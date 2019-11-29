@@ -1,0 +1,288 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://EGControl.gd" type="Script" id=1]
+[ext_resource path="res://spelunkid_font.tres" type="BitmapFont" id=2]
+
+[node name="EGControl" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = -658.0
+margin_bottom = -386.0
+script = ExtResource( 1 )
+
+[node name="H" type="HBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/separation = 4
+
+[node name="AR" type="VBoxContainer" parent="H"]
+editor/display_folded = true
+margin_right = 24.0
+margin_bottom = 214.0
+
+[node name="Label" type="Label" parent="H/AR"]
+margin_right = 24.0
+margin_bottom = 8.0
+custom_fonts/font = ExtResource( 2 )
+text = "Atk"
+align = 1
+
+[node name="Slider" type="VSlider" parent="H/AR"]
+margin_top = 12.0
+margin_right = 24.0
+margin_bottom = 202.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+ticks_on_borders = true
+
+[node name="Val" type="Label" parent="H/AR"]
+margin_top = 206.0
+margin_right = 24.0
+margin_bottom = 214.0
+custom_fonts/font = ExtResource( 2 )
+text = "0"
+align = 1
+valign = 2
+
+[node name="DR" type="VBoxContainer" parent="H"]
+editor/display_folded = true
+margin_left = 28.0
+margin_right = 68.0
+margin_bottom = 214.0
+
+[node name="Label" type="Label" parent="H/DR"]
+margin_right = 40.0
+margin_bottom = 8.0
+custom_fonts/font = ExtResource( 2 )
+text = "Decay"
+align = 1
+
+[node name="Slider" type="VSlider" parent="H/DR"]
+margin_top = 12.0
+margin_right = 40.0
+margin_bottom = 202.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+ticks_on_borders = true
+
+[node name="Val" type="Label" parent="H/DR"]
+margin_top = 206.0
+margin_right = 40.0
+margin_bottom = 214.0
+custom_fonts/font = ExtResource( 2 )
+text = "0"
+align = 1
+valign = 2
+
+[node name="SR" type="VBoxContainer" parent="H"]
+editor/display_folded = true
+margin_left = 72.0
+margin_right = 104.0
+margin_bottom = 214.0
+
+[node name="Label" type="Label" parent="H/SR"]
+margin_right = 32.0
+margin_bottom = 8.0
+custom_fonts/font = ExtResource( 2 )
+text = "Sust"
+align = 1
+
+[node name="Slider" type="VSlider" parent="H/SR"]
+margin_top = 12.0
+margin_right = 32.0
+margin_bottom = 202.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+ticks_on_borders = true
+
+[node name="Val" type="Label" parent="H/SR"]
+margin_top = 206.0
+margin_right = 32.0
+margin_bottom = 214.0
+custom_fonts/font = ExtResource( 2 )
+text = "0"
+align = 1
+valign = 2
+
+[node name="RR" type="VBoxContainer" parent="H"]
+editor/display_folded = true
+margin_left = 108.0
+margin_right = 156.0
+margin_bottom = 214.0
+
+[node name="RR" type="Label" parent="H/RR"]
+margin_right = 48.0
+margin_bottom = 8.0
+custom_fonts/font = ExtResource( 2 )
+text = "Releas"
+align = 1
+
+[node name="Slider" type="VSlider" parent="H/RR"]
+margin_top = 12.0
+margin_right = 48.0
+margin_bottom = 202.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+ticks_on_borders = true
+
+[node name="Val" type="Label" parent="H/RR"]
+margin_top = 206.0
+margin_right = 48.0
+margin_bottom = 214.0
+custom_fonts/font = ExtResource( 2 )
+text = "0"
+align = 1
+valign = 2
+
+[node name="SL" type="VBoxContainer" parent="H"]
+editor/display_folded = true
+margin_left = 160.0
+margin_right = 200.0
+margin_bottom = 214.0
+
+[node name="SL" type="Label" parent="H/SL"]
+margin_right = 40.0
+margin_bottom = 8.0
+custom_fonts/font = ExtResource( 2 )
+text = "SusLv"
+align = 1
+
+[node name="Slider" type="VSlider" parent="H/SL"]
+margin_top = 12.0
+margin_right = 40.0
+margin_bottom = 202.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+ticks_on_borders = true
+
+[node name="Val" type="Label" parent="H/SL"]
+margin_top = 206.0
+margin_right = 40.0
+margin_bottom = 214.0
+custom_fonts/font = ExtResource( 2 )
+text = "0"
+align = 1
+valign = 2
+
+[node name="TL" type="VBoxContainer" parent="H"]
+editor/display_folded = true
+margin_left = 204.0
+margin_right = 236.0
+margin_bottom = 214.0
+
+[node name="TL" type="Label" parent="H/TL"]
+margin_right = 32.0
+margin_bottom = 8.0
+custom_fonts/font = ExtResource( 2 )
+text = "TLvl"
+align = 1
+
+[node name="Slider" type="VSlider" parent="H/TL"]
+margin_top = 12.0
+margin_right = 32.0
+margin_bottom = 202.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+ticks_on_borders = true
+
+[node name="Val" type="Label" parent="H/TL"]
+margin_top = 206.0
+margin_right = 32.0
+margin_bottom = 214.0
+custom_fonts/font = ExtResource( 2 )
+text = "0"
+align = 1
+valign = 2
+
+[node name="KS" type="VBoxContainer" parent="H"]
+margin_left = 240.0
+margin_right = 272.0
+margin_bottom = 214.0
+
+[node name="KS" type="Label" parent="H/KS"]
+margin_right = 32.0
+margin_bottom = 8.0
+custom_fonts/font = ExtResource( 2 )
+text = "KScl"
+align = 1
+
+[node name="Slider" type="VSlider" parent="H/KS"]
+margin_top = 12.0
+margin_right = 32.0
+margin_bottom = 202.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+max_value = 10.0
+ticks_on_borders = true
+
+[node name="Val" type="Label" parent="H/KS"]
+margin_top = 206.0
+margin_right = 32.0
+margin_bottom = 214.0
+custom_fonts/font = ExtResource( 2 )
+text = "0"
+align = 1
+valign = 2
+
+[node name="MUL" type="VBoxContainer" parent="H"]
+margin_left = 276.0
+margin_right = 300.0
+margin_bottom = 214.0
+
+[node name="MUL" type="Label" parent="H/MUL"]
+margin_right = 24.0
+margin_bottom = 8.0
+custom_fonts/font = ExtResource( 2 )
+text = "Mul"
+align = 1
+
+[node name="Slider" type="VSlider" parent="H/MUL"]
+margin_top = 12.0
+margin_right = 24.0
+margin_bottom = 202.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+max_value = 16.0
+step = 0.5
+ticks_on_borders = true
+
+[node name="Val" type="Label" parent="H/MUL"]
+margin_top = 206.0
+margin_right = 24.0
+margin_bottom = 214.0
+custom_fonts/font = ExtResource( 2 )
+text = "0"
+align = 1
+valign = 2
+
+[node name="DT" type="VBoxContainer" parent="H"]
+editor/display_folded = true
+margin_left = 304.0
+margin_right = 352.0
+margin_bottom = 214.0
+
+[node name="DT" type="Label" parent="H/DT"]
+margin_right = 48.0
+margin_bottom = 8.0
+custom_fonts/font = ExtResource( 2 )
+text = "Detune"
+align = 1
+
+[node name="Slider" type="VSlider" parent="H/DT"]
+margin_top = 12.0
+margin_right = 48.0
+margin_bottom = 202.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+ticks_on_borders = true
+
+[node name="Val" type="Label" parent="H/DT"]
+margin_top = 206.0
+margin_right = 48.0
+margin_bottom = 214.0
+custom_fonts/font = ExtResource( 2 )
+text = "0"
+align = 1
+valign = 2

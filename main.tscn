@@ -1,0 +1,53 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://main.gd" type="Script" id=1]
+[ext_resource path="res://EGControl.tscn" type="PackedScene" id=2]
+[ext_resource path="res://spelunkid_font.tres" type="BitmapFont" id=3]
+
+[sub_resource type="AudioStreamGenerator" id=1]
+mix_rate = 22050.0
+buffer_length = 0.2
+
+[node name="Control" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="EGControl" parent="." instance=ExtResource( 2 )]
+margin_left = 640.0
+margin_top = 264.0
+margin_right = 2.0
+margin_bottom = -9.0
+
+[node name="GraphEdit" type="GraphEdit" parent="."]
+margin_right = 568.0
+margin_bottom = 280.0
+right_disconnects = true
+scroll_offset = Vector2( -80, -168 )
+snap_distance = 8
+
+[node name="Audio" type="AudioStreamPlayer" parent="."]
+stream = SubResource( 1 )
+volume_db = -27.866
+
+[node name="FB" type="HSlider" parent="."]
+margin_left = 16.0
+margin_top = 312.0
+margin_right = 272.0
+margin_bottom = 360.0
+max_value = 16.0
+
+[node name="Label" type="Label" parent="."]
+anchor_top = 0.5
+anchor_bottom = 0.5
+margin_left = 16.0
+margin_top = -4.0
+margin_right = 80.0
+margin_bottom = 4.0
+custom_fonts/font = ExtResource( 3 )
+text = "Feedback:  0"
+align = 1
+[connection signal="value_changed" from="FB" to="." method="_on_FB_value_changed"]
