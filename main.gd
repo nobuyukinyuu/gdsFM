@@ -2,6 +2,7 @@ extends Control
 
 var buf:AudioStreamGeneratorPlayback  #Playback buffer
 var samples = 0
+var bufferdata = []
 
 var hz = 22050.0
 
@@ -25,9 +26,10 @@ func fill_buffer(var frames=-1):
 	if !buf:  return
 	var frames_to_fill = buf.get_frames_available()
 	if frames >=0:  frames_to_fill = frames
-	var bufferdata = []
 
-	while frames_to_fill > 0:
+	bufferdata.resize(frames_to_fill)
+
+	for i in frames_to_fill:
 		samples +=1
 		
 #		var x = global.sint(2*PI * samples * (carrier_hz / hz))
@@ -41,8 +43,9 @@ func fill_buffer(var frames=-1):
 			feedback = modulate(feedback, carrier_hz)
 		var x = global.sint(feedback) 
 		
-		bufferdata.append(Vector2.ONE * x)
-		frames_to_fill -= 1
+#		bufferdata.append(Vector2.ONE * x)
+		bufferdata[i] = (Vector2.ONE * x)
+#		frames_to_fill -= 1
 
 	buf.push_buffer(bufferdata)
 
