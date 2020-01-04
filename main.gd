@@ -2,7 +2,7 @@ extends Control
 
 var buf:AudioStreamGeneratorPlayback  #Playback buffer
 var samples = 0
-var bufferdata = []
+var bufferdata = PoolVector2Array([])
 
 var hz = 22050.0
 
@@ -34,8 +34,8 @@ func fill_buffer(var frames=-1):
 		
 #		var x = global.sint(2*PI * samples * (carrier_hz / hz))
 		
-		var carrier = (2*PI * samples * (carrier_hz / hz))
-		var modulator = global.sint( 2*PI * samples * (modulator_hz / hz)) 
+		var carrier = (TAU * samples * (carrier_hz / hz))
+		var modulator = global.sint( TAU * samples * (modulator_hz / hz)) 
 		
 
 		var feedback = modulate(carrier , modulator_hz, $EGControl.get_value("MUL")) 
@@ -43,16 +43,14 @@ func fill_buffer(var frames=-1):
 			feedback = modulate(feedback, carrier_hz)
 		var x = global.sint(feedback) 
 		
-#		bufferdata.append(Vector2.ONE * x)
 		bufferdata[i] = (Vector2.ONE * x)
-#		frames_to_fill -= 1
 
 	buf.push_buffer(bufferdata)
 
 
 #Carrier:  A waveform not yet sin-processed.
 func modulate(carrier, modulator_hz, mul=1.0):
-	var modulator = global.sint( 2*PI * samples * (modulator_hz / hz))
+	var modulator = global.sint( TAU * samples * (modulator_hz / hz))
 	return (carrier + mul*modulator)
 	
 	

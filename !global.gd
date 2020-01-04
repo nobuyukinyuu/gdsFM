@@ -8,8 +8,9 @@ func _ready():
 
 func gen_sin_table(res):
 	sintable.clear()
+	sintable.resize(res)
 	for i in res:
-		sintable.append(  sin(2*PI * i/float(res))  )
+		sintable[i] = (  sin(2*PI * i/float(res))  )
 		
 
 #Grab a sine value from the lookup table.

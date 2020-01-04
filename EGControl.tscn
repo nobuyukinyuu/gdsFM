@@ -35,7 +35,6 @@ margin_right = 24.0
 margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-ticks_on_borders = true
 
 [node name="Val" type="Label" parent="H/AR"]
 margin_top = 206.0
@@ -65,7 +64,6 @@ margin_right = 40.0
 margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-ticks_on_borders = true
 
 [node name="Val" type="Label" parent="H/DR"]
 margin_top = 206.0
@@ -95,7 +93,6 @@ margin_right = 32.0
 margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-ticks_on_borders = true
 
 [node name="Val" type="Label" parent="H/SR"]
 margin_top = 206.0
@@ -125,7 +122,6 @@ margin_right = 48.0
 margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-ticks_on_borders = true
 
 [node name="Val" type="Label" parent="H/RR"]
 margin_top = 206.0
@@ -155,7 +151,6 @@ margin_right = 40.0
 margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-ticks_on_borders = true
 
 [node name="Val" type="Label" parent="H/SL"]
 margin_top = 206.0
@@ -185,7 +180,6 @@ margin_right = 32.0
 margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-ticks_on_borders = true
 
 [node name="Val" type="Label" parent="H/TL"]
 margin_top = 206.0
@@ -215,7 +209,6 @@ margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 max_value = 10.0
-ticks_on_borders = true
 
 [node name="Val" type="Label" parent="H/KS"]
 margin_top = 206.0
@@ -246,7 +239,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 max_value = 16.0
 step = 0.5
-ticks_on_borders = true
 
 [node name="Val" type="Label" parent="H/MUL"]
 margin_top = 206.0
@@ -276,7 +268,6 @@ margin_right = 48.0
 margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-ticks_on_borders = true
 
 [node name="Val" type="Label" parent="H/DT"]
 margin_top = 206.0
