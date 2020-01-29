@@ -1,12 +1,88 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://main.gd" type="Script" id=1]
 [ext_resource path="res://EGControl.tscn" type="PackedScene" id=2]
-[ext_resource path="res://spelunkid_font.tres" type="BitmapFont" id=3]
+[ext_resource path="res://OP-CenterNode.tscn" type="PackedScene" id=3]
+[ext_resource path="res://spelunkid_font.tres" type="BitmapFont" id=4]
+[ext_resource path="res://gfx/al1.png" type="Texture" id=5]
+[ext_resource path="res://gfx/al0.png" type="Texture" id=6]
+[ext_resource path="res://gfx/al2.png" type="Texture" id=7]
+[ext_resource path="res://gfx/al3.png" type="Texture" id=8]
+[ext_resource path="res://gfx/al4.png" type="Texture" id=9]
+[ext_resource path="res://gfx/al5.png" type="Texture" id=10]
+[ext_resource path="res://gfx/al6.png" type="Texture" id=11]
+[ext_resource path="res://gfx/al7.png" type="Texture" id=12]
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends GraphEdit
+
+func _ready():
+	add_valid_connection_type(0,1)
+	add_valid_connection_type(1,0)
+	
+	add_valid_left_disconnect_type(0)
+	add_valid_left_disconnect_type(1)
+	
+	add_valid_right_disconnect_type(0)
+	add_valid_right_disconnect_type(1)
+	
+	for o in get_children():
+		if o is GraphNode:
+			o.title = o.name
+
+
+func _on_GraphEdit_connection_request(from, from_slot, to, to_slot):
+	prints(\"request from\", from, \"slot\", from_slot, \"to\", to, \", slot\", to_slot)
+
+	if from != to:
+		connect_node(from, from_slot, to, to_slot)
+	else:
+		prints(\"Warning:  Attempting to connect\", from, \"to itself\")
+
+
+	#For processing output, we want to request the sample packet from the input.
+	#The request function should be given a list of processed nodes as an argument.
+	#The operator requesting a sample should add itself to the list it received.
+	#Then, each node recursively checks its own inputs, and requests a waveform
+	#from the input node if that node isn't already in the list.
+	#
+	# Once receiving the waveform, it performs frequency oscillation and passes
+	# the output to the function caller.
+
+func _on_GraphEdit_disconnection_request(from, from_slot, to, to_slot):
+		disconnect_node(from, from_slot, to, to_slot)
+"
+
+[sub_resource type="GDScript" id=4]
+script/source = "#Speakers output.  This terminus requests the first operator with an empty list.
+#Requesting empty from an OP produces a straight waveform output without any FM.
+extends GraphNode
+
+func _ready():
+	pass
+"
 
 [sub_resource type="AudioStreamGenerator" id=1]
 mix_rate = 22050.0
 buffer_length = 0.2
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends Timer
+var blep = 0
+
+func _ready():
+	pass
+
+func _process(delta):
+	blep +=1
+	
+
+
+func _on_Timer_timeout():
+	owner.get_node(\"ProcessRate\").text = str(blep)
+	blep = 0
+
+"
 
 [node name="Control" type="Control"]
 anchor_right = 1.0
@@ -17,37 +93,208 @@ __meta__ = {
 }
 
 [node name="EGControl" parent="." instance=ExtResource( 2 )]
-margin_left = 640.0
-margin_top = 264.0
-margin_right = 2.0
-margin_bottom = -9.0
+anchor_left = 1.0
+anchor_bottom = 0.0
+margin_left = -392.0
+margin_top = 136.0
+margin_right = -6.0
+margin_bottom = 383.0
 
 [node name="GraphEdit" type="GraphEdit" parent="."]
-margin_right = 568.0
-margin_bottom = 280.0
-right_disconnects = true
-scroll_offset = Vector2( -80, -168 )
-snap_distance = 8
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = -408.0
+margin_bottom = -88.0
+snap_distance = 16
+zoom = 1.2
+script = SubResource( 3 )
+
+[node name="OP1" type="GraphNode" parent="GraphEdit"]
+editor/display_folded = true
+margin_top = 76.8
+margin_right = 144.0
+margin_bottom = 159.8
+rect_scale = Vector2( 1.2, 1.2 )
+mouse_filter = 1
+custom_constants/separation = 8
+title = "OP1"
+offset = Vector2( 0, 64 )
+slot/0/left_enabled = false
+slot/0/left_type = -1
+slot/0/left_color = Color( 1, 1, 1, 1 )
+slot/0/right_enabled = true
+slot/0/right_type = 0
+slot/0/right_color = Color( 0.678431, 0.466667, 1, 1 )
+slot/1/left_enabled = false
+slot/1/left_type = 0
+slot/1/left_color = Color( 1, 1, 1, 1 )
+slot/1/right_enabled = false
+slot/1/right_type = 0
+slot/1/right_color = Color( 1, 1, 1, 1 )
+slot/2/left_enabled = false
+slot/2/left_type = 0
+slot/2/left_color = Color( 1, 1, 1, 1 )
+slot/2/right_enabled = false
+slot/2/right_type = 0
+slot/2/right_color = Color( 1, 1, 1, 1 )
+
+[node name="Label" type="Label" parent="GraphEdit/OP1"]
+margin_left = 16.0
+margin_top = 24.0
+margin_right = 128.0
+margin_bottom = 38.0
+text = "Outputs to:"
+align = 1
+valign = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="GraphEdit/OP1"]
+margin_left = 16.0
+margin_top = 38.0
+margin_right = 128.0
+margin_bottom = 38.0
+
+[node name="SpinBox" type="SpinBox" parent="GraphEdit/OP1"]
+margin_left = 16.0
+margin_top = 46.0
+margin_right = 128.0
+margin_bottom = 70.0
+max_value = 16.0
+align = 1
+prefix = "Feedback: "
+
+[node name="OP2" parent="GraphEdit" instance=ExtResource( 3 )]
+margin_left = 192.0
+margin_top = 76.8
+margin_right = 336.0
+margin_bottom = 187.8
+rect_scale = Vector2( 1.2, 1.2 )
+offset = Vector2( 160, 64 )
+
+[node name="OP3" parent="GraphEdit" instance=ExtResource( 3 )]
+margin_left = 384.0
+margin_top = 76.8
+margin_right = 528.0
+margin_bottom = 187.8
+rect_scale = Vector2( 1.2, 1.2 )
+offset = Vector2( 320, 64 )
+
+[node name="OP4" parent="GraphEdit" instance=ExtResource( 3 )]
+margin_left = 192.0
+margin_top = 222.0
+margin_right = 336.0
+margin_bottom = 333.0
+rect_scale = Vector2( 1.2, 1.2 )
+offset = Vector2( 160, 185 )
+
+[node name="Output" type="GraphNode" parent="GraphEdit"]
+margin_left = 432.0
+margin_top = 220.8
+margin_right = 536.0
+margin_bottom = 276.8
+rect_scale = Vector2( 1.2, 1.2 )
+mouse_filter = 1
+title = "Output"
+offset = Vector2( 360, 184 )
+slot/0/left_enabled = true
+slot/0/left_type = 1
+slot/0/left_color = Color( 0.85098, 1, 0, 1 )
+slot/0/right_enabled = false
+slot/0/right_type = 0
+slot/0/right_color = Color( 1, 1, 1, 1 )
+script = SubResource( 4 )
+
+[node name="Label" type="Label" parent="GraphEdit/Output"]
+margin_left = 16.0
+margin_top = 24.0
+margin_right = 87.0
+margin_bottom = 48.0
+rect_min_size = Vector2( 0, 24 )
+text = "Speakers"
+align = 1
+valign = 1
 
 [node name="Audio" type="AudioStreamPlayer" parent="."]
 stream = SubResource( 1 )
 volume_db = -27.866
 
 [node name="FB" type="HSlider" parent="."]
+anchor_top = 1.0
+anchor_bottom = 1.0
 margin_left = 16.0
-margin_top = 312.0
+margin_top = -64.0
 margin_right = 272.0
-margin_bottom = 360.0
-max_value = 16.0
+margin_bottom = -16.0
+max_value = 8.0
+step = 0.1
+ticks_on_borders = true
 
 [node name="Label" type="Label" parent="."]
-anchor_top = 0.5
-anchor_bottom = 0.5
+anchor_top = 1.0
+anchor_bottom = 1.0
 margin_left = 16.0
-margin_top = -4.0
-margin_right = 80.0
-margin_bottom = 4.0
-custom_fonts/font = ExtResource( 3 )
+margin_top = -72.0
+margin_right = 112.0
+margin_bottom = -64.0
+custom_fonts/font = ExtResource( 4 )
 text = "Feedback:  0"
 align = 1
+
+[node name="Timer" type="Timer" parent="."]
+autostart = true
+script = SubResource( 2 )
+
+[node name="ProcessRate" type="Label" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -272.0
+margin_top = 10.0
+margin_right = -8.0
+margin_bottom = 80.0
+text = "Test"
+align = 2
+
+[node name="btnPrintConnections" type="Button" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -392.0
+margin_top = 10.0
+margin_right = -152.0
+margin_bottom = 58.0
+text = "Print connections"
+
+[node name="OptionButton" type="OptionButton" parent="."]
+margin_left = 640.0
+margin_top = 72.0
+margin_right = 872.0
+margin_bottom = 120.0
+text = "Item 1"
+icon = ExtResource( 5 )
+items = [ "4x Serial Modulation", ExtResource( 6 ), false, 0, null, "Item 1", ExtResource( 5 ), false, 1, null, "Item 2", ExtResource( 7 ), false, 2, null, "Item 3", ExtResource( 8 ), false, 3, null, "Item 4", ExtResource( 9 ), false, 4, null, "Item 5", ExtResource( 10 ), false, 5, null, "Item 6", ExtResource( 11 ), false, 6, null, "Item 7", ExtResource( 12 ), false, 7, null ]
+selected = 1
+
+[node name="Label2" type="Label" parent="."]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_top = -14.0
+margin_right = 40.0
+text = "dfgrdfg"
+
+[node name="Panel" type="Panel" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -392.0
+margin_top = 408.0
+margin_right = -8.0
+margin_bottom = -8.0
+
+[node name="Line2D" type="Line2D" parent="Panel"]
+width = 1.0
+texture_mode = 1044891074
+[connection signal="connection_request" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_connection_request"]
+[connection signal="disconnection_request" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_disconnection_request"]
 [connection signal="value_changed" from="FB" to="." method="_on_FB_value_changed"]
+[connection signal="timeout" from="Timer" to="Timer" method="_on_Timer_timeout"]
+[connection signal="pressed" from="btnPrintConnections" to="." method="_on_btnPrintConnections_pressed"]

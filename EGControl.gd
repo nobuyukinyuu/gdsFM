@@ -10,6 +10,6 @@ func _on_slider_change(value, which):
 	$H.get_node(which + "/Val").text = str(value)
 	
 
-#Gets a specified slider value.	
+#Gets a specified slider value.
 func get_value(name):
 	return get_node("H/%s/Slider" % name).value

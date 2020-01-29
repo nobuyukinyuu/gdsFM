@@ -22,6 +22,15 @@ config/icon="res://icon.png"
 [autoload]
 
 global="*res://!global.gd"
+PinkNoise="*res://PinkNoiseGenerator.gd"
+
+[debug]
+
+gdscript/warnings/unused_variable=false
+
+[editor_plugins]
+
+enabled=PoolStringArray( "zoomy" )
 
 [rendering]
 
