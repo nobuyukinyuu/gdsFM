@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://main.gd" type="Script" id=1]
 [ext_resource path="res://EGControl.tscn" type="PackedScene" id=2]
@@ -12,8 +12,9 @@
 [ext_resource path="res://gfx/al5.png" type="Texture" id=10]
 [ext_resource path="res://gfx/al6.png" type="Texture" id=11]
 [ext_resource path="res://gfx/al7.png" type="Texture" id=12]
+[ext_resource path="res://gfx/al_custom.png" type="Texture" id=13]
 
-[sub_resource type="GDScript" id=3]
+[sub_resource type="GDScript" id=1]
 script/source = "extends GraphEdit
 
 func _ready():
@@ -53,7 +54,7 @@ func _on_GraphEdit_disconnection_request(from, from_slot, to, to_slot):
 		disconnect_node(from, from_slot, to, to_slot)
 "
 
-[sub_resource type="GDScript" id=4]
+[sub_resource type="GDScript" id=2]
 script/source = "#Speakers output.  This terminus requests the first operator with an empty list.
 #Requesting empty from an OP produces a straight waveform output without any FM.
 extends GraphNode
@@ -62,11 +63,11 @@ func _ready():
 	pass
 "
 
-[sub_resource type="AudioStreamGenerator" id=1]
+[sub_resource type="AudioStreamGenerator" id=3]
 mix_rate = 22050.0
 buffer_length = 0.2
 
-[sub_resource type="GDScript" id=2]
+[sub_resource type="GDScript" id=4]
 script/source = "extends Timer
 var blep = 0
 
@@ -109,66 +110,21 @@ margin_right = -408.0
 margin_bottom = -88.0
 snap_distance = 16
 zoom = 1.2
-script = SubResource( 3 )
+script = SubResource( 1 )
 
-[node name="OP1" type="GraphNode" parent="GraphEdit"]
-editor/display_folded = true
+[node name="OP1" parent="GraphEdit" instance=ExtResource( 3 )]
 margin_top = 76.8
 margin_right = 144.0
-margin_bottom = 159.8
+margin_bottom = 188.8
 rect_scale = Vector2( 1.2, 1.2 )
-mouse_filter = 1
-custom_constants/separation = 8
-title = "OP1"
 offset = Vector2( 0, 64 )
 slot/0/left_enabled = false
-slot/0/left_type = -1
-slot/0/left_color = Color( 1, 1, 1, 1 )
-slot/0/right_enabled = true
-slot/0/right_type = 0
-slot/0/right_color = Color( 0.678431, 0.466667, 1, 1 )
-slot/1/left_enabled = false
-slot/1/left_type = 0
-slot/1/left_color = Color( 1, 1, 1, 1 )
-slot/1/right_enabled = false
-slot/1/right_type = 0
-slot/1/right_color = Color( 1, 1, 1, 1 )
-slot/2/left_enabled = false
-slot/2/left_type = 0
-slot/2/left_color = Color( 1, 1, 1, 1 )
-slot/2/right_enabled = false
-slot/2/right_type = 0
-slot/2/right_color = Color( 1, 1, 1, 1 )
-
-[node name="Label" type="Label" parent="GraphEdit/OP1"]
-margin_left = 16.0
-margin_top = 24.0
-margin_right = 128.0
-margin_bottom = 38.0
-text = "Outputs to:"
-align = 1
-valign = 1
-
-[node name="MarginContainer" type="MarginContainer" parent="GraphEdit/OP1"]
-margin_left = 16.0
-margin_top = 38.0
-margin_right = 128.0
-margin_bottom = 38.0
-
-[node name="SpinBox" type="SpinBox" parent="GraphEdit/OP1"]
-margin_left = 16.0
-margin_top = 46.0
-margin_right = 128.0
-margin_bottom = 70.0
-max_value = 16.0
-align = 1
-prefix = "Feedback: "
 
 [node name="OP2" parent="GraphEdit" instance=ExtResource( 3 )]
 margin_left = 192.0
 margin_top = 76.8
 margin_right = 336.0
-margin_bottom = 187.8
+margin_bottom = 188.8
 rect_scale = Vector2( 1.2, 1.2 )
 offset = Vector2( 160, 64 )
 
@@ -176,7 +132,7 @@ offset = Vector2( 160, 64 )
 margin_left = 384.0
 margin_top = 76.8
 margin_right = 528.0
-margin_bottom = 187.8
+margin_bottom = 188.8
 rect_scale = Vector2( 1.2, 1.2 )
 offset = Vector2( 320, 64 )
 
@@ -184,7 +140,7 @@ offset = Vector2( 320, 64 )
 margin_left = 192.0
 margin_top = 222.0
 margin_right = 336.0
-margin_bottom = 333.0
+margin_bottom = 334.0
 rect_scale = Vector2( 1.2, 1.2 )
 offset = Vector2( 160, 185 )
 
@@ -203,7 +159,7 @@ slot/0/left_color = Color( 0.85098, 1, 0, 1 )
 slot/0/right_enabled = false
 slot/0/right_type = 0
 slot/0/right_color = Color( 1, 1, 1, 1 )
-script = SubResource( 4 )
+script = SubResource( 2 )
 
 [node name="Label" type="Label" parent="GraphEdit/Output"]
 margin_left = 16.0
@@ -216,7 +172,7 @@ align = 1
 valign = 1
 
 [node name="Audio" type="AudioStreamPlayer" parent="."]
-stream = SubResource( 1 )
+stream = SubResource( 3 )
 volume_db = -27.866
 
 [node name="FB" type="HSlider" parent="."]
@@ -243,7 +199,7 @@ align = 1
 
 [node name="Timer" type="Timer" parent="."]
 autostart = true
-script = SubResource( 2 )
+script = SubResource( 4 )
 
 [node name="ProcessRate" type="Label" parent="."]
 anchor_left = 1.0
@@ -255,24 +211,30 @@ margin_bottom = 80.0
 text = "Test"
 align = 2
 
-[node name="btnPrintConnections" type="Button" parent="."]
+[node name="btnValidate" type="Button" parent="."]
 anchor_left = 1.0
 anchor_right = 1.0
 margin_left = -392.0
-margin_top = 10.0
+margin_top = 72.0
 margin_right = -152.0
-margin_bottom = 58.0
-text = "Print connections"
+margin_bottom = 120.0
+text = "Load / Validate Algorithm"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="OptionButton" type="OptionButton" parent="."]
-margin_left = 640.0
-margin_top = 72.0
+margin_left = 632.0
+margin_top = 10.0
 margin_right = 872.0
-margin_bottom = 120.0
-text = "Item 1"
-icon = ExtResource( 5 )
-items = [ "4x Serial Modulation", ExtResource( 6 ), false, 0, null, "Item 1", ExtResource( 5 ), false, 1, null, "Item 2", ExtResource( 7 ), false, 2, null, "Item 3", ExtResource( 8 ), false, 3, null, "Item 4", ExtResource( 9 ), false, 4, null, "Item 5", ExtResource( 10 ), false, 5, null, "Item 6", ExtResource( 11 ), false, 6, null, "Item 7", ExtResource( 12 ), false, 7, null ]
-selected = 1
+margin_bottom = 58.0
+text = "Custom"
+icon = ExtResource( 13 )
+items = [ "4x Serial Modulation", ExtResource( 6 ), false, 0, null, "Double Mod 3x Serial", ExtResource( 5 ), false, 1, null, "Double Mod (Mode 1)", ExtResource( 7 ), false, 2, null, "Double Mod (Mode 2)", ExtResource( 8 ), false, 3, null, "2x Serial, 2x Parallel", ExtResource( 9 ), false, 4, null, "Common Modulator", ExtResource( 10 ), false, 5, null, "2x Serial + 2 Plain", ExtResource( 11 ), false, 6, null, "4x Parallel (Plain)", ExtResource( 12 ), false, 7, null, "Custom", ExtResource( 13 ), false, 8, null ]
+selected = 8
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Label2" type="Label" parent="."]
 anchor_top = 1.0
@@ -297,4 +259,4 @@ texture_mode = 1044891074
 [connection signal="disconnection_request" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_disconnection_request"]
 [connection signal="value_changed" from="FB" to="." method="_on_FB_value_changed"]
 [connection signal="timeout" from="Timer" to="Timer" method="_on_Timer_timeout"]
-[connection signal="pressed" from="btnPrintConnections" to="." method="_on_btnPrintConnections_pressed"]
+[connection signal="pressed" from="btnValidate" to="." method="_on_btnPrintConnections_pressed"]

@@ -18,7 +18,6 @@ size_flags_vertical = 3
 custom_constants/separation = 4
 
 [node name="AR" type="VBoxContainer" parent="H"]
-editor/display_folded = true
 margin_right = 24.0
 margin_bottom = 214.0
 
@@ -46,7 +45,6 @@ align = 1
 valign = 2
 
 [node name="DR" type="VBoxContainer" parent="H"]
-editor/display_folded = true
 margin_left = 28.0
 margin_right = 68.0
 margin_bottom = 214.0
@@ -75,7 +73,6 @@ align = 1
 valign = 2
 
 [node name="SR" type="VBoxContainer" parent="H"]
-editor/display_folded = true
 margin_left = 72.0
 margin_right = 104.0
 margin_bottom = 214.0
@@ -104,7 +101,6 @@ align = 1
 valign = 2
 
 [node name="RR" type="VBoxContainer" parent="H"]
-editor/display_folded = true
 margin_left = 108.0
 margin_right = 156.0
 margin_bottom = 214.0
@@ -133,7 +129,6 @@ align = 1
 valign = 2
 
 [node name="SL" type="VBoxContainer" parent="H"]
-editor/display_folded = true
 margin_left = 160.0
 margin_right = 200.0
 margin_bottom = 214.0
