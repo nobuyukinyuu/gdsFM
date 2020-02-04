@@ -1,13 +1,16 @@
+#A lot of FM Instrument modular structure lives here, for now....
+
 extends GraphEdit
 
 #A temp list of connections used to validate an algorithm.
 var test_connections = {}
 var connections = {}  #Operator connections in an algorithm
+var connections_valid = false
 
-var dirty = false setget set_changed  #Indicates if the node graph is out of date.
+var dirty = false setget set_dirty  #Indicates if the node graph is out of date.
 signal changed
 
-func set_changed(val):
+func set_dirty(val):
 	dirty = val
 	emit_signal("changed", dirty)
 
@@ -33,23 +36,15 @@ func _on_GraphEdit_connection_request(from, from_slot, to, to_slot):
 
 	if from != to:
 		connect_node(from, from_slot, to, to_slot)
-		set_changed( true )
+		set_dirty( true )
 	else:
 		prints("Warning:  Attempting to connect", from, "to itself")
 
 
-	#For processing output, we want to request the sample packet from the input.
-	#The request function should be given a list of processed nodes as an argument.
-	#The operator requesting a sample should add itself to the list it received.
-	#Then, each node recursively checks its own inputs, and requests a waveform
-	#from the input node if that node isn't already in the list.
-	#
-	# Once receiving the waveform, it performs frequency oscillation and passes
-	# the output to the function caller.
 
 func _on_GraphEdit_disconnection_request(from, from_slot, to, to_slot):
 		disconnect_node(from, from_slot, to, to_slot)
-		set_changed(true)
+		set_dirty(true)
 
 
 func validate():
@@ -67,7 +62,7 @@ func validate():
 #		connections[key].append(o["from"])
 		test_connections[key][ o["from"] ] = true
 
-	print(test_connections)
+#	print(test_connections)
 
 	#First, check if the speakers are connected to anything.
 	if !test_connections.has("Output") or test_connections["Output"].empty():
@@ -77,13 +72,16 @@ func validate():
 	#Now make sure there's no infinite loops in the operator connections.
 	var is_invalid:bool = validate_loop("Output", {})
 	if is_invalid:  
+		connections_valid = false
 		OS.alert("Algorithm validation failed.")
 		return
 	else:
 		#Validation passed.  Assign connections.
 		connections = test_connections
+		connections_valid = true
+		print(connections)
 #		OS.alert("Validation OK.")
-		set_changed(false)
+		set_dirty(false)
 	
 #Recursive function which validates an algorithm is free of infinite loops.
 func validate_loop(me, prior_connections) -> bool:

@@ -56,44 +56,34 @@ func fill_buffer(var frames=-1):
 		var phase = (global.samples / hz * TAU) 
 		
 		
-#		var x = global.sint(2*PI * samples * (carrier_hz / hz))
-		
 		var mul = $EGControl.get_value("MUL") +1
 		var tl = (100 - $EGControl.get_value("TL")) / 100.0
 
 		var carrier = (phase * carrier_hz) * (1+ $EGControl.get_value("DT")/500.0) 
 		var modulator = (phase * modulator_hz )
-		
+
 		var release_env = (1.0-min(1.0, global.get_secs()*0.7))  #DEBUG, TEMPORARY
-		
+
 		#Process feedback
 		if $FB.value > 0:
 			var average = (old_op1_sample[0] + old_op1_sample[1]) / 2.0
 			var scaled_fb = average * $FB.value #/ pow(2, $FB.value)
 			old_op1_sample[1] = old_op1_sample[0]
 			old_op1_sample[0] = sin(scaled_fb + carrier) * tl
-			
-	
+
+
 			carrier = old_op1_sample[0]
 		else:
 			carrier = sin(carrier) * tl * release_env
 			pass
-		
-#		var modulator = sin(phase * modulator_hz * $EGControl.get_value("MUL") + carrier*TAU)
 
-#		modulator =  global.sint(modulator*mul + (carrier) * TAU*4) 
-		modulator =  global.sint(sin(modulator*mul) + (carrier) * TAU*4) * release_env
-		
-#		modulator = modulate(modulator, modulator, tl, mul)
-		
-		
-#		modulator = sin(modulator + carrier)
-#		var x = clamp(carrier * modulator, -1, 1)
+
+		modulator = global.sint(sin(modulator*mul) + (carrier) * TAU*4) * release_env		
 		var x = clamp(modulator, -1.5, 1.5)
-		
-	
+
+
 		bufferdata[i] = (Vector2.ONE * x)
-		
+
 		global.samples +=1
 
 	buf.push_buffer(bufferdata)
