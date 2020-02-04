@@ -46,22 +46,22 @@ valign = 1
 
 [node name="MarginContainer2" type="MarginContainer" parent="."]
 margin_left = 16.0
-margin_top = 38.0
+margin_top = 46.0
 margin_right = 120.0
-margin_bottom = 38.0
+margin_bottom = 46.0
 
 [node name="Button" type="Button" parent="."]
 margin_left = 16.0
-margin_top = 46.0
+margin_top = 54.0
 margin_right = 120.0
-margin_bottom = 66.0
+margin_bottom = 74.0
 text = "Modify EG"
 
 [node name="CheckBox" type="CheckBox" parent="."]
 margin_left = 16.0
-margin_top = 74.0
+margin_top = 82.0
 margin_right = 120.0
-margin_bottom = 98.0
+margin_bottom = 106.0
 custom_constants/hseparation = 8
 text = "Bypass"
 clip_text = true

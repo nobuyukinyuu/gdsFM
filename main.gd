@@ -29,7 +29,7 @@ func _ready():
 
 func _input(event):
 	#DEBUG:  reset EG
-	if Input.is_key_pressed(KEY_F12):
+	if event.is_action_pressed("ui_accept"):
 		global.samples = 0
 
 func _process(delta):
@@ -61,12 +61,12 @@ func fill_buffer(var frames=-1):
 		var mul = $EGControl.get_value("MUL") +1
 		var tl = (100 - $EGControl.get_value("TL")) / 100.0
 
-		var carrier = (phase * carrier_hz) * (1+ $EGControl.get_value("DT")/1000.0) 
+		var carrier = (phase * carrier_hz) * (1+ $EGControl.get_value("DT")/500.0) 
 		var modulator = (phase * modulator_hz )
 		
-		var release_env = (1.0-min(1.0, global.get_secs()))  #DEBUG, TEMPORARY
+		var release_env = (1.0-min(1.0, global.get_secs()*0.7))  #DEBUG, TEMPORARY
 		
-		
+		#Process feedback
 		if $FB.value > 0:
 			var average = (old_op1_sample[0] + old_op1_sample[1]) / 2.0
 			var scaled_fb = average * $FB.value #/ pow(2, $FB.value)
@@ -89,7 +89,7 @@ func fill_buffer(var frames=-1):
 		
 #		modulator = sin(modulator + carrier)
 #		var x = clamp(carrier * modulator, -1, 1)
-		var x = clamp(modulator, -1, 1)
+		var x = clamp(modulator, -1.5, 1.5)
 		
 	
 		bufferdata[i] = (Vector2.ONE * x)
@@ -109,6 +109,14 @@ func _on_FB_value_changed(value):
 
 
 
-func _on_btnPrintConnections_pressed():
-	print($GraphEdit.get_connection_list())
+func _on_btnValidate_pressed():
+	$GraphEdit.validate()
 	pass # Replace with function body.
+
+
+func _on_GraphEdit_changed(dirty=false):
+#	print("boop, it's ", dirty)
+	if dirty:
+		$btnValidate.disabled = false
+	else:
+		$btnValidate.disabled = true

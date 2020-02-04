@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://main.gd" type="Script" id=1]
 [ext_resource path="res://EGControl.tscn" type="PackedScene" id=2]
@@ -13,46 +13,7 @@
 [ext_resource path="res://gfx/al6.png" type="Texture" id=11]
 [ext_resource path="res://gfx/al7.png" type="Texture" id=12]
 [ext_resource path="res://gfx/al_custom.png" type="Texture" id=13]
-
-[sub_resource type="GDScript" id=1]
-script/source = "extends GraphEdit
-
-func _ready():
-	add_valid_connection_type(0,1)
-	add_valid_connection_type(1,0)
-	
-	add_valid_left_disconnect_type(0)
-	add_valid_left_disconnect_type(1)
-	
-	add_valid_right_disconnect_type(0)
-	add_valid_right_disconnect_type(1)
-	
-	for o in get_children():
-		if o is GraphNode:
-			o.title = o.name
-
-
-func _on_GraphEdit_connection_request(from, from_slot, to, to_slot):
-	prints(\"request from\", from, \"slot\", from_slot, \"to\", to, \", slot\", to_slot)
-
-	if from != to:
-		connect_node(from, from_slot, to, to_slot)
-	else:
-		prints(\"Warning:  Attempting to connect\", from, \"to itself\")
-
-
-	#For processing output, we want to request the sample packet from the input.
-	#The request function should be given a list of processed nodes as an argument.
-	#The operator requesting a sample should add itself to the list it received.
-	#Then, each node recursively checks its own inputs, and requests a waveform
-	#from the input node if that node isn't already in the list.
-	#
-	# Once receiving the waveform, it performs frequency oscillation and passes
-	# the output to the function caller.
-
-func _on_GraphEdit_disconnection_request(from, from_slot, to, to_slot):
-		disconnect_node(from, from_slot, to, to_slot)
-"
+[ext_resource path="res://OP-GraphEditor.gd" type="Script" id=14]
 
 [sub_resource type="GDScript" id=2]
 script/source = "#Speakers output.  This terminus requests the first operator with an empty list.
@@ -66,6 +27,18 @@ func _ready():
 [sub_resource type="AudioStreamGenerator" id=3]
 mix_rate = 22050.0
 buffer_length = 0.2
+
+[sub_resource type="GDScript" id=5]
+script/source = "extends HSlider
+
+func _ready():
+	pass
+
+
+func _on_FB2_value_changed(value):
+	owner.get_node(\"Label2\").text = str(value) + \"\\ndb: \" + str(linear2db(value))
+	pass # Replace with function body.
+"
 
 [sub_resource type="GDScript" id=4]
 script/source = "extends Timer
@@ -110,7 +83,7 @@ margin_right = -408.0
 margin_bottom = -88.0
 snap_distance = 16
 zoom = 1.2
-script = SubResource( 1 )
+script = ExtResource( 14 )
 
 [node name="OP1" parent="GraphEdit" instance=ExtResource( 3 )]
 margin_top = 76.8
@@ -183,8 +156,20 @@ margin_top = -64.0
 margin_right = 272.0
 margin_bottom = -16.0
 max_value = 8.0
-step = 0.1
+step = 0.05
 ticks_on_borders = true
+
+[node name="FB2" type="HSlider" parent="."]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 312.0
+margin_top = -64.0
+margin_right = 568.0
+margin_bottom = -16.0
+max_value = 1.0
+step = 0.0
+ticks_on_borders = true
+script = SubResource( 5 )
 
 [node name="Label" type="Label" parent="."]
 anchor_top = 1.0
@@ -218,15 +203,18 @@ margin_left = -392.0
 margin_top = 72.0
 margin_right = -152.0
 margin_bottom = 120.0
-text = "Load / Validate Algorithm"
+disabled = true
+text = "Reload / Validate Algorithm"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="OptionButton" type="OptionButton" parent="."]
-margin_left = 632.0
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -392.0
 margin_top = 10.0
-margin_right = 872.0
+margin_right = -152.0
 margin_bottom = 58.0
 text = "Custom"
 icon = ExtResource( 13 )
@@ -239,8 +227,9 @@ __meta__ = {
 [node name="Label2" type="Label" parent="."]
 anchor_top = 1.0
 anchor_bottom = 1.0
-margin_top = -14.0
-margin_right = 40.0
+margin_top = -32.0
+margin_right = 43.0
+margin_bottom = -18.0
 text = "dfgrdfg"
 
 [node name="Panel" type="Panel" parent="."]
@@ -255,8 +244,10 @@ margin_bottom = -8.0
 [node name="Line2D" type="Line2D" parent="Panel"]
 width = 1.0
 texture_mode = 1044891074
+[connection signal="changed" from="GraphEdit" to="." method="_on_GraphEdit_changed"]
 [connection signal="connection_request" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_connection_request"]
 [connection signal="disconnection_request" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_disconnection_request"]
 [connection signal="value_changed" from="FB" to="." method="_on_FB_value_changed"]
+[connection signal="value_changed" from="FB2" to="FB2" method="_on_FB2_value_changed"]
 [connection signal="timeout" from="Timer" to="Timer" method="_on_Timer_timeout"]
-[connection signal="pressed" from="btnValidate" to="." method="_on_btnPrintConnections_pressed"]
+[connection signal="pressed" from="btnValidate" to="." method="_on_btnValidate_pressed"]
