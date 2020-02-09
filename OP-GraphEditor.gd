@@ -80,6 +80,10 @@ func validate():
 		connections = test_connections
 		connections_valid = true
 		print(connections)
+		
+		for connection in connections:
+			get_node(connection).connections = connections.get(connection)
+		
 #		OS.alert("Validation OK.")
 		set_dirty(false)
 	

@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=27 format=2]
 
 [ext_resource path="res://main.gd" type="Script" id=1]
 [ext_resource path="res://EGControl.tscn" type="PackedScene" id=2]
@@ -14,21 +14,46 @@
 [ext_resource path="res://gfx/al7.png" type="Texture" id=12]
 [ext_resource path="res://gfx/al_custom.png" type="Texture" id=13]
 [ext_resource path="res://OP-GraphEditor.gd" type="Script" id=14]
+[ext_resource path="res://gfx/waveforms/1.png" type="Texture" id=15]
+[ext_resource path="res://gfx/waveforms/6.png" type="Texture" id=16]
+[ext_resource path="res://gfx/waveforms/5.png" type="Texture" id=17]
+[ext_resource path="res://gfx/waveforms/4.png" type="Texture" id=18]
+[ext_resource path="res://gfx/waveforms/2.png" type="Texture" id=19]
+[ext_resource path="res://gfx/waveforms/7.png" type="Texture" id=20]
+[ext_resource path="res://gfx/waveforms/0.png" type="Texture" id=21]
+[ext_resource path="res://gfx/waveforms/3.png" type="Texture" id=22]
 
-[sub_resource type="GDScript" id=2]
+[sub_resource type="GDScript" id=1]
 script/source = "#Speakers output.  This terminus requests the first operator with an empty list.
 #Requesting empty from an OP produces a straight waveform output without any FM.
 extends GraphNode
 
+
+var connections = {}  #This is filled in by the algorithm validator.
+
+
 func _ready():
 	pass
+
+
+func mix(phase):
+	var avg = Vector2.ZERO
+	
+	for o in connections:
+		avg += $\"..\".get_node(o).request_sample(phase, 0, true)
+		
+	#If assertion failed, we'd get a divide by zero here.
+	assert(connections.size()>0, \"No connections to speaker. This shouldn't happen\")
+	avg /= connections.size()  #Shitty average-based mixing.
+	
+	return avg
 "
 
-[sub_resource type="AudioStreamGenerator" id=3]
+[sub_resource type="AudioStreamGenerator" id=2]
 mix_rate = 22050.0
-buffer_length = 0.2
+buffer_length = 1.0
 
-[sub_resource type="GDScript" id=5]
+[sub_resource type="GDScript" id=3]
 script/source = "extends HSlider
 
 func _ready():
@@ -132,7 +157,7 @@ slot/0/left_color = Color( 0.85098, 1, 0, 1 )
 slot/0/right_enabled = false
 slot/0/right_type = 0
 slot/0/right_color = Color( 1, 1, 1, 1 )
-script = SubResource( 2 )
+script = SubResource( 1 )
 
 [node name="Label" type="Label" parent="GraphEdit/Output"]
 margin_left = 16.0
@@ -145,8 +170,8 @@ align = 1
 valign = 1
 
 [node name="Audio" type="AudioStreamPlayer" parent="."]
-stream = SubResource( 3 )
-volume_db = -27.866
+stream = SubResource( 2 )
+volume_db = -15.0
 
 [node name="FB" type="HSlider" parent="."]
 anchor_top = 1.0
@@ -169,7 +194,7 @@ margin_bottom = -16.0
 max_value = 1.0
 step = 0.0
 ticks_on_borders = true
-script = SubResource( 5 )
+script = SubResource( 3 )
 
 [node name="Label" type="Label" parent="."]
 anchor_top = 1.0
@@ -199,12 +224,12 @@ align = 2
 [node name="btnValidate" type="Button" parent="."]
 anchor_left = 1.0
 anchor_right = 1.0
-margin_left = -392.0
+margin_left = -224.0
 margin_top = 72.0
-margin_right = -152.0
+margin_right = -141.0
 margin_bottom = 120.0
 disabled = true
-text = "Reload / Validate Algorithm"
+text = "Validate AL"
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -214,7 +239,7 @@ anchor_left = 1.0
 anchor_right = 1.0
 margin_left = -392.0
 margin_top = 10.0
-margin_right = -152.0
+margin_right = -144.0
 margin_bottom = 58.0
 text = "Custom"
 icon = ExtResource( 13 )
@@ -227,10 +252,14 @@ __meta__ = {
 [node name="Label2" type="Label" parent="."]
 anchor_top = 1.0
 anchor_bottom = 1.0
-margin_top = -32.0
-margin_right = 43.0
-margin_bottom = -18.0
+margin_left = 304.0
+margin_top = -24.0
+margin_right = 347.0
+margin_bottom = -10.0
 text = "dfgrdfg"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Panel" type="Panel" parent="."]
 anchor_left = 1.0
@@ -244,6 +273,22 @@ margin_bottom = -8.0
 [node name="Line2D" type="Line2D" parent="Panel"]
 width = 1.0
 texture_mode = 1044891074
+
+[node name="OptionButton2" type="OptionButton" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -392.0
+margin_top = 72.0
+margin_right = -246.0
+margin_bottom = 118.0
+custom_constants/hseparation = 8
+text = "Square/Pulse"
+icon = ExtResource( 22 )
+items = [ "Sine", ExtResource( 21 ), false, 0, null, "Sawtooth", ExtResource( 15 ), false, 1, null, "Stepped Tri", ExtResource( 19 ), false, 2, null, "Square/Pulse", ExtResource( 22 ), false, 3, null, "Absolute Sine", ExtResource( 18 ), false, 4, null, "White Noise", ExtResource( 17 ), false, 5, null, "Pink Noise", ExtResource( 16 ), false, 6, null, "Brown Noise", ExtResource( 20 ), false, 7, null ]
+selected = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
 [connection signal="changed" from="GraphEdit" to="." method="_on_GraphEdit_changed"]
 [connection signal="connection_request" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_connection_request"]
 [connection signal="disconnection_request" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_disconnection_request"]

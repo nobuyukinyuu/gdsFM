@@ -1,10 +1,7 @@
 extends Node
 
-var sintable = []  #LUT for a full sine. TODO:  use symmetry to only need 1/4 sine
-var sample_rate = 22050.0
+var sample_rate = 48000.0
 var samples = 0  #Global oscillator timer.  Iterated every time an output sample is produced.
-
-enum waveforms {PULSE, SAW, TRI, SINE, WHITE, PINK, BROWN, SAMPLE}
 
 # 12-field array containing a LUT of semitone frequencies at all MIDI note numbers.
 #Generated from center tuning (A-4) at 440hz.
@@ -16,7 +13,6 @@ const NOTE_A4 = 69   # Nice.
 
 func _ready():
 	randomize()
-	gen_sin_table(2048)
 
 	# Generate the period frequencies of every note based on center tuning (A-4) at 440hz
 	# Calculated from the equal temperment note ratio (12th root of 2).
@@ -27,21 +23,6 @@ func _ready():
 
 #	print(periods)
 
-#Generate the sine lookup table at the specified resolution.
-func gen_sin_table(res):
-	sintable.clear()
-	sintable.resize(res)
-	for i in res:
-		sintable[i] = (  sin(TAU * i/float(res))  )
-		
-
-#Grab a sine value from the lookup table.
-func sint(n):
-	var sz = sintable.size()
-	var idx = round( n / (TAU) * float(sz))
-	idx = wrapi(idx, 0, sz)
-
-	return sintable[idx]
 	
 #Sample Timer convenience functions.  Converts samples elapsed to readable time
 func get_secs():
@@ -64,9 +45,9 @@ class Instr:
 #
 #	var hz = 440.0  #Operator frequency.  Tuned to A-4 by default
 #
-#	var feedback = 0  #TODO:  Figure out if this is appropriate to use on multiple operators
-#
-
+	var feedback = 0  #TODO:  Figure out if this is appropriate to use on multiple operators
+	var duty = 0.5  #Duty cycle is only used for pulse right now
+	var waveform = 0
 
 
 	var release_time = 1 #Calculated from rr when set

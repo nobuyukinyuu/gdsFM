@@ -16,7 +16,6 @@ var duty = 0.5  #Duty cycle for pulses.  Might have other uses for config...
 
 var feedback = 0  #TODO:  Figure out if this is OK to use on multiple operators
 
-
 var connections = {}  #This is filled in by the algorithm validator.
 
 var eg = global.Instr.new()   #Envelope generator
@@ -26,15 +25,34 @@ func _ready():
 #			 "	Outputs: ", get_connection_output_count())
 	pass
 
-
-func request_sample(phase, amp, is_carrier=false):
-	var out = 0.0
+#Sample returns a Vec2 of (phase, amplitude). Phase is used to calculate modulation.
+func request_sample(phase:float, amp:float, is_carrier=false) -> Vector2:
+	var out = Vector2.ZERO
 	
 	#TODO:  Don't sin-modulate phase at first, add phases together for each
 	#		Parallel modulator, THEN call modulate on sample before passing back.
 	
-	if is_carrier:
-		out = (phase * hz) * (1+ eg.dt/500.0) 
+	var modulator = Vector2.ZERO
+	if connections.size() > 0:  
+		
+		#First, mix the parallel modulators.
+		for o in connections.keys():
+			modulator += $"..".get_node(o).request_sample(phase, amp)
+	
+		modulator /= connections.size()
+		
+		#Now modulate.
+		phase += modulator.y
+		phase = (gen.sint2(phase) + 1) / 2.0
+		
+		out.x = hz
+		out.y = gen.wave(phase, gen.waveforms.SINE)  * (1+ eg.dt/500.0)
+		
+	else:  #Terminus.  No further modulation required.
+		out.x = hz
+		out.y = gen.wave(phase, gen.waveforms.SINE) * (1+ eg.dt/500.0) 
+#		if is_carrier:  out.y = sin(phase*hz/2)
 
-	for o in connections.keys():
-		pass
+
+	return out
+

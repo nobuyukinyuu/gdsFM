@@ -23,6 +23,7 @@ config/icon="res://icon.png"
 
 global="*res://!global.gd"
 PinkNoise="*res://PinkNoiseGenerator.gd"
+gen="*res://!oscillators.gd"
 
 [debug]
 
@@ -31,6 +32,14 @@ gdscript/warnings/unused_variable=false
 [editor_plugins]
 
 enabled=PoolStringArray( "zoomy" )
+
+[input]
+
+play={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":90,"unicode":0,"echo":false,"script":null)
+ ]
+}
 
 [rendering]
 

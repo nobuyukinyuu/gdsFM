@@ -29,7 +29,7 @@ func _ready():
 
 func _input(event):
 	#DEBUG:  reset EG
-	if event.is_action_pressed("ui_accept"):
+	if event.is_action_pressed("play"):
 		global.samples = 0
 
 func _process(delta):
@@ -42,6 +42,8 @@ func _physics_process(delta):
 		$Panel/Line2D.points[i] = Vector2(i, h + bufferdata[i].y * h) 
 	
 #	$Panel/Line2D.points = pts
+
+	$Label2.text = str(fmod(global.get_secs(), 1.0))
 	
 func fill_buffer(var frames=-1):
 	if !buf:  return
@@ -53,36 +55,41 @@ func fill_buffer(var frames=-1):
 	for i in frames_to_fill:
 		
 		#Calculate the phase position to reduce calculations needed by each operator
-		var phase = (global.samples / hz * TAU) 
+#		var phase = (global.samples / hz) 
+		var phase =  fmod(global.get_secs(), 1.0) * 440
 		
 		
-		var mul = $EGControl.get_value("MUL") +1
-		var tl = (100 - $EGControl.get_value("TL")) / 100.0
+#		var mul = $EGControl.get_value("MUL") +1
+#		var tl = (100 - $EGControl.get_value("TL")) / 100.0
+#
+#		var carrier = (phase * carrier_hz) * (1+ $EGControl.get_value("DT")/500.0) 
+#		var modulator = (phase * modulator_hz )
+#
+#		var release_env = (1.0-min(1.0, global.get_secs()*0.7))  #DEBUG, TEMPORARY
+#
+#		#Process feedback
+#		if $FB.value > 0:
+#			var average = (old_op1_sample[0] + old_op1_sample[1]) / 2.0
+#			var scaled_fb = average * $FB.value #/ pow(2, $FB.value)
+#			old_op1_sample[1] = old_op1_sample[0]
+#			old_op1_sample[0] = sin(scaled_fb + carrier) * tl
+#
+#
+#			carrier = old_op1_sample[0]
+#		else:
+#			carrier = sin(carrier) * tl * release_env
+#			pass
+#
+#
+#		modulator = global.sint(sin(modulator*mul) + (carrier) * TAU*4) * release_env
+#		var x = clamp(modulator, -1.5, 1.5)
+#
+#
+#		bufferdata[i] = (Vector2.ONE * x)
 
-		var carrier = (phase * carrier_hz) * (1+ $EGControl.get_value("DT")/500.0) 
-		var modulator = (phase * modulator_hz )
-
-		var release_env = (1.0-min(1.0, global.get_secs()*0.7))  #DEBUG, TEMPORARY
-
-		#Process feedback
-		if $FB.value > 0:
-			var average = (old_op1_sample[0] + old_op1_sample[1]) / 2.0
-			var scaled_fb = average * $FB.value #/ pow(2, $FB.value)
-			old_op1_sample[1] = old_op1_sample[0]
-			old_op1_sample[0] = sin(scaled_fb + carrier) * tl
-
-
-			carrier = old_op1_sample[0]
-		else:
-			carrier = sin(carrier) * tl * release_env
-			pass
-
-
-		modulator = global.sint(sin(modulator*mul) + (carrier) * TAU*4) * release_env		
-		var x = clamp(modulator, -1.5, 1.5)
-
-
-		bufferdata[i] = (Vector2.ONE * x)
+		if $GraphEdit.connections_valid:
+			var s = $GraphEdit/Output.mix(phase)
+			bufferdata[i] = s.y * Vector2.ONE
 
 		global.samples +=1
 
