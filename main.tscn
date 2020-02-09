@@ -299,3 +299,4 @@ __meta__ = {
 [connection signal="value_changed" from="FB2" to="FB2" method="_on_FB2_value_changed"]
 [connection signal="timeout" from="Timer" to="Timer" method="_on_Timer_timeout"]
 [connection signal="pressed" from="btnValidate" to="." method="_on_btnValidate_pressed"]
+[connection signal="item_selected" from="Waveform" to="." method="_on_Waveform_item_selected"]

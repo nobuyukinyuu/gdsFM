@@ -119,4 +119,11 @@ func _on_GraphEdit_changed(dirty=false):
 func _on_GraphEdit_node_selected(node):
 	if node.is_in_group("operator"):
 		$EGControl.load_settings(node.eg)
+		$Waveform.select(node.eg.waveform)
 	
+
+
+func _on_Waveform_item_selected(id):
+	if !$EGControl.currentEG:  return
+
+	$EGControl.currentEG.waveform = id

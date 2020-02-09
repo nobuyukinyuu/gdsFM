@@ -16,7 +16,6 @@ func set_dirty(val):
 
 
 func _ready():
-	
 	add_valid_connection_type(0,1)
 	add_valid_connection_type(1,0)
 	
