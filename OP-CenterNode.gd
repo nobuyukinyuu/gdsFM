@@ -25,39 +25,37 @@ func _ready():
 	pass
 
 #Sample returns a Vec2 of (phase, amplitude). Phase is used to calculate modulation.
-func request_sample(phase:float, amp:float, is_carrier=false) -> Vector2:
-	var out = Vector2.ZERO
+func request_sample(phase:float) -> float:
+	var out:float
 	
 	#TODO:  Don't sin-modulate phase at first, add phases together for each
 	#		Parallel modulator, THEN call modulate on sample before passing back.
 	
-	var modulator = Vector2.ZERO
+	var modulator:float
 	if connections.size() > 0:  
 		
 		#First, mix the parallel modulators.
 		for o in connections.keys():
-			modulator += $"..".get_node(o).request_sample(phase, amp)
+			modulator += $"..".get_node(o).request_sample(phase)
 	
 		modulator /= connections.size()
 		
 		if $Bypass.pressed:  return modulator
 		
 		#Now modulate.
-		phase += modulator.y
+		phase += modulator
+		phase *= eg.freq_mult  
 		phase = (gen.sint2(phase) + 1) / 2.0
 		
-		out.x = hz
-		out.y = gen.wave(phase, eg.waveform)  * (1+ eg.dt/500.0)
+		out = gen.wave(phase, eg.waveform)  * (1+ eg.dt/500.0)
+		out *= eg.tl / 100.0
 		
-		out.y *= eg.tl / 100.0
 		
 	else:  #Terminus.  No further modulation required.
-		out.x = hz
-		if $Bypass.pressed:  
-			out.y = 0
-		else:
-			out.y = gen.wave(phase, eg.waveform) * (1+ eg.dt/500.0) 
-			out.y *= eg.tl / 100.0
+		if $Bypass.pressed:  return 0.0
+		phase *= eg.freq_mult  #DEBUG
+		out = gen.wave(phase, eg.waveform) * (1+ eg.dt/500.0) 
+		out *= eg.tl / 100.0
 
 	return out
 

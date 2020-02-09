@@ -37,10 +37,10 @@ func _ready():
 
 
 func mix(phase):
-	var avg = Vector2.ZERO
+	var avg:float
 	
 	for o in connections:
-		avg += $\"..\".get_node(o).request_sample(phase, 0, true)
+		avg += $\"..\".get_node(o).request_sample(phase)
 		
 	#If assertion failed, we'd get a divide by zero here.
 	assert(connections.size()>0, \"No connections to speaker. This shouldn't happen\")

@@ -43,7 +43,8 @@ func _physics_process(delta):
 	
 #	$Panel/Line2D.points = pts
 
-	$Label2.text = str(fmod(global.get_secs(), 1.0))
+	if $OP4:
+		$Label2.text = str($OP4.eg.freq_mult)
 	
 func fill_buffer(var frames=-1):
 	if !buf:  return
@@ -89,17 +90,13 @@ func fill_buffer(var frames=-1):
 
 		if $GraphEdit.connections_valid:
 			var s = $GraphEdit/Output.mix(phase)
-			bufferdata[i] = s.y * Vector2.ONE
+			bufferdata[i] = s * Vector2.ONE
 
 		global.samples +=1
 
 	buf.push_buffer(bufferdata)
 
-#Carrier:  A waveform not yet sin-processed.
-func modulate(carrier, modulator, tl, mul=1.0):
-#	var modulator = global.sint(TAU * global.samples * (mod_hz / hz))
-	return global.sint(sin(modulator*mul) * tl + (carrier) * TAU*4)
-	
+
 	
 func _on_FB_value_changed(value):
 	$Label.text = "Feedback:  " + str(value)

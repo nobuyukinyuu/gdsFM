@@ -32,6 +32,7 @@ func get_secs():
 
 class Instr:
 	var rr = 1 setget set_release_time  #Float between 0-1
+	var mul = 0 setget set_frequency_multiplier #Float between 0.5 and 15
 	
 	var ar=0	#Attack
 	var dr=0	#Decay
@@ -40,7 +41,7 @@ class Instr:
 	var sl=0	#Sustain level
 	var tl=50	#Total level  (attenuation)
 	var ks=0	#Key scale
-	var mul=0	#Frequency multiplier
+#	var mul=0	#Frequency multiplier
 	var dt=0	#Detune
 #
 #	var hz = 440.0  #Operator frequency.  Tuned to A-4 by default
@@ -51,6 +52,8 @@ class Instr:
 
 
 	var release_time = 1 #Calculated from rr when set
+	var freq_mult = 0.5
+	var hz = 440.0
 
 	var samples = 0  #Samples elapsed
 
@@ -63,10 +66,11 @@ class Instr:
 		else:
 			release_time = -log(rr) *2  # an rr of 0.01 will produce a ~10s release time.
 	
-	func get_level():
+	func set_frequency_multiplier(val):
+		mul = val
 		
-		pass
-		
+		if val == 0:  val = 0.5
+		freq_mult = val #* hz
 
 
 class Patch:
