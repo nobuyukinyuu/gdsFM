@@ -45,16 +45,17 @@ func request_sample(phase:float) -> float:
 		#Now modulate.
 		phase += modulator
 		phase *= eg.freq_mult  
+		phase += eg.dt
 		phase = (gen.sint2(phase) + 1) / 2.0
 		
-		out = gen.wave(phase, eg.waveform)  * (1+ eg.dt/500.0)
+		out = gen.wave(phase, eg.waveform)  #* (1+ eg.dt/500.0)
 		out *= eg.tl / 100.0
 		
 		
 	else:  #Terminus.  No further modulation required.
 		if $Bypass.pressed:  return 0.0
 		phase *= eg.freq_mult  #DEBUG
-		out = gen.wave(phase, eg.waveform) * (1+ eg.dt/500.0) 
+		out = gen.wave(phase, eg.waveform) #* (1+ eg.dt/500.0) 
 		out *= eg.tl / 100.0
 
 	return out
