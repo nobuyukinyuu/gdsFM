@@ -19,6 +19,9 @@ anchor_bottom = 1.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_constants/separation = 4
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="AR" type="VBoxContainer" parent="H"]
 margin_right = 24.0
@@ -178,6 +181,7 @@ margin_right = 32.0
 margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+value = 50.0
 ticks_on_borders = true
 
 [node name="Val" type="Label" parent="H/TL"]

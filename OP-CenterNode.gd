@@ -11,14 +11,13 @@ extends GraphNode
 #var dt=0	#Detune
 
 var hz = 440.0  #Operator frequency.  Tuned to A-4 by default
-var waveform = 0  #TODO:  Make enum.  Default 0 (Sine)
-var duty = 0.5  #Duty cycle for pulses.  Might have other uses for config...
 
 var feedback = 0  #TODO:  Figure out if this is OK to use on multiple operators
 
 var connections = {}  #This is filled in by the algorithm validator.
 
 var eg = global.Instr.new()   #Envelope generator
+
 
 func _ready():
 #	print(name, " inputs: ", get_connection_input_count(),\
@@ -41,18 +40,24 @@ func request_sample(phase:float, amp:float, is_carrier=false) -> Vector2:
 	
 		modulator /= connections.size()
 		
+		if $Bypass.pressed:  return modulator
+		
 		#Now modulate.
 		phase += modulator.y
 		phase = (gen.sint2(phase) + 1) / 2.0
 		
 		out.x = hz
-		out.y = gen.wave(phase, gen.waveforms.SINE)  * (1+ eg.dt/500.0)
+		out.y = gen.wave(phase, eg.waveform)  * (1+ eg.dt/500.0)
+		
+		out.y *= eg.tl / 100.0
 		
 	else:  #Terminus.  No further modulation required.
 		out.x = hz
-		out.y = gen.wave(phase, gen.waveforms.SINE) * (1+ eg.dt/500.0) 
-#		if is_carrier:  out.y = sin(phase*hz/2)
-
+		if $Bypass.pressed:  
+			out.y = 0
+		else:
+			out.y = gen.wave(phase, eg.waveform) * (1+ eg.dt/500.0) 
+			out.y *= eg.tl / 100.0
 
 	return out
 

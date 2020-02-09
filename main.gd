@@ -117,3 +117,9 @@ func _on_GraphEdit_changed(dirty=false):
 		$btnValidate.disabled = false
 	else:
 		$btnValidate.disabled = true
+
+#Load the envelope generator for the node.
+func _on_GraphEdit_node_selected(node):
+	if node.is_in_group("operator"):
+		$EGControl.load_settings(node.eg)
+	

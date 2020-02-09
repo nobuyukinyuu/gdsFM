@@ -38,7 +38,7 @@ class Instr:
 	var sr=0	#Sustain
 #	var rr=0	#Release
 	var sl=0	#Sustain level
-	var tl=0	#Total level  (attenuation)
+	var tl=50	#Total level  (attenuation)
 	var ks=0	#Key scale
 	var mul=0	#Frequency multiplier
 	var dt=0	#Detune
