@@ -109,50 +109,51 @@ snap_distance = 16
 zoom = 1.2
 script = ExtResource( 14 )
 __meta__ = {
+"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
 [node name="OP1" parent="GraphEdit" instance=ExtResource( 3 )]
-margin_top = 76.8
+margin_top = 115.2
 margin_right = 144.0
-margin_bottom = 188.8
+margin_bottom = 199.2
 rect_scale = Vector2( 1.2, 1.2 )
-offset = Vector2( 0, 64 )
+offset = Vector2( 0, 96 )
 slot/0/left_enabled = false
 
 [node name="OP2" parent="GraphEdit" instance=ExtResource( 3 )]
 margin_left = 192.0
 margin_top = 76.8
 margin_right = 336.0
-margin_bottom = 188.8
+margin_bottom = 160.8
 rect_scale = Vector2( 1.2, 1.2 )
 offset = Vector2( 160, 64 )
 
 [node name="OP3" parent="GraphEdit" instance=ExtResource( 3 )]
 margin_left = 384.0
-margin_top = 76.8
+margin_top = 115.2
 margin_right = 528.0
-margin_bottom = 188.8
+margin_bottom = 199.2
 rect_scale = Vector2( 1.2, 1.2 )
-offset = Vector2( 320, 64 )
+offset = Vector2( 320, 96 )
 
 [node name="OP4" parent="GraphEdit" instance=ExtResource( 3 )]
 margin_left = 192.0
 margin_top = 222.0
 margin_right = 336.0
-margin_bottom = 334.0
+margin_bottom = 306.0
 rect_scale = Vector2( 1.2, 1.2 )
 offset = Vector2( 160, 185 )
 
 [node name="Output" type="GraphNode" parent="GraphEdit"]
 margin_left = 432.0
-margin_top = 220.8
+margin_top = 268.8
 margin_right = 536.0
-margin_bottom = 276.8
+margin_bottom = 324.8
 rect_scale = Vector2( 1.2, 1.2 )
 mouse_filter = 1
 title = "Output"
-offset = Vector2( 360, 184 )
+offset = Vector2( 360, 224 )
 slot/0/left_enabled = true
 slot/0/left_type = 1
 slot/0/left_color = Color( 0.85098, 1, 0, 1 )

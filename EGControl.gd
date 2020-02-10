@@ -13,6 +13,7 @@ func load_settings(instr:global.Instr):
 	for setting in $H.get_children():
 		var s = setting.name.to_lower()
 		get_node("H/%s/Slider" % setting.name).value = instr.get(s)
+#		get_node("H/%s/Slider" % setting.name).setval(instr.get(s))
 
 
 func _on_slider_change(value, which):

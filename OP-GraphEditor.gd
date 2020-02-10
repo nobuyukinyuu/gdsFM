@@ -50,6 +50,7 @@ func validate():
 	var connection_list = get_connection_list()
 	
 	test_connections.clear()
+	connections.clear()
 	
 	#Assemble a dictionary of everything each block's connected to.
 	for o in connection_list:
@@ -80,8 +81,13 @@ func validate():
 		connections_valid = true
 		print(connections)
 		
+		#Clear all old connections.
+		for o in get_children():
+			if not o.is_in_group("operator"):  continue
+			o.connections.clear()
+
 		for connection in connections:
-			get_node(connection).connections = connections.get(connection)
+			get_node(connection).connections = connections[connection]
 		
 #		OS.alert("Validation OK.")
 		set_dirty(false)

@@ -1,6 +1,6 @@
 extends Node
 
-var sample_rate = 48000.0
+var sample_rate = 22050.0
 var samples = 0  #Global oscillator timer.  Iterated every time an output sample is produced.
 
 # 12-field array containing a LUT of semitone frequencies at all MIDI note numbers.
@@ -34,15 +34,15 @@ class Instr:
 	var rr = 1 setget set_release_time  #Float between 0-1
 	var mul = 0 setget set_frequency_multiplier #Float between 0.5 and 15
 	
-	var ar=0	#Attack
-	var dr=0	#Decay
-	var sr=0	#Sustain
-#	var rr=0	#Release
-	var sl=0	#Sustain level
-	var tl=50	#Total level  (attenuation)
-	var ks=0	#Key scale
-#	var mul=0	#Frequency multiplier
-	var dt=0	#Detune
+	var ar=0						#Attack
+	var dr=0						#Decay
+	var sr=0						#Sustain
+#	var rr=0						#Release
+	var sl=0						#Sustain level
+	var tl=50						#Total level  (attenuation)
+	var ks=0						#Key scale
+#	var mul=0						#Frequency multiplier
+	var dt=0 setget set_detune		#Detune
 #
 #	var hz = 440.0  #Operator frequency.  Tuned to A-4 by default
 #
@@ -51,11 +51,15 @@ class Instr:
 	var waveform = 0
 
 
+	# True, internal values referenced by the operator to reduce re-calculating
+	# these values when the above EG slider value changes.
 	var release_time = 1 #Calculated from rr when set
 	var freq_mult = 0.5
-	var hz = 440.0
-
-	var samples = 0  #Samples elapsed
+	var detune = 1
+	
+	
+#	var hz = 440.0
+#	var samples = 0  #Samples elapsed
 
 	func set_release_time(val):
 		rr = val 
@@ -71,6 +75,10 @@ class Instr:
 		
 		if val == 0:  val = 0.5
 		freq_mult = val #* hz
+
+	func set_detune(val):
+		dt = val
+		detune = 1.0 + (val / 10000.0)
 
 
 class Patch:

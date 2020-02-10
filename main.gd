@@ -6,11 +6,6 @@ var bufferdata = PoolVector2Array([])
 
 var hz = 44100.0  #This is set to a global var sample_rate
 
-var carrier_hz = 440.0
-var old_op1_sample = [0,0]
-var modulator_hz = 440.0
-
-var inst = global.Instr.new()
 
 func _ready():
 	hz = global.sample_rate
@@ -43,8 +38,8 @@ func _physics_process(delta):
 	
 #	$Panel/Line2D.points = pts
 
-	if $OP4:
-		$Label2.text = str($OP4.eg.freq_mult)
+	
+#	$Label2.text = str($GraphEdit/OP4.eg.freq_mult)
 	
 func fill_buffer(var frames=-1):
 	if !buf:  return
@@ -55,9 +50,11 @@ func fill_buffer(var frames=-1):
 
 	for i in frames_to_fill:
 		
-		#Calculate the phase position to reduce calculations needed by each operator
-#		var phase = (global.samples / hz) 
-		var phase =  fmod(global.get_secs(), 1.0) * 440
+
+		# The true phase is calculated by each oscillator's wave function.
+		# It's wrapped to a value between 0-1, but to account for detune,
+		# we don't wrap the phase here.
+		var phase = global.get_secs() * 440
 		
 		
 #		var mul = $EGControl.get_value("MUL") +1
