@@ -62,7 +62,7 @@ func validate():
 #		connections[key].append(o["from"])
 		test_connections[key][ o["from"] ] = true
 
-#	print(test_connections)
+	print(test_connections, "\n", get_connection_list())
 
 	#First, check if the speakers are connected to anything.
 	if !test_connections.has("Output") or test_connections["Output"].empty():
@@ -79,7 +79,6 @@ func validate():
 		#Validation passed.  Assign connections.
 		connections = test_connections
 		connections_valid = true
-		print(connections)
 		
 		#Clear all old connections.
 		for o in get_children():
@@ -93,7 +92,10 @@ func validate():
 		set_dirty(false)
 	
 #Recursive function which validates an algorithm is free of infinite loops.
-func validate_loop(me, prior_connections) -> bool:
+
+#TODO:  Doesn't work with common modulators!  Try to check only the input side
+#		of the connections for loops?
+func validate_loop(me, prior_connections, caller="?") -> bool:
 	var out = false  #Return true if there's a loop detected.
 	prior_connections[me] = true
 	var next_connections:Dictionary
@@ -103,12 +105,15 @@ func validate_loop(me, prior_connections) -> bool:
 	else:
 		next_connections = {}
 	
+	print(me, " next: ", next_connections, " prior: ", caller, ", ",
+			 prior_connections)
+	
 	#Check all the next connections for a prior connection.
 	for c in next_connections:
-		if prior_connections.has(c):
+		if prior_connections.has(c) and c != "Output":
 			OS.alert("Loop detected at %s to %s" % [me, c])
 			return true
 		else:  #So far so good.  Recurse.
-			out = out or validate_loop(c, prior_connections)
+			out = out or validate_loop(c, prior_connections.duplicate(), me)
 	
 	return out
