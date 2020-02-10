@@ -97,7 +97,8 @@ func fill_buffer(var frames=-1):
 	
 func _on_FB_value_changed(value):
 	$Label.text = "Feedback:  " + str(value)
-
+	if $EGControl.currentEG:
+		$EGControl.currentEG.feedback = value
 
 
 func _on_btnValidate_pressed():
@@ -117,6 +118,7 @@ func _on_GraphEdit_node_selected(node):
 	if node.is_in_group("operator"):
 		$EGControl.load_settings(node.eg)
 		$Waveform.select(node.eg.waveform)
+		$FB.value = node.eg.feedback
 	
 
 

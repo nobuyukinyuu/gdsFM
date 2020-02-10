@@ -17,6 +17,7 @@ var feedback = 0  #TODO:  Figure out if this is OK to use on multiple operators
 var connections = {}  #This is filled in by the algorithm validator.
 
 var eg = global.Instr.new()   #Envelope generator
+var old_sample = [0,0]  #held values for feedback processing.  Move to EG?
 
 
 func _ready():
@@ -56,7 +57,18 @@ func request_sample(phase:float) -> float:
 		if $Bypass.pressed:  return 0.0
 		phase *= eg.detune
 		phase *= eg.freq_mult
+
 		out = gen.wave(phase, eg.waveform) #* (1+ eg.dt/500.0) 
+		
+		#Process feedback
+		if eg.feedback > 0:
+			var average = (old_sample[0] + old_sample[1]) * 0.5
+			var scaled_fb = average / pow(2, 6-eg.feedback)
+			old_sample[1] = old_sample[0]
+			old_sample[0] = gen.wave(phase + scaled_fb, eg.waveform)
+
+			out = old_sample[0]
+
 		out *= eg.tl / 100.0
 
 	return out
