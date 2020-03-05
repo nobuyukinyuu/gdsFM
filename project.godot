@@ -24,6 +24,7 @@ config/icon="res://icon.png"
 global="*res://!global.gd"
 PinkNoise="*res://PinkNoiseGenerator.gd"
 gen="*res://!oscillators.gd"
+cgen="*res://oscillators.cs"
 
 [debug]
 

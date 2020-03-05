@@ -1,6 +1,6 @@
 extends Node
 
-var sample_rate = 22050.0
+var sample_rate = 44100.0
 var samples = 0  #Global oscillator timer.  Iterated every time an output sample is produced.
 
 # 12-field array containing a LUT of semitone frequencies at all MIDI note numbers.

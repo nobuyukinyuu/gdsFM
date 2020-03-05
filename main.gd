@@ -8,15 +8,14 @@ var hz = 44100.0  #This is set to a global var sample_rate
 
 
 func _ready():
-	hz = global.sample_rate
+#	hz = global.sample_rate
+#
+#	$Audio.stream.mix_rate = hz
+#	buf = $Audio.get_stream_playback()
+#
+#	fill_buffer()  #Prefill buffer
+#	$Audio.play()
 	
-	$Audio.stream.mix_rate = hz
-	buf = $Audio.get_stream_playback()
-
-	fill_buffer()  #Prefill buffer
-	$Audio.play()
-	
-#	$Panel/Line2D.position = $Panel.rect_position
 	var newpts = []
 	newpts.resize($Panel.rect_size.x)
 	$Panel/Line2D.points = newpts
@@ -28,18 +27,20 @@ func _input(event):
 		global.samples = 0
 
 func _process(delta):
-	fill_buffer()
+#	fill_buffer()
+	pass
 
 func _physics_process(delta):
-	if bufferdata.size() < 2:  return
-	for i in min($Panel.rect_size.x, bufferdata.size()):
-		var h = $Panel.rect_size.y/2
-		$Panel/Line2D.points[i] = Vector2(i, h + bufferdata[i].y * h) 
+#	if bufferdata.size() < 2:  return
+#	for i in min($Panel.rect_size.x, bufferdata.size()):
+#		var h = $Panel.rect_size.y/2
+#		$Panel/Line2D.points[i] = Vector2(i, h + bufferdata[i].y * h) 
+	
+	
 	
 #	$Panel/Line2D.points = pts
-
-	
 #	$Label2.text = str($GraphEdit/OP4.eg.freq_mult)
+	pass
 	
 func fill_buffer(var frames=-1):
 	if !buf:  return
@@ -56,34 +57,6 @@ func fill_buffer(var frames=-1):
 		# we don't wrap the phase here.
 		var phase = global.get_secs() * 440
 		
-		
-#		var mul = $EGControl.get_value("MUL") +1
-#		var tl = (100 - $EGControl.get_value("TL")) / 100.0
-#
-#		var carrier = (phase * carrier_hz) * (1+ $EGControl.get_value("DT")/500.0) 
-#		var modulator = (phase * modulator_hz )
-#
-#		var release_env = (1.0-min(1.0, global.get_secs()*0.7))  #DEBUG, TEMPORARY
-#
-#		#Process feedback
-#		if $FB.value > 0:
-#			var average = (old_op1_sample[0] + old_op1_sample[1]) / 2.0
-#			var scaled_fb = average * $FB.value #/ pow(2, $FB.value)
-#			old_op1_sample[1] = old_op1_sample[0]
-#			old_op1_sample[0] = sin(scaled_fb + carrier) * tl
-#
-#
-#			carrier = old_op1_sample[0]
-#		else:
-#			carrier = sin(carrier) * tl * release_env
-#			pass
-#
-#
-#		modulator = global.sint(sin(modulator*mul) + (carrier) * TAU*4) * release_env
-#		var x = clamp(modulator, -1.5, 1.5)
-#
-#
-#		bufferdata[i] = (Vector2.ONE * x)
 
 		if $GraphEdit.connections_valid:
 			var s = $GraphEdit/Output.mix(phase)

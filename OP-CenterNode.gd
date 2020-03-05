@@ -19,10 +19,17 @@ var connections = {}  #This is filled in by the algorithm validator.
 var eg = global.Instr.new()   #Envelope generator
 var old_sample = [0,0]  #held values for feedback processing.  Move to EG?
 
+func genwave(n, waveform = gen.waveforms.SINE, duty = 0.5):
+	return cgen.call("wave", n, waveform, duty)
+
+func gensint2(n):
+	return cgen.call("sint2", n)
+	
 
 func _ready():
 #	print(name, " inputs: ", get_connection_input_count(),\
 #			 "	Outputs: ", get_connection_output_count())
+
 	pass
 
 #Sample returns a Vec2 of (phase, amplitude). Phase is used to calculate modulation.
@@ -47,9 +54,9 @@ func request_sample(phase:float) -> float:
 		phase += modulator
 		phase *= eg.detune
 		phase *= eg.freq_mult  
-		phase = (gen.sint2(phase) + 1.0) / 2.0
+		phase = (gensint2(phase) + 1.0) / 2.0
 		
-		out = gen.wave(phase, eg.waveform)  #* (1+ eg.dt/500.0)
+		out = genwave(phase, eg.waveform)  #* (1+ eg.dt/500.0)
 		out *= eg.tl / 100.0
 		
 		
@@ -58,14 +65,14 @@ func request_sample(phase:float) -> float:
 		phase *= eg.detune
 		phase *= eg.freq_mult
 
-		out = gen.wave(phase, eg.waveform) #* (1+ eg.dt/500.0) 
+		out = genwave(phase, eg.waveform) #* (1+ eg.dt/500.0) 
 		
 		#Process feedback
 		if eg.feedback > 0:
 			var average = (old_sample[0] + old_sample[1]) * 0.5
 			var scaled_fb = average / pow(2, 6-eg.feedback)
 			old_sample[1] = old_sample[0]
-			old_sample[0] = gen.wave(phase + scaled_fb, eg.waveform)
+			old_sample[0] = genwave(phase + scaled_fb, eg.waveform)
 
 			out = old_sample[0]
 

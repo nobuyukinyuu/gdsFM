@@ -11,8 +11,13 @@ const TRI_TABLE = [0, 0.2, 0.4, 0.6, 0.8, 1, 0.8, 0.6, 0.4, 0.2, 0, -0.2, -0.4,
 					-0.6, -0.8, -1, -0.8, -0.6, -0.4, -0.2]
 
 
+var oscscript = preload("res://oscillators.cs")
+var osc
+
+
 func _ready():
 	gen_sin_table(4096)
+#	var osc = oscscript.new()
 
 #Generate the sine lookup table at the specified resolution.
 func gen_sin_table(res):
