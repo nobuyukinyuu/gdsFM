@@ -1,8 +1,8 @@
 extends Control
 
-var buf:AudioStreamGeneratorPlayback  #Playback buffer
-var samples = 0
-var bufferdata = PoolVector2Array([])
+#var buf:AudioStreamGeneratorPlayback  #Playback buffer
+#var samples = 0
+#var bufferdata = PoolVector2Array([])
 
 var hz = 44100.0  #This is set to a global var sample_rate
 
@@ -42,30 +42,30 @@ func _physics_process(delta):
 #	$Label2.text = str($GraphEdit/OP4.eg.freq_mult)
 	pass
 	
-func fill_buffer(var frames=-1):
-	if !buf:  return
-	var frames_to_fill = buf.get_frames_available()
-	if frames >=0:  frames_to_fill = frames
 
-	bufferdata.resize(frames_to_fill)
-
-	for i in frames_to_fill:
-		
-
-		# The true phase is calculated by each oscillator's wave function.
-		# It's wrapped to a value between 0-1, but to account for detune,
-		# we don't wrap the phase here.
-		var phase = global.get_secs() * 440
-		
-
-		if $GraphEdit.connections_valid:
-			var s = $GraphEdit/Output.mix(phase)
-			bufferdata[i] = s * Vector2.ONE
-
-		global.samples +=1
-
-	buf.push_buffer(bufferdata)
-
+#func fill_buffer(var frames=-1):
+#	if !buf:  return
+#	var frames_to_fill = buf.get_frames_available()
+#	if frames >=0:  frames_to_fill = frames
+#
+#	bufferdata.resize(frames_to_fill)
+#
+#	for i in frames_to_fill:
+#
+#
+#		# The true phase is calculated by each oscillator's wave function.
+#		# It's wrapped to a value between 0-1, but to account for detune,
+#		# we don't wrap the phase here.
+#		var phase = global.get_secs() * 440
+#
+#
+#		if $GraphEdit.connections_valid:
+#			var s = $GraphEdit/Output.mix(phase)
+#			bufferdata[i] = s * Vector2.ONE
+#
+#		global.samples +=1
+#
+#	buf.push_buffer(bufferdata)
 
 	
 func _on_FB_value_changed(value):

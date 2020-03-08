@@ -52,6 +52,7 @@ func mix(phase):
 
 [sub_resource type="AudioStreamGenerator" id=2]
 mix_rate = 22050.0
+buffer_length = 1.0
 
 [sub_resource type="GDScript" id=3]
 script/source = "extends HSlider
@@ -263,6 +264,9 @@ margin_left = -392.0
 margin_top = 408.0
 margin_right = -8.0
 margin_bottom = -8.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Line2D" type="Line2D" parent="Panel"]
 width = 1.0
