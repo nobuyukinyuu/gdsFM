@@ -1,18 +1,22 @@
 using Godot;
 using System;
 
+using System.Runtime.CompilerServices;
+
+public enum Waveforms {SINE, SAW, TRI, PULSE, ABSINE, WHITE, PINK, BROWN};
+
 public class oscillators : Node
 {
-	Random random = new Random ();
-	const float TAU = Mathf.Tau;
+	static Random random = new Random ();
+	const double TAU = Mathf.Tau;
 
-	float[] sintable;
-	enum Waveforms {SINE, SAW, TRI, PULSE, ABSINE, WHITE, PINK, BROWN};
+	static double[] sintable;
+
 	
-	PinkNumber pinkr = new PinkNumber() ; 
-	float lastr = 0.0f;
+	static PinkNumber pinkr = new PinkNumber() ; 
+	static double lastr = 0.0f;
 
-	readonly static float[] TRITABLE = {0.0f, 0.2f, 0.4f, 0.6f, 0.8f, 1.0f, 0.8f, 0.6f, 0.4f, 0.2f, 0.0f, -0.2f, -0.4f,
+	readonly static double[] TRITABLE = {0.0f, 0.2f, 0.4f, 0.6f, 0.8f, 1.0f, 0.8f, 0.6f, 0.4f, 0.2f, 0.0f, -0.2f, -0.4f,
 							-0.6f, -0.8f, -1.0f, -0.8f, -0.6f, -0.4f, -0.2f};
 
 
@@ -23,32 +27,32 @@ public class oscillators : Node
 	}
 
 
-	public void gen_sin_table(int res) {
-		sintable = new float[res];
+	public static void gen_sin_table(int res) {
+		sintable = new double[res];
 		for(int i=0; i < res; i++){
-			sintable[i] = Mathf.Sin(TAU * i / (float)(res));
+			sintable[i] = Math.Sin(TAU * i / (double)(res));
 		}
 	}
 // Grab a sine value from the lookup table
-	float sint(float n){
+	public static double sint(double n){
 		int sz = sintable.Length;
-		int idx = (int) Mathf.Round(n/TAU * (float)sz);
-		idx = idx % sz;
+		int idx = (int) Math.Round(n/TAU * (double)sz);
+		idx = OscMath.Wrap(idx,0, sz);
 
 		return sintable[idx];
 	}
 
 // Grab a sine from the lookup table, from 0-1 instead of 0-TAU.
-	float sint2(float n){
+	public static double sint2(double n){
 		int sz = sintable.Length;
-		int idx = (int) Mathf.Round(n*sz);
-		idx = idx % sz;
+		int idx = (int) Math.Round(n*sz);
+		idx = OscMath.Wrap(idx,0, sz);
 
 		return sintable[idx];
 	}
 
 
-	float wave(float n, Waveforms waveform = Waveforms.SINE, float duty = 0.5f){
+	public static double wave(double n, Waveforms waveform = Waveforms.SINE, double duty = 0.5f){
 		n %= 1.0f;
 
 		switch(waveform){
@@ -60,7 +64,7 @@ public class oscillators : Node
 				return sint2(n);
 
 			case Waveforms.ABSINE:
-				return Mathf.Abs(sint2(n));
+				return Math.Abs(sint2(n));
 
 			case Waveforms.TRI:
 				return TRITABLE[(int)n*20];
@@ -72,12 +76,12 @@ public class oscillators : Node
 				return pinkr.GetNextValue();
 
 			case Waveforms.BROWN:
-				lastr += (float)random.NextDouble() * 0.2f - 0.1f;
+				lastr += (double)random.NextDouble() * 0.2f - 0.1f;
 				lastr *= 0.99f;
 				return lastr;
 
 			case Waveforms.WHITE:
-				return (float)random.NextDouble() * 2.0f - 1.0f;
+				return (double)random.NextDouble() * 2.0f - 1.0f;
 
 			default:
 				return 0f;
@@ -87,7 +91,7 @@ public class oscillators : Node
 
 
 //  // Called every frame. 'delta' is the elapsed time since the previous frame.
-//  public override void _Process(float delta)
+//  public override void _Process(double delta)
 //  {
 //      
 //  }
@@ -114,7 +118,7 @@ public
 	  for (int i = 0; i < 5; i++)
  white_values[i] = rand.Next() % (range/5);
 	}
-  public int GetNextValue()
+  public double GetNextValue()
 	{
 	  int last_key = key;
 	  int sum;
@@ -134,6 +138,36 @@ public
 	 white_values[i] = rand.Next() % (range/5);
    sum += white_values[i];
  }
-	  return sum;
+	  return sum / 64.0f-1.0f;
 	}
 };
+
+
+//Auxillary functions intended to make stuff chooch faster
+static class OscMath
+{
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static int Wrap(int value, int min, int max) {
+		int range = max - min;
+		return range == 0 ? min : min + ((((value - min) % range) + range) % range);
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static Int64 Wrap64(Int64 value, Int64 min, Int64 max) {
+		Int64 range = max - min;
+		return range == 0 ? min : min + ((((value - min) % range) + range) % range);
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static double WrapF(double value, double min, double max) {
+		double range = max - min;
+		return is_zero_approx(range) ? min : value - (range * Math.Floor((value - min) / range));
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	static bool is_zero_approx(Double s) {
+		return Math.Abs(s) < Double.Epsilon;
+	}
+
+}

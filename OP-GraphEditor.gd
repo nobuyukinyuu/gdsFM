@@ -80,13 +80,35 @@ func validate():
 		connections = test_connections
 		connections_valid = true
 		
-		#Clear all old connections.
-		for o in get_children():
-			if not o.is_in_group("operator"):  continue
-			o.connections.clear()
+#		#Clear all old connections.
+#		for o in get_children():
+#			if not o.is_in_group("operator"):  continue
+#			o.connections.clear()
 
+		print (connections)
+
+#		for connection in connections:
+#			get_node(connection).connections = connections[connection]
+#
+			
+			
+		#For the C# engine:  Tell the mixer to assign connections.
+		#First, construct a string out of the connections because
+		#the marshalling of nested dictionaries is face-melting
+		var cs:String = ""
 		for connection in connections:
-			get_node(connection).connections = connections[connection]
+			var ops:String = connection + "="
+			for operator in connections[connection]:
+				ops += operator + ","
+			ops = ops.rstrip(",")
+			cs += ops + ";"
+		cs = cs.rstrip(";")
+
+		print(cs)
+		owner.get_node("Audio").NewPatchFromString(cs)
+			
+
+			
 		
 #		OS.alert("Validation OK.")
 		set_dirty(false)

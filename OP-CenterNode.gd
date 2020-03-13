@@ -20,10 +20,12 @@ var eg = global.Instr.new()   #Envelope generator
 var old_sample = [0,0]  #held values for feedback processing.  Move to EG?
 
 func genwave(n, waveform = gen.waveforms.SINE, duty = 0.5):
-	return cgen.call("wave", n, waveform, duty)
+#	return cgen.call("wave", n, waveform, duty)
+	return cgen.wave(n, waveform, duty)
 
 func gensint2(n):
-	return cgen.call("sint2", n)
+#	return cgen.call("sint2", n)
+	return cgen.sint2(n)
 	
 
 func _ready():

@@ -23,25 +23,25 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="AR" type="VBoxContainer" parent="H"]
+[node name="Ar" type="VBoxContainer" parent="H"]
 margin_right = 24.0
 margin_bottom = 214.0
 
-[node name="Label" type="Label" parent="H/AR"]
+[node name="Label" type="Label" parent="H/Ar"]
 margin_right = 24.0
 margin_bottom = 8.0
 custom_fonts/font = ExtResource( 2 )
 text = "Atk"
 align = 1
 
-[node name="Slider" type="VSlider" parent="H/AR"]
+[node name="Slider" type="VSlider" parent="H/Ar"]
 margin_top = 12.0
 margin_right = 24.0
 margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Val" type="Label" parent="H/AR"]
+[node name="Val" type="Label" parent="H/Ar"]
 margin_top = 206.0
 margin_right = 24.0
 margin_bottom = 214.0
@@ -50,26 +50,26 @@ text = "0"
 align = 1
 valign = 2
 
-[node name="DR" type="VBoxContainer" parent="H"]
+[node name="Dr" type="VBoxContainer" parent="H"]
 margin_left = 28.0
 margin_right = 68.0
 margin_bottom = 214.0
 
-[node name="Label" type="Label" parent="H/DR"]
+[node name="Label" type="Label" parent="H/Dr"]
 margin_right = 40.0
 margin_bottom = 8.0
 custom_fonts/font = ExtResource( 2 )
 text = "Decay"
 align = 1
 
-[node name="Slider" type="VSlider" parent="H/DR"]
+[node name="Slider" type="VSlider" parent="H/Dr"]
 margin_top = 12.0
 margin_right = 40.0
 margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Val" type="Label" parent="H/DR"]
+[node name="Val" type="Label" parent="H/Dr"]
 margin_top = 206.0
 margin_right = 40.0
 margin_bottom = 214.0
@@ -78,26 +78,26 @@ text = "0"
 align = 1
 valign = 2
 
-[node name="SR" type="VBoxContainer" parent="H"]
+[node name="Sr" type="VBoxContainer" parent="H"]
 margin_left = 72.0
 margin_right = 104.0
 margin_bottom = 214.0
 
-[node name="Label" type="Label" parent="H/SR"]
+[node name="Label" type="Label" parent="H/Sr"]
 margin_right = 32.0
 margin_bottom = 8.0
 custom_fonts/font = ExtResource( 2 )
 text = "Sust"
 align = 1
 
-[node name="Slider" type="VSlider" parent="H/SR"]
+[node name="Slider" type="VSlider" parent="H/Sr"]
 margin_top = 12.0
 margin_right = 32.0
 margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Val" type="Label" parent="H/SR"]
+[node name="Val" type="Label" parent="H/Sr"]
 margin_top = 206.0
 margin_right = 32.0
 margin_bottom = 214.0
@@ -106,26 +106,26 @@ text = "0"
 align = 1
 valign = 2
 
-[node name="RR" type="VBoxContainer" parent="H"]
+[node name="Rr" type="VBoxContainer" parent="H"]
 margin_left = 108.0
 margin_right = 156.0
 margin_bottom = 214.0
 
-[node name="RR" type="Label" parent="H/RR"]
+[node name="RR" type="Label" parent="H/Rr"]
 margin_right = 48.0
 margin_bottom = 8.0
 custom_fonts/font = ExtResource( 2 )
 text = "Releas"
 align = 1
 
-[node name="Slider" type="VSlider" parent="H/RR"]
+[node name="Slider" type="VSlider" parent="H/Rr"]
 margin_top = 12.0
 margin_right = 48.0
 margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Val" type="Label" parent="H/RR"]
+[node name="Val" type="Label" parent="H/Rr"]
 margin_top = 206.0
 margin_right = 48.0
 margin_bottom = 214.0
@@ -134,19 +134,19 @@ text = "0"
 align = 1
 valign = 2
 
-[node name="SL" type="VBoxContainer" parent="H"]
+[node name="Sl" type="VBoxContainer" parent="H"]
 margin_left = 160.0
 margin_right = 200.0
 margin_bottom = 214.0
 
-[node name="SL" type="Label" parent="H/SL"]
+[node name="SL" type="Label" parent="H/Sl"]
 margin_right = 40.0
 margin_bottom = 8.0
 custom_fonts/font = ExtResource( 2 )
 text = "SusLv"
 align = 1
 
-[node name="Slider" type="VSlider" parent="H/SL"]
+[node name="Slider" type="VSlider" parent="H/Sl"]
 margin_top = 12.0
 margin_right = 40.0
 margin_bottom = 202.0
@@ -154,7 +154,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 ticks_on_borders = true
 
-[node name="Val" type="Label" parent="H/SL"]
+[node name="Val" type="Label" parent="H/Sl"]
 margin_top = 206.0
 margin_right = 40.0
 margin_bottom = 214.0
@@ -163,19 +163,19 @@ text = "0"
 align = 1
 valign = 2
 
-[node name="TL" type="VBoxContainer" parent="H"]
+[node name="Tl" type="VBoxContainer" parent="H"]
 margin_left = 204.0
 margin_right = 236.0
 margin_bottom = 214.0
 
-[node name="TL" type="Label" parent="H/TL"]
+[node name="TL" type="Label" parent="H/Tl"]
 margin_right = 32.0
 margin_bottom = 8.0
 custom_fonts/font = ExtResource( 2 )
 text = "TLvl"
 align = 1
 
-[node name="Slider" type="VSlider" parent="H/TL"]
+[node name="Slider" type="VSlider" parent="H/Tl"]
 margin_top = 12.0
 margin_right = 32.0
 margin_bottom = 202.0
@@ -185,7 +185,7 @@ step = 0.1
 value = 50.0
 ticks_on_borders = true
 
-[node name="Val" type="Label" parent="H/TL"]
+[node name="Val" type="Label" parent="H/Tl"]
 margin_top = 206.0
 margin_right = 32.0
 margin_bottom = 214.0
@@ -194,19 +194,19 @@ text = "0"
 align = 1
 valign = 2
 
-[node name="KS" type="VBoxContainer" parent="H"]
+[node name="Ks" type="VBoxContainer" parent="H"]
 margin_left = 240.0
 margin_right = 272.0
 margin_bottom = 214.0
 
-[node name="KS" type="Label" parent="H/KS"]
+[node name="KS" type="Label" parent="H/Ks"]
 margin_right = 32.0
 margin_bottom = 8.0
 custom_fonts/font = ExtResource( 2 )
 text = "KScl"
 align = 1
 
-[node name="Slider" type="VSlider" parent="H/KS"]
+[node name="Slider" type="VSlider" parent="H/Ks"]
 margin_top = 12.0
 margin_right = 32.0
 margin_bottom = 202.0
@@ -214,7 +214,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 max_value = 10.0
 
-[node name="Val" type="Label" parent="H/KS"]
+[node name="Val" type="Label" parent="H/Ks"]
 margin_top = 206.0
 margin_right = 32.0
 margin_bottom = 214.0
@@ -223,19 +223,19 @@ text = "0"
 align = 1
 valign = 2
 
-[node name="MUL" type="VBoxContainer" parent="H"]
+[node name="Mul" type="VBoxContainer" parent="H"]
 margin_left = 276.0
 margin_right = 300.0
 margin_bottom = 214.0
 
-[node name="MUL" type="Label" parent="H/MUL"]
+[node name="MUL" type="Label" parent="H/Mul"]
 margin_right = 24.0
 margin_bottom = 8.0
 custom_fonts/font = ExtResource( 2 )
 text = "Mul"
 align = 1
 
-[node name="Slider" type="VSlider" parent="H/MUL"]
+[node name="Slider" type="VSlider" parent="H/Mul"]
 margin_top = 12.0
 margin_right = 24.0
 margin_bottom = 202.0
@@ -243,7 +243,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 max_value = 16.0
 
-[node name="Val" type="Label" parent="H/MUL"]
+[node name="Val" type="Label" parent="H/Mul"]
 margin_top = 206.0
 margin_right = 24.0
 margin_bottom = 214.0
@@ -252,19 +252,19 @@ text = "0"
 align = 1
 valign = 2
 
-[node name="DT" type="VBoxContainer" parent="H"]
+[node name="Dt" type="VBoxContainer" parent="H"]
 margin_left = 304.0
 margin_right = 352.0
 margin_bottom = 214.0
 
-[node name="DT" type="Label" parent="H/DT"]
+[node name="DT" type="Label" parent="H/Dt"]
 margin_right = 48.0
 margin_bottom = 8.0
 custom_fonts/font = ExtResource( 2 )
 text = "Detune"
 align = 1
 
-[node name="Slider" type="VSlider" parent="H/DT"]
+[node name="Slider" type="VSlider" parent="H/Dt"]
 margin_top = 12.0
 margin_right = 48.0
 margin_bottom = 202.0
@@ -273,7 +273,7 @@ size_flags_vertical = 3
 max_value = 200.0
 tick_count = 10
 
-[node name="Val" type="Label" parent="H/DT"]
+[node name="Val" type="Label" parent="H/Dt"]
 margin_top = 206.0
 margin_right = 48.0
 margin_bottom = 214.0
