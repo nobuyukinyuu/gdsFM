@@ -12,7 +12,10 @@ public class Operator
 
     public bool Bypass { get => bypass; set => bypass = value; }
 
+    //Envelope generator
     Envelope eg = new Envelope();
+    public Envelope EG { get => eg; set => eg = value; }
+
     double[] old_sample = {0f,0f};  //held values for feedback processing.  Move to EG?
 
     //Ctor to give me a name

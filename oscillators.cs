@@ -89,18 +89,9 @@ public class oscillators : Node
 
 	}
 
-
-//  // Called every frame. 'delta' is the elapsed time since the previous frame.
-//  public override void _Process(double delta)
-//  {
-//      
-//  }
-
-
-
 }
 
-
+// Pink noise generator
 class PinkNumber
 {
 private

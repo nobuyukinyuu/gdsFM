@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 
 //Todo:   PatchNote:Patch extension??  Might reduce confusion overall?
-public class Patch 
+public class Patch : Resource
 {
     protected int samples = 0;  //Sample timer 
     double hz = 440.0f;   //Sample pitch
@@ -14,7 +14,12 @@ public class Patch
     Operator[] connections = new Operator[0];  // This is filled in by the algorithm validator and used when mixing.
     Dictionary<String, Operator> operators = new Dictionary<string, Operator>();  // A list of all valid operators created by the algorithm validator.
 
-    //Wires up a patch using a valid dictionary of connections from the algorithm validator. Format: {PatchName("Output"):{InputOperatorNames}, Operator1Name:{InputOperators}, ...}
+    // Wires up a patch using a valid dictionary of connections from the algorithm validator. Format: {PatchName("Output"):{InputOpNames}, Operator1Name:{InputOps}, ...}
+    //
+    // TODO:This function clobbers existing operator envelope settings!  Maybe we should have
+    //      a version of Patch which will always contain valid Operators and only replace their
+    //      settings if explicitly reset and not just re-validated with a new algorithm.
+
     public bool WireUp(String input)
     {
         //Construct a dictionary from the input string.
@@ -71,6 +76,17 @@ public class Patch
     {
         if (name=="Output") return;
         if (!operators.ContainsKey(name))  operators.Add(name, new Operator(name));
+    }
+    public Operator GetOperator(string name)
+    {
+        if (operators.ContainsKey(name))  return operators[name];
+        return null;
+    }
+
+    public Envelope GetEG(string opName)
+    {
+        var op = GetOperator(opName);
+        return op?.EG;
     }
 
     public void Reset(bool timer=true, bool connections=false){

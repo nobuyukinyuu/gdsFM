@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public class Envelope
+public class Envelope : Resource 
 {
 	double ar=0f;						//Attack
 	double dr=0f;						//Decay
@@ -25,7 +25,7 @@ public class Envelope
     public double Sr { get => sr; set => sr = value; }
     public double Rr { get => rr;   set =>  _set_release_time(value); }
     public double Sl { get => sl; set => sl = value; }
-    public double Tl { get => tl; set => tl = value / 100.0f; }
+    public double Tl { get => tl; set  {tl = value;  _totalLevel = value / 100.0f;} }
     public double Ks { get => ks; set => ks = value; }
     public double Mul { get => mul;  set => _set_frequency_multiplier(value); }
     public double Dt { get => dt; set => set_detune(value); }
