@@ -31,3 +31,8 @@ func _on_slider_change(value, which):
 #Gets a specified slider value.
 func get_value(name):
 	return get_node("H/%s/Slider" % name).value
+
+
+func disable(yes:bool):
+	for setting in $H.get_children():
+		get_node("H/%s/Slider" % setting.name).editable = !yes

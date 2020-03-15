@@ -1,7 +1,17 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://EGControl.gd" type="Script" id=1]
 [ext_resource path="res://spelunkid_font.tres" type="BitmapFont" id=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends VSlider
+
+
+func _on_Slider_gui_input(event):
+	if event is InputEventMouseButton and !event.pressed:
+		if abs(value) < 6:  value = 0
+
+"
 
 [node name="EGControl" type="Control"]
 anchor_right = 1.0
@@ -270,8 +280,10 @@ margin_right = 48.0
 margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-max_value = 200.0
+min_value = -100.0
+max_value = 100.0
 tick_count = 10
+script = SubResource( 1 )
 
 [node name="Val" type="Label" parent="H/Dt"]
 margin_top = 206.0
@@ -281,3 +293,4 @@ custom_fonts/font = ExtResource( 2 )
 text = "0"
 align = 1
 valign = 2
+[connection signal="gui_input" from="H/Dt/Slider" to="H/Dt/Slider" method="_on_Slider_gui_input"]

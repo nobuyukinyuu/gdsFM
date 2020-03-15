@@ -96,5 +96,12 @@ float hz = 44100.0f;  //This is set to a global var sample_rate
         this.patch = new Patch( rate );        
         return this.patch.WireUp(s);
     }
+    public bool UpdatePatchFromString(String s)
+    {
+        double rate = (float) global.Get("sample_rate");
+
+        if (this.patch == null) this.patch = new Patch(rate);
+        return this.patch.WireUp(s);
+    }
 
 }

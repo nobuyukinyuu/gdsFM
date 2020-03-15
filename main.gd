@@ -20,6 +20,7 @@ func _ready():
 	newpts.resize($Panel.rect_size.x)
 	$Panel/Line2D.points = newpts
 
+	$TC/EGControl.disable(true)
 
 func _input(event):
 	#DEBUG:  reset EG
@@ -37,6 +38,7 @@ func _on_FB_value_changed(value):
 
 
 func _on_btnValidate_pressed():
+	$TC/EGControl.disable(true)
 	$GraphEdit.validate()
 	pass # Replace with function body.
 
@@ -58,6 +60,7 @@ func _on_GraphEdit_node_selected(node):
 		$Waveform.select(envelope.waveform)
 		$FB.value = envelope.feedback
 	
+		$TC/EGControl.disable(false)
 
 
 func _on_Waveform_item_selected(id):

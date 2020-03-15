@@ -15,13 +15,9 @@ public class Patch : Resource
     Dictionary<String, Operator> operators = new Dictionary<string, Operator>();  // A list of all valid operators created by the algorithm validator.
 
     // Wires up a patch using a valid dictionary of connections from the algorithm validator. Format: {PatchName("Output"):{InputOpNames}, Operator1Name:{InputOps}, ...}
-    //
-    // TODO:This function clobbers existing operator envelope settings!  Maybe we should have
-    //      a version of Patch which will always contain valid Operators and only replace their
-    //      settings if explicitly reset and not just re-validated with a new algorithm.
-
     public bool WireUp(String input)
     {
+
         //Construct a dictionary from the input string.
         var dict = new Dictionary<String, String[]>();
         foreach(String opConnections in input.Split(";",false))
@@ -33,17 +29,37 @@ public class Patch : Resource
             dict.Add( kv[0].Trim(), values);            
         }
 
-        // Construct the operators for this patch.  Some operators don't have forward connections, so we must check all values in addition to keys.
+        // Construct the a list of operators for this patch.  Some operators don't have forward connections, so we must check all values in addition to keys.
+        var validOps = new List<String>();
         foreach (String k in dict.Keys)
         {
             foreach (String[] v in dict.Values) 
             {
-                foreach(String s in v)  AddOp(s.Trim());
+                foreach(String s in v)  validOps.Add(s.Trim());
             } 
-            AddOp(k);
+            validOps.Add(k);
         }
 
-        // Now, wire them up to each other.
+        //Remove any unused operators by replacing the collection with a new one.
+        //Sweep the old collection checking for operators to reuse.  Add any missing ones to the new one.
+        var newOperators = new Dictionary<String, Operator>();
+        foreach(String item in validOps)
+        {
+            if (item=="Output")  continue;
+            if (operators.ContainsKey(item))  //The operator exists in the previous collection.
+            {
+                if (newOperators.ContainsKey(item)) continue;  //We've already added this operator.
+                newOperators.Add(item, operators[item]);
+                operators[item].Connections = new Operator[0];
+
+            } else {  //No operator existed in the previous configuration.  Add it.
+                AddOp(item, newOperators);
+            }
+        }
+        operators = newOperators;   //Replace the old op collection.  Old collection gets GC'd.
+
+
+        // Now, wire the Operators up to each other.
         foreach(string opString in dict.Keys)
         {
             var items= new List<Operator>();
@@ -72,10 +88,10 @@ public class Patch : Resource
         return true;
     }
 
-    private void AddOp(string name)
+    private void AddOp(string name, Dictionary<String, Operator> collection)
     {
         if (name=="Output") return;
-        if (!operators.ContainsKey(name))  operators.Add(name, new Operator(name));
+        if (!collection.ContainsKey(name))  collection.Add(name, new Operator(name));
     }
     public Operator GetOperator(string name)
     {

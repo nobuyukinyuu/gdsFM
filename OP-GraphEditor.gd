@@ -47,6 +47,7 @@ func _on_GraphEdit_disconnection_request(from, from_slot, to, to_slot):
 
 
 func validate():
+	
 	var connection_list = get_connection_list()
 	
 	test_connections.clear()
@@ -105,7 +106,7 @@ func validate():
 		cs = cs.rstrip(";")
 
 		print(cs)
-		owner.get_node("Audio").NewPatchFromString(cs)
+		owner.get_node("Audio").UpdatePatchFromString(cs)
 			
 
 			

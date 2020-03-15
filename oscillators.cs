@@ -67,7 +67,7 @@ public class oscillators : Node
 				return Math.Abs(sint2(n));
 
 			case Waveforms.TRI:
-				return TRITABLE[(int)n*20];
+				return TRITABLE[(int)(n*20)];
 
 			case Waveforms.SAW:
 				return 1.0f - (n * 2.0f);
