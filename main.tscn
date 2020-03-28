@@ -23,23 +23,12 @@
 [ext_resource path="res://gfx/waveforms/0.png" type="Texture" id=21]
 [ext_resource path="res://gfx/waveforms/3.png" type="Texture" id=22]
 [ext_resource path="res://AudioOutput.cs" type="Script" id=23]
+[ext_resource path="res://CurveControl.tscn" type="PackedScene" id=24]
 
-[sub_resource type="AudioStreamGenerator" id=1]
+[sub_resource type="AudioStreamGenerator" id=5]
 mix_rate = 22050.0
 
-[sub_resource type="GDScript" id=2]
-script/source = "extends HSlider
-
-func _ready():
-	pass
-
-
-func _on_FB2_value_changed(value):
-	owner.get_node(\"Label2\").text = str(value) + \"\\ndb: \" + str(linear2db(value))
-	pass # Replace with function body.
-"
-
-[sub_resource type="GDScript" id=3]
+[sub_resource type="GDScript" id=6]
 script/source = "extends Timer
 var blep = 0
 
@@ -84,6 +73,9 @@ margin_left = 4.0
 margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
+
+[node name="Curve" parent="TC" instance=ExtResource( 24 )]
+visible = false
 
 [node name="GraphEdit" type="GraphEdit" parent="."]
 anchor_right = 1.0
@@ -162,7 +154,7 @@ align = 1
 valign = 1
 
 [node name="Audio" type="AudioStreamPlayer" parent="."]
-stream = SubResource( 1 )
+stream = SubResource( 5 )
 volume_db = -15.0
 script = ExtResource( 23 )
 
@@ -180,18 +172,6 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="FB2" type="HSlider" parent="."]
-anchor_top = 1.0
-anchor_bottom = 1.0
-margin_left = 312.0
-margin_top = -64.0
-margin_right = 568.0
-margin_bottom = -16.0
-max_value = 1.0
-step = 0.0
-ticks_on_borders = true
-script = SubResource( 2 )
-
 [node name="Label" type="Label" parent="."]
 anchor_top = 1.0
 anchor_bottom = 1.0
@@ -205,7 +185,7 @@ align = 1
 
 [node name="ProcessRateTimer" type="Timer" parent="."]
 autostart = true
-script = SubResource( 3 )
+script = SubResource( 6 )
 
 [node name="ProcessRate" type="Label" parent="."]
 anchor_left = 1.0
@@ -295,7 +275,6 @@ __meta__ = {
 [connection signal="disconnection_request" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_disconnection_request"]
 [connection signal="node_selected" from="GraphEdit" to="." method="_on_GraphEdit_node_selected"]
 [connection signal="value_changed" from="FB" to="." method="_on_FB_value_changed"]
-[connection signal="value_changed" from="FB2" to="FB2" method="_on_FB2_value_changed"]
 [connection signal="timeout" from="ProcessRateTimer" to="ProcessRateTimer" method="_on_Timer_timeout"]
 [connection signal="pressed" from="btnValidate" to="." method="_on_btnValidate_pressed"]
 [connection signal="item_selected" from="Waveform" to="." method="_on_Waveform_item_selected"]

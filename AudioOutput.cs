@@ -104,4 +104,15 @@ float hz = 44100.0f;  //This is set to a global var sample_rate
         return this.patch.WireUp(s);
     }
 
+    //Changes bypass value on an individual operator inside the current patch.
+    public int Bypass(string opname, bool val)
+    {
+
+            Operator op = patch.GetOperator(opname);
+            op.Bypass = val;
+            if (op!=null) return(0); else return(-1);
+
+    }
+
+
 }

@@ -80,9 +80,3 @@ class Instr:
 		dt = val
 		detune = 1.0 + (val / 10000.0)
 
-
-class Patch:
-	var opChain  #Entire list of GraphNode connections
-#	var 
-	
-	

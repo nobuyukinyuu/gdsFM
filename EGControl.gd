@@ -22,7 +22,7 @@ func load_settings(instr):
 
 
 func _on_slider_change(value, which):
-	$H.get_node(which + "/Val").text = str(value)
+	$H.get_node(which + "/Val").text = str(value).pad_decimals(1)
 	
 	if currentEG:
 		currentEG.set(which, value)

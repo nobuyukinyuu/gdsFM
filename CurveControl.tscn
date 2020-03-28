@@ -1,0 +1,296 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://spelunkid_font.tres" type="BitmapFont" id=1]
+[ext_resource path="res://vol_curve.shader" type="Shader" id=2]
+[ext_resource path="res://CurveControl.gd" type="Script" id=3]
+[ext_resource path="res://gfx/grid.png" type="Texture" id=4]
+
+[sub_resource type="StyleBoxTexture" id=5]
+texture = ExtResource( 4 )
+region_rect = Rect2( 1, 1, 376, 172 )
+modulate_color = Color( 1, 1, 1, 0.12549 )
+
+[sub_resource type="ShaderMaterial" id=1]
+shader = ExtResource( 2 )
+shader_param/color = Color( 1, 0.862745, 0, 0.627451 )
+shader_param/curve = 0.5
+shader_param/thickness = 1.0
+shader_param/flip_h = false
+shader_param/sl = 0.0
+shader_param/tl = 1.0
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = ExtResource( 2 )
+shader_param/color = Color( 1, 0.843137, 0, 0.627451 )
+shader_param/curve = -2.0
+shader_param/thickness = 1.0
+shader_param/flip_h = true
+shader_param/sl = 0.5
+shader_param/tl = 1.0
+
+[sub_resource type="ShaderMaterial" id=3]
+shader = ExtResource( 2 )
+shader_param/color = Color( 1, 0.819608, 0, 0.627451 )
+shader_param/curve = 2.0
+shader_param/thickness = 1.0
+shader_param/flip_h = true
+shader_param/sl = 0.5
+shader_param/tl = 0.5
+
+[sub_resource type="ShaderMaterial" id=4]
+shader = ExtResource( 2 )
+shader_param/color = Color( 1, 0.772549, 0, 0.627451 )
+shader_param/curve = 5.0
+shader_param/thickness = 1.0
+shader_param/flip_h = true
+shader_param/sl = 0.0
+shader_param/tl = 0.25
+
+[node name="Curve" type="Tabs"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Panel" type="Panel" parent="."]
+margin_left = 4.0
+margin_top = 8.0
+margin_right = 380.0
+margin_bottom = 180.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Grid" type="Panel" parent="Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_styles/panel = SubResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Disp" type="HBoxContainer" parent="."]
+margin_left = 4.0
+margin_top = 16.0
+margin_right = 380.0
+margin_bottom = 173.0
+custom_constants/separation = 0
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="A" type="ColorRect" parent="Disp"]
+material = SubResource( 1 )
+margin_right = 62.0
+margin_bottom = 157.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="D" type="ColorRect" parent="Disp"]
+material = SubResource( 2 )
+margin_left = 62.0
+margin_right = 124.0
+margin_bottom = 157.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="S" type="ColorRect" parent="Disp"]
+material = SubResource( 3 )
+margin_left = 124.0
+margin_right = 249.0
+margin_bottom = 157.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="R" type="ColorRect" parent="Disp"]
+material = SubResource( 4 )
+margin_left = 249.0
+margin_right = 376.0
+margin_bottom = 157.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="A" type="HBoxContainer" parent="."]
+margin_left = 4.0
+margin_top = 184.0
+margin_right = 192.0
+margin_bottom = 200.0
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="A"]
+margin_top = 4.0
+margin_right = 8.0
+margin_bottom = 12.0
+custom_fonts/font = ExtResource( 1 )
+text = "A"
+align = 1
+
+[node name="Slider" type="HSlider" parent="A"]
+margin_left = 12.0
+margin_right = 160.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+min_value = -4.0
+max_value = 5.0
+step = 0.1
+tick_count = 10
+ticks_on_borders = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Val" type="Label" parent="A"]
+margin_left = 164.0
+margin_top = 4.0
+margin_right = 188.0
+margin_bottom = 12.0
+custom_fonts/font = ExtResource( 1 )
+text = "0.5"
+align = 1
+
+[node name="D" type="HBoxContainer" parent="."]
+margin_left = 196.0
+margin_top = 188.0
+margin_right = 384.0
+margin_bottom = 204.0
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="D"]
+margin_top = 4.0
+margin_right = 8.0
+margin_bottom = 12.0
+custom_fonts/font = ExtResource( 1 )
+text = "D"
+align = 1
+
+[node name="Slider" type="HSlider" parent="D"]
+margin_left = 12.0
+margin_right = 168.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+min_value = -4.0
+max_value = 5.0
+step = 0.1
+tick_count = 10
+ticks_on_borders = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Val" type="Label" parent="D"]
+margin_left = 172.0
+margin_top = 4.0
+margin_right = 188.0
+margin_bottom = 12.0
+custom_fonts/font = ExtResource( 1 )
+text = "-2"
+align = 1
+
+[node name="S" type="HBoxContainer" parent="."]
+margin_left = 4.0
+margin_top = 216.0
+margin_right = 192.0
+margin_bottom = 232.0
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="S"]
+margin_top = 4.0
+margin_right = 8.0
+margin_bottom = 12.0
+custom_fonts/font = ExtResource( 1 )
+text = "S"
+align = 1
+
+[node name="Slider" type="HSlider" parent="S"]
+margin_left = 12.0
+margin_right = 160.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+min_value = -4.0
+max_value = 5.0
+step = 0.1
+tick_count = 10
+ticks_on_borders = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Val" type="Label" parent="S"]
+margin_left = 164.0
+margin_top = 4.0
+margin_right = 188.0
+margin_bottom = 12.0
+custom_fonts/font = ExtResource( 1 )
+text = "0.5"
+align = 1
+
+[node name="R" type="HBoxContainer" parent="."]
+margin_left = 196.0
+margin_top = 216.0
+margin_right = 384.0
+margin_bottom = 232.0
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="R"]
+margin_top = 4.0
+margin_right = 8.0
+margin_bottom = 12.0
+custom_fonts/font = ExtResource( 1 )
+text = "R"
+align = 1
+
+[node name="Slider" type="HSlider" parent="R"]
+margin_left = 12.0
+margin_right = 160.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+min_value = -4.0
+max_value = 5.0
+step = 0.1
+tick_count = 10
+ticks_on_borders = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Val" type="Label" parent="R"]
+margin_left = 164.0
+margin_top = 4.0
+margin_right = 188.0
+margin_bottom = 12.0
+custom_fonts/font = ExtResource( 1 )
+text = "0.5"
+align = 1
