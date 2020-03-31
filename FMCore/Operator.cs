@@ -50,7 +50,7 @@ public class Operator
                 modulator += o.request_sample(phase);
             }
 
-            modulator /= connections.Length;
+            modulator /= connections.Length;  //mix down to 0.0-1.0f
             
             if (bypass)  return modulator;
             
@@ -60,18 +60,26 @@ public class Operator
             phase *= eg._freqMult;  
             phase = (oscillators.sint2(phase) + 1.0f) / 2.0f;
             
-            output = oscillators.wave(phase, eg.waveform);  
-            output *= eg._totalLevel;
+            output = oscillators.wave(phase, eg.waveform);  //Get a waveform from the oscillator.
+
+
+            //Determine the EG position and attenuate.
+            //TODO
+            output *= calc_eg();
+
+
+            output *= eg._totalLevel;  //Finally, Attenuate total level.
             
             
-        } else {  // Terminus.  No further modulation required.
+        } else {  // Terminus.  No further modulation required.  This is a carrier.
 
             if (bypass)  return 0.0f;
             phase *= eg._detune;
             phase *= eg._freqMult;
 
-            output = oscillators.wave(phase, eg.waveform); //* (1+ eg.dt/500.0) 
-            
+            output = oscillators.wave(phase, eg.waveform);  //Get a waveform from the oscillator.
+
+
             // Process feedback
             if (eg.feedback > 0)
             {
@@ -83,9 +91,22 @@ public class Operator
                 output = old_sample[0];
             }
 
-            output *= eg._totalLevel;
+
+            //Determine the EG position and attenuate.
+            //TODO
+            output *= calc_eg();
+
+
+            output *= eg._totalLevel;  //Finally, Attenuate total level.
         }
         return output;        
+    }
+
+    // Calculate the position and value attenuation as determined by the envelope generator.
+    double calc_eg()
+    {
+        //TODO
+        return 1.0d;
     }
 
 }

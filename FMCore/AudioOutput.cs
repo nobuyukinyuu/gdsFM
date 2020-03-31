@@ -15,16 +15,16 @@ Node global;
 
 const float BASE_TONE = 440f;   //TODO:  Change this later when phase is calculated inside the operator based on elapsed samples
 
-float hz = 44100.0f;  //This is set to a global var sample_rate
+public static float MixRate = 44100.0f;  //This is set to a global var sample_rate
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
         global = GetNode("/root/global");
-        hz = (float) global.Get("sample_rate");
+        MixRate = (float) global.Get("sample_rate");
 
         AudioStreamGenerator stream = (AudioStreamGenerator) this.Stream;
-        stream.MixRate = hz;
+        stream.MixRate = MixRate;
         buf = (AudioStreamGeneratorPlayback) GetStreamPlayback();
 
         // // Prepare the audio buffer's pool of Vector2s.
@@ -110,7 +110,7 @@ float hz = 44100.0f;  //This is set to a global var sample_rate
 
             Operator op = patch.GetOperator(opname);
             op.Bypass = val;
-            if (op!=null) return(0); else return(-1);
+            if (op!=null) return 0; else return -1;
 
     }
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=2]
+[gd_scene load_steps=28 format=2]
 
 [ext_resource path="res://main.gd" type="Script" id=1]
 [ext_resource path="res://EGControl.tscn" type="PackedScene" id=2]
@@ -22,13 +22,26 @@
 [ext_resource path="res://gfx/waveforms/7.png" type="Texture" id=20]
 [ext_resource path="res://gfx/waveforms/0.png" type="Texture" id=21]
 [ext_resource path="res://gfx/waveforms/3.png" type="Texture" id=22]
-[ext_resource path="res://AudioOutput.cs" type="Script" id=23]
+[ext_resource path="res://FMCore/AudioOutput.cs" type="Script" id=23]
 [ext_resource path="res://CurveControl.tscn" type="PackedScene" id=24]
 
-[sub_resource type="AudioStreamGenerator" id=5]
+[sub_resource type="AudioStreamGenerator" id=1]
 mix_rate = 22050.0
 
-[sub_resource type="GDScript" id=6]
+[sub_resource type="GDScript" id=2]
+script/source = "extends HSlider
+
+func _ready():
+	pass
+
+
+
+func _on_Slider_value_changed(value):
+	var val =  54.0 / pow(2, value-1)
+	$\"../Label2\".text = String(val)
+"
+
+[sub_resource type="GDScript" id=3]
 script/source = "extends Timer
 var blep = 0
 
@@ -154,7 +167,7 @@ align = 1
 valign = 1
 
 [node name="Audio" type="AudioStreamPlayer" parent="."]
-stream = SubResource( 5 )
+stream = SubResource( 1 )
 volume_db = -15.0
 script = ExtResource( 23 )
 
@@ -172,6 +185,21 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="Slider" type="HSlider" parent="."]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 328.0
+margin_top = -64.0
+margin_right = 584.0
+margin_bottom = -16.0
+max_value = 16.0
+value = 1.0
+ticks_on_borders = true
+script = SubResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="Label" type="Label" parent="."]
 anchor_top = 1.0
 anchor_bottom = 1.0
@@ -185,7 +213,7 @@ align = 1
 
 [node name="ProcessRateTimer" type="Timer" parent="."]
 autostart = true
-script = SubResource( 6 )
+script = SubResource( 3 )
 
 [node name="ProcessRate" type="Label" parent="."]
 anchor_left = 1.0
@@ -211,7 +239,6 @@ __meta__ = {
 }
 
 [node name="Label2" type="Label" parent="."]
-visible = false
 anchor_top = 1.0
 anchor_bottom = 1.0
 margin_left = 304.0
@@ -263,10 +290,10 @@ margin_top = 72.0
 margin_right = -246.0
 margin_bottom = 118.0
 custom_constants/hseparation = 8
-text = "Square/Pulse"
-icon = ExtResource( 22 )
+text = "Sine"
+icon = ExtResource( 21 )
 items = [ "Sine", ExtResource( 21 ), false, 0, null, "Sawtooth", ExtResource( 15 ), false, 1, null, "Stepped Tri", ExtResource( 19 ), false, 2, null, "Square/Pulse", ExtResource( 22 ), false, 3, null, "Absolute Sine", ExtResource( 18 ), false, 4, null, "White Noise", ExtResource( 17 ), false, 5, null, "Pink Noise", ExtResource( 16 ), false, 6, null, "Brown Noise", ExtResource( 20 ), false, 7, null ]
-selected = 3
+selected = 0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -275,6 +302,7 @@ __meta__ = {
 [connection signal="disconnection_request" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_disconnection_request"]
 [connection signal="node_selected" from="GraphEdit" to="." method="_on_GraphEdit_node_selected"]
 [connection signal="value_changed" from="FB" to="." method="_on_FB_value_changed"]
+[connection signal="value_changed" from="Slider" to="Slider" method="_on_Slider_value_changed"]
 [connection signal="timeout" from="ProcessRateTimer" to="ProcessRateTimer" method="_on_Timer_timeout"]
 [connection signal="pressed" from="btnValidate" to="." method="_on_btnValidate_pressed"]
 [connection signal="item_selected" from="Waveform" to="." method="_on_Waveform_item_selected"]
