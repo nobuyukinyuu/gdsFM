@@ -37,8 +37,13 @@ func _ready():
 
 
 func _on_Slider_value_changed(value):
-	var val =  54.0 / pow(2, value-1)
-	$\"../Label2\".text = String(val)
+#	var val =  54.0 / pow(2, value-1)
+#	$\"../Label2\".text = String(val)
+
+	
+	var val = Glue.EaseFast(0.25, value)
+	var val2 = ease(0.25, value)
+	$\"../Label2\".text = \"%s: %s, %s = %s%%\" % [value, val, val2, (val-val2)*100]
 "
 
 [sub_resource type="GDScript" id=3]
@@ -111,7 +116,6 @@ margin_right = 144.0
 margin_bottom = 199.2
 rect_scale = Vector2( 1.2, 1.2 )
 offset = Vector2( 0, 96 )
-slot/0/left_enabled = false
 
 [node name="OP2" parent="GraphEdit" instance=ExtResource( 3 )]
 margin_left = 192.0
@@ -192,7 +196,9 @@ margin_left = 328.0
 margin_top = -64.0
 margin_right = 584.0
 margin_bottom = -16.0
-max_value = 16.0
+min_value = -4.0
+max_value = 5.0
+step = 0.1
 value = 1.0
 ticks_on_borders = true
 script = SubResource( 2 )
@@ -263,7 +269,7 @@ __meta__ = {
 }
 
 [node name="Line2D" type="Line2D" parent="Panel"]
-width = 0.5
+width = 1.0
 texture_mode = 1044891074
 antialiased = true
 

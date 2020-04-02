@@ -25,6 +25,7 @@ global="*res://!global.gd"
 PinkNoise="*res://PinkNoiseGenerator.gd"
 gen="*res://!oscillators.gd"
 cgen="*res://FMCore/oscillators.cs"
+Glue="*res://FMCore/Glue.cs"
 
 [debug]
 

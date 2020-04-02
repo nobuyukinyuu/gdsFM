@@ -115,4 +115,10 @@ public static float MixRate = 44100.0f;  //This is set to a global var sample_ra
     }
 
 
+    //DEBUG.  This would be in a Note class instead once that exists.  Resets sample timer.
+    public void Reset(){
+        
+        if (patch !=null)  patch.Reset();
+    }
+
 }

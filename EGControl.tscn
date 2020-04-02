@@ -50,6 +50,8 @@ margin_right = 24.0
 margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+max_value = 31.0
+value = 31.0
 
 [node name="Val" type="Label" parent="H/Ar"]
 margin_top = 206.0
@@ -78,6 +80,7 @@ margin_right = 40.0
 margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+max_value = 31.0
 
 [node name="Val" type="Label" parent="H/Dr"]
 margin_top = 206.0
@@ -106,6 +109,7 @@ margin_right = 32.0
 margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+max_value = 31.0
 
 [node name="Val" type="Label" parent="H/Sr"]
 margin_top = 206.0
@@ -134,6 +138,7 @@ margin_right = 48.0
 margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+max_value = 15.0
 
 [node name="Val" type="Label" parent="H/Rr"]
 margin_top = 206.0
@@ -162,6 +167,7 @@ margin_right = 40.0
 margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+step = 0.1
 ticks_on_borders = true
 
 [node name="Val" type="Label" parent="H/Sl"]
@@ -252,6 +258,7 @@ margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 max_value = 16.0
+step = 0.5
 
 [node name="Val" type="Label" parent="H/Mul"]
 margin_top = 206.0

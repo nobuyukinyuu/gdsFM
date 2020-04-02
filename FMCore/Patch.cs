@@ -5,7 +5,7 @@ using System.Collections.Generic;
 //Todo:   PatchNote:Patch extension??  Might reduce confusion overall?
 public class Patch : Resource
 {
-    protected int samples = 0;  //Sample timer 
+    protected int samples = 0;  //Sample timer.  TODO:  Move this and hz out of this class and into a separate Note class.
     double hz = 440.0f;   //Sample pitch
 
     // This value should typically be initialized to whatever the global sample rate is.
@@ -112,7 +112,7 @@ public class Patch : Resource
 
     //This ctor can be used to set the sample rate used in phase calculations by a patch. The algorithm validator should do it when making a patch.
     public Patch(double sample_rate) => Patch.sample_rate = sample_rate;
-
+    // public Patch() {}  //Default constructor.
 
     // For speaker output.  This terminus requests samples from the first set of operators.
     // This class also contains the envelope timer for its connections.
@@ -124,7 +124,7 @@ public class Patch : Resource
         
         foreach (Operator op in connections)
         {	
-            avg += (double) op.request_sample(phase);  
+            avg += (double) op.request_sample(phase, samples);  
         }
 
         //If assertion failed, we'd get a divide by zero here.

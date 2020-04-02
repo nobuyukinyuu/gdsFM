@@ -67,10 +67,11 @@ public class oscillators : Node
 				return Math.Abs(sint2(n));
 
 			case Waveforms.TRI:
-				return TRITABLE[(int)(n*20)];
+				return TRITABLE[(int)(Math.Abs(n)*20)];
 
 			case Waveforms.SAW:
-				return 1.0f - (n * 2.0f);
+				return 1.0f - (n * 2.0f);  //Slopes upwards to the left
+				// return -1.0f + ((1.0-n) * 2.0f);  //Slopes upwards to the right
 
 			case Waveforms.PINK:
 				return pinkr.GetNextValue();

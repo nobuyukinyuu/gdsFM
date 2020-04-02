@@ -26,6 +26,7 @@ func _input(event):
 	#DEBUG:  reset EG
 	if event.is_action_pressed("play"):
 		global.samples = 0
+		$Audio.Reset()
 	
 
 

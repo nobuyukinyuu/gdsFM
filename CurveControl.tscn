@@ -5,12 +5,12 @@
 [ext_resource path="res://CurveControl.gd" type="Script" id=3]
 [ext_resource path="res://gfx/grid.png" type="Texture" id=4]
 
-[sub_resource type="StyleBoxTexture" id=5]
+[sub_resource type="StyleBoxTexture" id=1]
 texture = ExtResource( 4 )
 region_rect = Rect2( 1, 1, 376, 172 )
 modulate_color = Color( 1, 1, 1, 0.12549 )
 
-[sub_resource type="ShaderMaterial" id=1]
+[sub_resource type="ShaderMaterial" id=2]
 shader = ExtResource( 2 )
 shader_param/color = Color( 1, 0.862745, 0, 0.627451 )
 shader_param/curve = 0.5
@@ -19,7 +19,7 @@ shader_param/flip_h = false
 shader_param/sl = 0.0
 shader_param/tl = 1.0
 
-[sub_resource type="ShaderMaterial" id=2]
+[sub_resource type="ShaderMaterial" id=3]
 shader = ExtResource( 2 )
 shader_param/color = Color( 1, 0.843137, 0, 0.627451 )
 shader_param/curve = -2.0
@@ -28,7 +28,7 @@ shader_param/flip_h = true
 shader_param/sl = 0.5
 shader_param/tl = 1.0
 
-[sub_resource type="ShaderMaterial" id=3]
+[sub_resource type="ShaderMaterial" id=4]
 shader = ExtResource( 2 )
 shader_param/color = Color( 1, 0.819608, 0, 0.627451 )
 shader_param/curve = 2.0
@@ -37,7 +37,7 @@ shader_param/flip_h = true
 shader_param/sl = 0.5
 shader_param/tl = 0.5
 
-[sub_resource type="ShaderMaterial" id=4]
+[sub_resource type="ShaderMaterial" id=5]
 shader = ExtResource( 2 )
 shader_param/color = Color( 1, 0.772549, 0, 0.627451 )
 shader_param/curve = 5.0
@@ -70,7 +70,7 @@ __meta__ = {
 [node name="Grid" type="Panel" parent="Panel"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-custom_styles/panel = SubResource( 5 )
+custom_styles/panel = SubResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -87,7 +87,7 @@ __meta__ = {
 }
 
 [node name="A" type="ColorRect" parent="Disp"]
-material = SubResource( 1 )
+material = SubResource( 2 )
 margin_right = 62.0
 margin_bottom = 157.0
 size_flags_horizontal = 3
@@ -98,7 +98,7 @@ __meta__ = {
 }
 
 [node name="D" type="ColorRect" parent="Disp"]
-material = SubResource( 2 )
+material = SubResource( 3 )
 margin_left = 62.0
 margin_right = 124.0
 margin_bottom = 157.0
@@ -110,7 +110,7 @@ __meta__ = {
 }
 
 [node name="S" type="ColorRect" parent="Disp"]
-material = SubResource( 3 )
+material = SubResource( 4 )
 margin_left = 124.0
 margin_right = 249.0
 margin_bottom = 157.0
@@ -121,7 +121,7 @@ __meta__ = {
 }
 
 [node name="R" type="ColorRect" parent="Disp"]
-material = SubResource( 4 )
+material = SubResource( 5 )
 margin_left = 249.0
 margin_right = 376.0
 margin_bottom = 157.0

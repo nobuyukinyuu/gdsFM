@@ -13,7 +13,9 @@ public class Operator
     public bool Bypass { get => bypass; set => bypass = value; }
 
     //Envelope generator
-    Envelope eg = new Envelope();
+    Envelope eg;// = new Envelope(name);
+    
+
     public Envelope EG { get => eg; set => eg = value; }
 
     double[] old_sample = {0f,0f};  //held values for feedback processing.  Move to EG?
@@ -22,6 +24,7 @@ public class Operator
     public Operator(string name)
     {
         this.name = name;
+        eg = new Envelope(name);
     }
 
     //  //    Fills a buffer of samples.  Do this in the mixer or something.
@@ -31,7 +34,8 @@ public class Operator
     // }
 
     //Iterate over our connections, then mix and modulate them before returning the final modulated value.
-    public double request_sample(double phase)
+    //TODO:  Replace samplePos with proper argument for a Note class which can include NoteOff state, sample position at release time, etc.
+    public double request_sample(double phase, int samplePos=0)
     {
         
         double output = 0.0f;
@@ -47,7 +51,7 @@ public class Operator
             // First, mix the parallel modulators.
 
             foreach (Operator o in connections){
-                modulator += o.request_sample(phase);
+                modulator += o.request_sample(phase, samplePos);
             }
 
             modulator /= connections.Length;  //mix down to 0.0-1.0f
@@ -58,14 +62,14 @@ public class Operator
             phase += modulator;
             phase *= eg._detune;
             phase *= eg._freqMult;  
-            phase = (oscillators.sint2(phase) + 1.0f) / 2.0f;
+            phase = (oscillators.sint2(phase) + 1.0f) / 2.0f;  //TODO:  Seperate field for modulation waveform.  Cool new sounds!
             
             output = oscillators.wave(phase, eg.waveform);  //Get a waveform from the oscillator.
 
 
             //Determine the EG position and attenuate.
             //TODO
-            output *= calc_eg();
+            output *= calc_eg(samplePos);
 
 
             output *= eg._totalLevel;  //Finally, Attenuate total level.
@@ -73,7 +77,7 @@ public class Operator
             
         } else {  // Terminus.  No further modulation required.  This is a carrier.
 
-            if (bypass)  return 0.0f;
+            if (bypass)  return 0.0;
             phase *= eg._detune;
             phase *= eg._freqMult;
 
@@ -94,7 +98,8 @@ public class Operator
 
             //Determine the EG position and attenuate.
             //TODO
-            output *= calc_eg();
+            double asdr = calc_eg(samplePos);
+            output *= asdr;
 
 
             output *= eg._totalLevel;  //Finally, Attenuate total level.
@@ -103,10 +108,10 @@ public class Operator
     }
 
     // Calculate the position and value attenuation as determined by the envelope generator.
-    double calc_eg()
+    double calc_eg(int samplePos)
     {
-        //TODO
-        return 1.0d;
+        //TODO:  Take a sample timer, NoteOff status, and NoteOff position from an external Note resource.
+        return eg.VolumeAtSamplePosition(samplePos);
     }
 
 }
