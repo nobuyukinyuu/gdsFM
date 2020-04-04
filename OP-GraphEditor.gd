@@ -1,5 +1,4 @@
 #A lot of FM Instrument modular structure lives here, for now....
-
 extends GraphEdit
 
 #A temp list of connections used to validate an algorithm.
@@ -31,7 +30,7 @@ func _ready():
 
 
 func _on_GraphEdit_connection_request(from, from_slot, to, to_slot):
-	prints("request from", from, "slot", from_slot, "to", to, ", slot", to_slot)
+#	prints("request from", from, "slot", from_slot, "to", to, ", slot", to_slot)
 
 	if from != to:
 		connect_node(from, from_slot, to, to_slot)
@@ -39,12 +38,13 @@ func _on_GraphEdit_connection_request(from, from_slot, to, to_slot):
 	else:
 		prints("Warning:  Attempting to connect", from, "to itself")
 
-
+	global.custom_algo = get_connection_list()
 
 func _on_GraphEdit_disconnection_request(from, from_slot, to, to_slot):
-		disconnect_node(from, from_slot, to, to_slot)
-		set_dirty(true)
+	disconnect_node(from, from_slot, to, to_slot)
+	set_dirty(true)
 
+	global.custom_algo = get_connection_list()
 
 func validate():
 	

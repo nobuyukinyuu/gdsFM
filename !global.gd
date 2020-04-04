@@ -11,6 +11,37 @@ var periods = []  #Size 128 +1
 const NOTE_A4 = 69   # Nice.
 
 
+# The 8 magical algorithms shared by all 4-op FM synthesizers.
+const algorithms = [
+	[ [1,2], [2,3], [3,4], [4,0] ], #Four serial connection
+	[ [1,3], [2,3], [3,4], [4,0] ], #Three double mod serial connection
+	[ [1,4], [2,3], [3,4], [4,0] ], #Double mod 1
+	[ [1,2], [2,4], [3,4], [4,0] ], #Double mod 2
+	[ [1,2], [2,0], [3,4], [4,0] ], #Two serial, two parallel
+	[ [1,2], [1,3], [1,4], [2,0], [3,0], [4,0] ], #3x parallel, common modulator
+	[ [1,2], [2,0], [3,0], [4,0] ], #Two serial, two sines
+	[ [1,0], [2,0], [3,0], [4,0] ], #Four parallel sines
+]
+
+var custom_algo="" setget save_custom_algo
+
+func save_custom_algo(connections):
+	#Save the custom algorithm for later use in our standard algo format.
+	assert (typeof(connections)==TYPE_ARRAY)
+	var output = []
+	
+	for connection in connections:
+		assert (typeof(connection)==TYPE_DICTIONARY)
+		var pair = []
+		for cName in [connection["from"], connection["to"]]:
+			if cName.begins_with("OP"):  #Operator.
+				pair.append(int( cName.right(2) ))
+			elif cName.begins_with("Output"):
+				pair.append(0)
+		output.append(pair)
+		
+	custom_algo = output
+
 func _ready():
 	randomize()
 

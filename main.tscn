@@ -101,9 +101,8 @@ anchor_bottom = 1.0
 margin_left = 8.0
 margin_top = 8.0
 margin_right = -408.0
-margin_bottom = -88.0
+margin_bottom = -200.0
 snap_distance = 16
-zoom = 1.2
 script = ExtResource( 14 )
 __meta__ = {
 "_edit_lock_": true,
@@ -111,45 +110,41 @@ __meta__ = {
 }
 
 [node name="OP1" parent="GraphEdit" instance=ExtResource( 3 )]
-margin_top = 115.2
-margin_right = 144.0
-margin_bottom = 199.2
-rect_scale = Vector2( 1.2, 1.2 )
-offset = Vector2( 0, 96 )
+margin_left = 40.0
+margin_top = 96.0
+margin_right = 184.0
+margin_bottom = 180.0
+offset = Vector2( 40, 96 )
 
 [node name="OP2" parent="GraphEdit" instance=ExtResource( 3 )]
-margin_left = 192.0
-margin_top = 76.8
-margin_right = 336.0
-margin_bottom = 160.8
-rect_scale = Vector2( 1.2, 1.2 )
-offset = Vector2( 160, 64 )
+margin_left = 200.0
+margin_top = 64.0
+margin_right = 344.0
+margin_bottom = 148.0
+offset = Vector2( 200, 64 )
 
 [node name="OP3" parent="GraphEdit" instance=ExtResource( 3 )]
-margin_left = 384.0
-margin_top = 115.2
-margin_right = 528.0
-margin_bottom = 199.2
-rect_scale = Vector2( 1.2, 1.2 )
-offset = Vector2( 320, 96 )
+margin_left = 360.0
+margin_top = 96.0
+margin_right = 504.0
+margin_bottom = 180.0
+offset = Vector2( 360, 96 )
 
 [node name="OP4" parent="GraphEdit" instance=ExtResource( 3 )]
-margin_left = 192.0
-margin_top = 222.0
-margin_right = 336.0
-margin_bottom = 306.0
-rect_scale = Vector2( 1.2, 1.2 )
-offset = Vector2( 160, 185 )
+margin_left = 200.0
+margin_top = 185.0
+margin_right = 344.0
+margin_bottom = 269.0
+offset = Vector2( 200, 185 )
 
 [node name="Output" type="GraphNode" parent="GraphEdit"]
-margin_left = 432.0
-margin_top = 268.8
-margin_right = 536.0
-margin_bottom = 324.8
-rect_scale = Vector2( 1.2, 1.2 )
+margin_left = 400.0
+margin_top = 224.0
+margin_right = 504.0
+margin_bottom = 280.0
 mouse_filter = 1
 title = "Output"
-offset = Vector2( 360, 224 )
+offset = Vector2( 400, 224 )
 slot/0/left_enabled = true
 slot/0/left_type = 1
 slot/0/left_color = Color( 0.85098, 1, 0, 1 )
@@ -173,6 +168,7 @@ valign = 1
 [node name="Audio" type="AudioStreamPlayer" parent="."]
 stream = SubResource( 1 )
 volume_db = -15.0
+bus = "reverb"
 script = ExtResource( 23 )
 
 [node name="FB" type="HSlider" parent="."]
@@ -277,9 +273,9 @@ antialiased = true
 anchor_left = 1.0
 anchor_right = 1.0
 margin_left = -392.0
-margin_top = 10.0
+margin_top = 8.0
 margin_right = -144.0
-margin_bottom = 58.0
+margin_bottom = 56.0
 text = "Custom"
 icon = ExtResource( 13 )
 items = [ "4x Serial Modulation", ExtResource( 6 ), false, 0, null, "Double Mod 3x Serial", ExtResource( 5 ), false, 1, null, "Double Mod (Mode 1)", ExtResource( 7 ), false, 2, null, "Double Mod (Mode 2)", ExtResource( 8 ), false, 3, null, "2x Serial, 2x Parallel", ExtResource( 9 ), false, 4, null, "Common Modulator", ExtResource( 10 ), false, 5, null, "2x Serial + 2 Plain", ExtResource( 11 ), false, 6, null, "4x Parallel (Plain)", ExtResource( 12 ), false, 7, null, "Custom", ExtResource( 13 ), false, 8, null ]
@@ -311,4 +307,5 @@ __meta__ = {
 [connection signal="value_changed" from="Slider" to="Slider" method="_on_Slider_value_changed"]
 [connection signal="timeout" from="ProcessRateTimer" to="ProcessRateTimer" method="_on_Timer_timeout"]
 [connection signal="pressed" from="btnValidate" to="." method="_on_btnValidate_pressed"]
+[connection signal="item_selected" from="Algorithm" to="." method="_on_Algorithm_item_selected"]
 [connection signal="item_selected" from="Waveform" to="." method="_on_Waveform_item_selected"]

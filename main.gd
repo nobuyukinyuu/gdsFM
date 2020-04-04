@@ -29,7 +29,9 @@ func _input(event):
 		$Audio.Reset()
 	
 
-
+	if Input.is_action_just_pressed("play"):
+		OS.clipboard = var2str($GraphEdit.get_connection_list())
+		print ("Copied.  " + OS.clipboard)
 	
 # Feedback
 func _on_FB_value_changed(value):
@@ -41,7 +43,8 @@ func _on_FB_value_changed(value):
 func _on_btnValidate_pressed():
 	$TC/EGControl.disable(true)
 	$GraphEdit.validate()
-	pass # Replace with function body.
+
+#	global.custom_algo = $GraphEdit.get_connection_list()
 
 
 func _on_GraphEdit_changed(dirty=false):
@@ -50,6 +53,7 @@ func _on_GraphEdit_changed(dirty=false):
 		$btnValidate.disabled = false
 	else:
 		$btnValidate.disabled = true
+		
 
 #Load the envelope generator for the node.
 func _on_GraphEdit_node_selected(node):
@@ -68,3 +72,28 @@ func _on_Waveform_item_selected(id):
 	if !$TC/EGControl.currentEG:  return
 
 	$TC/EGControl.currentEG.waveform = id
+
+
+func _on_Algorithm_item_selected(id):
+	var algo = []
+	if id == 8:
+		algo = global.custom_algo
+	else:
+		algo = global.algorithms[id]
+
+	if !typeof(algo)==TYPE_ARRAY or algo.empty():  return
+	$GraphEdit.clear_connections()
+	
+	#Reconnect
+	for connection in algo:
+		#Each pair is a 2 field array indicating the connection.
+		var pair = ["", ""]
+		for i in 2:
+			if connection[i] == 0:
+				pair[i] = "Output"
+			else:
+				pair[i] = "OP%s" % connection[i]
+			
+		$GraphEdit.connect_node(pair[0],0, pair[1],0)
+
+	$GraphEdit.dirty = true

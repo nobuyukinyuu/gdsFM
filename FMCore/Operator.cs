@@ -88,7 +88,7 @@ public class Operator
             if (eg.feedback > 0)
             {
                 var average = (old_sample[0] + old_sample[1]) * 0.5;
-                var scaled_fb = average / Math.Pow(2, 6.0f-eg.feedback);
+                var scaled_fb = average / Math.Pow(2, 6.0f-eg.feedback);  //maybe use powfast if I can get it to support negative numbers
                 old_sample[1] = old_sample[0];
                 old_sample[0] = oscillators.wave(phase + scaled_fb, eg.waveform);
 
