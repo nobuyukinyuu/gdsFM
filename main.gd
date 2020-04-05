@@ -21,6 +21,10 @@ func _ready():
 	$Panel/Line2D.points = newpts
 
 	$TC/EGControl.disable(true)
+	$TC.set_tab_title(0, "Envelope")
+	$TC.set_tab_icon(0, preload("res://gfx/ui/icon_adsr.svg"))
+	$TC.set_tab_icon(1, preload("res://gfx/ui/icon_curve.svg"))
+	$TC.set_tab_icon(2, preload("res://gfx/ui/icon_waveform.svg"))
 
 func _input(event):
 	#DEBUG:  reset EG
@@ -33,12 +37,6 @@ func _input(event):
 		OS.clipboard = var2str($GraphEdit.get_connection_list())
 		print ("Copied.  " + OS.clipboard)
 	
-# Feedback
-func _on_FB_value_changed(value):
-	$Label.text = "Feedback:  " + str(value)
-	if $TC/EGControl.currentEG:
-		$TC/EGControl.currentEG.feedback = value
-
 
 func _on_btnValidate_pressed():
 	$TC/EGControl.disable(true)
@@ -62,16 +60,25 @@ func _on_GraphEdit_node_selected(node):
 		var envelope = $Audio.patch.GetEG(node.name)
 		if !envelope:  return
 		$TC/EGControl.load_settings(envelope)
-		$Waveform.select(envelope.waveform)
-		$FB.value = envelope.feedback
+		$TC/Waveform/Grid/Waveform.select(envelope.waveform)
+		$TC/Waveform/Grid/Waveform2.select(envelope.fmTechnique)
 	
+	
+		$TC/Curve.load_settings(envelope)
+		$TC/Waveform/Options.load_settings(envelope)
+
+
 		$TC/EGControl.disable(false)
+#		$TC.enable
 
 
-func _on_Waveform_item_selected(id):
+func _on_Waveform_item_selected(id, techWaveform:bool=false):
 	if !$TC/EGControl.currentEG:  return
 
-	$TC/EGControl.currentEG.waveform = id
+	if !techWaveform:
+		$TC/EGControl.currentEG.waveform = id
+	else:
+		$TC/EGControl.currentEG.fmTechnique = id
 
 
 func _on_Algorithm_item_selected(id):

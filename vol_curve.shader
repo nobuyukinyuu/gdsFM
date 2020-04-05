@@ -67,7 +67,7 @@ void fragment() {
 	
 	if (flip_h) st.x = 1.0 - st.x;
 
-    float y = ease(st.x, curve);
+    float y = ease(st.x, flip_h? ((curve==0.0)? 0.0: 1.0/curve) : curve);
 
     vec4 c = vec4(0);
 

@@ -49,20 +49,20 @@ shader_param/tl = 0.25
 [node name="Curve" type="Tabs"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 4.0
-margin_top = 32.0
-margin_right = -4.0
-margin_bottom = -4.0
+margin_right = -636.0
+margin_bottom = -360.0
 script = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Panel" type="Panel" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
 margin_left = 4.0
 margin_top = 8.0
-margin_right = 380.0
-margin_bottom = 180.0
+margin_right = -8.0
+margin_bottom = -60.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -76,10 +76,12 @@ __meta__ = {
 }
 
 [node name="Disp" type="HBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
 margin_left = 4.0
 margin_top = 16.0
-margin_right = 380.0
-margin_bottom = 173.0
+margin_right = -8.0
+margin_bottom = -67.0
 custom_constants/separation = 0
 __meta__ = {
 "_edit_group_": true,
@@ -132,10 +134,12 @@ __meta__ = {
 }
 
 [node name="A" type="HBoxContainer" parent="."]
+anchor_top = 1.0
+anchor_bottom = 1.0
 margin_left = 4.0
-margin_top = 184.0
+margin_top = -56.0
 margin_right = 192.0
-margin_bottom = 200.0
+margin_bottom = -40.0
 __meta__ = {
 "_edit_group_": true,
 "_edit_use_anchors_": false
@@ -173,10 +177,12 @@ text = "0.5"
 align = 1
 
 [node name="D" type="HBoxContainer" parent="."]
+anchor_top = 1.0
+anchor_bottom = 1.0
 margin_left = 196.0
-margin_top = 188.0
+margin_top = -52.0
 margin_right = 384.0
-margin_bottom = 204.0
+margin_bottom = -36.0
 __meta__ = {
 "_edit_group_": true,
 "_edit_use_anchors_": false
@@ -214,10 +220,12 @@ text = "-2"
 align = 1
 
 [node name="S" type="HBoxContainer" parent="."]
+anchor_top = 1.0
+anchor_bottom = 1.0
 margin_left = 4.0
-margin_top = 216.0
+margin_top = -24.0
 margin_right = 192.0
-margin_bottom = 232.0
+margin_bottom = -8.0
 __meta__ = {
 "_edit_group_": true,
 "_edit_use_anchors_": false
@@ -255,10 +263,12 @@ text = "0.5"
 align = 1
 
 [node name="R" type="HBoxContainer" parent="."]
+anchor_top = 1.0
+anchor_bottom = 1.0
 margin_left = 196.0
-margin_top = 216.0
+margin_top = -24.0
 margin_right = 384.0
-margin_bottom = 232.0
+margin_bottom = -8.0
 __meta__ = {
 "_edit_group_": true,
 "_edit_use_anchors_": false

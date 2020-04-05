@@ -45,7 +45,7 @@ public class Operator
         
         double modulator = 0.0f;
 
-        if (connections.Length > 0)
+        if (connections.Length > 0)  // We're a Modulator.
         {	
             
             // First, mix the parallel modulators.
@@ -62,13 +62,13 @@ public class Operator
             phase += modulator;
             phase *= eg._detune;
             phase *= eg._freqMult;  
-            phase = (oscillators.sint2(phase) + 1.0f) / 2.0f;  //TODO:  Seperate field for modulation waveform.  Cool new sounds!
+            // phase = (oscillators.sint2(phase) + 1.0f) / 2.0f;  //TODO:  Seperate field for modulation waveform.  Cool new sounds!
+            phase = (oscillators.wave(phase, eg.fmTechnique, eg.duty) + 1.0f) / 2.0f;  
             
-            output = oscillators.wave(phase, eg.waveform);  //Get a waveform from the oscillator.
+            output = oscillators.wave(phase, eg.waveform, eg.duty);  //Get a waveform from the oscillator.
 
 
             //Determine the EG position and attenuate.
-            //TODO
             output *= calc_eg(samplePos);
 
 
@@ -81,7 +81,7 @@ public class Operator
             phase *= eg._detune;
             phase *= eg._freqMult;
 
-            output = oscillators.wave(phase, eg.waveform);  //Get a waveform from the oscillator.
+            output = oscillators.wave(phase, eg.waveform, eg.duty);  //Get a waveform from the oscillator.
 
 
             // Process feedback
@@ -97,7 +97,6 @@ public class Operator
 
 
             //Determine the EG position and attenuate.
-            //TODO
             double asdr = calc_eg(samplePos);
             output *= asdr;
 

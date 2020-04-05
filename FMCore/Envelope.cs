@@ -14,6 +14,7 @@ public class Envelope : Node
     }
     public string ownerName;  // Debug purposes
 
+    //STANDARD FM EG STUFF
 	double ar=31f;						//Attack
 	double dr=0f;						//Decay
 	double sr=0f;						//Sustain
@@ -24,10 +25,23 @@ public class Envelope : Node
 	double mul=0.0f;					//Frequency multiplier  //double between 0.5 and 15
     double dt=0;                        //_detune
 
-	public double hz = 440.0f;  //Operator frequency.  Tuned to A-4 by default
-	public double feedback = 0f;  //TODO:  Figure output if this is appropriate to use on multiple operators
-	public double duty = 0.5f;  //Duty cycle is only used for pulse right now
+
+    //CUSTOM STUFF
 	public Waveforms waveform = Waveforms.SINE;
+	public double feedback = 0f;  //Operator feedback only used in carriers
+	public double duty = 0.5f;  //Duty cycle is only used for pulse right now
+    public bool reflect = false;  //Waveform reflection.  Inverts sine phase, makes sawtooth point to the right, etc.
+
+    public Waveforms fmTechnique = Waveforms.SINE;  //FM Technique used to modulate phase when requesting a sample up the chain.
+    public double techDuty = 0.5f;  //Duty cycle for the fmTechnique    
+    public bool techReflect = false;  //Waveform reflection for the fmTechnique
+
+    //ADSR easing curve values.
+    public double ac = -2.0;  //Attack curve.  In-out.
+    public double dc = 0.75;  //Decay curve.  50% Linear, 50% Ease-out.
+    public double sc = 0.8;  //Sustain curve.  80% Linear, 20% Ease-out.
+    public double rc = 0.5;  //Release curve.  Ease-out.
+
 
 
     //Property values used to translate "user-friendly" values to internal values.
@@ -65,40 +79,45 @@ public class Envelope : Node
     //ASDR Getter
     public double VolumeAtSamplePosition(int s, bool noteOff=false, int releaseSample=0)
     {
-        if (_susLevel < 0.2) {
-            ownerName = ownerName;
-        }
+
+        double output=0;
 
         //Determine the envelope phase.
         if (s < _attackTime) { // Attack phase.
             //Interpolate between 0 and the total level.
-            return GDSFmFuncs.EaseFast(0.0, 1.0, s / _attackTime);
+            output= GDSFmFuncs.EaseFast(0.0, 1.0, s / _attackTime, ac);
 
         } else if ((s >= _attackTime) && (s < _ad) ) {  //Decay phase.
             //Interpolate between the total level and sustain level.
-            return GDSFmFuncs.EaseFast(1.0, _susLevel, (s-_attackTime) / _decayTime);
+            output= GDSFmFuncs.EaseFast(1.0, _susLevel, (s-_attackTime) / _decayTime, dc);
 
         } else if ((s >= _ad) && !noteOff ) {  //Sustain phase.
             //Interpolate between sustain level and 0.
-            return GDSFmFuncs.EaseFast(_susLevel, 0, (s-_ad) / _susTime);
+            output= GDSFmFuncs.EaseFast(_susLevel, 0, (s-_ad) / _susTime, sc);
 
 
         } else if (noteOff && (s-releaseSample > _adr)) {  //Release: Note off, but beyond the total time of the attack, decay, and release phases.
             return 0;
 
-        } else if ((noteOff && (s > _ad )) || s > _ads) {  //Release:  Note off, and not yet beyond the total time of the release phase.
+        // } else if ((noteOff && (s > _ad )) || s > _ads) {  //Release:  Note off, and not yet beyond the total time of the release phase.
+        } else if (s > _ads) {  //Release:  Note off, and not yet beyond the total time of the release phase.
 
             //The initial release level is determined by the level at the last sustain phase.  Interpolate between this and 0.
             //If the note was released before _ad, the initial release level is equal to _susLevel.
             
             //Calculate sustain level at the the time of the noteOff event.
-            double lastSL = GDSFmFuncs.EaseFast(_susLevel, 0, (releaseSample-_ad) / _susTime);
+            double lastSL = GDSFmFuncs.EaseFast(_susLevel, 0, (releaseSample-_ad) / _susTime, sc);
 
             //Interpolate between last sustain level and 0.
-            return GDSFmFuncs.EaseFast(lastSL, 0, (s-releaseSample) / _releaseTime);
+            output= GDSFmFuncs.EaseFast(lastSL, 0, (s-releaseSample) / _releaseTime, rc);
         }
-        //Beyond the range of the envelope.  Return 0.
-        return 0;
+
+        if (noteOff)  //Apply release envelope.
+        {
+            output *= GDSFmFuncs.EaseFast(0.0, 1.0, s-releaseSample, rc);
+        }
+   
+        return output;
     }
 
     //ASDR setters
