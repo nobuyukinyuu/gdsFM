@@ -65,7 +65,7 @@ public class Operator
             // phase = (oscillators.sint2(phase) + 1.0f) / 2.0f;  //TODO:  Seperate field for modulation waveform.  Cool new sounds!
             phase = (oscillators.wave(phase, eg.fmTechnique, eg.duty) + 1.0f) / 2.0f;  
             
-            output = oscillators.wave(phase, eg.waveform, eg.duty);  //Get a waveform from the oscillator.
+            output = oscillators.wave(phase, eg.waveform, eg.duty, eg.reflect);  //Get a waveform from the oscillator.
 
 
             //Determine the EG position and attenuate.
@@ -81,7 +81,7 @@ public class Operator
             phase *= eg._detune;
             phase *= eg._freqMult;
 
-            output = oscillators.wave(phase, eg.waveform, eg.duty);  //Get a waveform from the oscillator.
+            output = oscillators.wave(phase, eg.waveform, eg.duty, eg.reflect);  //Get a waveform from the oscillator.
 
 
             // Process feedback
@@ -90,7 +90,7 @@ public class Operator
                 var average = (old_sample[0] + old_sample[1]) * 0.5;
                 var scaled_fb = average / Math.Pow(2, 6.0f-eg.feedback);  //maybe use powfast if I can get it to support negative numbers
                 old_sample[1] = old_sample[0];
-                old_sample[0] = oscillators.wave(phase + scaled_fb, eg.waveform);
+                old_sample[0] = oscillators.wave(phase + scaled_fb, eg.waveform, eg.duty, eg.reflect);
 
                 output = old_sample[0];
             }

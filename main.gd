@@ -67,7 +67,6 @@ func _on_GraphEdit_node_selected(node):
 		$TC/Curve.load_settings(envelope)
 		$TC/Waveform/Options.load_settings(envelope)
 
-
 		$TC/EGControl.disable(false)
 #		$TC.enable
 

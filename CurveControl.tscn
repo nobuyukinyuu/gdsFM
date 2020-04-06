@@ -7,7 +7,7 @@
 
 [sub_resource type="StyleBoxTexture" id=1]
 texture = ExtResource( 4 )
-region_rect = Rect2( 1, 1, 376, 172 )
+region_rect = Rect2( 1, 1, 376, 516 )
 modulate_color = Color( 1, 1, 1, 0.12549 )
 
 [sub_resource type="ShaderMaterial" id=2]

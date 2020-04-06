@@ -31,6 +31,10 @@ Glue="*res://FMCore/Glue.cs"
 
 gdscript/warnings/unused_variable=false
 
+[display]
+
+window/vsync/use_vsync=false
+
 [editor_plugins]
 
 enabled=PoolStringArray( "mono_debugger", "zoomy" )

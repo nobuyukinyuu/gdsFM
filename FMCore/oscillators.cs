@@ -52,26 +52,31 @@ public class oscillators : Node
 	}
 
 
-	public static double wave(double n, Waveforms waveform = Waveforms.SINE, double duty = 0.5f){
+	public static double wave(double n, Waveforms waveform = Waveforms.SINE, double duty = 0.5f, bool reflect=false){
 		n %= 1.0f;
+
+		double sReflect = reflect? -1 : 1;
 
 		switch(waveform){
 			case Waveforms.PULSE:
-				if (n >= duty) return 1f;
+				if ((n >= duty) ^ reflect) return 1f;
 				return -1f;
 
 			case Waveforms.SINE:
-				return sint2(n);
+				return sint2(n)  * sReflect;
 
 			case Waveforms.ABSINE:
-				return Math.Abs(sint2(n));
+				return Math.Abs(sint2(n)) * sReflect;
 
 			case Waveforms.TRI:
-				return TRITABLE[(int)(Math.Abs(n)*20)];
+				return TRITABLE[(int)(Math.Abs(n)*20)] * sReflect;
 
 			case Waveforms.SAW:
-				return 1.0f - (n * 2.0f);  //Slopes upwards to the left
-				// return -1.0f + ((1.0-n) * 2.0f);  //Slopes upwards to the right
+				// return (1.0f - (n * 2.0f)) * sReflect; 
+				// return (1.0 - (Math.Min((n/duty), 1.0) * 2.0 * duty)) * sReflect; 
+				duty += Single.Epsilon;
+				duty *= 2.0;
+				return 1.0 - Math.Max(n + duty - 1.0, 0.0) * (1.0/duty) * 2 * sReflect;
 
 			case Waveforms.PINK:
 				return pinkr.GetNextValue();

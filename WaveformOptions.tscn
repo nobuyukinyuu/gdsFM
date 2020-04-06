@@ -124,3 +124,4 @@ margin_bottom = 24.0
 align = 2
 [connection signal="value_changed" from="FB" to="." method="_on_FB_value_changed"]
 [connection signal="value_changed" from="DutyCycle" to="." method="_on_DutyCycle_value_changed"]
+[connection signal="toggled" from="chkReflect" to="." method="_on_chkReflect_toggled"]

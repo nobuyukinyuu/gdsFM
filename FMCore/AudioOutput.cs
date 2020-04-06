@@ -46,23 +46,27 @@ public static float MixRate = 44100.0f;  //This is set to a global var sample_ra
         fill_buffer();
     }
 
-    public override void _PhysicsProcess(float delta)
-    {
-        if (bufferdata.Length < 2) return;
+    // public override void _PhysicsProcess(float delta)
+    // {
+    //     if (bufferdata.Length < 2) return;
         
-        Vector2 rect_size = (Vector2) (GetNode("../Panel").Get("rect_size"));
-        Vector2[] pts = new Vector2[(int) Math.Min(rect_size.x, bufferdata.Length)];
+    //     Vector2 rect_size = (Vector2) (GetNode("../Panel").Get("rect_size"));
+    //     Vector2 rect_position = (Vector2) (GetNode("../Panel").Get("rect_position"));
+    //     Vector2[] pts = new Vector2[(int) Math.Min(rect_size.x, bufferdata.Length)];
 
-        for(int i=0; i < pts.Length; i++)
-        {
-            float h = rect_size.y / 2.0f;
-            pts[i] = new Vector2(i, h + bufferdata[i].y * h);
-        }
+    //     for(int i=0; i < pts.Length; i++)
+    //     {
+    //         float h = rect_size.y / 2.0f;
+    //         pts[i] = new Vector2(i, h + bufferdata[i].y * h);
+    //     }
 
-            Line2D l = (Line2D) GetNode("../Panel/Line2D");
-            l.Points = pts;
-        
-    }
+    //         // Line2D l = (Line2D) GetNode("../Panel/Line2D");
+    //         // l.Points = pts;
+
+    //         GetNode("../Panel").Set("pts", pts);
+    //         GetNode("../Panel").Call("Update");
+
+    // }
 
 
     //Fills the buffer using Patch.cs

@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=2]
+[gd_scene load_steps=31 format=2]
 
 [ext_resource path="res://main.gd" type="Script" id=1]
 [ext_resource path="res://EGControl.tscn" type="PackedScene" id=2]
@@ -25,9 +25,10 @@
 [ext_resource path="res://FMCore/AudioOutput.cs" type="Script" id=23]
 [ext_resource path="res://CurveControl.tscn" type="PackedScene" id=24]
 [ext_resource path="res://WaveformOptions.tscn" type="PackedScene" id=25]
+[ext_resource path="res://PanelScope.gd" type="Script" id=26]
 
 [sub_resource type="AudioStreamGenerator" id=1]
-mix_rate = 22050.0
+buffer_length = 0.2
 
 [sub_resource type="GDScript" id=2]
 script/source = "extends HSlider
@@ -103,13 +104,13 @@ __meta__ = {
 }
 
 [node name="EGControl" parent="TC" instance=ExtResource( 2 )]
+visible = false
 margin_left = 4.0
 margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
 
 [node name="Curve" parent="TC" instance=ExtResource( 24 )]
-visible = false
 margin_left = 4.0
 margin_top = 32.0
 margin_right = -4.0
@@ -251,7 +252,7 @@ __meta__ = {
 [node name="Label" type="Label" parent="GraphEdit/Output"]
 margin_left = 16.0
 margin_top = 24.0
-margin_right = 87.0
+margin_right = 88.0
 margin_bottom = 48.0
 rect_min_size = Vector2( 0, 24 )
 text = "Speakers"
@@ -322,7 +323,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Panel" type="Panel" parent="."]
+[node name="Panel" type="ColorRect" parent="."]
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -330,13 +331,16 @@ margin_left = 8.0
 margin_top = -192.0
 margin_right = -408.0
 margin_bottom = -8.0
+color = Color( 0, 0, 0, 1 )
+script = ExtResource( 26 )
 __meta__ = {
-"_edit_group_": true,
 "_edit_use_anchors_": false
 }
 
 [node name="Line2D" type="Line2D" parent="Panel"]
+visible = false
 width = 1.0
+default_color = Color( 0.4, 0.501961, 1, 1 )
 texture_mode = 1044891074
 antialiased = true
 
