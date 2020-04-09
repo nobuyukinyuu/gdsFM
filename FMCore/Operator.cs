@@ -35,7 +35,7 @@ public class Operator
 
     //Iterate over our connections, then mix and modulate them before returning the final modulated value.
     //TODO:  Replace samplePos with proper argument for a Note class which can include NoteOff state, sample position at release time, etc.
-    public double request_sample(double phase, int samplePos=0)
+    public double request_sample(double phase, Note note)
     {
         
         double output = 0.0f;
@@ -51,7 +51,7 @@ public class Operator
             // First, mix the parallel modulators.
 
             foreach (Operator o in connections){
-                modulator += o.request_sample(phase, samplePos);
+                modulator += o.request_sample(phase, note);
             }
 
             modulator /= connections.Length;  //mix down to 0.0-1.0f
@@ -69,7 +69,7 @@ public class Operator
 
 
             //Determine the EG position and attenuate.
-            output *= calc_eg(samplePos);
+            output *= calc_eg(note);
 
 
             output *= eg._totalLevel;  //Finally, Attenuate total level.
@@ -97,7 +97,7 @@ public class Operator
 
 
             //Determine the EG position and attenuate.
-            double asdr = calc_eg(samplePos);
+            double asdr = calc_eg(note);
             output *= asdr;
 
 
@@ -107,10 +107,10 @@ public class Operator
     }
 
     // Calculate the position and value attenuation as determined by the envelope generator.
-    double calc_eg(int samplePos)
+    double calc_eg(Note note)
     {
         //TODO:  Take a sample timer, NoteOff status, and NoteOff position from an external Note resource.
-        return eg.VolumeAtSamplePosition(samplePos);
+        return eg.VolumeAtSamplePosition(note.samples);
     }
 
 }

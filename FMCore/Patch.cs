@@ -5,8 +5,7 @@ using System.Collections.Generic;
 //Todo:   PatchNote:Patch extension??  Might reduce confusion overall?
 public class Patch : Resource
 {
-    protected int samples = 0;  //Sample timer.  TODO:  Move this and hz out of this class and into a separate Note class.
-    double hz = 440.0f;   //Sample pitch
+    // double hz = 440.0f;   //Sample pitch
 
     // This value should typically be initialized to whatever the global sample rate is.
     public static double sample_rate = 44100.0f;
@@ -105,37 +104,44 @@ public class Patch : Resource
         return op?.EG;
     }
 
-    public void Reset(bool timer=true, bool connections=false){
-        if (timer) this.samples = 0;
-        if (connections) this.connections = null;
+    public void ResetConnections(){
+        this.connections = null;
+    }
+    public void ResetOperator(string opname){
+        //Nothing here yet.  
+    }
+    public void ResetOperators()
+    {
+        //Nothing here yet.  Would reset EG, curves, waveforms etc.
     }
 
     //This ctor can be used to set the sample rate used in phase calculations by a patch. The algorithm validator should do it when making a patch.
     public Patch(double sample_rate) => Patch.sample_rate = sample_rate;
     // public Patch() {}  //Default constructor.
 
-    // For speaker output.  This terminus requests samples from the first set of operators.
-    // This class also contains the envelope timer for its connections.
-    public double mix(){
-        return mix(samples / sample_rate * hz);
+    // For speaker output.  Requests samples from the set of operators currently connected to the Patch.
+    public double mix(Note note){
+        return mix(note, note.GetPhase(sample_rate));
     }
-    public double mix(double phase){ 
+    public double mix(Note note, double phase){ 
         double avg = 0.0f;
         
         foreach (Operator op in connections)
         {	
-            avg += (double) op.request_sample(phase, samples);  
+            avg += (double) op.request_sample(phase, note);  
         }
 
-        //If assertion failed, we'd get a divide by zero here.
-        if (connections.Length <= 0){
-            var msg = "Patch.mix: No operator connections to patch. This shouldn't happen";
-            GD.PrintErr(msg);
-            throw new System.Exception(msg);
-        }
+        #if DEBUG  //We probably don't need this in release mode
+            //If assertion failed, we'd get a divide by zero here.
+            if (connections.Length <= 0){
+                var msg = "Patch.mix: No operator connections to patch. This shouldn't happen";
+                GD.PrintErr(msg);
+                throw new System.Exception(msg);
+            }
+        #endif
 
         avg /= connections.Length;  //Shitty average-based mixing.        
-        samples += 1;
+        note.samples += 1;
         return avg;
     }
 }

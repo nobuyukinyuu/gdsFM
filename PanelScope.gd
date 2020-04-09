@@ -10,7 +10,7 @@ func _ready():
 
 
 func _process(delta):
-	if $"../Audio".bufferdata.size() > 0:
+	if $"../Audio".bufferdata.size() > 0 and visible:
 		update()
 
 func _draw():

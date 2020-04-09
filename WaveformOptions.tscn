@@ -101,6 +101,7 @@ margin_left = 950.0
 margin_right = 1024.0
 margin_bottom = 24.0
 align = 2
+editable = false
 
 [node name="ModBank" type="HBoxContainer" parent="."]
 margin_top = 195.0
@@ -122,6 +123,7 @@ margin_left = 950.0
 margin_right = 1024.0
 margin_bottom = 24.0
 align = 2
+editable = false
 [connection signal="value_changed" from="FB" to="." method="_on_FB_value_changed"]
 [connection signal="value_changed" from="DutyCycle" to="." method="_on_DutyCycle_value_changed"]
 [connection signal="toggled" from="chkReflect" to="." method="_on_chkReflect_toggled"]

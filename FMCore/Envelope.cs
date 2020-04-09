@@ -73,9 +73,6 @@ public class Envelope : Node
     double _ads; //Attack, decay, and sustain time.
 	double _adr; //Attack, decay, and release time.  Used to check whether the sample offset from release is beyond the need to calculate an easing curve.
 
-//	var hz = 440.0
-// int samples = 0;  //Samples elapsed
-
     //ASDR Getter
     public double VolumeAtSamplePosition(int s, bool noteOff=false, int releaseSample=0)
     {
