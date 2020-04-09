@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
 public class Note : Node
 {
@@ -8,12 +9,16 @@ public class Note : Node
     [Export]
     public int samples = 0;  //Samples elapsed.  Sample timer.  TODO:  Separate phase timer from envelope timer???? (Currently synced)
     [Export]
-    public int midi_velocity = 128; //0-127, probably
+    public int midi_velocity = 0; //0-127, probably
 
     public double Velocity  => midi_velocity/128.0;
 
     public bool pressed = true;
+    public int releaseSample = 0;  //The sample at which noteOff was received.
 
+
+//The owner of the Note.  This could be a channel for arbitrary-n notes, or a channel which needs temporary polyphony.
+    public List<Note> _channel; 
 
 // 12-field array containing a LUT of semitone frequencies at all MIDI note numbers.
 // Generated from center tuning (A-4) at 440hz.
@@ -24,12 +29,9 @@ const int NOTE_A4 = 69;   // Nice.
 
 
     //Constructors
-    public Note ()  //Needed by Godot
-    {
-        this.hz = 440.0;
-        this.midi_velocity = 127;
-    }
-
+    #if GODOT
+        public Note() {}  //Default ctor Needed by Godot
+    #endif    
 
     //Lookup frequency based on MIDI note number.
     public Note (int note_number, int velocity=0)
@@ -89,4 +91,15 @@ const int NOTE_A4 = 69;   // Nice.
         if (pressed) this.pressed = true;
     }
 
+    //Typically called by an Envelope when a note runs past its release time.
+    public void Destroy(){
+
+        //Remove myself from the channel.
+        if (_channel != null){
+            _channel.Remove(this);
+        }
+
+        QueueFree();
+
+    }
 }

@@ -110,7 +110,7 @@ public class Operator
     double calc_eg(Note note)
     {
         //TODO:  Take a sample timer, NoteOff status, and NoteOff position from an external Note resource.
-        return eg.VolumeAtSamplePosition(note.samples);
+        return eg.VolumeAtSamplePosition(note.samples, !note.pressed, note.releaseSample);
     }
 
 }

@@ -12,9 +12,10 @@ Vector2[] bufferdata = new Vector2[8192];
 
 public Patch patch;  // FM Instrument Patch
 
- public Note previewNote;  //Monophonic note used to preview the patch.
+public Note previewNote;  //Monophonic note used to preview the patch.
     // public Note PreviewNote () {return previewNote;}
 
+public List<Note> PreviewNotes = new List<Note>();
 
 
     Node global;
@@ -103,8 +104,8 @@ public Patch patch;  // FM Instrument Patch
 
 
     //DEBUG.  This would be in a Note class instead once that exists.  Resets sample timer.
-    public void Reset(){
-        
+    public void Reset()
+    {
         if (previewNote !=null)  previewNote.Reset();
     }
 

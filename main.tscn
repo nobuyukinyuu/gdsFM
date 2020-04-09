@@ -30,8 +30,7 @@
 [ext_resource path="res://FMCore/Note.cs" type="Script" id=28]
 
 [sub_resource type="AudioStreamGenerator" id=1]
-mix_rate = 22050.0
-buffer_length = 0.1
+buffer_length = 0.25
 
 [sub_resource type="GDScript" id=2]
 script/source = "extends HSlider
@@ -267,7 +266,7 @@ valign = 1
 
 [node name="Audio" type="AudioStreamPlayer" parent="."]
 stream = SubResource( 1 )
-volume_db = -15.0
+volume_db = -10.0
 script = ExtResource( 23 )
 
 [node name="PreviewNote" type="Node" parent="Audio"]
@@ -333,7 +332,6 @@ __meta__ = {
 }
 
 [node name="Panel" type="ColorRect" parent="."]
-visible = false
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0

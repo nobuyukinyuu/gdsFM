@@ -123,6 +123,20 @@ public class Patch : Resource
     public double mix(Note note){
         return mix(note, note.GetPhase(sample_rate));
     }
+
+    //Multiple note polyphony
+    public double mix(List<Note> notes)
+    {
+        double output = 0.0;
+        foreach (Note note in notes)
+        {
+            output += mix(note);
+        }
+
+        output /= notes.Count;  // Count is an O(1) operation
+        return output;
+    }
+
     public double mix(Note note, double phase){ 
         double avg = 0.0f;
         

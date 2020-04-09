@@ -15,14 +15,14 @@ public class Envelope : Node
     public string ownerName;  // Debug purposes
 
     //STANDARD FM EG STUFF
-	double ar=31f;						//Attack
-	double dr=0f;						//Decay
-	double sr=0f;						//Sustain
+	double ar=31;						//Attack
+	double dr=0;						//Decay
+	double sr=0;						//Sustain
 	double rr = 15;                      //Release
 	double sl=100.0;                      //Sustain level
-    double tl = 50;                     //Total level  (attenuation)
+    double tl = 100;                     //Total level  (attenuation)
     double ks=0;						//Key scale
-	double mul=0.0f;					//Frequency multiplier  //double between 0.5 and 15
+	double mul=0.0;					//Frequency multiplier  //double between 0.5 and 15
     double dt=0;                        //_detune
 
 
@@ -88,30 +88,18 @@ public class Envelope : Node
             //Interpolate between the total level and sustain level.
             output= GDSFmFuncs.EaseFast(1.0, _susLevel, (s-_attackTime) / _decayTime, dc);
 
-        } else if ((s >= _ad) && !noteOff ) {  //Sustain phase.
+        // } else if ((s >= _ad) && !noteOff ) {  //Sustain phase.
+        } else if ((s >= _ad) ) {  //Sustain phase.
             //Interpolate between sustain level and 0.
             output= GDSFmFuncs.EaseFast(_susLevel, 0, (s-_ad) / _susTime, sc);
-
-
-        } else if (noteOff && (s-releaseSample > _adr)) {  //Release: Note off, but beyond the total time of the attack, decay, and release phases.
-            return 0;
-
-        // } else if ((noteOff && (s > _ad )) || s > _ads) {  //Release:  Note off, and not yet beyond the total time of the release phase.
-        } else if (s > _ads) {  //Release:  Note off, and not yet beyond the total time of the release phase.
-
-            //The initial release level is determined by the level at the last sustain phase.  Interpolate between this and 0.
-            //If the note was released before _ad, the initial release level is equal to _susLevel.
-            
-            //Calculate sustain level at the the time of the noteOff event.
-            double lastSL = GDSFmFuncs.EaseFast(_susLevel, 0, (releaseSample-_ad) / _susTime, sc);
-
-            //Interpolate between last sustain level and 0.
-            output= GDSFmFuncs.EaseFast(lastSL, 0, (s-releaseSample) / _releaseTime, rc);
         }
 
-        if (noteOff)  //Apply release envelope.
+
+        if (noteOff && (s-releaseSample) <= _releaseTime)  //Apply release envelope.
         {
-            output *= GDSFmFuncs.EaseFast(0.0, 1.0, s-releaseSample, rc);
+            output *= GDSFmFuncs.EaseFast(1.0, 0.0, (s-releaseSample) / _releaseTime, rc);
+        } else if (noteOff && (s-releaseSample) > _releaseTime) {
+            return 0;
         }
    
         return output;
@@ -141,7 +129,7 @@ public class Envelope : Node
         if (val <=0) {
             _attackTime = float.MaxValue/5.0;  //Stupid workaround to avoid Double.PositiveInfinity.  Who's gonna hold a note for 2.264668e+299 hours?
         } else {
-            _attackTime = get_curve_secs(BaseSecs.AR, val, 0.5) * SampleRate;
+            _attackTime = get_curve_secs(BaseSecs.AR, val, 0.5, 0) * SampleRate;
         }
         recalc_adsr();
     }
@@ -213,7 +201,7 @@ public double SampleRate {
 //Precalculate absolute total length (in samples) of a blip. During KeyOff event, in sustain state whenever KeyOff is detected,
 //Immediately move the play head to the total length minus RR length.
 //http://forums.submarine.org.uk/phpBB/viewtopic.php?f=9&t=16
-    double get_curve_secs(double base_secs, double val, double scaleFactor=1.0)
+    double get_curve_secs(double base_secs, double val, double scaleFactor=1.0, double minlength=0.005)
     {
         //estimated base rates for OPNA at value 1:
         //AR    30sec?   (32 values)
