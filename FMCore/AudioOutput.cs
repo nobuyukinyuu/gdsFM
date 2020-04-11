@@ -15,7 +15,7 @@ public Patch patch;  // FM Instrument Patch
 public Note previewNote;  //Monophonic note used to preview the patch.
     // public Note PreviewNote () {return previewNote;}
 
-public List<Note> PreviewNotes = new List<Note>();
+public Channel PreviewNotes = new Channel();
 
 
     Node global;
@@ -62,8 +62,7 @@ public List<Note> PreviewNotes = new List<Note>();
         {
             if (patch != null)
             {
-                var s = (float) patch.mix(previewNote);
-                s *= (float) previewNote.Velocity;  //DEBUG:  REMOVE ME WHEN PER-OPERATOR VELOCITY SENSITIVITY IS IMPLEMENTED?
+                var s = (float) patch.mix(PreviewNotes);
 
                  bufferdata[i].x = s;  //TODO:  Stereo mixing maybe
                  bufferdata[i].y = s;  //TODO:  Stereo mixing maybe   
@@ -97,7 +96,7 @@ public List<Note> PreviewNotes = new List<Note>();
     {
 
             Operator op = patch.GetOperator(opname);
-            op.Bypass = val;
+            if (op!=null)  op.Bypass = val;
             if (op!=null) return 0; else return -1;
 
     }
@@ -109,4 +108,39 @@ public List<Note> PreviewNotes = new List<Note>();
         if (previewNote !=null)  previewNote.Reset();
     }
 
+    //Returns the number of notes that should be currently playing in our preview channel.
+    public int Polyphony()
+    {
+        return PreviewNotes.Count;
+    }
+
+    //Adds a note of the specific MIDI key to the preview notes.
+    public void AddNote(Note note)
+    {
+            note._channel = PreviewNotes;
+            PreviewNotes.Add(note);
+    }
+
+    public void AddNote(int note_number, int velocity)
+    {
+        Note note = new Note(note_number, velocity);
+        AddNote(note);
+    }
+
+    public void TurnOffNote(int note_number)
+    {
+        Note note = PreviewNotes.FindActiveNote(note_number);        
+        if (note==null) throw new NullReferenceException("Note not found?");
+
+        note.releaseSample = note.samples;
+        note.pressed = false;
+
+        if (patch==null) // Uh oh, no patch right now.  Probably should just kill the note.
+        {
+            note.Destroy();
+        } else {  // Patch is okay.  Set the TTL to prepare the note to be killed off by the Patch when sent the Channel contents.
+            note.ttl = patch.GetReleaseTime();
+        }
+
+    }
 }

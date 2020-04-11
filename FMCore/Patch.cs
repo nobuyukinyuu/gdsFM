@@ -104,6 +104,17 @@ public class Patch : Resource
         return op?.EG;
     }
 
+    public double GetReleaseTime() //Total max release time of all operators in the patch, measured in samples.
+    {
+        double time = 0;
+        foreach (String op in operators.Keys)
+        {
+            var envelope = GetEG(op);
+            time = Math.Max(time, envelope._releaseTime);            
+        }
+        return time;
+    }
+
     public void ResetConnections(){
         this.connections = null;
     }
@@ -119,23 +130,33 @@ public class Patch : Resource
     public Patch(double sample_rate) => Patch.sample_rate = sample_rate;
     // public Patch() {}  //Default constructor.
 
-    // For speaker output.  Requests samples from the set of operators currently connected to the Patch.
-    public double mix(Note note){
-        return mix(note, note.GetPhase(sample_rate));
-    }
-
     //Multiple note polyphony
     public double mix(List<Note> notes)
     {
         double output = 0.0;
-        foreach (Note note in notes)
+        
+        // TODO!!!!!!!! FIX CONCURRENT LIST MODIFICATION IN SEPARATE THREADS.  FIXME FIXME FIXME
+        // NOTES COME IN AS AN EVENT ON A SEPARATE THREAD, SO MODIFICATION (NOTE DELETION) MUST BE QUEUED TO THE NEXT SYNCED PROCESS THREAD
+        for (int i = 0; i < notes.Count; i++) //Note note in notes)
         {
-            output += mix(note);
+            output += mix(notes[i]);
+    
+           //Check if the note needs to die.
+            if (notes[i] !=null && notes[i].IsDestroyable())  notes[i].Destroy();
+
         }
 
-        output /= notes.Count;  // Count is an O(1) operation
+
+        // Shitty average based mixing of total notes being played again.  Count is an O(1) operation. 
+        output /= 2.5;  //TODO:  Maybe don't do this?  Figure out what the velocity is like normally, maybe scale down a tiny bit instead.
         return output;
     }
+    // For speaker output.  Requests samples from the set of operators currently connected to the Patch.
+    public double mix(Note note){
+        if (note==null) return 0.0;
+        return mix(note, note.GetPhase(sample_rate));
+    }
+
 
     public double mix(Note note, double phase){ 
         double avg = 0.0f;
@@ -156,6 +177,9 @@ public class Patch : Resource
 
         avg /= connections.Length;  //Shitty average-based mixing.        
         note.samples += 1;
+
+        avg *= note.Velocity;  //DEBUG / TODO:  REMOVE ME WHEN PER-OPERATOR VELOCITY SENSITIVITY IS IMPLEMENTED?
+
         return avg;
     }
 }

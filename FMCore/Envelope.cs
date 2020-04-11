@@ -74,9 +74,12 @@ public class Envelope : Node
 	double _adr; //Attack, decay, and release time.  Used to check whether the sample offset from release is beyond the need to calculate an easing curve.
 
     //ASDR Getter
-    public double VolumeAtSamplePosition(int s, bool noteOff=false, int releaseSample=0)
+    public double VolumeAtSamplePosition(Note note)
     {
 
+        int s = note.samples;
+        bool noteOff=!note.pressed;
+        int releaseSample=note.releaseSample;
         double output=0;
 
         //Determine the envelope phase.

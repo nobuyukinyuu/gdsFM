@@ -85,6 +85,7 @@ public class Operator
 
 
             // Process feedback
+            // TODO:  Oxe feedback is pre-envelope, just like this code.  DX is supposedly post-envelope. Check and determine if FB is more useful there.
             if (eg.feedback > 0)
             {
                 var average = (old_sample[0] + old_sample[1]) * 0.5;
@@ -110,7 +111,7 @@ public class Operator
     double calc_eg(Note note)
     {
         //TODO:  Take a sample timer, NoteOff status, and NoteOff position from an external Note resource.
-        return eg.VolumeAtSamplePosition(note.samples, !note.pressed, note.releaseSample);
+        return eg.VolumeAtSamplePosition(note);
     }
 
 }

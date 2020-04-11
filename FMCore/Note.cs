@@ -2,7 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-public class Note : Node
+public class Note : Node, IComparable<Note>
 {
     [Export]
 	public double hz = 440.0;
@@ -10,15 +10,19 @@ public class Note : Node
     public int samples = 0;  //Samples elapsed.  Sample timer.  TODO:  Separate phase timer from envelope timer???? (Currently synced)
     [Export]
     public int midi_velocity = 0; //0-127, probably
+    public int midi_note; //Pitch of note.  0-127 for sure.
 
     public double Velocity  => midi_velocity/128.0;
 
     public bool pressed = true;
     public int releaseSample = 0;  //The sample at which noteOff was received.
 
+    //Set by the mixer handling the channel.  Mixer finds the patch being used for this Note, gets total release time, and patch determines when to release from channel.
+    public double ttl = float.MaxValue / 4.0;  
+
 
 //The owner of the Note.  This could be a channel for arbitrary-n notes, or a channel which needs temporary polyphony.
-    public List<Note> _channel; 
+    public Channel _channel; 
 
 // 12-field array containing a LUT of semitone frequencies at all MIDI note numbers.
 // Generated from center tuning (A-4) at 440hz.
@@ -36,6 +40,7 @@ const int NOTE_A4 = 69;   // Nice.
     //Lookup frequency based on MIDI note number.
     public Note (int note_number, int velocity=0)
     {
+        this.midi_note = note_number;
         this.hz = lookup_frequency(note_number);
         this.midi_velocity = velocity;
     }
@@ -43,6 +48,7 @@ const int NOTE_A4 = 69;   // Nice.
     //Construct a note directly with the frequency specified.
     public Note(double hz, int velocity=0)
     {
+        this.midi_note = -1;  //Custom sound location in channel
         this.hz = hz;
         this.midi_velocity = velocity;
     }
@@ -91,7 +97,14 @@ const int NOTE_A4 = 69;   // Nice.
         if (pressed) this.pressed = true;
     }
 
-    //Typically called by an Envelope when a note runs past its release time.
+
+    //Convenience method for mixers, envelopes, whatever to check if this note is ready to die.
+    public bool IsDestroyable()
+    {
+        return ((samples - releaseSample > ttl) && !pressed);
+    }
+
+    //Typically called by the mixer when a note runs past its release time.
     public void Destroy(){
 
         //Remove myself from the channel.
@@ -102,4 +115,14 @@ const int NOTE_A4 = 69;   // Nice.
         QueueFree();
 
     }
+
+    public int CompareTo(Note other)
+    {
+        if (other == null) return 1;
+        if (midi_note < other.midi_note) return -1;
+        if (midi_note > other.midi_note) return 1;
+
+        return 0;
+    }
+
 }
