@@ -81,25 +81,28 @@ public class Operator
             phase *= eg._detune;
             phase *= eg._freqMult;
 
-            output = oscillators.wave(phase, eg.waveform, eg.duty, eg.reflect);  //Get a waveform from the oscillator.
 
+            //Determine the EG position and attenuate.
+            double asdr = calc_eg(note);
 
             // Process feedback
             // TODO:  Oxe feedback is pre-envelope, just like this code.  DX is supposedly post-envelope. Check and determine if FB is more useful there.
             if (eg.feedback > 0)
             {
+                
                 var average = (old_sample[0] + old_sample[1]) * 0.5;
                 var scaled_fb = average / Math.Pow(2, 6.0f-eg.feedback);  //maybe use powfast if I can get it to support negative numbers
                 old_sample[1] = old_sample[0];
-                old_sample[0] = oscillators.wave(phase + scaled_fb, eg.waveform, eg.duty, eg.reflect);
+                old_sample[0] = oscillators.wave(phase + scaled_fb, eg.waveform, eg.duty, eg.reflect) * asdr;
 
                 output = old_sample[0];
+            
+            } else {
+                output = oscillators.wave(phase, eg.waveform, eg.duty, eg.reflect) * asdr;  //Get a waveform from the oscillator.
+
             }
 
 
-            //Determine the EG position and attenuate.
-            double asdr = calc_eg(note);
-            output *= asdr;
 
 
             output *= eg._totalLevel;  //Finally, Attenuate total level.

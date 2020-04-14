@@ -67,7 +67,7 @@ func _on_Timer_timeout():
 	blep = 0
 "
 
-[sub_resource type="GDScript" id=5]
+[sub_resource type="GDScript" id=4]
 script/source = "extends Label
 
 
@@ -75,8 +75,7 @@ func _physics_process(delta):
 		text = str($\"../Audio\".Polyphony())
 "
 
-[sub_resource type="Animation" id=4]
-resource_name = "New Anim"
+[sub_resource type="Animation" id=5]
 tracks/0/type = "value"
 tracks/0/path = NodePath("AnimationPlayer:process_priority")
 tracks/0/interp = 1
@@ -334,7 +333,7 @@ margin_top = -23.0
 margin_right = 769.0
 margin_bottom = -9.0
 text = "dfgrdfg"
-script = SubResource( 5 )
+script = SubResource( 4 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -388,7 +387,7 @@ __meta__ = {
 }
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-"anims/New Anim" = SubResource( 4 )
+"anims/New Anim" = SubResource( 5 )
 [connection signal="item_selected" from="TC/Waveform/Grid/Waveform" to="." method="_on_Waveform_item_selected"]
 [connection signal="item_selected" from="TC/Waveform/Grid/Waveform2" to="." method="_on_Waveform_item_selected" binds= [ true ]]
 [connection signal="changed" from="GraphEdit" to="." method="_on_GraphEdit_changed"]
