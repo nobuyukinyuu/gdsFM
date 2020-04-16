@@ -1,9 +1,23 @@
 using Godot;
 using System;
 
+//Envelope Generator.  Includes pitch, curve, ADSR, feedback, waveform, etc.
 public class Envelope : Node 
 {
+
+//This measurement was done against DX7 detune at A-4, where every 22 cycles the tone would change (-detune) samples at a recording rate of 44100hz.
+//See const definitions in Note.cs for more information about the extra-fine detune increment.
+    const Decimal DETUNE_440 = 2205M / 22M;
+    const Decimal DETUNE_MIN = (2198M / 22M) / DETUNE_440 ;  //Smallest detune multiplier, a fraction of 1.0
+    const Decimal DETUNE_MAX = (2212M / 22M) / DETUNE_440;   //Largest detune multiplier, a multiple of 1.0
+
+
     public Envelope()  //Default ctor.
+    {
+        recalc_adsr();
+    }
+
+    public override void _Ready()
     {
         recalc_adsr();
     }
@@ -22,7 +36,7 @@ public class Envelope : Node
 	double sl=100.0;                      //Sustain level
     double tl = 100;                     //Total level  (attenuation)
     double ks=0;						//Key scale
-	double mul=0.0;					//Frequency multiplier  //double between 0.5 and 15
+	double mul=1.0;					//Frequency multiplier  //double between 0.5 and 15
     double dt=0;                        //_detune
 
 
@@ -64,8 +78,8 @@ public class Envelope : Node
     public double _susTime = float.MaxValue/5;
     public double _releaseTime = 0.0; //Calculated from rr when set
     public double _susLevel = 1.0;
-    public double _totalLevel = 0.5;
-	public double _freqMult = 0.5;
+    public double _totalLevel = 1.0;
+	public double _freqMult = 1.0;
 	public double _detune = 1;
 	
     public double _egLength;  //total envelope length, in samples.  TODO:  Make ASDR true values int?
@@ -97,14 +111,19 @@ public class Envelope : Node
             output= GDSFmFuncs.EaseFast(_susLevel, 0, (s-_ad) / _susTime, sc);
         }
 
+        if(Double.IsNaN(output)) System.Diagnostics.Debugger.Break();
 
-        if (noteOff && (s-releaseSample) <= _releaseTime)  //Apply release envelope.
+        if (noteOff && (s-releaseSample) < _releaseTime)  //Apply release envelope.
         {
             output *= GDSFmFuncs.EaseFast(1.0, 0.0, (s-releaseSample) / _releaseTime, rc);
-        } else if (noteOff && (s-releaseSample) > _releaseTime) {
+        } else if (noteOff && (s-releaseSample) >= _releaseTime) {
             return 0;
         }
-   
+
+        #if DEBUG
+        if(Double.IsNaN(output)) System.Diagnostics.Debugger.Break();  //Stop. NaN propagation. This should never trigger but if it does prepare for pain
+        #endif
+
         return output;
     }
 
@@ -183,7 +202,22 @@ public class Envelope : Node
     }
 	void set_detune(double val){
 		dt = val;
-		_detune = 1.0f + (val / 10000.0f);
+		// _detune = 1.0f + (val / 10000.0f);  //approx max multiplier is 1.0 ± 0.01
+        switch (Math.Sign(val))
+        {
+            case 0:
+                _detune = 1.0;
+                break;
+
+            case 1:
+        		_detune = (double) GDSFmFuncs.lerp(1.0M, DETUNE_MAX, (Decimal) (val / 100.0)) ;
+                break;
+
+            case -1:
+        		_detune = (double) GDSFmFuncs.lerp(1.0M, DETUNE_MIN, (Decimal) (-val / 100.0)) ;
+                break;
+        }
+
     }
 
 //Gets the sample rate from the global singleton

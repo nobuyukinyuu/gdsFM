@@ -5,6 +5,8 @@ export (Vector2) var noteOffset = Vector2.ZERO
 export (Vector2) var note2Offset = Vector2.ZERO
 const offsets=[-2,-2,-1,-1,0,0,-1,-2,-2,-3,-3,-4]  #12-TET grid offsets
 
+export (bool) var reverse
+
 var textureFlip:Texture
 
 var curve = Curve2D.new()
@@ -39,8 +41,16 @@ func resize_curve():
 	var sz = texture.get_size()
 	var j = Vector2.ZERO
 	var h = Vector2(-sz.x/2.0, sz.y / 2.0)
-	curve.add_point(noteOffset-h, Vector2.ZERO,Vector2(0,1)*rect_size +j)
-	curve.add_point(Vector2.ONE*rect_size - note2Offset+h, Vector2(0,-1)*rect_size -j,Vector2.ZERO)
+
+	if !reverse:
+		curve.add_point(noteOffset-h, Vector2.ZERO,Vector2(0,1)*rect_size +h)
+		curve.add_point(Vector2.ONE*rect_size + note2Offset+h, 
+						Vector2(0,-1)*rect_size -h,Vector2.ZERO)
+	else:
+		h.x *= -1
+		curve.add_point(Vector2(rect_size.x, 0) + noteOffset-h, Vector2.ZERO,Vector2(0,1)*rect_size +h)
+		curve.add_point(Vector2(0, rect_size.y) + note2Offset+h, 
+						Vector2(0,-1)*rect_size -h,Vector2.ZERO)
 
 
 func _draw():
@@ -55,6 +65,7 @@ func _draw():
 
 
 	$Line2D.texture = textureFlip if rect_size.y < 5 else texture
+	$Line2D.texture = texture
 	$Line2D.points = curve.get_baked_points()
 	
 

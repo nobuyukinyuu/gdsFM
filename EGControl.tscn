@@ -181,6 +181,7 @@ margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 step = 0.1
+exp_edit = true
 tick_count = 11
 ticks_on_borders = true
 
@@ -214,6 +215,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 step = 0.1
 value = 50.0
+exp_edit = true
 tick_count = 11
 ticks_on_borders = true
 
@@ -310,7 +312,8 @@ margin_right = 48.0
 margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-min_value = -100.0
+min_value = -200.0
+max_value = 200.0
 tick_count = 21
 ticks_on_borders = true
 script = SubResource( 1 )

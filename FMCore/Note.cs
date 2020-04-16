@@ -20,6 +20,18 @@ public class Note : Node, IComparable<Note>
     //Set by the mixer handling the channel.  Mixer finds the patch being used for this Note, gets total release time, and patch determines when to release from channel.
     public double ttl = float.MaxValue / 4.0;  
 
+//Each increment of detune is 1/8 the ratio between a period of 2205/22 at 44100hz sample rate (440hz tone) and 2197/22 (about 441.6hz).
+//This measurement was done against DX7 detune at A-4, where every 22 cycles the tone would change (-detune) samples.
+    const Decimal DETUNE_HZ_INCREMENT = 1.60218479745106964041875284479M / 8M;  
+    const Decimal DETUNE_HZ_DENCREMENT = 1M / 1.60218479745106964041875284479M / 8M;  //Each decrement of detune is 1/8 the ratio between periods of 2205/22 and 2213/22.
+
+
+    double[] old_sample = {0f,0f};  //held values for feedback processing.  Move to EG?
+
+// Feedback relies on averaging the last 2 samples in an operator. To support polyphony, each note should store its own feedback history per-operator.
+// When/if more/less operators are supported per patch, Note may need to examine patch on init to determine capacity. 
+// If Patches are eventually linked to Notes, requesting samples can be moved here from AudioOutput and the Channel can request samples more directly.
+    public List<Double[]> feedbackHistory = new List<Double[]>{new double[]{0.0, 0.0}, new double[]{0.0, 0.0},new double[]{0.0, 0.0},new double[]{0.0, 0.0}, };
 
 //The owner of the Note.  This could be a channel for arbitrary-n notes, or a channel which needs temporary polyphony.
     public Channel _channel; 

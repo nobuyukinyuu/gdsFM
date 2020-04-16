@@ -6,6 +6,7 @@ using System;
 public class Operator
 {
     public String name;
+    public int id=0;  //Operator number, used to reference itself in ordered datasets specific to operators, like Note.feedback_history
     Operator[] connections = new Operator[0];
     public Operator[] Connections { get => connections; set => connections = value; }
     bool bypass = false;
@@ -18,12 +19,14 @@ public class Operator
 
     public Envelope EG { get => eg; set => eg = value; }
 
-    double[] old_sample = {0f,0f};  //held values for feedback processing.  Move to EG?
+    // double[] old_sample = {0f,0f};  //held values for feedback processing.  Move to EG?
 
     //Ctor to give me a name
     public Operator(string name)
     {
         this.name = name;
+        //TODO: Proper ID check. Right now we just assume operators are named "OP1" etc based on OP number.
+        this.id = Int32.Parse(name.Substring(2)) -1;  
         eg = new Envelope(name);
     }
 
@@ -45,7 +48,7 @@ public class Operator
         
         double modulator = 0.0f;
 
-        if (connections.Length > 0)  // We're a Modulator.
+        if (connections.Length > 0)  //Not a terminus.  Probably a modulator.
         {	
             
             // First, mix the parallel modulators.
@@ -75,7 +78,7 @@ public class Operator
             output *= eg._totalLevel;  //Finally, Attenuate total level.
             
             
-        } else {  // Terminus.  No further modulation required.  This is a carrier.
+        } else {  // Terminus.  No further modulation required. 
 
             if (bypass)  return 0.0;
             phase *= eg._detune;
@@ -86,24 +89,20 @@ public class Operator
             double asdr = calc_eg(note);
 
             // Process feedback
-            // TODO:  Oxe feedback is pre-envelope, just like this code.  DX is supposedly post-envelope. Check and determine if FB is more useful there.
             if (eg.feedback > 0)
             {
                 
-                var average = (old_sample[0] + old_sample[1]) * 0.5;
+                var average = (note.feedbackHistory[id][0] + note.feedbackHistory[id][1]) * 0.5;
                 var scaled_fb = average / Math.Pow(2, 6.0f-eg.feedback);  //maybe use powfast if I can get it to support negative numbers
-                old_sample[1] = old_sample[0];
-                old_sample[0] = oscillators.wave(phase + scaled_fb, eg.waveform, eg.duty, eg.reflect) * asdr;
+                note.feedbackHistory[id][1] = note.feedbackHistory[id][0]; 
+                note.feedbackHistory[id][0] = oscillators.wave(phase + scaled_fb, eg.waveform, eg.duty, eg.reflect) * asdr;
 
-                output = old_sample[0];
-            
+                output = note.feedbackHistory[id][0];
+
             } else {
                 output = oscillators.wave(phase, eg.waveform, eg.duty, eg.reflect) * asdr;  //Get a waveform from the oscillator.
 
             }
-
-
-
 
             output *= eg._totalLevel;  //Finally, Attenuate total level.
         }

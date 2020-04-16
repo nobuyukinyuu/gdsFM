@@ -6,6 +6,7 @@ using System;
 //"Glue" class used for interacting with GDScript code only
 public class Glue : Node
 {
+
     public static double PowFast(double a, double b) {
         return GDSFmFuncs.PowFast(a,b);
     }
@@ -109,6 +110,14 @@ public static class GDSFmFuncs
             return r * BitConverter.Int64BitsToDouble(tmp2);
     }
 
+    public static double lerp(double value1, double value2, double amount)
+    {
+        return value1 + (value2 - value1) * amount;
+    }
+    public static Decimal lerp(Decimal value1, Decimal value2, Decimal amount)
+    {
+        return value1 + (value2 - value1) * amount;
+    }
 }
 
 
