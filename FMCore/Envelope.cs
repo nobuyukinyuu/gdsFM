@@ -54,7 +54,7 @@ public class Envelope : Node
     public double ac = -2.0;  //Attack curve.  In-out.
     public double dc = 0.75;  //Decay curve.  50% Linear, 50% Ease-out.
     public double sc = 0.8;  //Sustain curve.  80% Linear, 20% Ease-out.
-    public double rc = 0.5;  //Release curve.  Ease-out.
+    public double rc = 0.25;  //Release curve.  Ease-out.
 
 
 

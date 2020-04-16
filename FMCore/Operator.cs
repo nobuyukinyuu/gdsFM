@@ -62,12 +62,19 @@ public class Operator
             if (bypass)  return modulator;
             
             // Now modulate.
-            phase += modulator;
+            //Modulate the phase according to the phase technique. In most FM engines this technique is always a sine wave.
+            phase += (oscillators.wave(modulator, eg.fmTechnique,eg.duty)+0)/1.0;
             phase *= eg._detune;
             phase *= eg._freqMult;  
+
+
+            // Why the heck did we add 1 to the phase and divide it by 2 anyway?  Must've been a hack fix....
             // phase = (oscillators.sint2(phase) + 1.0f) / 2.0f;  //TODO:  Seperate field for modulation waveform.  Cool new sounds!
-            phase = (oscillators.wave(phase, eg.fmTechnique, eg.duty) + 1.0f) / 2.0f;  
+
+            //Previous technique, which didn't work right with bypass because it was applied in addition to modulation
+            // phase = (oscillators.wave(phase, eg.fmTechnique, eg.duty) + 0.0f) / 1.0f;  
             
+
             output = oscillators.wave(phase, eg.waveform, eg.duty, eg.reflect);  //Get a waveform from the oscillator.
 
 
