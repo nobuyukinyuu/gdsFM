@@ -10,6 +10,7 @@ func load_settings(envelope):
 	$FB.value = envelope.feedback
 	$DutyCycle.value = envelope.duty
 	$chkReflect.pressed = envelope.reflect
+	$chkUseDuty.pressed = envelope.use_duty
 
 
 # Feedback
@@ -28,3 +29,8 @@ func _on_DutyCycle_value_changed(value):
 func _on_chkReflect_toggled(button_pressed):
 	if currentEG:
 		currentEG.reflect = button_pressed
+
+
+func _on_chkUseDuty_toggled(button_pressed):
+	if currentEG:
+		currentEG.UseDuty = button_pressed

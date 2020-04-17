@@ -73,18 +73,24 @@ margin_bottom = 98.0
 margin_top = 106.0
 margin_right = 1024.0
 margin_bottom = 146.0
-text = "Reflect waveform"
+text = "Reflect Waveform"
 
-[node name="LineSep3" type="Panel" parent="."]
+[node name="chkUseDuty" type="CheckButton" parent="."]
 margin_top = 154.0
 margin_right = 1024.0
-margin_bottom = 155.0
+margin_bottom = 194.0
+text = "Use Duty Cycle (Higher CPU)"
+
+[node name="LineSep3" type="Panel" parent="."]
+margin_top = 202.0
+margin_right = 1024.0
+margin_bottom = 203.0
 rect_min_size = Vector2( 0, 1 )
 
 [node name="OscBank" type="HBoxContainer" parent="."]
-margin_top = 163.0
+margin_top = 211.0
 margin_right = 1024.0
-margin_bottom = 187.0
+margin_bottom = 235.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -102,28 +108,7 @@ margin_right = 1024.0
 margin_bottom = 24.0
 align = 2
 editable = false
-
-[node name="ModBank" type="HBoxContainer" parent="."]
-margin_top = 195.0
-margin_right = 1024.0
-margin_bottom = 219.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Label" type="Label" parent="ModBank"]
-margin_top = 5.0
-margin_right = 946.0
-margin_bottom = 19.0
-size_flags_horizontal = 3
-text = " Custom Phase Modulation Technique #  "
-
-[node name="SpinBox" type="SpinBox" parent="ModBank"]
-margin_left = 950.0
-margin_right = 1024.0
-margin_bottom = 24.0
-align = 2
-editable = false
 [connection signal="value_changed" from="FB" to="." method="_on_FB_value_changed"]
 [connection signal="value_changed" from="DutyCycle" to="." method="_on_DutyCycle_value_changed"]
 [connection signal="toggled" from="chkReflect" to="." method="_on_chkReflect_toggled"]
+[connection signal="toggled" from="chkUseDuty" to="." method="_on_chkUseDuty_toggled"]

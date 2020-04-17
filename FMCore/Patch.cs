@@ -148,9 +148,10 @@ public class Patch : Resource
 
 
         // Shitty average based mixing of total notes being played again.  Count is an O(1) operation. 
-        output /= 2.5;  //TODO:  Maybe don't do this?  Figure out what the velocity is like normally, maybe scale down a tiny bit instead.
+        output /= 2;  //TODO:  Maybe don't do this?  Figure out what the velocity is like normally, maybe scale down a tiny bit instead.
         return output;
     }
+
     // For speaker output.  Requests samples from the set of operators currently connected to the Patch.
     public double mix(Note note){
         if (note==null) return 0.0;

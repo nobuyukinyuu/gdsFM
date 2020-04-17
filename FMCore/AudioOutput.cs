@@ -72,6 +72,9 @@ public Channel PreviewNotes = new Channel();
         buf.PushBuffer(bufferdata); 
     }
 
+
+
+
     //TODO:  MOVE ME TO A DISCRETE MIXER OR SOMETHING?
     //      This function clobbers existing operator envelope settings!  Maybe we should have
     //      a version of Patch which will always contain valid Operators and only replace their

@@ -1,7 +1,7 @@
 // Helper classes and other C# to GDScript glue go here
 using Godot;
 using System;
-
+using System.Runtime.CompilerServices;
 
 //"Glue" class used for interacting with GDScript code only
 public class Glue : Node
@@ -86,7 +86,7 @@ public static class GDSFmFuncs
 // https://www.reddit.com/r/gamedev/comments/n7na0/fast_approximation_to_mathpow/
 // ONLY WORKS FOR POSITIVE NUMBERS
     public static double PowFast(double a, double b) {
-            System.Diagnostics.Debug.Assert(Math.Sign(b) >= 0);
+            // System.Diagnostics.Debug.Assert(Math.Sign(b) >= 0);
 
             // exponentiation by squaring
             double r = 1.0;
@@ -110,10 +110,13 @@ public static class GDSFmFuncs
             return r * BitConverter.Int64BitsToDouble(tmp2);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double lerp(double value1, double value2, double amount)
     {
         return value1 + (value2 - value1) * amount;
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Decimal lerp(Decimal value1, Decimal value2, Decimal amount)
     {
         return value1 + (value2 - value1) * amount;

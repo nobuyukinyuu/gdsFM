@@ -9,7 +9,7 @@ var samples = 0  #Global oscillator timer.  Iterated every time an output sample
 # https://www.inspiredacoustics.com/en/MIDI_note_numbers_and_center_frequencies
 var periods = []  #Size 128 +1
 const NOTE_A4 = 69   # Nice.
-
+const USE_DUTY = 0x100  #Use duty flag.  Pass with waveform to the oscillator.
 
 # The 8 magical algorithms shared by all 4-op FM synthesizers.
 const algorithms = [

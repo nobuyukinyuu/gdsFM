@@ -3,7 +3,9 @@ using System;
 
 using System.Runtime.CompilerServices;
 
-public enum Waveforms {SINE, SAW, TRI, PULSE, ABSINE, WHITE, PINK, BROWN};
+[Flags]
+public enum Waveforms {SINE, SAW, TRI, PULSE, ABSINE, WHITE, PINK, BROWN, 
+					   USE_DUTY=0x100, DUTY_SINE=SINE|USE_DUTY, };
 
 public class oscillators : Node
 {
@@ -53,18 +55,22 @@ public class oscillators : Node
 	}
 
 
-	public static double wave(double n, Waveforms waveform = Waveforms.SINE, double duty = 0.5f, bool reflect=false){
+	public static double wave(double n, Waveforms waveform = Waveforms.SINE, double duty = 0.5, bool reflect=false){
 		n %= 1.0;
 
 		double sReflect = reflect? -1 : 1;
 
 		switch(waveform){
 			case Waveforms.PULSE:
+				// if (duty%1.0 == 0) duty = 0.5;  //Prevents silence from full duty wave cycles and allows sane duty defaults for other waveforms
 				if ((n >= duty) ^ reflect) return 1f;
 				return -1f;
 
 			case Waveforms.SINE:
 				return sint2(n)  * sReflect;
+
+			case Waveforms.SINE|Waveforms.USE_DUTY:
+				return n>=duty ? 0.0 : sint2(n*1.0/(duty+Double.Epsilon)) * sReflect;
 
 			case Waveforms.ABSINE:
 				return Math.Abs(sint2(n)) * sReflect;
@@ -73,25 +79,28 @@ public class oscillators : Node
 				return TRITABLE[(int)(Math.Abs(n)*20)] * sReflect;
 
 			case Waveforms.SAW:
+				return (1.0 - (n * 2.0)) * sReflect; 
+
+			case Waveforms.SAW|Waveforms.USE_DUTY:
 				// return (1.0f - (n * 2.0f)) * sReflect; 
 				// return (1.0 - (Math.Min((n/duty), 1.0) * 2.0 * duty)) * sReflect; 
 				duty += Single.Epsilon;
-				duty *= 2.0;
+				// duty *= 2.0;   //Used when duty needs to be in the 0-0.5 range due to a 0.5 default
 				return 1.0 - Math.Max(n + duty - 1.0, 0.0) * (1.0/duty) * 2 * sReflect;
 
 			case Waveforms.PINK:
 				return pinkr.GetNextValue();
 
 			case Waveforms.BROWN:
-				lastr += (double)random.NextDouble() * 0.2f - 0.1f;
+				lastr += (double)random.NextDouble() * 0.2 - 0.1;
 				lastr *= 0.99f;
 				return lastr;
 
 			case Waveforms.WHITE:
-				return (double)random.NextDouble() * 2.0f - 1.0f;
+				return (double)random.NextDouble() * 2.0 - 1.0;
 
 			default:
-				return 0f;
+				return 0;  //FIXME:  REROUTE CASES FOR FUNCTIONS NOT SUPPORTING DUTY CYCLE OR ELSE THIS WILL OCCUR
 		}
 
 	}
@@ -136,7 +145,7 @@ public
 	 white_values[i] = rand.Next() % (range/5);
    sum += white_values[i];
  }
-	  return sum / 64.0f-1.0f;
+	  return sum / 64.0-1.0;
 	}
 };
 

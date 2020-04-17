@@ -41,20 +41,28 @@ public class Operator
     public double request_sample(double phase, Note note)
     {
         
-        double output = 0.0f;
-        
-        // TODO:  Don't sin-modulate phase at first, add phases together for each
-        //		  Parallel modulator, THEN call modulate on sample before passing back.
-        
-        double modulator = 0.0f;
+        double output = 0.0;        
+        double modulator = 0.0;
 
-        if (connections.Length > 0)  //Not a terminus.  Probably a modulator.
+        double adsr = calc_eg(note);  //Get the adsr envelope from the EG to use later.
+        if (Math.Abs(adsr) < 0.0005) 
+            {return 0;}  //Exit early for quiet samples to save CPU.
+
+
+        if (bypass && connections.Length ==0){
+            return 0.0;
+        } else if (connections.Length > 0)  //Not a terminus.  Probably a modulator.
         {	
             
             // First, mix the parallel modulators.
 
-            foreach (Operator o in connections){
-                modulator += o.request_sample(phase, note);
+            // foreach (Operator o in connections){
+            //     modulator += o.request_sample(phase, note);
+            // }
+
+            for (var i=0; i < connections.Length; i++)
+            {
+                modulator += connections[i].request_sample(phase,note);
             }
 
             modulator /= connections.Length;  //mix down to 0.0-1.0f
@@ -63,7 +71,7 @@ public class Operator
             
             // Now modulate.
             //Modulate the phase according to the phase technique. In most FM engines this technique is always a sine wave.
-            phase += (oscillators.wave(modulator, eg.fmTechnique,eg.duty)+0)/1.0;
+            phase += (oscillators.wave(modulator, eg.fmTechnique, eg.techDuty));
             phase *= eg._detune;
             phase *= eg._freqMult;  
 
@@ -75,25 +83,19 @@ public class Operator
             // phase = (oscillators.wave(phase, eg.fmTechnique, eg.duty) + 0.0f) / 1.0f;  
             
 
-            output = oscillators.wave(phase, eg.waveform, eg.duty, eg.reflect);  //Get a waveform from the oscillator.
+            output = oscillators.wave(phase, eg.waveform | eg._use_duty, eg.duty, eg.reflect);  //Get a waveform from the oscillator.
 
 
             //Determine the EG position and attenuate.
-            output *= calc_eg(note);
+            output *= adsr;
 
 
             output *= eg._totalLevel;  //Finally, Attenuate total level.
             
             
         } else {  // Terminus.  No further modulation required. 
-
-            if (bypass)  return 0.0;
             phase *= eg._detune;
             phase *= eg._freqMult;
-
-
-            //Determine the EG position and attenuate.
-            double asdr = calc_eg(note);
 
             // Process feedback
             if (eg.feedback > 0)
@@ -102,12 +104,12 @@ public class Operator
                 var average = (note.feedbackHistory[id][0] + note.feedbackHistory[id][1]) * 0.5;
                 var scaled_fb = average / Math.Pow(2, 6.0f-eg.feedback);  //maybe use powfast if I can get it to support negative numbers
                 note.feedbackHistory[id][1] = note.feedbackHistory[id][0]; 
-                note.feedbackHistory[id][0] = oscillators.wave(phase + scaled_fb, eg.waveform, eg.duty, eg.reflect) * asdr;
+                note.feedbackHistory[id][0] = oscillators.wave(phase + scaled_fb, eg.waveform, eg.duty, eg.reflect) * adsr;
 
                 output = note.feedbackHistory[id][0];
 
             } else {
-                output = oscillators.wave(phase, eg.waveform, eg.duty, eg.reflect) * asdr;  //Get a waveform from the oscillator.
+                output = oscillators.wave(phase, eg.waveform|eg._use_duty, eg.duty, eg.reflect) * adsr;  //Get a waveform from the oscillator.
 
             }
 

@@ -42,13 +42,19 @@ public class Envelope : Node
 
     //CUSTOM STUFF
 	public Waveforms waveform = Waveforms.SINE;
-	public double feedback = 0f;  //Operator feedback only used in carriers
-	public double duty = 0.5f;  //Duty cycle is only used for pulse right now
+	public double feedback = 0;  //Operator feedback only used in op chain termini.
     public bool reflect = false;  //Waveform reflection.  Inverts sine phase, makes sawtooth point to the right, etc.
 
+	public double duty = 0.5;  //Duty cycle is only used for pulse right now
+    public Waveforms _use_duty = 0;  //Set to Waveforms.USE_DUTY (0x100) to use duty cycle variants of functions
+    //Property accessor for GDScript that flips the internal duty flag to the proper native bitmask.
+    public bool UseDuty { get => _use_duty==Waveforms.USE_DUTY; set => _use_duty=value? Waveforms.USE_DUTY : Waveforms.SINE;}
+
+
     public Waveforms fmTechnique = Waveforms.SINE;  //FM Technique used to modulate phase when requesting a sample up the chain.
-    public double techDuty = 0.5f;  //Duty cycle for the fmTechnique    
+    public double techDuty = 0.5;  //Duty cycle for the fmTechnique.  Currently UNUSED (no use_tech_duty bit set) to save CPU. 
     public bool techReflect = false;  //Waveform reflection for the fmTechnique
+
 
     //ADSR easing curve values.
     public double ac = -2.0;  //Attack curve.  In-out.
@@ -68,8 +74,6 @@ public class Envelope : Node
     public double Ks { get => ks; set => ks = value; }
     public double Mul { get => mul;  set => _set_frequency_multiplier(value); }
     public double Dt { get => dt; set => set_detune(value); }
-
-
 
     // True, internal values referenced by the operator to reduce re-calculating
     // these values when the above EG slider value changes.
