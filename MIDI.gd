@@ -1,6 +1,8 @@
 extends Node
 #onready var note = owner.get_node("Audio/PreviewNote")
 
+signal NoteOff
+
 func _ready():
 	OS.open_midi_inputs()
 	
@@ -20,3 +22,4 @@ func _input(event):
 
 			MIDI_MESSAGE_NOTE_OFF:
 				$"../Audio".TurnOffNote(event.pitch)
+				emit_signal("NoteOff", event.pitch)
