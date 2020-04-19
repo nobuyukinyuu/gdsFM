@@ -4,8 +4,7 @@ using System;
 using System.Runtime.CompilerServices;
 
 [Flags]
-public enum Waveforms {SINE, SAW, TRI, PULSE, ABSINE, WHITE, PINK, BROWN, 
-					   USE_DUTY=0x100, DUTY_SINE=SINE|USE_DUTY, };
+public enum Waveforms {SINE, SAW, TRI, PULSE, ABSINE, WHITE, PINK, BROWN, USE_DUTY=0x100};
 
 public class oscillators : Node
 {
@@ -62,6 +61,7 @@ public class oscillators : Node
 
 		switch(waveform){
 			case Waveforms.PULSE:
+			case Waveforms.PULSE | Waveforms.USE_DUTY:
 				// if (duty%1.0 == 0) duty = 0.5;  //Prevents silence from full duty wave cycles and allows sane duty defaults for other waveforms
 				if ((n >= duty) ^ reflect) return 1f;
 				return -1f;

@@ -10,7 +10,7 @@ func load_settings(envelope):
 	$FB.value = envelope.feedback
 	$DutyCycle.value = envelope.duty
 	$chkReflect.pressed = envelope.reflect
-	$chkUseDuty.pressed = envelope.use_duty
+	$chkUseDuty.pressed = envelope.UseDuty
 
 
 # Feedback

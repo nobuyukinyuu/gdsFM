@@ -17,6 +17,7 @@ public class Channel : List<Note>
         return Find((Note x) => (x.midi_note == n) && (x.pressed==true) && (x.releaseSample==0));
     }
 
+    //Deals with the channel exceeding its polyphony limit.
     public void CheckPolyphony()
     {
         while (this.Count > maxPolyphony)

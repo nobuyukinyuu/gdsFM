@@ -137,4 +137,16 @@ const int NOTE_A4 = 69;   // Nice.
         return 0;
     }
 
+
+    //When this note receives a NoteOff event, it's sent release time from a Patch. MIDI preview handler can do this, or (later) patterns with patch data.
+    public void _on_ReleaseNote(int pitch, double releaseTime)
+    {
+        if (midi_note == pitch && pressed)
+        {
+            releaseSample = samples;
+            pressed = false;
+            ttl = releaseTime;      
+        }
+    }
+
 }

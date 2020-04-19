@@ -118,16 +118,22 @@ public Channel PreviewNotes = new Channel();
     }
 
     //Adds a note of the specific MIDI key to the preview notes.
-    public void AddNote(Note note)
-    {
-            note._channel = PreviewNotes;
-            PreviewNotes.Add(note);
-    }
-
-    public void AddNote(int note_number, int velocity)
+    public Note AddNote(int note_number, int velocity)
     {
         Note note = new Note(note_number, velocity);
-        AddNote(note);
+        note._channel = PreviewNotes;
+        PreviewNotes.Add(note);
+        return note;
+    
+    }
+
+    //Adds a note for a specific MIDI key, and attaches NoteOff signal from the specified handler. If we have no patch, note won't be added.
+    public bool AddNote(int note_number, int velocity, Node handler)
+    {
+        if (patch==null) return false;
+        var note = AddNote(note_number, velocity);
+        AttachNoteToSignal(note, handler);
+        return true;
     }
 
     public void TurnOffNote(int note_number)
@@ -144,6 +150,14 @@ public Channel PreviewNotes = new Channel();
         } else {  // Patch is okay.  Set the TTL to prepare the note to be killed off by the Patch when sent the Channel contents.
             note.ttl = patch.GetReleaseTime();
         }
+    }
 
+    //Signals for note off events are emitted by the MIDI event handler, which notes can use to start the release process without having to find them in the channel.
+    //Might be possible to do this in the note, but TTL can't be determined without a Patch to calculate the release envelope.
+    public void AttachNoteToSignal(Note note, Node signalSource)
+    {
+        //TODO:  Test when the release time calculation is bound to the Note.  Probably on NoteOff....
+        signalSource.Connect("NoteOff", note as Note, "_on_ReleaseNote", new Godot.Collections.Array(){patch.GetReleaseTime()} );
+        //Other event signals here, as necessary.
     }
 }

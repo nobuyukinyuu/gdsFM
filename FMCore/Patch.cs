@@ -106,6 +106,8 @@ public class Patch : Resource
 
     public double GetReleaseTime() //Total max release time of all operators in the patch, measured in samples.
     {
+        //FIXME:   get better release time envelope, instead of Max of all release envelopes, it should follow operator precedence up the chain recursively and only max parallel samples connected to output 
+        //          ie, if an eg.release further down the chain has a shorter release envelope, step into the next op in the chain, otherwise, return the current release
         double time = 0;
         foreach (String op in operators.Keys)
         {
