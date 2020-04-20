@@ -104,7 +104,7 @@ public class Operator
                 var average = (note.feedbackHistory[id][0] + note.feedbackHistory[id][1]) * 0.5;
                 var scaled_fb = average / Math.Pow(2, 6.0f-eg.feedback);  //maybe use powfast if I can get it to support negative numbers
                 note.feedbackHistory[id][1] = note.feedbackHistory[id][0]; 
-                note.feedbackHistory[id][0] = oscillators.wave(phase + scaled_fb, eg.waveform, eg.duty, eg.reflect) * adsr;
+                note.feedbackHistory[id][0] = oscillators.wave(phase + scaled_fb, eg.waveform | eg._use_duty, eg.duty, eg.reflect) * adsr;
 
                 output = note.feedbackHistory[id][0];
 

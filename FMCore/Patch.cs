@@ -104,17 +104,20 @@ public class Patch : Resource
         return op?.EG;
     }
 
-    public double GetReleaseTime() //Total max release time of all operators in the patch, measured in samples.
+    //Total max release time of all operators in the patch, measured in samples.
+    // public double GetReleaseTime(Operator[] connections, double lastReleaseTime=float.MaxValue) 
+    public double GetReleaseTime() 
     {
-        //FIXME:   get better release time envelope, instead of Max of all release envelopes, it should follow operator precedence up the chain recursively and only max parallel samples connected to output 
-        //          ie, if an eg.release further down the chain has a shorter release envelope, step into the next op in the chain, otherwise, return the current release
-        double time = 0;
-        foreach (String op in operators.Keys)
+        //Get the Max release time of all parallel operators connected to the current patch output/operator.
+        double parallel_time = 0;  
+        foreach (Operator op in connections)
         {
-            var envelope = GetEG(op);
-            time = Math.Max(time, envelope._releaseTime);            
+            //Recursively compare release times.
+            var envelope = op.EG;
+            parallel_time = Math.Max(parallel_time, envelope._releaseTime);            
         }
-        return time;
+
+        return parallel_time;
     }
 
     public void ResetConnections(){

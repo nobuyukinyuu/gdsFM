@@ -74,6 +74,8 @@ public class oscillators : Node
 
 			case Waveforms.ABSINE:
 				return Math.Abs(sint2(n)) * sReflect;
+			case Waveforms.ABSINE|Waveforms.USE_DUTY:
+				return n >= duty? 0.0:  Math.Abs(sint2(n*1.0/(duty+Double.Epsilon))) * sReflect;
 
 			case Waveforms.TRI:
 				return TRITABLE[(int)(Math.Abs(n)*20)] * sReflect;
@@ -90,14 +92,26 @@ public class oscillators : Node
 
 			case Waveforms.PINK:
 				return pinkr.GetNextValue();
+			case Waveforms.PINK|Waveforms.USE_DUTY:
+				return n<duty?  pinkr.GetNextValue() : 0.0;
 
 			case Waveforms.BROWN:
 				lastr += (double)random.NextDouble() * 0.2 - 0.1;
 				lastr *= 0.99f;
 				return lastr;
+			case Waveforms.BROWN|Waveforms.USE_DUTY:
+				if (n < duty) {
+					lastr += (double)random.NextDouble() * 0.2 - 0.1;
+					lastr *= 0.99f;
+					return lastr;					
+				} else {
+					return 0.0;
+				}
 
 			case Waveforms.WHITE:
 				return (double)random.NextDouble() * 2.0 - 1.0;
+			case Waveforms.WHITE|Waveforms.USE_DUTY:
+				return n<duty? (double)random.NextDouble() * 2.0 - 1.0 : 0.0;
 
 			default:
 				return 0;  //FIXME:  REROUTE CASES FOR FUNCTIONS NOT SUPPORTING DUTY CYCLE OR ELSE THIS WILL OCCUR
