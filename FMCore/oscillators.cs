@@ -13,7 +13,11 @@ public class oscillators : Node
 
 	static double[] sintable;
 
-	
+
+	//Used for periodic noise
+	static byte[] noise_counter = new byte[128];
+	static double[] lastNoiseValue = new double[128];
+
 	static PinkNumber pinkr = new PinkNumber() ; 
 	static double lastr = 0.0f;
 
@@ -54,7 +58,7 @@ public class oscillators : Node
 	}
 
 
-	public static double wave(double n, Waveforms waveform = Waveforms.SINE, double duty = 0.5, bool reflect=false){
+	public static double wave(double n, Waveforms waveform = Waveforms.SINE, double duty = 0.5, bool reflect=false, int auxData=0){
 		n %= 1.0;
 
 		double sReflect = reflect? -1 : 1;
@@ -96,12 +100,12 @@ public class oscillators : Node
 				return n<duty?  pinkr.GetNextValue() : 0.0;
 
 			case Waveforms.BROWN:
-				lastr += (double)random.NextDouble() * 0.2 - 0.1;
+				lastr += random.NextDouble() * 0.2 - 0.1;
 				lastr *= 0.99f;
 				return lastr;
 			case Waveforms.BROWN|Waveforms.USE_DUTY:
 				if (n < duty) {
-					lastr += (double)random.NextDouble() * 0.2 - 0.1;
+					lastr += random.NextDouble() * 0.2 - 0.1;
 					lastr *= 0.99f;
 					return lastr;					
 				} else {
@@ -109,9 +113,19 @@ public class oscillators : Node
 				}
 
 			case Waveforms.WHITE:
-				return (double)random.NextDouble() * 2.0 - 1.0;
+				// return (double)random.NextDouble() * 2.0 - 1.0;
+				noise_counter[auxData] += 0b1;
+				noise_counter[auxData] %= Convert.ToByte(auxData);
+
+				if (noise_counter[auxData]==0) lastNoiseValue[auxData]=random.NextDouble() * 2.0 - 1.0;
+				return lastNoiseValue[auxData];
+
 			case Waveforms.WHITE|Waveforms.USE_DUTY:
-				return n<duty? (double)random.NextDouble() * 2.0 - 1.0 : 0.0;
+				noise_counter[auxData] += 0b1;
+				noise_counter[auxData] %= Convert.ToByte(auxData);
+
+				if (noise_counter[auxData]==0) lastNoiseValue[auxData]=random.NextDouble() * 2.0 - 1.0;
+				return n<duty? lastNoiseValue[auxData] : 0.0;
 
 			default:
 				return 0;  //FIXME:  REROUTE CASES FOR FUNCTIONS NOT SUPPORTING DUTY CYCLE OR ELSE THIS WILL OCCUR

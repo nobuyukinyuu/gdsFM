@@ -8,9 +8,20 @@
 
 config_version=4
 
-_global_script_classes=[  ]
+_global_script_classes=[ {
+"base": "Control",
+"class": "PatternNote",
+"language": "GDScript",
+"path": "res://sys/ui/PatternNote.gd"
+}, {
+"base": "Control",
+"class": "PatternNotePorta",
+"language": "GDScript",
+"path": "res://sys/ui/PatternNotePorta.gd"
+} ]
 _global_script_class_icons={
-
+"PatternNote": "res://gfx/ui/icon_note.svg",
+"PatternNotePorta": "res://gfx/ui/icon_edit_bezier.svg"
 }
 
 [application]

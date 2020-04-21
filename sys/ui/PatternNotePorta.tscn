@@ -1,0 +1,51 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://sys/ui/PatternNotePorta.gd" type="Script" id=1]
+[ext_resource path="res://sys/ui/PatternNote.tscn" type="PackedScene" id=2]
+[ext_resource path="res://gfx/ui/note_body.png" type="Texture" id=3]
+[ext_resource path="res://sys/ui/PatternNotePortaCurve.gd" type="Script" id=4]
+[ext_resource path="res://sys/ui/PatternNotePortaCurve.tscn" type="PackedScene" id=5]
+
+[node name="PatternNotePorta" type="Control"]
+margin_right = 40.0
+margin_bottom = 40.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Notes" type="Control" parent="."]
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Top" parent="Notes" instance=ExtResource( 2 )]
+
+[node name="Bottom" parent="Notes" instance=ExtResource( 2 )]
+margin_left = 24.0
+margin_top = 24.0
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="Curves" type="Control" parent="."]
+margin_right = 40.0
+margin_bottom = 40.0
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Curve" type="Control" parent="Curves" instance=ExtResource( 5 )]
+margin_top = 16.0
+margin_right = 40.0
+margin_bottom = 24.0
+rect_min_size = Vector2( 32, 1 )
+mouse_filter = 2
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+texture = ExtResource( 3 )
+[connection signal="resized" from="." to="." method="_on_PatternNotePorta_resized"]

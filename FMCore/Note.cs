@@ -41,7 +41,7 @@ public class Note : Node, IComparable<Note>
 
 // https://www.inspiredacoustics.com/en/MIDI_note_numbers_and_center_frequencies
 static double[] periods = {} ;  //Size 128 +1
-const int NOTE_A4 = 69;   // Nice.
+public const int NOTE_A4 = 69;   // Nice.
 
 
     //Constructors

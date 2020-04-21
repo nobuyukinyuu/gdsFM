@@ -55,11 +55,6 @@ public class Operator
         {	
             
             // First, mix the parallel modulators.
-
-            // foreach (Operator o in connections){
-            //     modulator += o.request_sample(phase, note);
-            // }
-
             for (var i=0; i < connections.Length; i++)
             {
                 modulator += connections[i].request_sample(phase,note);
@@ -83,7 +78,7 @@ public class Operator
             // phase = (oscillators.wave(phase, eg.fmTechnique, eg.duty) + 0.0f) / 1.0f;  
             
 
-            output = oscillators.wave(phase, eg.waveform | eg._use_duty, eg.duty, eg.reflect);  //Get a waveform from the oscillator.
+            output = oscillators.wave(phase, eg.waveform | eg._use_duty, eg.duty, eg.reflect, 120-note.midi_note);  //Get a waveform from the oscillator.
 
 
             //Determine the EG position and attenuate.
@@ -104,12 +99,12 @@ public class Operator
                 var average = (note.feedbackHistory[id][0] + note.feedbackHistory[id][1]) * 0.5;
                 var scaled_fb = average / Math.Pow(2, 6.0f-eg.feedback);  //maybe use powfast if I can get it to support negative numbers
                 note.feedbackHistory[id][1] = note.feedbackHistory[id][0]; 
-                note.feedbackHistory[id][0] = oscillators.wave(phase + scaled_fb, eg.waveform | eg._use_duty, eg.duty, eg.reflect) * adsr;
+                note.feedbackHistory[id][0] = oscillators.wave(phase + scaled_fb, eg.waveform | eg._use_duty, eg.duty, eg.reflect, 120-note.midi_note) * adsr;
 
                 output = note.feedbackHistory[id][0];
 
             } else {
-                output = oscillators.wave(phase, eg.waveform|eg._use_duty, eg.duty, eg.reflect) * adsr;  //Get a waveform from the oscillator.
+                output = oscillators.wave(phase, eg.waveform|eg._use_duty, eg.duty, eg.reflect, 120-note.midi_note) * adsr;  //Get a waveform from the oscillator.
 
             }
 
