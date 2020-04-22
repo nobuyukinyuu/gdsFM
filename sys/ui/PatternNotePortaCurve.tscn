@@ -12,19 +12,18 @@ colors = PoolColorArray( 1, 1, 1, 1, 0.627451, 0.627451, 0.627451, 1, 1, 1, 1, 1
 
 [node name="Curve" type="Control"]
 margin_top = 16.0
-margin_right = 40.0
+margin_right = 16.0
 margin_bottom = 24.0
-rect_min_size = Vector2( 32, 1 )
+rect_min_size = Vector2( 8, 1 )
 mouse_filter = 2
 script = ExtResource( 1 )
 __meta__ = {
-"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 texture = ExtResource( 2 )
 
 [node name="Line2D" type="Line2D" parent="."]
-points = PoolVector2Array( 8, -8, 7.04896, -3.09128, 10.2658, 0.737216, 14.893, 2.63005, 19.7164, 3.92909, 24.5495, 5.20223, 29.2257, 6.98266, 32.7804, 10.5016, 32.2505, 15.4722, 32, 16 )
+points = PoolVector2Array( 8, -8, 6.71089, -3.16763, 9.29076, 1.11359, 13.8072, 3.25176, 18.5391, 4.87348, 23.0112, 7.10719, 25.294, 11.5568, 24, 16 )
 width = 16.0
 width_curve = SubResource( 1 )
 default_color = Color( 1, 1, 1, 1 )

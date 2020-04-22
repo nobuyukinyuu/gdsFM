@@ -21,10 +21,11 @@ func _ready():
 	$Panel/Line2D.points = newpts
 
 	$TC/EGControl.disable(true)
-	$TC.set_tab_title(0, "Envelope")
+	$TC.set_tab_title(0, "EG")
 	$TC.set_tab_icon(0, preload("res://gfx/ui/icon_adsr.svg"))
-	$TC.set_tab_icon(1, preload("res://gfx/ui/icon_curve.svg"))
-	$TC.set_tab_icon(2, preload("res://gfx/ui/icon_waveform.svg"))
+	$TC.set_tab_icon(1, preload("res://gfx/ui/icon_tuning.svg"))
+	$TC.set_tab_icon(2, preload("res://gfx/ui/icon_curve.svg"))
+	$TC.set_tab_icon(3, preload("res://gfx/ui/icon_waveform.svg"))
 
 func _input(event):
 	#DEBUG:  reset EG
@@ -60,12 +61,12 @@ func _on_GraphEdit_node_selected(node):
 		var envelope = $Audio.patch.GetEG(node.name)
 		if !envelope:  return
 		$TC/EGControl.load_settings(envelope)
-		$TC/Waveform/Grid/Waveform.select(envelope.waveform)
-		$TC/Waveform/Grid/Waveform2.select(envelope.fmTechnique)
-	
-	
+		$TC/Tuning.load_settings(envelope)
 		$TC/Curve.load_settings(envelope)
 		$TC/Waveform/Options.load_settings(envelope)
+
+		$TC/Waveform/Grid/Waveform.select(envelope.waveform)
+		$TC/Waveform/Grid/Waveform2.select(envelope.fmTechnique)
 
 		$TC/EGControl.disable(false)
 #		$TC.enable

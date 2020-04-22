@@ -3,22 +3,27 @@ extends Control
 var currentEG  #:global.Instr  #Current instrument associated with the controls.
 
 
+
 func _ready():
+	
+	
 	for o in $H.get_children():
-		o.get_node("Slider").connect("value_changed", self, "_on_slider_change", [o.name])
+		if o.is_in_group("slider"):
+			o.get_node("Slider").connect("value_changed", self, "_on_slider_change", [o.name])
 		
 
 func load_settings(instr):
 	if !instr:  
-		
+		print("Warning:  Attempting to load EG settings from null")
 		return
 	
 	currentEG = instr
 	
 	for setting in $H.get_children():
 		var s = setting.name
-		get_node("H/%s/Slider" % setting.name).value = instr.get(s)
-#		get_node("H/%s/Slider" % setting.name).setval(instr.get(s))
+		if setting.is_in_group("slider"):
+			get_node("H/%s/Slider" % setting.name).value = instr.get(s)
+
 
 
 func _on_slider_change(value, which):
@@ -35,4 +40,9 @@ func get_value(name):
 
 func disable(yes:bool):
 	for setting in $H.get_children():
-		get_node("H/%s/Slider" % setting.name).editable = !yes
+		if setting.is_in_group("slider"):
+			get_node("H/%s/Slider" % setting.name).editable = !yes
+
+
+
+

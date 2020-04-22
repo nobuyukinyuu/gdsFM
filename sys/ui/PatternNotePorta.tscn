@@ -40,11 +40,9 @@ __meta__ = {
 margin_top = 16.0
 margin_right = 40.0
 margin_bottom = 24.0
-rect_min_size = Vector2( 32, 1 )
 mouse_filter = 2
 script = ExtResource( 4 )
 __meta__ = {
-"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 texture = ExtResource( 3 )

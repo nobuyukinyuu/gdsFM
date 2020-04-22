@@ -67,8 +67,17 @@ public class Operator
             // Now modulate.
             //Modulate the phase according to the phase technique. In most FM engines this technique is always a sine wave.
             phase += (oscillators.wave(modulator, eg.fmTechnique, eg.techDuty));
-            phase *= eg._detune;
-            phase *= eg._freqMult;  
+
+
+            //Apply pitch modifiers.
+            if (eg.FixedFreq>0) //Fixed frequency
+            {
+                phase *= eg.FixedFreq;
+                phase /= note.hz;
+            } else {  //Ratio'd frequency
+                phase *= eg._detune;
+                phase *= eg._freqMult * eg._coarseDetune;
+            }
 
 
             // Why the heck did we add 1 to the phase and divide it by 2 anyway?  Must've been a hack fix....
@@ -89,8 +98,16 @@ public class Operator
             
             
         } else {  // Terminus.  No further modulation required. 
-            phase *= eg._detune;
-            phase *= eg._freqMult;
+
+            //Apply pitch modifiers.
+            if (eg.FixedFreq>0) //Fixed frequency
+            {
+                phase *= eg.FixedFreq;
+                phase /= note.hz;
+            } else {  //Ratio'd frequency
+                phase *= eg._detune;
+                phase *= eg._freqMult * eg._coarseDetune;
+            }
 
             // Process feedback
             if (eg.feedback > 0)
@@ -104,7 +121,7 @@ public class Operator
                 output = note.feedbackHistory[id][0];
 
             } else {
-                output = oscillators.wave(phase, eg.waveform|eg._use_duty, eg.duty, eg.reflect, 120-note.midi_note) * adsr;  //Get a waveform from the oscillator.
+                output = oscillators.wave(phase, eg.waveform|eg._use_duty, eg.duty, eg.reflect, 128-note.midi_note) * adsr;  //Get a waveform from the oscillator.
 
             }
 

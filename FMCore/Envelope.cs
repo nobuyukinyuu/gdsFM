@@ -38,6 +38,10 @@ public class Envelope : Node
     double ks=0;						//Key scale
 	double mul=1.0;					//Frequency multiplier  //double between 0.5 and 15
     double dt=0;                        //_detune
+    double dt2=0;                        // Coarse detune (semitone, -12 to 12)
+
+    double delay=0;                     //Envelope delay
+    double fixed_frequency=0;           //Use fixed frequency if >0
 
 
     //CUSTOM STUFF
@@ -74,16 +78,24 @@ public class Envelope : Node
     public double Ks { get => ks; set => ks = value; }
     public double Mul { get => mul;  set => _set_frequency_multiplier(value); }
     public double Dt { get => dt; set => set_detune(value); }
+    public double Dt2 { get => dt2; set => set_detune2(value); }
+
+
+    public double FixedFreq { get => fixed_frequency; set => fixed_frequency = value; }
+    public double Delay { get => delay; set => delay = value; }
+
+
 
     // True, internal values referenced by the operator to reduce re-calculating
     // these values when the above EG slider value changes.
     public double _attackTime;
     public double _decayTime;
     public double _susTime = float.MaxValue/5;
-    public double _releaseTime = 0.0; //Calculated from rr when set
+    public double _releaseTime = 100; //Calculated from rr when set
     public double _susLevel = 1.0;
     public double _totalLevel = 1.0;
 	public double _freqMult = 1.0;
+	public double _coarseDetune = 1;
 	public double _detune = 1;
 	
     public double _egLength;  //total envelope length, in samples.  TODO:  Make ASDR true values int?
@@ -221,7 +233,26 @@ public class Envelope : Node
         		_detune = (double) GDSFmFuncs.lerp(1.0M, DETUNE_MIN, (Decimal) (-val / 100.0)) ;
                 break;
         }
+    }
 
+    //Coarse detune (Semitone)
+    void set_detune2(double val)
+    {
+        dt2 = val;
+        switch (Math.Sign(val))
+        {
+            case 0:
+                _coarseDetune = 1.0;
+                break;
+            
+            case 1:
+                _coarseDetune = 1 * Math.Pow(2, Math.Abs(val) / 12.0);
+                break;
+            
+            case -1:
+                _coarseDetune = 1 / Math.Pow(2, Math.Abs(val) / 12.0);
+                break;
+        }
     }
 
 //Gets the sample rate from the global singleton
@@ -234,14 +265,14 @@ public double SampleRate {
     }
 }
 
-//Determines the length of part of an ADSR curve for sample calculation.  
-//Multiply the output of this method to the sample rate to get that number of samples.
+    //Determines the length of part of an ADSR curve for sample calculation.  
+    //Multiply the output of this method to the sample rate to get that number of samples.
 
-//Consider baking a table of the appropriate length for each easing curve in the ADSR components at 1.0 TL.
-//For RR, multiply the value output by this table by the level at sustain on KeyOff.  Process until hitting sustain.
-//Precalculate absolute total length (in samples) of a blip. During KeyOff event, in sustain state whenever KeyOff is detected,
-//Immediately move the play head to the total length minus RR length.
-//http://forums.submarine.org.uk/phpBB/viewtopic.php?f=9&t=16
+    //Consider baking a table of the appropriate length for each easing curve in the ADSR components at 1.0 TL.
+    //For RR, multiply the value output by this table by the level at sustain on KeyOff.  Process until hitting sustain.
+    //Precalculate absolute total length (in samples) of a blip. During KeyOff event, in sustain state whenever KeyOff is detected,
+    //Immediately move the play head to the total length minus RR length.
+    //http://forums.submarine.org.uk/phpBB/viewtopic.php?f=9&t=16
     double get_curve_secs(double base_secs, double val, double scaleFactor=1.0, double minlength=0.005)
     {
         //estimated base rates for OPNA at value 1:

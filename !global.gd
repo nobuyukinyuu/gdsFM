@@ -8,6 +8,7 @@ var samples = 0  #Global oscillator timer.  Iterated every time an output sample
 
 # https://www.inspiredacoustics.com/en/MIDI_note_numbers_and_center_frequencies
 var periods = []  #Size 128 +1
+var semitone_ratio = []  #Size 12, used to get a multiplier within an octave
 const NOTE_A4 = 69   # Nice.
 const USE_DUTY = 0x100  #Use duty flag.  Pass with waveform to the oscillator.
 
@@ -51,6 +52,12 @@ func _ready():
 	periods.resize(129)  #Extra field accounts for G#9
 	for i in periods.size():
 		periods[i] = 440.0 * pow(2, (i-NOTE_A4) / 12.0 )
+		
+		
+	semitone_ratio.clear()
+	semitone_ratio.resize(13)
+	for i in semitone_ratio.size():
+		semitone_ratio[i] = pow(2, i/12)
 
 #	print(periods)
 

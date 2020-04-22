@@ -1,0 +1,116 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://gfx/grid.png" type="Texture" id=1]
+[ext_resource path="res://sys/ui/EnvelopeADSRLine.gd" type="Script" id=2]
+
+[sub_resource type="StyleBoxFlat" id=1]
+content_margin_left = 0.0
+content_margin_top = 4.0
+content_margin_bottom = 4.0
+bg_color = Color( 0.0313726, 0.0313726, 0.0627451, 1 )
+border_width_left = 12
+border_width_top = 12
+border_width_right = 12
+border_width_bottom = 12
+border_color = Color( 0, 0, 0, 1 )
+border_blend = true
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="CanvasItemMaterial" id=2]
+blend_mode = 2
+
+[node name="EnvelopeDisplay" type="Panel"]
+margin_right = 198.0
+margin_bottom = 128.0
+custom_styles/panel = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Grid" type="TextureRect" parent="."]
+modulate = Color( 0.705882, 0.701961, 0.854902, 0.0627451 )
+material = SubResource( 2 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 1 )
+expand = true
+stretch_mode = 2
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="ADSR" type="HBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 4.0
+margin_right = -3.99998
+margin_bottom = -3.99999
+custom_constants/separation = 0
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="0" type="TextureRect" parent="ADSR"]
+margin_right = 47.0
+margin_bottom = 120.0
+size_flags_horizontal = 3
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+color = Color( 0.921569, 0.486275, 0.470588, 1 )
+thickness = 1.5
+curve = -2.0
+sl = 1.0
+
+[node name="1" type="TextureRect" parent="ADSR"]
+margin_left = 47.0
+margin_right = 94.0
+margin_bottom = 120.0
+size_flags_horizontal = 3
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+reverse = true
+color = Color( 0.858824, 0.67451, 0.231373, 1 )
+thickness = 1.5
+curve = -2.0
+sl = 0.5
+
+[node name="2" type="TextureRect" parent="ADSR"]
+margin_left = 94.0
+margin_right = 141.0
+margin_bottom = 120.0
+size_flags_horizontal = 3
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+reverse = true
+color = Color( 0.214233, 0.84375, 0.457726, 1 )
+thickness = 1.5
+tl = 0.5
+sl = 0.5
+
+[node name="3" type="TextureRect" parent="ADSR"]
+margin_left = 141.0
+margin_right = 190.0
+margin_bottom = 120.0
+size_flags_horizontal = 3
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+reverse = true
+color = Color( 0.515317, 0.238647, 0.71875, 1 )
+thickness = 1.5
+curve = 2.0
+tl = 0.25
+sl = 1.0

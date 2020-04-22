@@ -15,8 +15,8 @@ public class oscillators : Node
 
 
 	//Used for periodic noise
-	static byte[] noise_counter = new byte[128];
-	static double[] lastNoiseValue = new double[128];
+	static byte[] noise_counter = new byte[129];   //Extra field is to accomodate 
+	static double[] lastNoiseValue = new double[129];
 
 	static PinkNumber pinkr = new PinkNumber() ; 
 	static double lastr = 0.0f;

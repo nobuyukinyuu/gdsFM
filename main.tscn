@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=2]
+[gd_scene load_steps=36 format=2]
 
 [ext_resource path="res://main.gd" type="Script" id=1]
 [ext_resource path="res://EGControl.tscn" type="PackedScene" id=2]
@@ -28,6 +28,8 @@
 [ext_resource path="res://PanelScope.gd" type="Script" id=26]
 [ext_resource path="res://MIDI.gd" type="Script" id=27]
 [ext_resource path="res://FMCore/Note.cs" type="Script" id=28]
+[ext_resource path="res://PitchControl.tscn" type="PackedScene" id=29]
+[ext_resource path="res://sys/ui/EnvelopeDisplay.tscn" type="PackedScene" id=30]
 
 [sub_resource type="AudioStreamGenerator" id=1]
 buffer_length = 0.25
@@ -57,7 +59,7 @@ var blep = 0
 func _ready():
 	pass
 
-func _process(delta):
+func _process(_delta):
 	blep +=1
 	
 
@@ -71,7 +73,7 @@ func _on_Timer_timeout():
 script/source = "extends Label
 
 
-func _physics_process(delta):
+func _physics_process(_delta):
 		text = str($\"../Audio\".Polyphony())
 "
 
@@ -104,17 +106,25 @@ script = ExtResource( 27 )
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -400.0
+margin_left = -416.0
 margin_top = 104.0
 margin_right = -8.0
 margin_bottom = -136.0
 custom_constants/top_margin = 1
 custom_constants/side_margin = 12
+tab_align = 0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="EGControl" parent="TC" instance=ExtResource( 2 )]
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="Tuning" parent="TC" instance=ExtResource( 29 )]
+visible = false
 margin_left = 4.0
 margin_top = 32.0
 margin_right = -4.0
@@ -205,7 +215,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 8.0
 margin_top = 8.0
-margin_right = -408.0
+margin_right = -424.0
 margin_bottom = -200.0
 snap_distance = 16
 script = ExtResource( 14 )
@@ -342,9 +352,9 @@ __meta__ = {
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 8.0
+margin_left = 7.0
 margin_top = -192.0
-margin_right = -408.0
+margin_right = -424.0
 margin_bottom = -8.0
 color = Color( 0, 0, 0, 1 )
 script = ExtResource( 26 )
@@ -388,6 +398,8 @@ __meta__ = {
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 "anims/New Anim" = SubResource( 5 )
+
+[node name="EnvelopeDisplay" parent="." instance=ExtResource( 30 )]
 [connection signal="item_selected" from="TC/Waveform/Grid/Waveform" to="." method="_on_Waveform_item_selected"]
 [connection signal="item_selected" from="TC/Waveform/Grid/Waveform2" to="." method="_on_Waveform_item_selected" binds= [ true ]]
 [connection signal="changed" from="GraphEdit" to="." method="_on_GraphEdit_changed"]

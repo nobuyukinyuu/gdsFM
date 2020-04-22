@@ -1,16 +1,26 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://EGControl.gd" type="Script" id=1]
 [ext_resource path="res://spelunkid_font.tres" type="BitmapFont" id=2]
+[ext_resource path="res://gfx/ui/icon_millisecs.svg" type="Texture" id=3]
 
 [sub_resource type="GDScript" id=1]
-script/source = "extends VSlider
+script/source = "#Delay value script
+extends Label
 
 
-func _on_Slider_gui_input(event):
-	if event is InputEventMouseButton and !event.pressed:
-		if abs(value) < 4:  value = 0
+func _gui_input(event):
+	if event is InputEventMouseButton and event.pressed:
+		$Popup.popup()
+		$Popup.rect_position = get_global_mouse_position()
+		$Popup/Edit.select_all()
 
+
+func _on_Edit_text_entered(new_text):
+	$\"../Slider\".value = int(new_text)
+#	owner._on_slider_change(int(new_text), $\"..\".name)
+	$Popup.visible = false
+	
 "
 
 [node name="EGControl" type="Control"]
@@ -33,13 +43,15 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Ar" type="VBoxContainer" parent="H"]
-margin_right = 31.0
+[node name="Ar" type="VBoxContainer" parent="H" groups=[
+"slider",
+]]
+margin_right = 38.0
 margin_bottom = 214.0
 size_flags_horizontal = 3
 
 [node name="Label" type="Label" parent="H/Ar"]
-margin_right = 31.0
+margin_right = 38.0
 margin_bottom = 8.0
 custom_fonts/font = ExtResource( 2 )
 text = "Atk"
@@ -47,7 +59,7 @@ align = 1
 
 [node name="Slider" type="VSlider" parent="H/Ar"]
 margin_top = 12.0
-margin_right = 31.0
+margin_right = 38.0
 margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -58,16 +70,18 @@ ticks_on_borders = true
 
 [node name="Val" type="Label" parent="H/Ar"]
 margin_top = 206.0
-margin_right = 31.0
+margin_right = 38.0
 margin_bottom = 214.0
 custom_fonts/font = ExtResource( 2 )
 text = "0"
 align = 1
 valign = 2
 
-[node name="Dr" type="VBoxContainer" parent="H"]
-margin_left = 35.0
-margin_right = 75.0
+[node name="Dr" type="VBoxContainer" parent="H" groups=[
+"slider",
+]]
+margin_left = 42.0
+margin_right = 82.0
 margin_bottom = 214.0
 size_flags_horizontal = 3
 
@@ -97,14 +111,16 @@ text = "0"
 align = 1
 valign = 2
 
-[node name="Sr" type="VBoxContainer" parent="H"]
-margin_left = 79.0
-margin_right = 111.0
+[node name="Sr" type="VBoxContainer" parent="H" groups=[
+"slider",
+]]
+margin_left = 86.0
+margin_right = 124.0
 margin_bottom = 214.0
 size_flags_horizontal = 3
 
 [node name="Label" type="Label" parent="H/Sr"]
-margin_right = 32.0
+margin_right = 38.0
 margin_bottom = 8.0
 custom_fonts/font = ExtResource( 2 )
 text = "Sust"
@@ -112,7 +128,7 @@ align = 1
 
 [node name="Slider" type="VSlider" parent="H/Sr"]
 margin_top = 12.0
-margin_right = 32.0
+margin_right = 38.0
 margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -122,16 +138,18 @@ ticks_on_borders = true
 
 [node name="Val" type="Label" parent="H/Sr"]
 margin_top = 206.0
-margin_right = 32.0
+margin_right = 38.0
 margin_bottom = 214.0
 custom_fonts/font = ExtResource( 2 )
 text = "0"
 align = 1
 valign = 2
 
-[node name="Rr" type="VBoxContainer" parent="H"]
-margin_left = 115.0
-margin_right = 163.0
+[node name="Rr" type="VBoxContainer" parent="H" groups=[
+"slider",
+]]
+margin_left = 128.0
+margin_right = 176.0
 margin_bottom = 214.0
 size_flags_horizontal = 3
 
@@ -161,9 +179,11 @@ text = "0"
 align = 1
 valign = 2
 
-[node name="Sl" type="VBoxContainer" parent="H"]
-margin_left = 167.0
-margin_right = 207.0
+[node name="Sl" type="VBoxContainer" parent="H" groups=[
+"slider",
+]]
+margin_left = 180.0
+margin_right = 220.0
 margin_bottom = 214.0
 size_flags_horizontal = 3
 
@@ -194,14 +214,16 @@ text = "0"
 align = 1
 valign = 2
 
-[node name="Tl" type="VBoxContainer" parent="H"]
-margin_left = 211.0
-margin_right = 242.0
+[node name="Tl" type="VBoxContainer" parent="H" groups=[
+"slider",
+]]
+margin_left = 224.0
+margin_right = 262.0
 margin_bottom = 214.0
 size_flags_horizontal = 3
 
 [node name="TL" type="Label" parent="H/Tl"]
-margin_right = 31.0
+margin_right = 38.0
 margin_bottom = 8.0
 custom_fonts/font = ExtResource( 2 )
 text = "Vol"
@@ -209,7 +231,7 @@ align = 1
 
 [node name="Slider" type="VSlider" parent="H/Tl"]
 margin_top = 12.0
-margin_right = 31.0
+margin_right = 38.0
 margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -221,21 +243,23 @@ ticks_on_borders = true
 
 [node name="Val" type="Label" parent="H/Tl"]
 margin_top = 206.0
-margin_right = 31.0
+margin_right = 38.0
 margin_bottom = 214.0
 custom_fonts/font = ExtResource( 2 )
 text = "0"
 align = 1
 valign = 2
 
-[node name="Ks" type="VBoxContainer" parent="H"]
-margin_left = 246.0
-margin_right = 278.0
+[node name="Ks" type="VBoxContainer" parent="H" groups=[
+"slider",
+]]
+margin_left = 266.0
+margin_right = 304.0
 margin_bottom = 214.0
 size_flags_horizontal = 3
 
 [node name="KS" type="Label" parent="H/Ks"]
-margin_right = 32.0
+margin_right = 38.0
 margin_bottom = 8.0
 custom_fonts/font = ExtResource( 2 )
 text = "KScl"
@@ -243,7 +267,7 @@ align = 1
 
 [node name="Slider" type="VSlider" parent="H/Ks"]
 margin_top = 12.0
-margin_right = 32.0
+margin_right = 38.0
 margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -253,77 +277,78 @@ ticks_on_borders = true
 
 [node name="Val" type="Label" parent="H/Ks"]
 margin_top = 206.0
-margin_right = 32.0
+margin_right = 38.0
 margin_bottom = 214.0
 custom_fonts/font = ExtResource( 2 )
 text = "0"
 align = 1
 valign = 2
 
-[node name="Mul" type="VBoxContainer" parent="H"]
-margin_left = 282.0
-margin_right = 313.0
+[node name="Delay" type="VBoxContainer" parent="H" groups=[
+"slider",
+]]
+margin_left = 308.0
+margin_right = 364.0
 margin_bottom = 214.0
-size_flags_horizontal = 3
 
-[node name="MUL" type="Label" parent="H/Mul"]
-margin_right = 31.0
+[node name="Lbl" type="Label" parent="H/Delay"]
+margin_right = 56.0
 margin_bottom = 8.0
 custom_fonts/font = ExtResource( 2 )
-text = "Mul"
+text = "Delay  "
 align = 1
 
-[node name="Slider" type="VSlider" parent="H/Mul"]
+[node name="Slider" type="VSlider" parent="H/Delay"]
 margin_top = 12.0
-margin_right = 31.0
+margin_right = 56.0
 margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-max_value = 16.0
-step = 0.5
-tick_count = 17
+max_value = 10000.0
+exp_edit = true
+rounded = true
+allow_greater = true
+tick_count = 11
 ticks_on_borders = true
 
-[node name="Val" type="Label" parent="H/Mul"]
+[node name="Val" type="Label" parent="H/Delay" groups=[
+"slider",
+]]
 margin_top = 206.0
-margin_right = 31.0
+margin_right = 56.0
 margin_bottom = 214.0
+mouse_filter = 0
+mouse_default_cursor_shape = 2
 custom_fonts/font = ExtResource( 2 )
 text = "0"
 align = 1
 valign = 2
-
-[node name="Dt" type="VBoxContainer" parent="H"]
-margin_left = 317.0
-margin_right = 365.0
-margin_bottom = 214.0
-size_flags_horizontal = 3
-
-[node name="DT" type="Label" parent="H/Dt"]
-margin_right = 48.0
-margin_bottom = 8.0
-custom_fonts/font = ExtResource( 2 )
-text = "Detune"
-align = 1
-
-[node name="Slider" type="VSlider" parent="H/Dt"]
-margin_top = 12.0
-margin_right = 48.0
-margin_bottom = 202.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-min_value = -200.0
-max_value = 200.0
-tick_count = 21
-ticks_on_borders = true
 script = SubResource( 1 )
 
-[node name="Val" type="Label" parent="H/Dt"]
-margin_top = 206.0
-margin_right = 48.0
-margin_bottom = 214.0
+[node name="Popup" type="PopupPanel" parent="H/Delay/Val"]
+visible = true
+margin_left = 62.0
+margin_top = 12.0
+margin_right = 181.0
+margin_bottom = 46.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Edit" type="LineEdit" parent="H/Delay/Val/Popup"]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 115.0
+margin_bottom = 30.0
 custom_fonts/font = ExtResource( 2 )
-text = "0"
-align = 1
-valign = 2
-[connection signal="gui_input" from="H/Dt/Slider" to="H/Dt/Slider" method="_on_Slider_gui_input"]
+custom_colors/selection_color = Color( 0, 0, 0, 0.282353 )
+custom_colors/font_color_selected = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 0.690196, 0.690196, 0.690196, 1 )
+text = "0.0"
+align = 2
+max_length = 6
+right_icon = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="text_entered" from="H/Delay/Val/Popup/Edit" to="H/Delay/Val" method="_on_Edit_text_entered"]
