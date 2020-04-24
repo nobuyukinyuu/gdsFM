@@ -149,7 +149,7 @@ public const int NOTE_A4 = 69;   // Nice.
             _channel.Remove(this);
         }
 
-        // QueueFree();
+        QueueFree();
         // Free();
 
     }

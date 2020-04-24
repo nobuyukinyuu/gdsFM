@@ -11,6 +11,31 @@ public class Channel : List<Note>
         int maxPolyphony=48;
     #endif
 
+    public Stack<Note> _flaggedForDeletion = new Stack<Note>();
+
+    public void FlagForDeletion(Note note)
+    {
+        _flaggedForDeletion.Push(note);
+    }
+
+    public void FlagInactiveNotes()
+    {
+        foreach(Note note in this)
+        {
+            if(note.IsDestroyable()) FlagForDeletion(note);
+        }
+    }
+
+    public void Flush()
+    {
+        while (_flaggedForDeletion.Count>1)
+        {
+            Note note = _flaggedForDeletion.Pop();
+            this.Remove(note);
+            note.QueueFree();
+        }
+    }
+
     public Note FindActiveNote(int midi_note)
     {
         var n = midi_note;  //Import to local scope for the lambda below

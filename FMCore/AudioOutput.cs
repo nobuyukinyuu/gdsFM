@@ -48,7 +48,10 @@ public Channel PreviewNotes = new Channel();
     public override void _Process(float delta)
     {
         fill_buffer();
+        PreviewNotes.FlagInactiveNotes();
+        PreviewNotes.Flush();
     }
+
 
 
     //Fills the buffer using Patch.cs
@@ -160,8 +163,11 @@ public Channel PreviewNotes = new Channel();
     }
 
 
-    public void Pitch(double amt)
+    public void Pitch(double amt, float range)
     { 
+        double rangemod = Math.Pow(2.0, range/12) - 1.0;
+        amt *= rangemod;
+        // if (amt < 0) amt = 1 / Math.Abs(1-amt); else amt +=1;
         if (amt < 0) amt = 1 / Math.Abs(1-amt); else amt +=1;
         for(int i=0; i < PreviewNotes.Count; i++)
         {
