@@ -68,7 +68,7 @@ public class Envelope : Node
 
 
 
-    //Property values used to translate "user-friendly" values to internal values.
+    //Property values used to translate "user-friendly" values to internal values, which are different than standard FM values.
     public double Ar { get => ar; set => _set_attack_time(value); }
     public double Dr { get => dr; set => _set_decay_time(value); }
     public double Sr { get => sr; set => _set_sustain_time(value); }
@@ -76,12 +76,11 @@ public class Envelope : Node
     public double Sl { get => sl; set  {sl = value;  _susLevel = value / 100.0;} }
     public double Tl { get => tl; set  {tl = value;  _totalLevel = value / 100.0f;} }
     public double Ks { get => ks; set => ks = value; }
-    public double Mul { get => mul;  set => _set_frequency_multiplier(value); }
+    public double Mul { get => mul;  set => _set_octave_multiplier(value); }
     public double Dt { get => dt; set => set_detune(value); }
     public double Dt2 { get => dt2; set => set_detune2(value); }
+    public double FixedFreq { get => fixed_frequency; set {fixed_frequency = value;  update_multiplier();} }
 
-
-    public double FixedFreq { get => fixed_frequency; set => fixed_frequency = value; }
     public double Delay { get => delay; set => delay = value; }
 
 
@@ -94,10 +93,13 @@ public class Envelope : Node
     public double _releaseTime = 100; //Calculated from rr when set
     public double _susLevel = 1.0;
     public double _totalLevel = 1.0;
-	public double _freqMult = 1.0;
+	public double _freqMult = 1.0;  //Octave multiplier (MUL)
 	public double _coarseDetune = 1;
 	public double _detune = 1;
 	
+    public double totalMultiplier = 1;  //Precalculated value of mul+dt+dt2 or the fixed frequency. See update_multiplier().
+
+    //Internal ADSR timer calculating values.
     public double _egLength;  //total envelope length, in samples.  TODO:  Make ASDR true values int?
     double _ad;  //Attack time + decay time
     double _ads; //Attack, decay, and sustain time.
@@ -137,7 +139,11 @@ public class Envelope : Node
         }
 
         #if DEBUG
-        if(Double.IsNaN(output)) System.Diagnostics.Debugger.Break();  //Stop. NaN propagation. This should never trigger but if it does prepare for pain
+        if(Double.IsNaN(output)) 
+        {
+            System.Diagnostics.Debugger.Break();  //Stop. NaN propagation. This should never trigger but if it does prepare for pain
+            throw new ArithmeticException("NaN encountered in calculated envelope output");
+        }
         #endif
 
         return output;
@@ -210,13 +216,56 @@ public class Envelope : Node
         recalc_adsr();
     }
 
-	void _set_frequency_multiplier(double val){
+
+    //Determines the length of part of an ADSR curve for sample calculation.  
+    //Multiply the output of this method to the sample rate to get that number of samples.
+
+    //Consider baking a table of the appropriate length for each easing curve in the ADSR components at 1.0 TL.
+    //For RR, multiply the value output by this table by the level at sustain on KeyOff.  Process until hitting sustain.
+    //Precalculate absolute total length (in samples) of a blip. During KeyOff event, in sustain state whenever KeyOff is detected,
+    //Immediately move the play head to the total length minus RR length.
+    //http://forums.submarine.org.uk/phpBB/viewtopic.php?f=9&t=16
+    double get_curve_secs(double base_secs, double val, double scaleFactor=1.0, double minlength=0.005)
+    {
+        //estimated base rates for OPNA at value 1:
+        //AR    30sec?   (32 values)
+        //DR    120sec  (32 values)
+        //SR    120sec  (32 values)
+        //RR    54sec   (16 values)
+        return base_secs / Math.Pow(2, (val-1) * scaleFactor);
+    }
+
+
+
+
+// =========  PITCH AND TUNING RELATED SETTERS  ===============
+ 
+    //Whenever a tuning field changes, this should be called to update the precalculated total multiplier amount. 
+    void update_multiplier()
+    {
+        if (fixed_frequency > 0)
+        {
+            //Note:  This multiplier needs to be divided down by the Note hz rate if Note freq does not equal 1. See Operator.cs
+            totalMultiplier = fixed_frequency;  
+            
+        } else {
+            totalMultiplier = _freqMult * _coarseDetune * _detune;
+        }
+    }
+
+ 
+    //Octave multiplier
+	void _set_octave_multiplier(double val){
 		mul = val;
 		
 		if (val == 0)  val = 0.5f;
-		_freqMult = val; //* hz
+		_freqMult = val; 
+
+        update_multiplier();
     }
-	void set_detune(double val){
+
+    //Extra fine detune
+	void set_detune(double val){  
 		dt = val;
 		// _detune = 1.0f + (val / 10000.0f);  //approx max multiplier is 1.0 ± 0.01
         switch (Math.Sign(val))
@@ -233,6 +282,8 @@ public class Envelope : Node
         		_detune = (double) GDSFmFuncs.lerp(1.0M, DETUNE_MIN, (Decimal) (-val / 100.0)) ;
                 break;
         }
+
+        update_multiplier();
     }
 
     //Coarse detune (Semitone)
@@ -253,36 +304,21 @@ public class Envelope : Node
                 _coarseDetune = 1 / Math.Pow(2, Math.Abs(val) / 12.0);
                 break;
         }
+
+        update_multiplier();
     }
 
-//Gets the sample rate from the global singleton
-public double SampleRate {
-    get 
-    {
-        //// NOPE NOPE NOPE, NEVERMIND.  This clobbers any semblance of portability.  Use AudioOutput and work on abstracting it from the autoloads.
-        // return (double) AutoLoadHelper<Double>.Get("global", "sample_rate");
-        return AudioOutput.MixRate;
+
+
+    //Gets the sample rate from the global singleton
+    public double SampleRate {
+        get 
+        {
+            //// NOPE NOPE NOPE, NEVERMIND.  This clobbers any semblance of portability.  Use AudioOutput and work on abstracting it from the autoloads.
+            // return (double) AutoLoadHelper<Double>.Get("global", "sample_rate");
+            return AudioOutput.MixRate;
+        }
     }
-}
-
-    //Determines the length of part of an ADSR curve for sample calculation.  
-    //Multiply the output of this method to the sample rate to get that number of samples.
-
-    //Consider baking a table of the appropriate length for each easing curve in the ADSR components at 1.0 TL.
-    //For RR, multiply the value output by this table by the level at sustain on KeyOff.  Process until hitting sustain.
-    //Precalculate absolute total length (in samples) of a blip. During KeyOff event, in sustain state whenever KeyOff is detected,
-    //Immediately move the play head to the total length minus RR length.
-    //http://forums.submarine.org.uk/phpBB/viewtopic.php?f=9&t=16
-    double get_curve_secs(double base_secs, double val, double scaleFactor=1.0, double minlength=0.005)
-    {
-        //estimated base rates for OPNA at value 1:
-        //AR    30sec?   (32 values)
-        //DR    120sec  (32 values)
-        //SR    120sec  (32 values)
-        //RR    54sec   (16 values)
-        return base_secs / Math.Pow(2, (val-1) * scaleFactor);
-    }
-
 }
 
 //Struct for typical length of one part of an Envelope at value 1 on OPNA

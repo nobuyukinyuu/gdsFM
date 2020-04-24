@@ -40,7 +40,7 @@ public static class GDSFmFuncs
                 return (1.0 - Math.Pow(1.0 - (p_x - 0.5) * 2.0, -p_c)) * 0.5 + 0.5;
             }
         } else
-            return 0.0f; // no ease (raw)
+            return 0.0; // no ease (raw)
     }
 
     //Ease, but produces values between the range specified.
@@ -71,7 +71,7 @@ public static class GDSFmFuncs
                 return (1.0 - PowFast(1.0 - (p_x - 0.5) * 2.0, -p_c)) * 0.5 + 0.5;
             }
         } else
-            return 0.0f; // no ease (raw)
+            return 0.0; // no ease (raw)
     }
 
     //EaseFast, but produces values between the range specified.

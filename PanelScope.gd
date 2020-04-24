@@ -26,4 +26,4 @@ func _draw():
 		var v2 = Vector2((i+1)* (rect_size.x/window), pts[(i+1 + startpos) % window].y * h + h)
 		self.draw_line(v, v2, Color("#6680ff"),1.0, true)
 
-	startpos += window
+#	startpos += window

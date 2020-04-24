@@ -5,28 +5,28 @@ using System.Collections.Generic;
 public class Note : Node, IComparable<Note>
 {
     [Export]
-	public double hz = 440.0;
-    [Export]
+    public double base_hz = 440.0;  //Always fixed compared to the hz field;  used to return to normal after a pitch bend or lfo calc
+	public double hz = 440.0;  //Current frequency at any given time.
+    
     public int samples = 0;  //Samples elapsed.  Sample timer.  TODO:  Separate phase timer from envelope timer???? (Currently synced)
+    public double phase = 0;  //Phase accumulator. This holds the sum of all previous Note.Iterate() periods. Allows smooth pitch changes.
+
     [Export]
     public int midi_velocity = 0; //0-127, probably
     public int midi_note; //Pitch of note.  0-127 for sure.
 
-    public double Velocity  => midi_velocity/128.0;
+    public double Velocity  => midi_velocity/128.0;  //Grab velocity as a float value 0-1.
 
-    public bool pressed = true;
+    public bool pressed = true;     //The current state of whether the note is on or off.
     public int releaseSample = 0;  //The sample at which noteOff was received.
 
-    //Set by the mixer handling the channel.  Mixer finds the patch being used for this Note, gets total release time, and patch determines when to release from channel.
+    //Set by the mixer handling the channel. Mixer finds the patch being used for this Note, gets total release time, and patch determines when to release from channel.
     public double ttl = float.MaxValue / 4.0;  
 
 //Each increment of detune is 1/8 the ratio between a period of 2205/22 at 44100hz sample rate (440hz tone) and 2197/22 (about 441.6hz).
 //This measurement was done against DX7 detune at A-4, where every 22 cycles the tone would change (-detune) samples.
     const Decimal DETUNE_HZ_INCREMENT = 1.60218479745106964041875284479M / 8M;  
-    const Decimal DETUNE_HZ_DENCREMENT = 1M / 1.60218479745106964041875284479M / 8M;  //Each decrement of detune is 1/8 the ratio between periods of 2205/22 and 2213/22.
-
-
-    double[] old_sample = {0f,0f};  //held values for feedback processing.  Move to EG?
+    const Decimal DETUNE_HZ_DENCREMENT = 1M / 1.60218479745106964041875284479M / 8M; //Each decrement of detune is 1/8 the ratio between periods of 2205/22 and 2213/22.
 
 // Feedback relies on averaging the last 2 samples in an operator. To support polyphony, each note should store its own feedback history per-operator.
 // When/if more/less operators are supported per patch, Note may need to examine patch on init to determine capacity. 
@@ -52,9 +52,10 @@ public const int NOTE_A4 = 69;   // Nice.
     //Lookup frequency based on MIDI note number.
     public Note (int note_number, int velocity=0)
     {
+        this.midi_velocity = velocity;
         this.midi_note = note_number;
         this.hz = lookup_frequency(note_number);
-        this.midi_velocity = velocity;
+        this.base_hz = hz;
     }
 
     //Construct a note directly with the frequency specified.
@@ -62,6 +63,7 @@ public const int NOTE_A4 = 69;   // Nice.
     {
         this.midi_note = -1;  //Custom sound location in channel
         this.hz = hz;
+        this.base_hz = hz;
         this.midi_velocity = velocity;
     }
 
@@ -98,16 +100,39 @@ public const int NOTE_A4 = 69;   // Nice.
     //Gets the phase increment based on the current pitch and sample rate.
     public double GetPhase(double sample_rate=44100.0)
     {
-        return samples / sample_rate * hz;
+        // return samples / sample_rate * hz;
+        return this.phase;
     }
 
-
-    public void Reset(bool hz=false, bool samples=true, bool velocity = false, bool pressed=true)
+    //Iterates the phase accumulator a certain number of samples ahead based on the current pitch.
+    public void Iterate(int numsamples, double sample_rate=44100.0)
     {
-        if (hz) this.hz = 440.0;
-        if (samples) this.samples = 0;
-        if (pressed) this.pressed = true;
+        phase += numsamples / sample_rate * hz;
+        samples += numsamples;
     }
+
+    //Iterates the phase accumulator a certain number of samples ahead based on the current pitch+multiplier (like temporary pitch modifiers from an Envelope/Pattern)
+    public void Iterate(int numsamples, double multiplier, double sample_rate)
+    {
+        phase += numsamples / sample_rate * (hz*multiplier);
+        samples += numsamples;
+    }
+
+    //Iterates the phase accumulator one sample ahead based on the phase alteration given to it from an outside source (like output from an Operator or EG fixed rate).
+    public void Iterate(double phaseAmt, double sample_rate=44100.0)
+    {
+        this.phase += phaseAmt;
+        samples += 1;
+    }
+
+
+
+    // public void Reset(bool hz=false, bool samples=true, bool velocity = false, bool pressed=true)
+    // {
+    //     if (hz) this.hz = 440.0;
+    //     if (samples) this.samples = 0;
+    //     if (pressed) this.pressed = true;
+    // }
 
 
     //Convenience method for mixers, envelopes, whatever to check if this note is ready to die.
@@ -124,7 +149,8 @@ public const int NOTE_A4 = 69;   // Nice.
             _channel.Remove(this);
         }
 
-        QueueFree();
+        // QueueFree();
+        // Free();
 
     }
 

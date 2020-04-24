@@ -66,48 +66,37 @@ public class Operator
             
             // Now modulate.
             //Modulate the phase according to the phase technique. In most FM engines this technique is always a sine wave.
-            phase += (oscillators.wave(modulator, eg.fmTechnique, eg.techDuty));
+            phase += oscillators.wave(modulator, eg.fmTechnique, eg.techDuty);
 
 
             //Apply pitch modifiers.
-            if (eg.FixedFreq>0) //Fixed frequency
-            {
-                phase *= eg.FixedFreq;
-                phase /= note.hz;
-            } else {  //Ratio'd frequency
-                phase *= eg._detune;
-                phase *= eg._freqMult * eg._coarseDetune;
-            }
-
-
-            // Why the heck did we add 1 to the phase and divide it by 2 anyway?  Must've been a hack fix....
-            // phase = (oscillators.sint2(phase) + 1.0f) / 2.0f;  //TODO:  Seperate field for modulation waveform.  Cool new sounds!
-
-            //Previous technique, which didn't work right with bypass because it was applied in addition to modulation
-            // phase = (oscillators.wave(phase, eg.fmTechnique, eg.duty) + 0.0f) / 1.0f;  
+            phase *= eg.totalMultiplier;
+            if (eg.FixedFreq>0)  phase /= note.hz;
             
 
-            output = oscillators.wave(phase, eg.waveform | eg._use_duty, eg.duty, eg.reflect, 128-note.midi_note);  //Get a waveform from the oscillator.
+            //Get a waveform sample from the oscillator at the current phase after all phase-modifying processing has been done.
+            output = oscillators.wave(phase, eg.waveform | eg._use_duty, eg.duty, eg.reflect, 128-note.midi_note);  
 
 
             //Determine the EG position and attenuate.
             output *= adsr;
-
-
-            output *= eg._totalLevel;  //Finally, Attenuate total level.
+            output *= eg._totalLevel;  
             
             
         } else {  // Terminus.  No further modulation required. 
 
             //Apply pitch modifiers.
-            if (eg.FixedFreq>0) //Fixed frequency
-            {
-                phase *= eg.FixedFreq;
-                phase /= note.hz;
-            } else {  //Ratio'd frequency
-                phase *= eg._detune;
-                phase *= eg._freqMult * eg._coarseDetune;
-            }
+            phase *= eg.totalMultiplier;
+            if (eg.FixedFreq>0)  phase /= note.hz;
+
+            // if (eg.FixedFreq>0) //Fixed frequency
+            // {
+            //     phase *= eg.FixedFreq;
+            //     phase /= note.hz;
+            // } else {  //Ratio'd frequency
+            //     phase *= eg._detune;
+            //     phase *= eg._freqMult * eg._coarseDetune;
+            // }
 
             // Process feedback
             if (eg.feedback > 0)
@@ -125,7 +114,7 @@ public class Operator
 
             }
 
-            output *= eg._totalLevel;  //Finally, Attenuate total level.
+            output *= eg._totalLevel;  //Finally, Attenuate total level.  ADSR was applied to output earlier depending on FB.
         }
         return output;        
     }

@@ -8,7 +8,7 @@ public class Patch : Resource
     // double hz = 440.0f;   //Sample pitch
 
     // This value should typically be initialized to whatever the global sample rate is.
-    public static double sample_rate = 44100.0f;
+    public static double sample_rate = 44100.0;
 
     Operator[] connections = new Operator[0];  // This is filled in by the algorithm validator and used when mixing.
     Dictionary<String, Operator> operators = new Dictionary<string, Operator>();  // A list of all valid operators created by the algorithm validator.
@@ -110,11 +110,9 @@ public class Patch : Resource
     {
         //Get the Max release time of all parallel operators connected to the current patch output/operator.
         double parallel_time = 0;  
-        foreach (Operator op in connections)
+        for (int i=0; i < connections.Length; i++) //Operator op in connections)
         {
-            //Recursively compare release times.
-            var envelope = op.EG;
-            parallel_time = Math.Max(parallel_time, envelope._releaseTime);            
+            parallel_time = Math.Max(parallel_time, connections[i].EG._releaseTime);            
         }
 
         return parallel_time;
@@ -144,10 +142,11 @@ public class Patch : Resource
         // NOTES COME IN AS AN EVENT ON A SEPARATE THREAD, SO MODIFICATION (NOTE DELETION) MUST BE QUEUED TO THE NEXT SYNCED PROCESS THREAD
         for (int i = 0; i < notes.Count; i++) //Note note in notes)
         {
+            if (notes[i] ==null) continue;
             output += mix(notes[i]);
     
            //Check if the note needs to die.
-            if (notes[i] !=null && notes[i].IsDestroyable())  notes[i].Destroy();
+            if (notes[i].IsDestroyable())  notes[i].Destroy();
 
         }
 
@@ -165,11 +164,14 @@ public class Patch : Resource
 
 
     public double mix(Note note, double phase){ 
-        double avg = 0.0f;
-        
+        double avg = 0.0;  //Output average
+        double pitch_avg = 0.0; //Pitch multiplier average
+
         foreach (Operator op in connections)
         {	
-            avg += (double) op.request_sample(phase, note);  
+            // avg += (double) op.request_sample(phase, note);
+            avg += (double) op.request_sample(phase, note); //* note.Velocity;  //DEBUG / TODO:  REMOVE ME WHEN PER-OPERATOR VELOCITY SENSITIVITY IS IMPLEMENTED?;
+            pitch_avg += op.EG.totalMultiplier;  
         }
 
         #if DEBUG  //We probably don't need this in release mode
@@ -182,9 +184,13 @@ public class Patch : Resource
         #endif
 
         avg /= connections.Length;  //Shitty average-based mixing.        
-        note.samples += 1;
+        pitch_avg /= connections.Length;  //Shitty average-based mixing.        
 
-        avg *= note.Velocity;  //DEBUG / TODO:  REMOVE ME WHEN PER-OPERATOR VELOCITY SENSITIVITY IS IMPLEMENTED?
+        //Iterate the sample timer and phase accumulator.
+        note.Iterate(1, sample_rate);
+        // note.Iterate(1, pitch_avg, sample_rate);
+
+        
 
         return avg;
     }

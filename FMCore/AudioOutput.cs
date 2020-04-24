@@ -70,6 +70,10 @@ public Channel PreviewNotes = new Channel();
         }
 
         buf.PushBuffer(bufferdata); 
+
+        // #if DEBUG
+        // if (buf.GetSkips()>0) GD.Print("Skips: ", buf.GetSkips());
+        // #endif
     }
 
 
@@ -104,12 +108,6 @@ public Channel PreviewNotes = new Channel();
 
     }
 
-
-    //DEBUG.  This would be in a Note class instead once that exists.  Resets sample timer.
-    public void Reset()
-    {
-        if (previewNote !=null)  previewNote.Reset();
-    }
 
     //Returns the number of notes that should be currently playing in our preview channel.
     public int Polyphony()
@@ -163,19 +161,22 @@ public Channel PreviewNotes = new Channel();
 
 
     public void Pitch(double amt)
-    { //DEBUG PURPOSES ONLY
-        if (PreviewNotes.Count > 0)
+    { 
+        if (amt < 0) amt = 1 / Math.Abs(1-amt); else amt +=1;
+        for(int i=0; i < PreviewNotes.Count; i++)
         {
-            switch (Math.Sign(amt))
-            {
-                case 1:
-                    PreviewNotes[0].hz = 440.0 + 440 * Math.Abs(amt);
-                    return;
-                case -1:
-                    PreviewNotes[0].hz = 220 + 220.0 * Math.Abs(1+amt);
-                    return;
+            double base_hz = PreviewNotes[i].base_hz;
+            PreviewNotes[i].hz = base_hz * amt;
+            // switch (Math.Sign(amt))
+            // {
+            //     case 1:
+            //         PreviewNotes[i].hz = base_hz + base_hz * Math.Abs(amt);
+            //         return;
+            //     case -1:
+            //         PreviewNotes[i].hz = base_hz - (base_hz / 2 * (amt+1));
+            //         return;
 
-            }
+            // }
         }
     }
 }

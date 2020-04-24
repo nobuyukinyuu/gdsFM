@@ -10,7 +10,7 @@
 [sub_resource type="GDScript" id=2]
 script/source = "extends VSlider
 
-
+# Zero snap
 func _on_Slider_gui_input(event):
 	if event is InputEventMouseButton and !event.pressed:
 		if abs(value) < 4:  value = 0
@@ -268,5 +268,4 @@ __meta__ = {
 [connection signal="item_selected" from="H/FixedFreq/Presets" to="H/FixedFreq" method="_on_Presets_item_selected"]
 [connection signal="pressed" from="H/FixedFreq/Presets" to="H/FixedFreq" method="_on_Presets_pressed"]
 [connection signal="gui_input" from="H/FixedFreq/Slider" to="H/FixedFreq/Slider" method="_on_Slider_gui_input"]
-[connection signal="gui_input" from="H/Dt2/Slider" to="H/Dt2/Slider" method="_on_Slider_gui_input"]
 [connection signal="gui_input" from="H/Dt/Slider" to="H/Dt/Slider" method="_on_Slider_gui_input"]
