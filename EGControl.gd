@@ -23,7 +23,8 @@ func load_settings(instr):
 		var s = setting.name
 		if setting.is_in_group("slider"):
 			get_node("H/%s/Slider" % setting.name).value = instr.get(s)
-
+		elif setting.is_in_group("setting_group"):
+			setting.load_settings(instr)
 
 
 func _on_slider_change(value, which):

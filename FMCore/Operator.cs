@@ -87,7 +87,7 @@ public class Operator
             // phase = (oscillators.wave(phase, eg.fmTechnique, eg.duty) + 0.0f) / 1.0f;  
             
 
-            output = oscillators.wave(phase, eg.waveform | eg._use_duty, eg.duty, eg.reflect, 120-note.midi_note);  //Get a waveform from the oscillator.
+            output = oscillators.wave(phase, eg.waveform | eg._use_duty, eg.duty, eg.reflect, 128-note.midi_note);  //Get a waveform from the oscillator.
 
 
             //Determine the EG position and attenuate.

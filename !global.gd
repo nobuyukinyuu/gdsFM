@@ -67,6 +67,9 @@ func get_secs():
 	return samples / sample_rate
 	
 
+func log2(n):
+	return log(n) / log(2)
+
 
 class Instr:
 	var rr = 1 setget set_release_time  #Float between 0-1

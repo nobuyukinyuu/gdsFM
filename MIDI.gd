@@ -23,3 +23,9 @@ func _input(event):
 			MIDI_MESSAGE_NOTE_OFF:
 #				$"../Audio".TurnOffNote(event.pitch)
 				emit_signal("NoteOff", event.pitch)
+
+			MIDI_MESSAGE_PITCH_BEND:
+				var pitch_amt = (event.pitch+0.5) / 8192.0 - 1
+				prints("P: ", pitch_amt)
+				owner.get_node("Audio").Pitch(pitch_amt)
+				

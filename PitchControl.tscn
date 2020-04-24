@@ -37,7 +37,9 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="FixedFreq" type="VBoxContainer" parent="H"]
+[node name="FixedFreq" type="VBoxContainer" parent="H" groups=[
+"setting_group",
+]]
 margin_right = 88.0
 margin_bottom = 214.0
 size_flags_horizontal = 3
@@ -83,16 +85,16 @@ margin_bottom = 103.0
 custom_fonts/font = ExtResource( 2 )
 text = " Base Hz:"
 
-[node name="txtHz" type="LineEdit" parent="H/FixedFreq"]
+[node name="txtHz" type="SpinBox" parent="H/FixedFreq"]
 margin_top = 107.0
 margin_right = 88.0
 margin_bottom = 131.0
 rect_min_size = Vector2( 0, 20 )
-text = "10"
-caret_blink = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
+max_value = 22050.0
+exp_edit = true
+allow_greater = true
+align = 1
+suffix = "Hz"
 
 [node name="Blanker" type="Panel" parent="H/FixedFreq"]
 margin_top = 135.0
@@ -262,7 +264,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 [connection signal="toggled" from="H/FixedFreq/chkFixed" to="H/FixedFreq" method="_on_chkFixed_toggled"]
-[connection signal="text_entered" from="H/FixedFreq/txtHz" to="H/FixedFreq" method="_on_txtHz_text_entered"]
+[connection signal="value_changed" from="H/FixedFreq/txtHz" to="H/FixedFreq" method="_on_txtHz_value_changed"]
 [connection signal="item_selected" from="H/FixedFreq/Presets" to="H/FixedFreq" method="_on_Presets_item_selected"]
 [connection signal="pressed" from="H/FixedFreq/Presets" to="H/FixedFreq" method="_on_Presets_pressed"]
 [connection signal="gui_input" from="H/FixedFreq/Slider" to="H/FixedFreq/Slider" method="_on_Slider_gui_input"]

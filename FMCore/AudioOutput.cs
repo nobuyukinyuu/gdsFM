@@ -160,4 +160,22 @@ public Channel PreviewNotes = new Channel();
         signalSource.Connect("NoteOff", note as Note, "_on_ReleaseNote", new Godot.Collections.Array(){patch.GetReleaseTime()} );
         //Other event signals here, as necessary.
     }
+
+
+    public void Pitch(double amt)
+    { //DEBUG PURPOSES ONLY
+        if (PreviewNotes.Count > 0)
+        {
+            switch (Math.Sign(amt))
+            {
+                case 1:
+                    PreviewNotes[0].hz = 440.0 + 440 * Math.Abs(amt);
+                    return;
+                case -1:
+                    PreviewNotes[0].hz = 220 + 220.0 * Math.Abs(1+amt);
+                    return;
+
+            }
+        }
+    }
 }
