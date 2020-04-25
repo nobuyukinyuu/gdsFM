@@ -61,7 +61,6 @@ play={
 [mono]
 
 debugger_agent/wait_timeout=5000
-project/auto_update_project=false
 
 [rendering]
 

@@ -20,8 +20,9 @@ public class Channel : List<Note>
 
     public void FlagInactiveNotes()
     {
-        foreach(Note note in this)   //FIXME:  InvalidOperationException, collection modified.  For instead of foreach?
+        for(int i=0; i<this.Count; i++) //Note note in this)   //FIXME:  InvalidOperationException, collection modified.  For instead of foreach?
         {
+            Note note = this[i];
             if(note.IsDestroyable()) FlagForDeletion(note);
         }
     }
