@@ -246,7 +246,7 @@ public class Envelope : Node
         if (fixed_frequency > 0)
         {
             //Note:  This multiplier needs to be divided down by the Note hz rate if Note freq does not equal 1. See Operator.cs
-            totalMultiplier = fixed_frequency;  
+            totalMultiplier = fixed_frequency / SampleRate;  
             
         } else {
             totalMultiplier = _freqMult * _coarseDetune * _detune;

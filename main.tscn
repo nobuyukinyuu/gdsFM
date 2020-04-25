@@ -75,6 +75,8 @@ script/source = "extends Label
 
 func _physics_process(_delta):
 		text = str($\"../Audio\".Polyphony())
+		if $\"../TC/Tuning\".currentEG:
+			text = \"\\n\" + str($\"../TC/Tuning\".currentEG.totalMultiplier)
 "
 
 [sub_resource type="Animation" id=5]

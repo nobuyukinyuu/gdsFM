@@ -9,7 +9,7 @@ public class Note : Node, IComparable<Note>
 	public double hz = 440.0;  //Current frequency at any given time.
     
     public int samples = 0;  //Samples elapsed.  Sample timer.  TODO:  Separate phase timer from envelope timer???? (Currently synced)
-    public double phase = 0;  //Phase accumulator. This holds the sum of all previous Note.Iterate() periods. Allows smooth pitch changes.
+    public List<Double> phase = new List<double>{0,0,0,0};  //Phase accumulator. This holds the sum of all previous Note.Iterate() periods. Allows smooth pitch changes.
 
     [Export]
     public int midi_velocity = 0; //0-127, probably
@@ -98,33 +98,47 @@ public const int NOTE_A4 = 69;   // Nice.
     }
 
     //Gets the phase increment based on the current pitch and sample rate.
-    public double GetPhase(double sample_rate=44100.0)
+    public double GetPhase(int idx, double sample_rate=44100.0)
     {
         // return samples / sample_rate * hz;
-        return this.phase;
+        return this.phase[idx];
     }
 
     //Iterates the phase accumulator a certain number of samples ahead based on the current pitch.
-    public void Iterate(int numsamples, double sample_rate=44100.0)
+    public void Iterate(int idx, int numsamples, double sample_rate=44100.0)
     {
-        phase += numsamples / sample_rate * hz;
+        phase[idx] += numsamples / sample_rate * hz;
         samples += numsamples;
     }
 
     //Iterates the phase accumulator a certain number of samples ahead based on the current pitch+multiplier (like temporary pitch modifiers from an Envelope/Pattern)
-    public void Iterate(int numsamples, double multiplier, double sample_rate)
+    public void Iterate(int idx, int numsamples, double multiplier, double sample_rate)
     {
-        phase += numsamples / sample_rate * (hz*multiplier);
+        phase[idx] += numsamples / sample_rate * (hz*multiplier);
         samples += numsamples;
     }
 
     //Iterates the phase accumulator one sample ahead based on the phase alteration given to it from an outside source (like output from an Operator or EG fixed rate).
-    public void Iterate(double phaseAmt, double sample_rate=44100.0)
+    public void Iterate(int idx, double phaseAmt)
     {
-        this.phase += phaseAmt;
+        this.phase[idx] += phaseAmt;
         samples += 1;
     }
 
+    //Increment the phase accumulator without moving the timer forward.
+    public void Accumulate(int idx, double phaseAmt)
+    {
+        this.phase[idx] += phaseAmt;
+    }
+    public void Accumulate(int idx, int numsamples, double multiplier, double sample_rate)
+    {
+        phase[idx] += numsamples / sample_rate * (hz*multiplier);
+    }
+
+    public void Iterate(int numsamples=1)
+    {
+        samples += numsamples;
+    }
 
 
     // public void Reset(bool hz=false, bool samples=true, bool velocity = false, bool pressed=true)

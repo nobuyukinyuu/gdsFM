@@ -5,7 +5,10 @@ using System.Collections.Generic;
 //Todo:   PatchNote:Patch extension??  Might reduce confusion overall?
 public class Patch : Resource
 {
-    // double hz = 440.0f;   //Sample pitch
+
+    #if GODOT  //Needs default ctor
+        Patch() {}
+    #endif
 
     // This value should typically be initialized to whatever the global sample rate is.
     public static double sample_rate = 44100.0;
@@ -156,22 +159,19 @@ public class Patch : Resource
         return output;
     }
 
-    // For speaker output.  Requests samples from the set of operators currently connected to the Patch.
-    public double mix(Note note){
-        if (note==null) return 0.0;
-        return mix(note, note.GetPhase(sample_rate));
-    }
-
-
-    public double mix(Note note, double phase){ 
+    public double mix(Note note){ 
         double avg = 0.0;  //Output average
-        double pitch_avg = 0.0; //Pitch multiplier average
 
         foreach (Operator op in connections)
         {	
-            // avg += (double) op.request_sample(phase, note);
-            avg += (double) op.request_sample(phase, note); 
-            pitch_avg += op.EG.totalMultiplier;  
+            //Get running average of sample output of all operators connected to output.
+            avg += op.request_sample(note.phase[op.id], note); 
+
+            //Iterate the sample timer.
+            // note.Iterate(op.id, 1, op.EG.totalMultiplier, sample_rate);
+            // note.Accumulate(op.id,1, op.EG.totalMultiplier, op.EG.SampleRate);
+            note.Iterate(1);
+
         }
 
         #if DEBUG  //We probably don't need this in release mode
@@ -184,12 +184,9 @@ public class Patch : Resource
         #endif
 
         avg /= connections.Length;  //Shitty average-based mixing.        
-        pitch_avg /= connections.Length;  //Shitty average-based mixing.        
 
-        avg *=  note.Velocity;  //DEBUG / TODO:  REMOVE ME WHEN PER-OPERATOR VELOCITY SENSITIVITY IS IMPLEMENTED?;
+        avg *=  note.Velocity;  // TODO:  REMOVE ME WHEN PER-OPERATOR VELOCITY SENSITIVITY IS IMPLEMENTED?
 
-        //Iterate the sample timer and phase accumulator.
-        note.Iterate(1, sample_rate);
         // note.Iterate(1, pitch_avg, sample_rate);
 
         

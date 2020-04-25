@@ -45,9 +45,15 @@ public class Operator
         double modulator = 0.0;
 
         double adsr = calc_eg(note);  //Get the adsr envelope from the EG to use later.
-        if (Math.Abs(adsr) < 0.0005) 
-            {return 0;}  //Exit early for quiet samples to save CPU.
 
+
+        if (Math.Abs(adsr) < 0.0005) 
+            {
+
+                return 0;
+            }  //Exit early for quiet samples to save CPU.
+
+        note.Accumulate(id,1, eg.totalMultiplier, eg.SampleRate);
 
         if (bypass && connections.Length ==0){
             return 0.0;
@@ -57,7 +63,7 @@ public class Operator
             // First, mix the parallel modulators.
             for (var i=0; i < connections.Length; i++)
             {
-                modulator += connections[i].request_sample(phase,note);
+                modulator += connections[i].request_sample(note.phase[id],note);
             }
 
             modulator /= connections.Length;  //mix down to 0.0-1.0f
@@ -66,16 +72,19 @@ public class Operator
             
             // Now modulate.
             //Modulate the phase according to the phase technique. In most FM engines this technique is always a sine wave.
-            phase += oscillators.wave(modulator, eg.fmTechnique, eg.techDuty);
+            var phaseAmt = oscillators.wave(modulator, eg.fmTechnique, eg.techDuty);
+            phase += phaseAmt;
+            // note.phase[id] += phaseAmt/note.hz;
+            // note.Accumulate(id, phaseAmt/eg.SampleRate);
 
 
             //Apply pitch modifiers.
-            phase *= eg.totalMultiplier;
-            if (eg.FixedFreq>0)  phase /= note.hz;
+            // phase *= eg.totalMultiplier;
+            // if (eg.FixedFreq>0)  phase /= note.hz;
             
 
             //Get a waveform sample from the oscillator at the current phase after all phase-modifying processing has been done.
-            output = oscillators.wave(phase, eg.waveform | eg._use_duty, eg.duty, eg.reflect, 128-note.midi_note);  
+            output = oscillators.wave(phase*eg.totalMultiplier, eg.waveform | eg._use_duty, eg.duty, eg.reflect, 128-note.midi_note);  
 
 
             //Determine the EG position and attenuate.
@@ -86,8 +95,8 @@ public class Operator
         } else {  // Terminus.  No further modulation required. 
 
             //Apply pitch modifiers.
-            phase *= eg.totalMultiplier;
-            if (eg.FixedFreq>0)  phase /= note.hz;
+            // phase *= eg.totalMultiplier;
+            // if (eg.FixedFreq>0)  phase /= note.hz;
 
             // if (eg.FixedFreq>0) //Fixed frequency
             // {
@@ -116,6 +125,9 @@ public class Operator
 
             output *= eg._totalLevel;  //Finally, Attenuate total level.  ADSR was applied to output earlier depending on FB.
         }
+
+        //Iterate the sample timer and phase accumulator.
+        // note.Accumulate(id,1, eg.totalMultiplier, eg.SampleRate);
         return output;        
     }
 

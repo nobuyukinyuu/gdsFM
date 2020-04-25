@@ -20,7 +20,7 @@ public class Channel : List<Note>
 
     public void FlagInactiveNotes()
     {
-        foreach(Note note in this)
+        foreach(Note note in this)   //FIXME:  InvalidOperationException, collection modified.  For instead of foreach?
         {
             if(note.IsDestroyable()) FlagForDeletion(note);
         }
