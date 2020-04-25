@@ -19,8 +19,6 @@ public class Operator
 
     public Envelope EG { get => eg; set => eg = value; }
 
-    // double[] old_sample = {0f,0f};  //held values for feedback processing.  Move to EG?
-
     //Ctor to give me a name
     public Operator(string name)
     {
@@ -30,14 +28,7 @@ public class Operator
         eg = new Envelope(name);
     }
 
-    //  //    Fills a buffer of samples.  Do this in the mixer or something.
-    // public double[] FillBuffer(double[] phase)
-    // {
-
-    // }
-
     //Iterate over our connections, then mix and modulate them before returning the final modulated value.
-    //TODO:  Replace samplePos with proper argument for a Note class which can include NoteOff state, sample position at release time, etc.
     public double request_sample(double phase, Note note)
     {
         
@@ -72,11 +63,6 @@ public class Operator
             //Modulate the phase according to the phase technique. In most FM engines this technique is always a sine wave.
             var phaseAmt = oscillators.wave(modulator, eg.fmTechnique, eg.techDuty);
             phase += phaseAmt;
-
-
-            //Apply pitch modifiers.
-            // phase *= eg.totalMultiplier;
-            // if (eg.FixedFreq>0)  phase /= note.hz;
             
 
             //Get a waveform sample from the oscillator at the current phase after all phase-modifying processing has been done.
@@ -87,23 +73,7 @@ public class Operator
             output *= adsr;
             output *= eg._totalLevel;  
             
-            // note.phase[id] += phase;
-            // note.Accumulate(id,1, eg.totalMultiplier, eg.SampleRate);
-            // return output;
         } else {  // Terminus.  No further modulation required. 
-
-            //Apply pitch modifiers.
-            // phase *= eg.totalMultiplier;
-            // if (eg.FixedFreq>0)  phase /= note.hz;
-
-            // if (eg.FixedFreq>0) //Fixed frequency
-            // {
-            //     phase *= eg.FixedFreq;
-            //     phase /= note.hz;
-            // } else {  //Ratio'd frequency
-            //     phase *= eg._detune;
-            //     phase *= eg._freqMult * eg._coarseDetune;
-            // }
 
             // Process feedback
             if (eg.feedback > 0)
@@ -125,11 +95,10 @@ public class Operator
         }
 
         //Iterate the sample timer and phase accumulator.
-        // note.Accumulate(id,1, eg.totalMultiplier, eg.SampleRate);
-
         Finalize: 
-        note.Accumulate(id,1, eg.totalMultiplier, eg.SampleRate);
-        return output;        
+          note.Accumulate(id,1, eg.FixedFreq>0? eg.totalMultiplier/note.hz : eg.totalMultiplier, eg.SampleRate);
+
+          return output;        
     }
 
     // Calculate the position and value attenuation as determined by the envelope generator.
