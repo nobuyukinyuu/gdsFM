@@ -58,7 +58,7 @@ public class oscillators : Node
 	}
 
 
-	public static double wave(double n, Waveforms waveform = Waveforms.SINE, double duty = 0.5, bool reflect=false, int auxData=0){
+	public static double wave(double n, Waveforms waveform = Waveforms.SINE, double duty = 0.5, bool reflect=false, int auxData=1){
 		n %= 1.0;
 
 		double sReflect = reflect? -1 : 1;
