@@ -59,7 +59,7 @@ __meta__ = {
 }
 
 [node name="0" type="TextureRect" parent="ADSR"]
-margin_right = 47.0
+margin_right = 46.0
 margin_bottom = 120.0
 size_flags_horizontal = 3
 script = ExtResource( 2 )
@@ -72,8 +72,8 @@ curve = -2.0
 sl = 1.0
 
 [node name="1" type="TextureRect" parent="ADSR"]
-margin_left = 47.0
-margin_right = 94.0
+margin_left = 46.0
+margin_right = 92.0
 margin_bottom = 120.0
 size_flags_horizontal = 3
 script = ExtResource( 2 )
@@ -87,8 +87,8 @@ curve = -2.0
 sl = 0.5
 
 [node name="2" type="TextureRect" parent="ADSR"]
-margin_left = 94.0
-margin_right = 141.0
+margin_left = 92.0
+margin_right = 138.0
 margin_bottom = 120.0
 size_flags_horizontal = 3
 script = ExtResource( 2 )
@@ -102,8 +102,8 @@ tl = 0.5
 sl = 0.5
 
 [node name="3" type="TextureRect" parent="ADSR"]
-margin_left = 141.0
-margin_right = 190.0
+margin_left = 138.0
+margin_right = 184.0
 margin_bottom = 120.0
 size_flags_horizontal = 3
 script = ExtResource( 2 )
@@ -116,3 +116,13 @@ thickness = 1.5
 curve = 2.0
 tl = 0.25
 sl = 1.0
+
+[node name="Spacer" type="TextureRect" parent="ADSR"]
+margin_left = 184.0
+margin_right = 190.0
+margin_bottom = 120.0
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.1
+__meta__ = {
+"_edit_use_anchors_": false
+}

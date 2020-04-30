@@ -94,8 +94,8 @@ func update_env():
 	
 	var rl= sl
 	
-	$ADSR/"2".sl = 1.0-sr   #Sustain level final
-	$ADSR/"3".tl = sr*sl*tl   #Release level start
+	$ADSR/"2".sl = 1.0-sr*sr   #Sustain level final
+	$ADSR/"3".tl = sr*sr*sl*tl   #Release level start
 
 	if Release < 1:
 		$ADSR/"3".sl = 0.5-(rr/2.0)  #Release level end  (Lerp between 0 and rlev at rrate)
@@ -107,6 +107,8 @@ func update_env():
 	$ADSR/"2".size_flags_stretch_ratio = sr
 	$ADSR/"3".size_flags_stretch_ratio = rr
 	
+	$ADSR/Spacer.size_flags_stretch_ratio = lerp(2,0, (ar+dr+sr+rr) / 5.0)
+	
 	update()
 
 func update_vol():
@@ -116,7 +118,8 @@ func update_vol():
 func update_thickness(val):
 	thickness = val
 	
-	for o in $ADSR.get_children():
+	for i in 4:
+		var o = $ADSR.get_node(str(i))
 		o.thickness = thickness
 		o.update()
 
@@ -145,4 +148,5 @@ func set_all(a,d,s,r, svol,vol, acurve,dcurve,scurve,rcurve):
 	update_vol()
 
 func _ready():
+#	update_env()
 	update_vol()

@@ -42,7 +42,6 @@ margin_right = 120.0
 margin_bottom = 88.0
 rect_min_size = Vector2( 0, 64 )
 mouse_filter = 1
-thickness = 0.8
 Decay = 0
 
 [node name="Label" type="Label" parent="."]
