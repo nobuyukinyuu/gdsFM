@@ -1,12 +1,13 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://GraphNodeSimple.gd" type="Script" id=1]
+[ext_resource path="res://sys/ui/EnvelopeDisplay.tscn" type="PackedScene" id=2]
 
 [node name="OP" type="GraphNode" groups=[
 "operator",
 ]]
 margin_right = 136.0
-margin_bottom = 84.0
+margin_bottom = 116.0
 mouse_filter = 1
 custom_constants/separation = 8
 title = "OP"
@@ -34,26 +35,31 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="."]
+[node name="EnvelopeDisplay" parent="." instance=ExtResource( 2 )]
 margin_left = 16.0
 margin_top = 24.0
 margin_right = 120.0
-margin_bottom = 38.0
+margin_bottom = 88.0
+rect_min_size = Vector2( 0, 64 )
+mouse_filter = 1
+thickness = 0.8
+Decay = 0
+
+[node name="Label" type="Label" parent="."]
+margin_left = 16.0
+margin_top = 96.0
+margin_right = 120.0
+margin_bottom = 110.0
 text = "Input / Output"
 align = 1
 valign = 1
 
-[node name="MarginContainer2" type="MarginContainer" parent="."]
-margin_left = 16.0
-margin_top = 46.0
-margin_right = 120.0
-margin_bottom = 46.0
-
 [node name="Bypass" type="CheckBox" parent="."]
 margin_left = 16.0
-margin_top = 54.0
+margin_top = 118.0
 margin_right = 120.0
-margin_bottom = 78.0
+margin_bottom = 142.0
 custom_constants/hseparation = 8
 text = "Bypass"
 clip_text = true
+align = 1

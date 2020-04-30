@@ -2,6 +2,7 @@ extends Control
 
 var currentEG  #:global.Instr  #Current instrument associated with the controls.
 
+signal envelope_changed
 
 
 func _ready():
@@ -11,6 +12,7 @@ func _ready():
 		if o.is_in_group("slider"):
 			o.get_node("Slider").connect("value_changed", self, "_on_slider_change", [o.name])
 		
+
 
 func load_settings(instr):
 	if !instr:  
@@ -32,6 +34,9 @@ func _on_slider_change(value, which):
 	
 	if currentEG:
 		currentEG.set(which, value)
+		
+		if ["Ar", "Dr", "Sr", "Rr", "Sl", "Tl"].has(which):
+			emit_signal("envelope_changed", value, which)
 	
 
 #Gets a specified slider value.

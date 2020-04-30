@@ -102,13 +102,14 @@ public Channel PreviewNotes = new Channel();
     }
 
     //Changes bypass value on an individual operator inside the current patch.
-    public int Bypass(string opname, bool val)
+    public Godot.Error Bypass(string opname, bool val)
     {
-
+            if (patch==null) return Godot.Error.DoesNotExist;
             Operator op = patch.GetOperator(opname);
-            if (op!=null)  op.Bypass = val;
-            if (op!=null) return 0; else return -1;
+            if (op == null) return Godot.Error.DoesNotExist;
 
+            op.Bypass = val;
+            return Godot.Error.Ok;
     }
 
 

@@ -1,31 +1,26 @@
 extends Control
 
-#var buf:AudioStreamGeneratorPlayback  #Playback buffer
-#var samples = 0
-#var bufferdata = PoolVector2Array([])
-
-var hz = 44100.0  #This is set to a global var sample_rate
+var lastOperatorEnvelope  #Preview from GraphNode of last operator selected.
 
 
 func _ready():
-#	hz = global.sample_rate
-#
-#	$Audio.stream.mix_rate = hz
-#	buf = $Audio.get_stream_playback()
-#
-#	fill_buffer()  #Prefill buffer
-#	$Audio.play()
-	
+	#Setup oscilloscope
 	var newpts = []
 	newpts.resize($Panel.rect_size.x)
 	$Panel/Line2D.points = newpts
 
+	#Setup tabs
 	$TC/EGControl.disable(true)
 	$TC.set_tab_title(0, "EG")
 	$TC.set_tab_icon(0, preload("res://gfx/ui/icon_adsr.svg"))
 	$TC.set_tab_icon(1, preload("res://gfx/ui/icon_tuning.svg"))
+#	$TC.set_tab_icon(1, preload("res://gfx/ui/icon_lfo.svg"))
 	$TC.set_tab_icon(2, preload("res://gfx/ui/icon_curve.svg"))
 	$TC.set_tab_icon(3, preload("res://gfx/ui/icon_waveform.svg"))
+	
+	#Setup envelope connections
+	$TC/EGControl.connect("envelope_changed", self, "_on_Env_update")
+	$TC/Curve.connect("envelope_changed", self, "_on_Env_update")
 
 func _input(event):
 	#DEBUG:  reset EG
@@ -71,6 +66,9 @@ func _on_GraphEdit_node_selected(node):
 		$TC/EGControl.disable(false)
 #		$TC.enable
 
+		yield(get_tree(),"idle_frame")
+		lastOperatorEnvelope = node
+
 
 func _on_Waveform_item_selected(id, techWaveform:bool=false):
 	if !$TC/EGControl.currentEG:  return
@@ -104,3 +102,37 @@ func _on_Algorithm_item_selected(id):
 		$GraphEdit.connect_node(pair[0],0, pair[1],0)
 
 	$GraphEdit.dirty = true
+
+
+func _on_Env_update(value, which):
+	if !lastOperatorEnvelope:  return
+	
+	var env:EnvelopeDisplay = lastOperatorEnvelope.get_node("EnvelopeDisplay")
+#	prints ("Setting", which,"to", value, "in", env)
+	match which:
+		"Ar":
+			env.Attack = value
+		"Dr":
+			env.Decay = value
+		"Sr":
+			env.Sustain = value
+		"Rr":
+			env.Release = value
+		"Sl":
+			env.sl = value 
+			env.update_env()
+			env.update_vol()
+		"Tl":
+			env.tl = value 
+			env.update_env()
+			env.update_vol()
+		"Ac":
+			env.ac = value
+		"Dc":
+			env.dc = value
+		"Sc":
+			env.sc = value
+		"Rc":
+			env.rc = value
+
+

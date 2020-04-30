@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.5, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+<line opacity="0.5" fill="none" stroke="#FFFFFF" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="-0.656" y1="12.406" x2="16.313" y2="12.406"/>
+<line opacity="0.5" fill="none" stroke="#FFFFFF" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="-0.656" y1="10.125" x2="16.313" y2="10.125"/>
+<line opacity="0.5" fill="none" stroke="#FFFFFF" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="-0.656" y1="6.125" x2="16.313" y2="6.125"/>
+<g>
+	<path opacity="0.2" d="M13,11.126c0,1.035-0.84,1.875-1.875,1.875h-6.25C3.84,13.001,3,12.161,3,11.126v-6.25
+		C3,3.84,3.84,3,4.875,3h6.25C12.16,3,13,3.84,13,4.876V11.126z"/>
+	<g>
+		
+			<polyline fill="none" stroke="#FFDA1F" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="
+			2.608,6.349 2.608,2.337 7.844,2.337 7.844,6.349 12.627,6.349 		"/>
+		
+			<line fill="none" stroke="#FF9A1F" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="12.627" y1="6.349" x2="8.313" y2="6.349"/>
+		
+			<polyline fill="none" stroke="#FF1FDD" stroke-width="1.2927" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="
+			5.893,10.276 14.555,5.266 14.555,10.276 		"/>
+		
+			<path fill="none" stroke="#1F90FF" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+			M1.036,11.964c0,0,0-2.34,2.428-2.34c2.429,0,2.424,4.679,4.857,4.679c2.434,0,2.43-2.339,2.43-2.339"/>
+	</g>
+</g>
+</svg>

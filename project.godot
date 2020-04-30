@@ -9,6 +9,11 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Panel",
+"class": "EnvelopeDisplay",
+"language": "GDScript",
+"path": "res://sys/ui/EnvelopeDisplay.gd"
+}, {
 "base": "Control",
 "class": "PatternNote",
 "language": "GDScript",
@@ -20,6 +25,7 @@ _global_script_classes=[ {
 "path": "res://sys/ui/PatternNotePorta.gd"
 } ]
 _global_script_class_icons={
+"EnvelopeDisplay": "",
 "PatternNote": "res://gfx/ui/icon_note.svg",
 "PatternNotePorta": "res://gfx/ui/icon_edit_bezier.svg"
 }

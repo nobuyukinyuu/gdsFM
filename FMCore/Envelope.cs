@@ -74,7 +74,7 @@ public class Envelope : Node
     public double Sr { get => sr; set => _set_sustain_time(value); }
     public double Rr { get => rr;   set =>  _set_release_time(value); }
     public double Sl { get => sl; set  {sl = value;  _susLevel = value / 100.0;} }
-    public double Tl { get => tl; set  {tl = value;  _totalLevel = value / 100.0f;} }
+    public double Tl { get => tl; set  {tl = value;  _totalLevel = value / 100.0;} }
     public double Ks { get => ks; set => ks = value; }
     public double Mul { get => mul;  set => _set_octave_multiplier(value); }
     public double Dt { get => dt; set => set_detune(value); }

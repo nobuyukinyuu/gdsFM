@@ -1,0 +1,208 @@
+[gd_scene load_steps=20 format=2]
+
+[ext_resource path="res://sys/ui/responseCurve/VUMeter.gd" type="Script" id=1]
+[ext_resource path="res://sys/ui/responseCurve/Splits.gd" type="Script" id=2]
+[ext_resource path="res://gfx/ui/vu/ruler16.png" type="Texture" id=3]
+[ext_resource path="res://gfx/ui/vu/split_toggle_bg.png" type="Texture" id=4]
+[ext_resource path="res://gfx/ui/vu/response_curve.png" type="Texture" id=5]
+[ext_resource path="res://gfx/ui/vu/minmax_ruler_labels.png" type="Texture" id=6]
+[ext_resource path="res://gfx/ui/vu/split_toggle.png" type="Texture" id=7]
+[ext_resource path="res://gfx/ui/vu/empty16.png" type="Texture" id=8]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0, 0, 0, 1 )
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0, 0, 0, 1 )
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="AtlasTexture" id=2]
+atlas = ExtResource( 5 )
+region = Rect2( 0, 0, 82, 8 )
+
+[sub_resource type="AtlasTexture" id=3]
+atlas = ExtResource( 6 )
+region = Rect2( 0, 0, 16, 8 )
+
+[sub_resource type="AtlasTexture" id=4]
+atlas = ExtResource( 6 )
+region = Rect2( 16, 8, 16, 8 )
+
+[sub_resource type="AtlasTexture" id=5]
+atlas = ExtResource( 6 )
+region = Rect2( 16, 0, 16, 8 )
+
+[sub_resource type="AtlasTexture" id=6]
+atlas = ExtResource( 6 )
+region = Rect2( 16, 16, 16, 8 )
+
+[sub_resource type="AtlasTexture" id=7]
+atlas = ExtResource( 6 )
+region = Rect2( 16, 24, 16, 8 )
+
+[sub_resource type="AtlasTexture" id=8]
+atlas = ExtResource( 6 )
+region = Rect2( 0, 8, 16, 8 )
+
+[sub_resource type="AtlasTexture" id=9]
+atlas = ExtResource( 6 )
+region = Rect2( 0, 24, 16, 8 )
+
+[sub_resource type="StyleBoxEmpty" id=10]
+
+[sub_resource type="StyleBoxEmpty" id=11]
+
+[node name="ResponseCurve" type="Panel"]
+margin_right = 376.0
+margin_bottom = 336.0
+custom_styles/panel = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Ruler" type="TextureRect" parent="."]
+modulate = Color( 1, 1, 1, 0.584314 )
+margin_left = 22.0
+margin_top = 16.0
+margin_right = 32.0
+margin_bottom = 272.0
+texture = ExtResource( 3 )
+stretch_mode = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VU" type="TextureRect" parent="."]
+margin_left = 34.0
+margin_top = 16.0
+margin_right = 354.0
+margin_bottom = 272.0
+mouse_filter = 0
+texture = ExtResource( 8 )
+stretch_mode = 2
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="lblResponse" type="TextureRect" parent="."]
+modulate = Color( 1, 1, 1, 0.584314 )
+margin_left = 274.0
+margin_top = 6.0
+margin_right = 356.0
+margin_bottom = 14.0
+texture = SubResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MinMax1" type="TextureRect" parent="."]
+modulate = Color( 1, 1, 1, 0.584314 )
+margin_left = 16.0
+margin_top = 8.0
+margin_right = 32.0
+margin_bottom = 16.0
+texture = SubResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MinMax2" type="TextureRect" parent="."]
+modulate = Color( 1, 1, 1, 0.25098 )
+margin_left = 4.0
+margin_top = 74.0
+margin_right = 20.0
+margin_bottom = 82.0
+texture = SubResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MinMax3" type="TextureRect" parent="."]
+modulate = Color( 1, 1, 1, 0.627451 )
+margin_left = 4.0
+margin_top = 16.0
+margin_right = 20.0
+margin_bottom = 24.0
+texture = SubResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MinMax4" type="TextureRect" parent="."]
+modulate = Color( 1, 1, 1, 0.627451 )
+margin_left = 4.0
+margin_top = 138.0
+margin_right = 20.0
+margin_bottom = 146.0
+texture = SubResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MinMax5" type="TextureRect" parent="."]
+modulate = Color( 1, 1, 1, 0.25098 )
+margin_left = 4.0
+margin_top = 202.0
+margin_right = 20.0
+margin_bottom = 210.0
+texture = SubResource( 7 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MinMax7" type="TextureRect" parent="."]
+modulate = Color( 1, 1, 1, 0.584314 )
+margin_left = 16.0
+margin_top = 272.0
+margin_right = 32.0
+margin_bottom = 280.0
+texture = SubResource( 8 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MinMax6" type="TextureRect" parent="."]
+modulate = Color( 1, 1, 1, 0.627451 )
+margin_left = 4.0
+margin_top = 266.0
+margin_right = 20.0
+margin_bottom = 274.0
+texture = SubResource( 9 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Splits" type="TextureRect" parent="."]
+margin_left = 32.0
+margin_top = 280.0
+margin_right = 352.0
+margin_bottom = 320.0
+texture = ExtResource( 4 )
+stretch_mode = 2
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="0" type="CheckButton" parent="Splits"]
+margin_right = 10.0
+margin_bottom = 40.0
+hint_tooltip = "> 0-3 | 4"
+custom_icons/off = ExtResource( 4 )
+custom_icons/on_disabled = ExtResource( 4 )
+custom_icons/on = ExtResource( 7 )
+custom_icons/off_disabled = ExtResource( 7 )
+custom_styles/focus = SubResource( 10 )
+custom_styles/normal = SubResource( 11 )
+action_mode = 0
+flat = true
+clip_text = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
