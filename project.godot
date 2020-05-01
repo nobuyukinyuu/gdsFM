@@ -34,7 +34,7 @@ _global_script_class_icons={
 
 config/name="gdsFM"
 run/main_scene="res://main.tscn"
-config/icon="res://icon.png"
+config/icon="res://gfx/logos/icon64.png"
 
 [autoload]
 
