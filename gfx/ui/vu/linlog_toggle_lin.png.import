@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/split_toggle_bg.png-d5cf448228108280148b4dd97b0299e5.stex"
+path="res://.import/linlog_toggle_lin.png-31284c5c54c598f38dd114389fe0153c.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://gfx/ui/vu/split_toggle_bg.png"
-dest_files=[ "res://.import/split_toggle_bg.png-d5cf448228108280148b4dd97b0299e5.stex" ]
+source_file="res://gfx/ui/vu/linlog_toggle_lin.png"
+dest_files=[ "res://.import/linlog_toggle_lin.png-31284c5c54c598f38dd114389fe0153c.stex" ]
 
 [params]
 

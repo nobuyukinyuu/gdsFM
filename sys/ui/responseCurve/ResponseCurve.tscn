@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=25 format=2]
 
 [ext_resource path="res://sys/ui/responseCurve/VUMeter.gd" type="Script" id=1]
 [ext_resource path="res://sys/ui/responseCurve/Splits.gd" type="Script" id=2]
@@ -8,6 +8,9 @@
 [ext_resource path="res://gfx/ui/vu/minmax_ruler_labels.png" type="Texture" id=6]
 [ext_resource path="res://gfx/ui/vu/split_toggle.png" type="Texture" id=7]
 [ext_resource path="res://gfx/ui/vu/empty16.png" type="Texture" id=8]
+[ext_resource path="res://gfx/ui/vu/linlog_toggle_off.png" type="Texture" id=9]
+[ext_resource path="res://gfx/ui/vu/linlog_toggle_log.png" type="Texture" id=10]
+[ext_resource path="res://gfx/ui/vu/linlog_toggle_lin.png" type="Texture" id=11]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0, 0, 0, 1 )
@@ -21,41 +24,106 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
-[sub_resource type="AtlasTexture" id=2]
+[sub_resource type="Shader" id=14]
+code = "shader_type canvas_item;
+uniform bvec3 swizzle=bvec3(false,false,false);  //RG, GB, RB
+
+uniform int column : hint_range(-1,31) = -1;
+uniform sampler2D mask;
+
+vec4 swizz(vec4 c)
+{
+	if (swizzle.r && swizzle.g && swizzle.b) {  // 7  invert
+		c.rgb = vec3(1.0)-c.rgb;
+	} else if (swizzle.r && swizzle.g) {  // 3  BRG
+		c.rgb = c.brg;
+	} else if (swizzle.r && swizzle.b) { // 5  GBR
+		c.rgb = c.gbr;
+	} else if (swizzle.b && swizzle.g) { // 6  gray
+		c.rgb = vec3((c.r+c.g+c.b) / 3.0); 
+
+	} else {
+			if (swizzle.b)  // 4  BGR
+			{
+				c.rb = c.br;
+			}
+
+			if (swizzle.g) // 2  RBG
+			{
+				c.gb = c.bg;
+			}
+
+			if (swizzle.r) // 1  GRB
+			{
+				c.rg = c.gr;
+			}
+	}	
+
+	return c;
+}
+
+void fragment(){
+	vec4 c = texture(SCREEN_TEXTURE, SCREEN_UV);
+	
+	
+//	float uva = (UV.x * TEXTURE_PIXEL_SIZE.x);
+	float uva = (UV.x * TEXTURE_PIXEL_SIZE.x * SCREEN_UV.x * SCREEN_PIXEL_SIZE.x);
+//	int uvc = int((UV.x-0.0) / (SCREEN_PIXEL_SIZE.x ) / 10.0 );
+	int uvc = int((UV.x) * 32.0 );
+
+	if (textureLod(mask,UV,0) != vec4(vec3(0.0), 1.0) ){
+		c = swizz(c);
+	}
+	if (uvc==column)
+	{
+		c = swizz(c);
+//		c.rgb = vec3(1);
+	}
+
+	COLOR=c;
+}
+"
+
+[sub_resource type="ShaderMaterial" id=15]
+shader = SubResource( 14 )
+shader_param/swizzle = 5
+shader_param/column = -1
+
+[sub_resource type="AtlasTexture" id=4]
 atlas = ExtResource( 5 )
 region = Rect2( 0, 0, 82, 8 )
 
-[sub_resource type="AtlasTexture" id=3]
+[sub_resource type="AtlasTexture" id=5]
 atlas = ExtResource( 6 )
 region = Rect2( 0, 0, 16, 8 )
 
-[sub_resource type="AtlasTexture" id=4]
+[sub_resource type="AtlasTexture" id=6]
 atlas = ExtResource( 6 )
 region = Rect2( 16, 8, 16, 8 )
 
-[sub_resource type="AtlasTexture" id=5]
+[sub_resource type="AtlasTexture" id=7]
 atlas = ExtResource( 6 )
 region = Rect2( 16, 0, 16, 8 )
 
-[sub_resource type="AtlasTexture" id=6]
+[sub_resource type="AtlasTexture" id=8]
 atlas = ExtResource( 6 )
 region = Rect2( 16, 16, 16, 8 )
 
-[sub_resource type="AtlasTexture" id=7]
+[sub_resource type="AtlasTexture" id=9]
 atlas = ExtResource( 6 )
 region = Rect2( 16, 24, 16, 8 )
 
-[sub_resource type="AtlasTexture" id=8]
+[sub_resource type="AtlasTexture" id=10]
 atlas = ExtResource( 6 )
 region = Rect2( 0, 8, 16, 8 )
 
-[sub_resource type="AtlasTexture" id=9]
+[sub_resource type="AtlasTexture" id=11]
 atlas = ExtResource( 6 )
 region = Rect2( 0, 24, 16, 8 )
 
-[sub_resource type="StyleBoxEmpty" id=10]
+[sub_resource type="StyleBoxEmpty" id=12]
 
-[sub_resource type="StyleBoxEmpty" id=11]
+[sub_resource type="StyleBoxEmpty" id=13]
 
 [node name="ResponseCurve" type="Panel"]
 margin_right = 376.0
@@ -66,7 +134,7 @@ __meta__ = {
 }
 
 [node name="Ruler" type="TextureRect" parent="."]
-modulate = Color( 1, 1, 1, 0.584314 )
+modulate = Color( 1, 1, 1, 0.752941 )
 margin_left = 22.0
 margin_top = 16.0
 margin_right = 32.0
@@ -89,14 +157,23 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+maxValue = 127
+
+[node name="Overlay" type="ColorRect" parent="VU"]
+material = SubResource( 15 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="lblResponse" type="TextureRect" parent="."]
-modulate = Color( 1, 1, 1, 0.584314 )
 margin_left = 274.0
 margin_top = 6.0
 margin_right = 356.0
 margin_bottom = 14.0
-texture = SubResource( 2 )
+texture = SubResource( 4 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -107,7 +184,7 @@ margin_left = 16.0
 margin_top = 8.0
 margin_right = 32.0
 margin_bottom = 16.0
-texture = SubResource( 3 )
+texture = SubResource( 5 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -118,7 +195,7 @@ margin_left = 4.0
 margin_top = 74.0
 margin_right = 20.0
 margin_bottom = 82.0
-texture = SubResource( 4 )
+texture = SubResource( 6 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -129,7 +206,7 @@ margin_left = 4.0
 margin_top = 16.0
 margin_right = 20.0
 margin_bottom = 24.0
-texture = SubResource( 5 )
+texture = SubResource( 7 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -140,7 +217,7 @@ margin_left = 4.0
 margin_top = 138.0
 margin_right = 20.0
 margin_bottom = 146.0
-texture = SubResource( 6 )
+texture = SubResource( 8 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -151,7 +228,7 @@ margin_left = 4.0
 margin_top = 202.0
 margin_right = 20.0
 margin_bottom = 210.0
-texture = SubResource( 7 )
+texture = SubResource( 9 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -162,7 +239,7 @@ margin_left = 16.0
 margin_top = 272.0
 margin_right = 32.0
 margin_bottom = 280.0
-texture = SubResource( 8 )
+texture = SubResource( 10 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -173,15 +250,15 @@ margin_left = 4.0
 margin_top = 266.0
 margin_right = 20.0
 margin_bottom = 274.0
-texture = SubResource( 9 )
+texture = SubResource( 11 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Splits" type="TextureRect" parent="."]
-margin_left = 32.0
+margin_left = 34.0
 margin_top = 280.0
-margin_right = 352.0
+margin_right = 354.0
 margin_bottom = 320.0
 texture = ExtResource( 4 )
 stretch_mode = 2
@@ -198,8 +275,27 @@ custom_icons/off = ExtResource( 4 )
 custom_icons/on_disabled = ExtResource( 4 )
 custom_icons/on = ExtResource( 7 )
 custom_icons/off_disabled = ExtResource( 7 )
-custom_styles/focus = SubResource( 10 )
-custom_styles/normal = SubResource( 11 )
+custom_styles/focus = SubResource( 12 )
+custom_styles/normal = SubResource( 13 )
+action_mode = 0
+flat = true
+clip_text = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="chkLinlog" type="CheckButton" parent="."]
+margin_left = 16.0
+margin_top = 277.0
+margin_right = 32.0
+margin_bottom = 317.0
+hint_tooltip = "> 0-3 | 4"
+custom_icons/off = ExtResource( 11 )
+custom_icons/on_disabled = ExtResource( 9 )
+custom_icons/on = ExtResource( 10 )
+custom_icons/off_disabled = ExtResource( 9 )
+custom_styles/focus = SubResource( 12 )
+custom_styles/normal = SubResource( 13 )
 action_mode = 0
 flat = true
 clip_text = true

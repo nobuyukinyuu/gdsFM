@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/split_toggle_bg.png-d5cf448228108280148b4dd97b0299e5.stex"
+path="res://.import/small_numerics_thin.png-fa96414c1539792e00c958e240e3117e.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://gfx/ui/vu/split_toggle_bg.png"
-dest_files=[ "res://.import/split_toggle_bg.png-d5cf448228108280148b4dd97b0299e5.stex" ]
+source_file="res://gfx/fonts/small_numerics_thin.png"
+dest_files=[ "res://.import/small_numerics_thin.png-fa96414c1539792e00c958e240e3117e.stex" ]
 
 [params]
 
