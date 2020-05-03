@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/piano_roll_wide.png-576c3aded7df8d6c3498800868333a11.stex"
+path="res://.import/icon_curve_out_in.svg-a1fe47e1abe00e1eb644e83ca0f92b19.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://gfx/ui/piano_roll_wide.png"
-dest_files=[ "res://.import/piano_roll_wide.png-576c3aded7df8d6c3498800868333a11.stex" ]
+source_file="res://gfx/ui/godot_icons/icon_curve_out_in.svg"
+dest_files=[ "res://.import/icon_curve_out_in.svg-a1fe47e1abe00e1eb644e83ca0f92b19.stex" ]
 
 [params]
 
@@ -19,7 +19,7 @@ compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
-flags/repeat=1
+flags/repeat=0
 flags/filter=true
 flags/mipmaps=false
 flags/anisotropic=false

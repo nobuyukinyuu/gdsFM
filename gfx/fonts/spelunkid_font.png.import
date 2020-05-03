@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/pill.png-a885b7af86e342fa5a7620ec92fed102.stex"
+path="res://.import/spelunkid_font.png-e6b2fa6d2e689a873389e20a396fb0fc.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://gfx/ui/pill.png"
-dest_files=[ "res://.import/pill.png-a885b7af86e342fa5a7620ec92fed102.stex" ]
+source_file="res://gfx/fonts/spelunkid_font.png"
+dest_files=[ "res://.import/spelunkid_font.png-e6b2fa6d2e689a873389e20a396fb0fc.stex" ]
 
 [params]
 
@@ -20,7 +20,7 @@ compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
 flags/repeat=0
-flags/filter=true
+flags/filter=false
 flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2

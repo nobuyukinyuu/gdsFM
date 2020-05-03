@@ -3,7 +3,7 @@ extends VBoxContainer
 
 const note_names = ["A-", "A#", "B-", "C-", "C#", "D-", "D#", "E-", "F-", "F#", "G-", "G#"]
 const noteColors = preload("res://gfx/noteColors/5th.png")
-const noteFont = preload("res://gfx/ui/NoteFont.tres")
+const noteFont = preload("res://gfx/fonts/NoteFont.tres")
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

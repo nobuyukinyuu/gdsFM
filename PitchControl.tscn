@@ -1,9 +1,9 @@
 [gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://EGControl.gd" type="Script" id=1]
-[ext_resource path="res://spelunkid_font.tres" type="BitmapFont" id=2]
+[ext_resource path="res://gfx/fonts/spelunkid_font.tres" type="BitmapFont" id=2]
 [ext_resource path="res://FixedFreq.gd" type="Script" id=3]
-[ext_resource path="res://gfx/ui/NoteFont.tres" type="BitmapFont" id=4]
+[ext_resource path="res://gfx/fonts/NoteFont.tres" type="BitmapFont" id=4]
 
 [sub_resource type="StyleBoxEmpty" id=1]
 

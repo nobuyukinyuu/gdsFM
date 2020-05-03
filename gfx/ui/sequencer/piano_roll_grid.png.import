@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/spelunkid_font.png-735f01cc9e673b9cb1fdcdf70f987f71.stex"
+path="res://.import/piano_roll_grid.png-e77334dcd2033baae17bba77f962e9bc.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://spelunkid_font.png"
-dest_files=[ "res://.import/spelunkid_font.png-735f01cc9e673b9cb1fdcdf70f987f71.stex" ]
+source_file="res://gfx/ui/sequencer/piano_roll_grid.png"
+dest_files=[ "res://.import/piano_roll_grid.png-e77334dcd2033baae17bba77f962e9bc.stex" ]
 
 [params]
 
@@ -20,7 +20,7 @@ compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
 flags/repeat=0
-flags/filter=false
+flags/filter=true
 flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2

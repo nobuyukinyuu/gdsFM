@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/piano_roll_grid.png-c8562bcbcb9b83b13d904dda3ff35117.stex"
+path="res://.import/icon_curve_in.svg-33ffcc8f5f32ed98057948535713f989.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://gfx/ui/piano_roll_grid.png"
-dest_files=[ "res://.import/piano_roll_grid.png-c8562bcbcb9b83b13d904dda3ff35117.stex" ]
+source_file="res://gfx/ui/godot_icons/icon_curve_in.svg"
+dest_files=[ "res://.import/icon_curve_in.svg-33ffcc8f5f32ed98057948535713f989.stex" ]
 
 [params]
 

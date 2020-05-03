@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/noteFont_proto.png-359ce8443eb520aa33ecfeb9fad2204e.stex"
+path="res://.import/icon_curve_out.svg-b66240168d2c0b8a4a0d22fc62570ff8.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://gfx/noteFont_proto.png"
-dest_files=[ "res://.import/noteFont_proto.png-359ce8443eb520aa33ecfeb9fad2204e.stex" ]
+source_file="res://gfx/ui/godot_icons/icon_curve_out.svg"
+dest_files=[ "res://.import/icon_curve_out.svg-b66240168d2c0b8a4a0d22fc62570ff8.stex" ]
 
 [params]
 

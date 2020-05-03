@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/piano_roll.png-248afe41128517bd253239410a043d80.stex"
+path="res://.import/pill.png-c873ed57dafc5c1e716ae8869de45c8e.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://gfx/ui/piano_roll.png"
-dest_files=[ "res://.import/piano_roll.png-248afe41128517bd253239410a043d80.stex" ]
+source_file="res://gfx/ui/sequencer/pill.png"
+dest_files=[ "res://.import/pill.png-c873ed57dafc5c1e716ae8869de45c8e.stex" ]
 
 [params]
 
@@ -19,7 +19,7 @@ compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
-flags/repeat=1
+flags/repeat=0
 flags/filter=true
 flags/mipmaps=false
 flags/anisotropic=false

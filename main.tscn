@@ -3,7 +3,7 @@
 [ext_resource path="res://main.gd" type="Script" id=1]
 [ext_resource path="res://EGControl.tscn" type="PackedScene" id=2]
 [ext_resource path="res://OP-CenterNode.tscn" type="PackedScene" id=3]
-[ext_resource path="res://spelunkid_font.tres" type="BitmapFont" id=4]
+[ext_resource path="res://gfx/fonts/spelunkid_font.tres" type="BitmapFont" id=4]
 [ext_resource path="res://gfx/al1.png" type="Texture" id=5]
 [ext_resource path="res://gfx/al0.png" type="Texture" id=6]
 [ext_resource path="res://gfx/al2.png" type="Texture" id=7]
@@ -278,7 +278,7 @@ __meta__ = {
 [node name="Label" type="Label" parent="GraphEdit/Output"]
 margin_left = 16.0
 margin_top = 24.0
-margin_right = 87.0
+margin_right = 88.0
 margin_bottom = 48.0
 rect_min_size = Vector2( 0, 24 )
 text = "Speakers"

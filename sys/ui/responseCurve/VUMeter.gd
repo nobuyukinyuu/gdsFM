@@ -15,6 +15,12 @@ var cursor_img = Image.new()
 var cursor_texture=ImageTexture.new()
 var custom_texture=ImageTexture.new()
 
+#Held values to allow keyboard tweaking.
+var last_column = 0
+var last_value = 0
+
+var dirty = false  #When altered this value changes to indicate data is ready to send.
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	elementWidth = texture.get_width()
@@ -45,23 +51,28 @@ func _gui_input(event):
 		var vol = maxValue * (val/100.0)
 		if linLog:  vol = (val/float(maxValue)) * (val/float(maxValue)) * maxValue
 		
+		
+		#Generate a cursor to help user set proper map val
 		set_cursor(String(vol))
 		Input.set_custom_mouse_cursor(cursor_texture,0,Vector2(0,0)) #Temporarily blank to update
 		Input.set_custom_mouse_cursor(custom_texture,0,Vector2(0,0))
 
 
-		tbl[arpos] = val
+		tbl[arpos] = val  #Array position set to value.
 
 		#Determine grouping.  Ideally we'd lerp the values between the one the user selected
 		#and the values next to it on the VU meter display.  Rudimentary set is also fine..
 		var numElements = int(rect_size.x / elementWidth)
 		var groupWidth = numElements / 128.0  #Value used to stepify between 1/(arraySize) to 1/(VisualElements)
 		var startPos = int(arpos * groupWidth) * (1/groupWidth)  #Stepified position.
-
 #		prints("Elements:", numElements, "groupWidth:", groupWidth, "startPos:",startPos)
 #
+
+		#Interpolation methods.
 		for i in range(startPos, min(128, startPos+ (1/groupWidth))):
-#			prints("Setting", i)
+
+			#Split mode value.  All values in this group are the same.
+			
 			tbl[i] = val
 
 		update()
@@ -100,3 +111,8 @@ func set_cursor(volume:String):
 	
 	cursor_img.unlock()
 	custom_texture.create_from_image(cursor_img,0)
+
+
+func set_table(table):
+	tbl = table
+	update()

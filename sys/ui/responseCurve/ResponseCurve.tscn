@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=2]
+[gd_scene load_steps=39 format=2]
 
 [ext_resource path="res://sys/ui/responseCurve/VUMeter.gd" type="Script" id=1]
 [ext_resource path="res://sys/ui/responseCurve/Splits.gd" type="Script" id=2]
@@ -11,6 +11,16 @@
 [ext_resource path="res://gfx/ui/vu/linlog_toggle_off.png" type="Texture" id=9]
 [ext_resource path="res://gfx/ui/vu/linlog_toggle_log.png" type="Texture" id=10]
 [ext_resource path="res://gfx/ui/vu/linlog_toggle_lin.png" type="Texture" id=11]
+[ext_resource path="res://sys/ui/responseCurve/ResponseCurve.gd" type="Script" id=12]
+[ext_resource path="res://gfx/ui/vu/btnPreset2.png" type="Texture" id=13]
+[ext_resource path="res://gfx/ui/vu/btnPreset1.png" type="Texture" id=14]
+[ext_resource path="res://sys/ui/responseCurve/btnPresets.gd" type="Script" id=15]
+[ext_resource path="res://gfx/ui/godot_icons/icon_curve_linear.svg" type="Texture" id=16]
+[ext_resource path="res://gfx/ui/godot_icons/icon_curve_out_in.svg" type="Texture" id=17]
+[ext_resource path="res://gfx/ui/godot_icons/icon_curve_out.svg" type="Texture" id=18]
+[ext_resource path="res://gfx/ui/godot_icons/icon_curve_in_out.svg" type="Texture" id=19]
+[ext_resource path="res://gfx/ui/godot_icons/icon_curve_in.svg" type="Texture" id=20]
+[ext_resource path="res://gfx/fonts/spelunkid_font.tres" type="BitmapFont" id=21]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0, 0, 0, 1 )
@@ -24,7 +34,7 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
-[sub_resource type="Shader" id=14]
+[sub_resource type="Shader" id=2]
 code = "shader_type canvas_item;
 uniform bvec3 swizzle=bvec3(false,false,false);  //RG, GB, RB
 
@@ -84,8 +94,8 @@ void fragment(){
 }
 "
 
-[sub_resource type="ShaderMaterial" id=15]
-shader = SubResource( 14 )
+[sub_resource type="ShaderMaterial" id=3]
+shader = SubResource( 2 )
 shader_param/swizzle = 5
 shader_param/column = -1
 
@@ -125,10 +135,60 @@ region = Rect2( 0, 24, 16, 8 )
 
 [sub_resource type="StyleBoxEmpty" id=13]
 
+[sub_resource type="StyleBoxTexture" id=14]
+texture = ExtResource( 13 )
+region_rect = Rect2( 0, 0, 16, 24 )
+axis_stretch_horizontal = 2
+axis_stretch_vertical = 2
+
+[sub_resource type="StyleBoxTexture" id=15]
+texture = ExtResource( 14 )
+region_rect = Rect2( 0, 0, 16, 24 )
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[sub_resource type="StyleBoxFlat" id=16]
+content_margin_left = 8.0
+content_margin_right = 8.0
+content_margin_top = 8.0
+content_margin_bottom = 8.0
+bg_color = Color( 0, 0, 0, 1 )
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.188235, 0.631373, 0.752941, 1 )
+border_blend = true
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="Theme" id=17]
+PopupMenu/colors/font_color = Color( 1, 1, 1, 1 )
+PopupMenu/colors/font_color_accel = Color( 0.7, 0.7, 0.7, 0.8 )
+PopupMenu/colors/font_color_disabled = Color( 0.4, 0.4, 0.4, 0.8 )
+PopupMenu/colors/font_color_hover = Color( 0.360784, 1, 0.490196, 1 )
+PopupMenu/constants/hseparation = 4
+PopupMenu/constants/vseparation = 6
+PopupMenu/fonts/font = ExtResource( 21 )
+PopupMenu/icons/checked = null
+PopupMenu/icons/radio_checked = null
+PopupMenu/icons/radio_unchecked = null
+PopupMenu/icons/submenu = null
+PopupMenu/icons/unchecked = null
+PopupMenu/styles/hover = null
+PopupMenu/styles/labeled_separator_left = null
+PopupMenu/styles/labeled_separator_right = null
+PopupMenu/styles/panel = SubResource( 16 )
+PopupMenu/styles/panel_disabled = null
+PopupMenu/styles/separator = null
+
 [node name="ResponseCurve" type="Panel"]
-margin_right = 376.0
+margin_right = 384.0
 margin_bottom = 336.0
 custom_styles/panel = SubResource( 1 )
+script = ExtResource( 12 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -157,10 +217,9 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-maxValue = 127
 
 [node name="Overlay" type="ColorRect" parent="VU"]
-material = SubResource( 15 )
+material = SubResource( 3 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
@@ -286,10 +345,13 @@ __meta__ = {
 
 [node name="chkLinlog" type="CheckButton" parent="."]
 margin_left = 16.0
-margin_top = 277.0
+margin_top = 280.0
 margin_right = 32.0
-margin_bottom = 317.0
-hint_tooltip = "> 0-3 | 4"
+margin_bottom = 320.0
+hint_tooltip = "Toggles whether this response curve represents linear or logarithmic values.
+
+LINEAR values are better for rate curves;
+LOGARITHMIC values are better for level curves."
 custom_icons/off = ExtResource( 11 )
 custom_icons/on_disabled = ExtResource( 9 )
 custom_icons/on = ExtResource( 10 )
@@ -299,6 +361,34 @@ custom_styles/normal = SubResource( 13 )
 action_mode = 0
 flat = true
 clip_text = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="btnPresets" type="MenuButton" parent="."]
+margin_left = 358.0
+margin_top = 20.0
+margin_right = 374.0
+margin_bottom = 44.0
+hint_tooltip = "Use a preset curve."
+custom_styles/hover = SubResource( 14 )
+custom_styles/pressed = SubResource( 14 )
+custom_styles/focus = SubResource( 12 )
+custom_styles/normal = SubResource( 15 )
+flat = false
+clip_text = true
+script = ExtResource( 15 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="EaseSubmenu" type="PopupMenu" parent="btnPresets"]
+margin_left = 34.0
+margin_top = 28.0
+margin_right = 154.0
+margin_bottom = 135.0
+theme = SubResource( 17 )
+items = [ "Linear", ExtResource( 16 ), 0, false, false, 0, 0, null, "", false, "In", ExtResource( 20 ), 0, false, false, 1, 0, null, "", false, "Out", ExtResource( 18 ), 0, false, false, 2, 0, null, "", false, "In-Out", ExtResource( 19 ), 0, false, false, 3, 0, null, "", false, "Out-In", ExtResource( 17 ), 0, false, false, 4, 0, null, "", false ]
 __meta__ = {
 "_edit_use_anchors_": false
 }

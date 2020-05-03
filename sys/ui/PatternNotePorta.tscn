@@ -2,9 +2,10 @@
 
 [ext_resource path="res://sys/ui/PatternNotePorta.gd" type="Script" id=1]
 [ext_resource path="res://sys/ui/PatternNote.tscn" type="PackedScene" id=2]
-[ext_resource path="res://gfx/ui/note_body.png" type="Texture" id=3]
+[ext_resource path="res://gfx/ui/sequencer/note_body.png" type="Texture" id=3]
 [ext_resource path="res://sys/ui/PatternNotePortaCurve.gd" type="Script" id=4]
 [ext_resource path="res://sys/ui/PatternNotePortaCurve.tscn" type="PackedScene" id=5]
+
 
 [node name="PatternNotePorta" type="Control"]
 margin_right = 40.0

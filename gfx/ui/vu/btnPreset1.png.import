@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/note_body.png-9098a74a92a5acbe5e68e4cdde093ea6.stex"
+path="res://.import/btnPreset1.png-f8a290567d05d556bcbcd544fcf7a790.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://gfx/ui/note_body.png"
-dest_files=[ "res://.import/note_body.png-9098a74a92a5acbe5e68e4cdde093ea6.stex" ]
+source_file="res://gfx/ui/vu/btnPreset1.png"
+dest_files=[ "res://.import/btnPreset1.png-f8a290567d05d556bcbcd544fcf7a790.stex" ]
 
 [params]
 
@@ -20,7 +20,7 @@ compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
 flags/repeat=0
-flags/filter=true
+flags/filter=false
 flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2

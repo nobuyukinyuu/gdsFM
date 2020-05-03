@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/icon_edit_bezier.svg-d275cc41e68bb18ba0ac5af08720234b.stex"
+path="res://.import/piano_roll.png-04b2e8b562ebf098668185b34b7ff461.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://gfx/ui/icon_edit_bezier.svg"
-dest_files=[ "res://.import/icon_edit_bezier.svg-d275cc41e68bb18ba0ac5af08720234b.stex" ]
+source_file="res://gfx/ui/sequencer/piano_roll.png"
+dest_files=[ "res://.import/piano_roll.png-04b2e8b562ebf098668185b34b7ff461.stex" ]
 
 [params]
 
@@ -19,7 +19,7 @@ compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
-flags/repeat=0
+flags/repeat=1
 flags/filter=true
 flags/mipmaps=false
 flags/anisotropic=false

@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/noteFont.png-867a085bddcf02b8a543b4fc287ef8f6.stex"
+path="res://.import/piano_roll_med.png-74aaaaef67116f2687b377bbf69f5807.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://gfx/noteFont.png"
-dest_files=[ "res://.import/noteFont.png-867a085bddcf02b8a543b4fc287ef8f6.stex" ]
+source_file="res://gfx/ui/sequencer/piano_roll_med.png"
+dest_files=[ "res://.import/piano_roll_med.png-74aaaaef67116f2687b377bbf69f5807.stex" ]
 
 [params]
 
@@ -19,8 +19,8 @@ compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
-flags/repeat=0
-flags/filter=false
+flags/repeat=1
+flags/filter=true
 flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2
