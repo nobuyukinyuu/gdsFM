@@ -1,6 +1,9 @@
 using Godot;
 using System;
 
+// using TinyJson;
+using Newtonsoft.Json;
+
 //Envelope Generator.  Includes pitch, curve, ADSR, feedback, waveform, etc.
 public class Envelope : Node 
 {
@@ -26,6 +29,8 @@ public class Envelope : Node
     {
         ownerName = name;
     }
+
+    [System.Runtime.Serialization.IgnoreDataMember]
     public string ownerName;  // Debug purposes
 
     //STANDARD FM EG STUFF
@@ -309,6 +314,36 @@ public class Envelope : Node
     }
 
 
+
+    // ================ IO ==================
+
+    public String PrintJson()
+    {
+        var settings=new JsonSerializerSettings();
+        settings.ContractResolver = new IgnoreParentPropertiesResolver(true);
+        // settings.Formatting = Formatting.Indented;
+
+        var output = JsonConvert.SerializeObject(this, settings);
+        GD.Print(output);
+        return output;
+    }
+
+    public void CopyEnvelope()
+    {
+        //Copy all properties.
+        // var output = TinyJson.JSONWriter.ToJson(this);
+        var output = PrintJson();
+        if (output != null) OS.Clipboard = output;
+
+    }
+
+    public int ParseEnvelope(string json)
+    {
+        //TODO:  Don't do properties, recalculate only if necessary or explicitly specified
+        
+
+        return 0;
+    }
 
     //Gets the sample rate from the global singleton
     public double SampleRate {

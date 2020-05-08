@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://EGControl.gd" type="Script" id=1]
 [ext_resource path="res://gfx/fonts/spelunkid_font.tres" type="BitmapFont" id=2]
@@ -16,6 +16,11 @@ func _on_Slider_gui_input(event):
 		if abs(value) < 4:  value = 0
 
 "
+
+[sub_resource type="StyleBoxFlat" id=3]
+content_margin_left = 8.0
+content_margin_right = 8.0
+draw_center = false
 
 [node name="PitchControl" type="Control"]
 anchor_right = 1.0
@@ -144,16 +149,34 @@ text = "0"
 align = 1
 valign = 2
 
+[node name="Seperator" type="PanelContainer" parent="H"]
+margin_left = 92.0
+margin_right = 109.0
+margin_bottom = 214.0
+custom_styles/panel = SubResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Separator2" type="Panel" parent="H/Seperator"]
+margin_left = 8.0
+margin_right = 9.0
+margin_bottom = 214.0
+rect_min_size = Vector2( 1, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="Mul" type="VBoxContainer" parent="H" groups=[
 "slider",
 ]]
-margin_left = 92.0
-margin_right = 180.0
+margin_left = 113.0
+margin_right = 194.0
 margin_bottom = 214.0
 size_flags_horizontal = 3
 
 [node name="MUL" type="Label" parent="H/Mul"]
-margin_right = 88.0
+margin_right = 81.0
 margin_bottom = 8.0
 custom_fonts/font = ExtResource( 2 )
 text = "Multiplier"
@@ -161,7 +184,7 @@ align = 1
 
 [node name="Slider" type="VSlider" parent="H/Mul"]
 margin_top = 12.0
-margin_right = 88.0
+margin_right = 81.0
 margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -172,7 +195,7 @@ ticks_on_borders = true
 
 [node name="Val" type="Label" parent="H/Mul"]
 margin_top = 206.0
-margin_right = 88.0
+margin_right = 81.0
 margin_bottom = 214.0
 custom_fonts/font = ExtResource( 2 )
 text = "0"
@@ -182,13 +205,13 @@ valign = 2
 [node name="Dt2" type="VBoxContainer" parent="H" groups=[
 "slider",
 ]]
-margin_left = 184.0
-margin_right = 272.0
+margin_left = 198.0
+margin_right = 279.0
 margin_bottom = 214.0
 size_flags_horizontal = 3
 
 [node name="DT2" type="Label" parent="H/Dt2"]
-margin_right = 88.0
+margin_right = 81.0
 margin_bottom = 8.0
 custom_fonts/font = ExtResource( 2 )
 text = "Semitone"
@@ -196,7 +219,7 @@ align = 1
 
 [node name="Slider" type="VSlider" parent="H/Dt2"]
 margin_top = 12.0
-margin_right = 88.0
+margin_right = 81.0
 margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -207,7 +230,7 @@ ticks_on_borders = true
 
 [node name="Val" type="Label" parent="H/Dt2"]
 margin_top = 206.0
-margin_right = 88.0
+margin_right = 81.0
 margin_bottom = 214.0
 custom_fonts/font = ExtResource( 2 )
 text = "0"
@@ -217,13 +240,13 @@ valign = 2
 [node name="Dt" type="VBoxContainer" parent="H" groups=[
 "slider",
 ]]
-margin_left = 276.0
+margin_left = 283.0
 margin_right = 366.0
 margin_bottom = 214.0
 size_flags_horizontal = 3
 
 [node name="DT" type="Label" parent="H/Dt"]
-margin_right = 90.0
+margin_right = 83.0
 margin_bottom = 8.0
 custom_fonts/font = ExtResource( 2 )
 text = "Detune"
@@ -231,7 +254,7 @@ align = 1
 
 [node name="Slider" type="VSlider" parent="H/Dt"]
 margin_top = 12.0
-margin_right = 90.0
+margin_right = 83.0
 margin_bottom = 202.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -243,7 +266,7 @@ script = SubResource( 2 )
 
 [node name="Val" type="Label" parent="H/Dt"]
 margin_top = 206.0
-margin_right = 90.0
+margin_right = 83.0
 margin_bottom = 214.0
 custom_fonts/font = ExtResource( 2 )
 text = "0"
@@ -251,10 +274,10 @@ align = 1
 valign = 2
 
 [node name="Label" type="Label" parent="."]
-margin_left = 447.243
-margin_top = 26.3861
-margin_right = 700.243
-margin_bottom = 108.386
+margin_left = 751.243
+margin_top = 10.3861
+margin_right = 1004.24
+margin_bottom = 92.3861
 text = "TODO:
 LFO Depth,
 Freq slide time

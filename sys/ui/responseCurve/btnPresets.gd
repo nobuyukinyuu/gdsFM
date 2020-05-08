@@ -29,7 +29,13 @@ func _ready():
 	p.add_submenu_item("L / R ", "EaseSubmenu")
 	p.add_submenu_item("R / L ", "EaseSubmenu")
 	
+	
+	
+	print(p.is_item_disabled(1))
+	
 	pass
 
 func _on_Menu_index_pressed(idx):
 	print(idx)
+
+

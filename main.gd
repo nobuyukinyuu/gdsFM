@@ -23,15 +23,18 @@ func _ready():
 	$TC/Curve.connect("envelope_changed", self, "_on_Env_update")
 
 func _input(event):
-	#DEBUG:  reset EG
-	if event.is_action_pressed("play"):
-		global.samples = 0
-		$Audio.Reset()
-	
+#	#DEBUG:  reset EG
+#	if event.is_action_pressed("play"):
+#		global.samples = 0
+#		$Audio.Reset()
+#
+#
+#	if Input.is_action_just_pressed("play"):
+#		OS.clipboard = var2str($GraphEdit.get_connection_list())
+#		print ("Copied.  " + OS.clipboard)
 
 	if Input.is_action_just_pressed("play"):
-		OS.clipboard = var2str($GraphEdit.get_connection_list())
-		print ("Copied.  " + OS.clipboard)
+		$TC/EGControl.currentEG.CopyEnvelope();
 	
 
 func _on_btnValidate_pressed():

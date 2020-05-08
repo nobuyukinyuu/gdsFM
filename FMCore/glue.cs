@@ -3,6 +3,11 @@ using Godot;
 using System;
 using System.Runtime.CompilerServices;
 
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using System.Reflection;
+using System.Linq;
+
 //"Glue" class used for interacting with GDScript code only
 public class Glue : Node
 {
@@ -145,4 +150,29 @@ public class AutoLoadHelper : Node
         return root.GetNode(autoload);
     }
 
+}
+
+
+
+
+//ContractResolver which is used to specify only the specific subclass properties should be added when serializing
+public class IgnoreParentPropertiesResolver : DefaultContractResolver
+{
+    bool IgnoreBase = false;
+    public IgnoreParentPropertiesResolver(bool ignoreBase)
+    {
+        IgnoreBase = ignoreBase;
+    }
+    protected override System.Collections.Generic.IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
+    {
+        var allProps = base.CreateProperties(type, memberSerialization);
+        if (!IgnoreBase) return allProps;
+
+        //Choose the properties you want to serialize/deserialize
+        var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.DeclaredOnly;
+        // var props = type.GetProperties(~System.Reflection.BindingFlags.FlattenHierarchy); 
+        var props = type.GetFields(flags); 
+
+        return allProps.Where(p => props.Any(a => a.Name == p.PropertyName)).ToList();
+    }
 }
