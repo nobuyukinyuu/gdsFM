@@ -19,7 +19,7 @@ var custom_texture=ImageTexture.new()
 var last_column = 0
 var last_value = 0
 
-var dirty = false  #When altered this value changes to indicate data is ready to send.
+enum {NO, PROCESS_LEFT, PROCESS_MID, PROCESS_RIGHT}  #For input events
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -43,9 +43,17 @@ func _ready():
 
 
 func _gui_input(event):
-	if event is InputEventMouseMotion and Input.is_mouse_button_pressed(BUTTON_LEFT):
-		var arpos = clamp(int(lerp(0, 127, get_local_mouse_position().x / float(rect_size.x))) , 0, 127)
-		var val = clamp(lerp(100,0, get_local_mouse_position().y / float(rect_size.y)) , 0, 100)
+	var process = NO
+	if event is InputEventMouseButton and Input.is_mouse_button_pressed(BUTTON_LEFT): process = PROCESS_LEFT
+	if event is InputEventMouseMotion and Input.is_mouse_button_pressed(BUTTON_LEFT): process = PROCESS_LEFT
+	
+	if process == PROCESS_LEFT:
+		var xy = get_table_pos()
+		var arpos = xy.x
+		var val = xy.y
+		
+#		var arpos = clamp(int(lerp(0, 127, get_local_mouse_position().x / float(rect_size.x))) , 0, 127)
+#		var val = clamp(lerp(100,0, get_local_mouse_position().y / float(rect_size.y)) , 0, 100)
 #		prints("arpos",arpos,"val",val)
 
 		var vol = maxValue * (val/100.0)
@@ -79,6 +87,13 @@ func _gui_input(event):
 	else:
 		Input.set_custom_mouse_cursor(null)
 
+#Returns a vector of the table position and value.
+func get_table_pos() -> Vector2:
+	var arpos = clamp(int(lerp(0, 127, get_local_mouse_position().x / float(rect_size.x))) , 0, 127)
+	var val = clamp(lerp(100,0, get_local_mouse_position().y / float(rect_size.y)) , 0, 100)
+	return Vector2(arpos, val)
+
+
 func _draw():
 	
 	for i in range(0, rect_size.x, elementWidth):
@@ -86,11 +101,29 @@ func _draw():
 		var sz = Vector2(10, int(lerp(0, rect_size.y,val/200.0)) * 2 )
 		var pos = Vector2(i, rect_size.y - sz.y)
 		draw_texture_rect(full16, Rect2(pos, sz),true)
-		draw_texture(indicator,pos)
+		if val > 0:  draw_texture(indicator,pos)
 #		if i == 310:  prints("drawrect", i, ":", pos, sz)
 
 
 
+##============================ DEBUG:  REMOVE ME ===================================================
+#func _physics_process(delta):
+#	if !OS.is_debug_build():  return
+#	var tblPos = get_table_pos()
+#
+#	var numElements = int(rect_size.x / elementWidth)
+#	var groupWidth = numElements / 128.0  #Value used to stepify between 1/(arraySize) to 1/(VisualElements)
+#	var startPos = int(tblPos.x * groupWidth) * (1/groupWidth)  #Stepified position.
+##
+#
+#	#Show the table positions occupying this column.
+#	$Label.text = ""
+#	for i in range(startPos, min(128, startPos+ (1/groupWidth))):
+#		$Label.text += "\n" + str(tbl[i])
+#
+
+
+#Sets the mouse cursor to something useful
 func set_cursor(volume:String):
 	cursor_img.lock()
 

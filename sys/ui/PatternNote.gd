@@ -1,7 +1,7 @@
 tool
 extends Control
 class_name PatternNote, "res://gfx/ui/icon_note.svg"
-export (Texture) var texture = preload("res://gfx/ui/pill.png")
+export (Texture) var texture = preload("res://gfx/ui/sequencer/pill.png")
 export (Vector2) var noteOffset = Vector2.ZERO
 const offsets=[-2,-2,-1,-1,0,0,-1,-2,-2,-3,-3,-4]  #12-TET grid offsets
 

@@ -1,6 +1,6 @@
 tool
 extends Control
-class_name PatternNotePorta, "res://gfx/ui/icon_edit_bezier.svg"
+class_name PatternNotePorta, "res://gfx/ui/godot_icons/old_bezier.svg"
 
 #PatternNotePorta relies on all notes which need to be connected to it to be inside the Notes node.
 #To connect these notes with portamento, some kind of control key modifier should be held while dragging.

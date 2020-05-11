@@ -27,7 +27,7 @@ _global_script_classes=[ {
 _global_script_class_icons={
 "EnvelopeDisplay": "",
 "PatternNote": "res://gfx/ui/icon_note.svg",
-"PatternNotePorta": "res://gfx/ui/icon_edit_bezier.svg"
+"PatternNotePorta": "res://gfx/ui/godot_icons/old_bezier.svg"
 }
 
 [application]
@@ -42,14 +42,16 @@ global="*res://!global.gd"
 PinkNoise="*res://PinkNoiseGenerator.gd"
 gen="*res://!oscillators.gd"
 cgen="*res://FMCore/oscillators.cs"
-Glue="*res://FMCore/Glue.cs"
+glue="*res://FMCore/glue.cs"
 
 [debug]
 
+gdscript/warnings/unassigned_variable=false
 gdscript/warnings/unused_variable=false
 
 [display]
 
+window/size/width=1280
 window/vsync/use_vsync=false
 
 [editor_plugins]
@@ -73,5 +75,5 @@ debugger_agent/wait_timeout=5000
 quality/driver/driver_name="GLES2"
 vram_compression/import_etc=true
 vram_compression/import_etc2=false
-environment/default_clear_color=Color( 0.101961, 0.101961, 0.101961, 1 )
+environment/default_clear_color=Color( 0.0627451, 0.0627451, 0.0627451, 1 )
 environment/default_environment="res://default_env.tres"

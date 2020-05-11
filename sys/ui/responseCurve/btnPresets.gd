@@ -39,3 +39,5 @@ func _on_Menu_index_pressed(idx):
 	print(idx)
 
 
+	#TODO:  IMPLEMENT 12th ROOT OF 2 CURVE AS 1 / Pow(2, x/12) for descending,
+	#		Pow(2, (x-127) / 12) for ascending

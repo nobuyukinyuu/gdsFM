@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=2]
+[gd_scene load_steps=40 format=2]
 
 [ext_resource path="res://sys/ui/responseCurve/VUMeter.gd" type="Script" id=1]
 [ext_resource path="res://sys/ui/responseCurve/Splits.gd" type="Script" id=2]
@@ -21,6 +21,7 @@
 [ext_resource path="res://gfx/ui/godot_icons/icon_curve_in_out.svg" type="Texture" id=19]
 [ext_resource path="res://gfx/ui/godot_icons/icon_curve_in.svg" type="Texture" id=20]
 [ext_resource path="res://gfx/fonts/spelunkid_font.tres" type="BitmapFont" id=21]
+[ext_resource path="res://gfx/ui/icon_12th_root.svg" type="Texture" id=22]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0, 0, 0, 1 )
@@ -192,6 +193,7 @@ script = ExtResource( 12 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+maxValue = 128
 
 [node name="Ruler" type="TextureRect" parent="."]
 modulate = Color( 1, 1, 1, 0.752941 )
@@ -217,6 +219,12 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Label" type="Label" parent="VU"]
+margin_left = 214.0
+margin_top = 320.0
+margin_right = 254.0
+margin_bottom = 334.0
 
 [node name="Overlay" type="ColorRect" parent="VU"]
 material = SubResource( 3 )
@@ -386,9 +394,9 @@ __meta__ = {
 margin_left = 34.0
 margin_top = 28.0
 margin_right = 154.0
-margin_bottom = 135.0
+margin_bottom = 146.0
 theme = SubResource( 17 )
-items = [ "Linear", ExtResource( 16 ), 0, false, false, 0, 0, null, "", false, "In", ExtResource( 20 ), 0, false, false, 1, 0, null, "", false, "Out", ExtResource( 18 ), 0, false, false, 2, 0, null, "", false, "In-Out", ExtResource( 19 ), 0, false, false, 3, 0, null, "", false, "Out-In", ExtResource( 17 ), 0, false, false, 4, 0, null, "", false ]
+items = [ "Linear", ExtResource( 16 ), 0, false, false, 0, 0, null, "", false, "In", ExtResource( 20 ), 0, false, false, 1, 0, null, "", false, "Out", ExtResource( 18 ), 0, false, false, 2, 0, null, "", false, "In-Out", ExtResource( 19 ), 0, false, false, 3, 0, null, "", false, "Out-In", ExtResource( 17 ), 0, false, false, 4, 0, null, "", false, "Even Temp", ExtResource( 22 ), 0, false, false, 5, 0, null, "", false ]
 __meta__ = {
 "_edit_use_anchors_": false
 }

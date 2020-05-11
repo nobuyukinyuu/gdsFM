@@ -4,6 +4,9 @@ var lastOperatorEnvelope  #Preview from GraphNode of last operator selected.
 
 
 func _ready():
+	#Setup patch
+	$TC2/Program.patch = $Audio.patch  #Currently a global preview patch!
+	
 	#Setup oscilloscope
 	var newpts = []
 	newpts.resize($Panel.rect_size.x)
@@ -13,14 +16,19 @@ func _ready():
 	$TC/EGControl.disable(true)
 	$TC.set_tab_title(0, "EG")
 	$TC.set_tab_icon(0, preload("res://gfx/ui/icon_adsr.svg"))
-	$TC.set_tab_icon(1, preload("res://gfx/ui/icon_tuning.svg"))
-#	$TC.set_tab_icon(1, preload("res://gfx/ui/icon_lfo.svg"))
-	$TC.set_tab_icon(2, preload("res://gfx/ui/icon_curve.svg"))
+	$TC.set_tab_icon(1, preload("res://gfx/ui/icon_curve.svg"))
+	$TC.set_tab_icon(2, preload("res://gfx/ui/icon_tuning.svg"))
 	$TC.set_tab_icon(3, preload("res://gfx/ui/icon_waveform.svg"))
+	
+	$TC2.set_tab_icon(0, preload("res://gfx/ui/icon_note2.svg"))
+	$TC2.set_tab_icon(1, preload("res://gfx/ui/icon_lfo.svg"))
+	$TC2.set_tab_icon(2, preload("res://gfx/ui/icon_pitch.svg"))
 	
 	#Setup envelope connections
 	$TC/EGControl.connect("envelope_changed", self, "_on_Env_update")
 	$TC/Curve.connect("envelope_changed", self, "_on_Env_update")
+
+
 
 func _input(event):
 #	#DEBUG:  reset EG
@@ -71,7 +79,9 @@ func _on_GraphEdit_node_selected(node):
 
 		yield(get_tree(),"idle_frame")
 		lastOperatorEnvelope = node
-
+		
+		print("Selected: ", node.name)
+		update_envelope_preview_all($EnvelopeDisplay, envelope)
 
 func _on_Waveform_item_selected(id, techWaveform:bool=false):
 	if !$TC/EGControl.currentEG:  return
@@ -112,7 +122,14 @@ func _on_Env_update(value, which):
 	
 	var env:EnvelopeDisplay = lastOperatorEnvelope.get_node("EnvelopeDisplay")
 #	prints ("Setting", which,"to", value, "in", env)
-	match which:
+
+	update_envelope_preview(env,which,value)
+	update_envelope_preview($EnvelopeDisplay,which,value)
+
+
+func update_envelope_preview(env:EnvelopeDisplay, propertyName:String, value):
+#	print("Update ", propertyName, " of ", env.get_path())
+	match propertyName:
 		"Ar":
 			env.Attack = value
 		"Dr":
@@ -138,4 +155,17 @@ func _on_Env_update(value, which):
 		"Rc":
 			env.rc = value
 
-
+func update_envelope_preview_all(env:EnvelopeDisplay, eg):
+	print("Update all of ", eg.ownerName)
+	env.Attack = eg.ar
+	env.Decay = eg.dr
+	env.Sustain = eg.sr
+	env.Release = eg.rr
+	env.sl = eg.sl
+	env.tl = eg.tl 
+	env.ac = eg.ac
+	env.dc = eg.dc
+	env.sc = eg.sc
+	env.rc = eg.rc
+	env.update_env()
+	env.update_vol()

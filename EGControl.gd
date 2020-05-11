@@ -11,7 +11,8 @@ func _ready():
 	for o in $H.get_children():
 		if o.is_in_group("slider"):
 			o.get_node("Slider").connect("value_changed", self, "_on_slider_change", [o.name])
-		
+			o.get_node("Slider").connect("gui_input", self, "_on_slider_input", [o])
+
 
 
 func load_settings(instr):
@@ -35,9 +36,16 @@ func _on_slider_change(value, which):
 	if currentEG:
 		currentEG.set(which, value)
 		
-		if ["Ar", "Dr", "Sr", "Rr", "Sl", "Tl"].has(which):
-			emit_signal("envelope_changed", value, which)
+#		if ["Ar", "Dr", "Sr", "Rr", "Sl", "Tl"].has(which):
+#			emit_signal("envelope_changed", value, which)
 	
+func _on_slider_input(ev, which):
+	var value = which.get_node("Slider").value
+	if ev is InputEventMouseMotion and Input.is_mouse_button_pressed(BUTTON_LEFT):
+		if ["Ar", "Dr", "Sr", "Rr", "Sl", "Tl"].has(which.name):
+			emit_signal("envelope_changed", value, which.name)
+	
+
 
 #Gets a specified slider value.
 func get_value(name):

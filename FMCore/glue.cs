@@ -9,7 +9,7 @@ using System.Reflection;
 using System.Linq;
 
 //"Glue" class used for interacting with GDScript code only
-public class Glue : Node
+public class glue : Node
 {
 
     public static double PowFast(double a, double b) {
