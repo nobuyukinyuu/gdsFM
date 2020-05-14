@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=2]
+[gd_scene load_steps=42 format=2]
 
 [ext_resource path="res://sys/ui/responseCurve/VUMeter.gd" type="Script" id=1]
 [ext_resource path="res://sys/ui/responseCurve/Splits.gd" type="Script" id=2]
@@ -34,6 +34,9 @@ corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
+shadow_color = Color( 0, 0, 0, 0.301961 )
+shadow_size = 4
+shadow_offset = Vector2( 0, 2 )
 
 [sub_resource type="Shader" id=2]
 code = "shader_type canvas_item;
@@ -91,64 +94,134 @@ void fragment(){
 //		c.rgb = vec3(1);
 	}
 
+//	if (UV.x > 0.5) c = swizz(c);
 	COLOR=c;
+//	COLOR=vec4(0,1,0,1);
 }
 "
 
 [sub_resource type="ShaderMaterial" id=3]
+resource_local_to_scene = true
 shader = SubResource( 2 )
 shader_param/swizzle = 5
 shader_param/column = -1
 
-[sub_resource type="AtlasTexture" id=4]
+[sub_resource type="Shader" id=4]
+code = "shader_type canvas_item;
+uniform bvec3 swizzle=bvec3(false,false,false);  //RG, GB, RB
+
+uniform int column : hint_range(-1,31) = -1;
+uniform sampler2D mask;
+
+vec4 swizz(vec4 c)
+{
+	if (swizzle.r && swizzle.g && swizzle.b) {  // 7  invert
+		c.rgb = vec3(1.0)-c.rgb;
+	} else if (swizzle.r && swizzle.g) {  // 3  BRG
+		c.rgb = c.brg;
+	} else if (swizzle.r && swizzle.b) { // 5  GBR
+		c.rgb = c.gbr;
+	} else if (swizzle.b && swizzle.g) { // 6  gray
+		c.rgb = vec3((c.r+c.g+c.b) / 3.0); 
+
+	} else {
+			if (swizzle.b)  // 4  BGR
+			{
+				c.rb = c.br;
+			}
+
+			if (swizzle.g) // 2  RBG
+			{
+				c.gb = c.bg;
+			}
+
+			if (swizzle.r) // 1  GRB
+			{
+				c.rg = c.gr;
+			}
+	}	
+
+	return c;
+}
+
+void fragment(){
+	vec4 c = texture(SCREEN_TEXTURE, SCREEN_UV);
+	
+	
+//	float uva = (UV.x * TEXTURE_PIXEL_SIZE.x);
+	float uva = (UV.x * TEXTURE_PIXEL_SIZE.x * SCREEN_UV.x * SCREEN_PIXEL_SIZE.x);
+//	int uvc = int((UV.x-0.0) / (SCREEN_PIXEL_SIZE.x ) / 10.0 );
+	int uvc = int((UV.x) * 32.0 );
+
+	if (textureLod(mask,UV,0) != vec4(vec3(0.0), 1.0) ){
+		c = swizz(c);
+	}
+	if (uvc==column)
+	{
+		c = swizz(c);
+//		c.rgb = vec3(1);
+	}
+
+	if (UV.x > 0.5) c = swizz(c);
+	COLOR=c;
+//	COLOR=vec4(0,1,0,1);
+}
+"
+
+[sub_resource type="ShaderMaterial" id=5]
+shader = SubResource( 4 )
+shader_param/swizzle = 5
+shader_param/column = -1
+
+[sub_resource type="AtlasTexture" id=6]
 atlas = ExtResource( 5 )
 region = Rect2( 0, 0, 82, 8 )
 
-[sub_resource type="AtlasTexture" id=5]
+[sub_resource type="AtlasTexture" id=7]
 atlas = ExtResource( 6 )
 region = Rect2( 0, 0, 16, 8 )
 
-[sub_resource type="AtlasTexture" id=6]
+[sub_resource type="AtlasTexture" id=8]
 atlas = ExtResource( 6 )
 region = Rect2( 16, 8, 16, 8 )
 
-[sub_resource type="AtlasTexture" id=7]
+[sub_resource type="AtlasTexture" id=9]
 atlas = ExtResource( 6 )
 region = Rect2( 16, 0, 16, 8 )
 
-[sub_resource type="AtlasTexture" id=8]
+[sub_resource type="AtlasTexture" id=10]
 atlas = ExtResource( 6 )
 region = Rect2( 16, 16, 16, 8 )
 
-[sub_resource type="AtlasTexture" id=9]
+[sub_resource type="AtlasTexture" id=11]
 atlas = ExtResource( 6 )
 region = Rect2( 16, 24, 16, 8 )
 
-[sub_resource type="AtlasTexture" id=10]
+[sub_resource type="AtlasTexture" id=12]
 atlas = ExtResource( 6 )
 region = Rect2( 0, 8, 16, 8 )
 
-[sub_resource type="AtlasTexture" id=11]
+[sub_resource type="AtlasTexture" id=13]
 atlas = ExtResource( 6 )
 region = Rect2( 0, 24, 16, 8 )
 
-[sub_resource type="StyleBoxEmpty" id=12]
+[sub_resource type="StyleBoxEmpty" id=14]
 
-[sub_resource type="StyleBoxEmpty" id=13]
+[sub_resource type="StyleBoxEmpty" id=15]
 
-[sub_resource type="StyleBoxTexture" id=14]
+[sub_resource type="StyleBoxTexture" id=16]
 texture = ExtResource( 13 )
 region_rect = Rect2( 0, 0, 16, 24 )
 axis_stretch_horizontal = 2
 axis_stretch_vertical = 2
 
-[sub_resource type="StyleBoxTexture" id=15]
+[sub_resource type="StyleBoxTexture" id=17]
 texture = ExtResource( 14 )
 region_rect = Rect2( 0, 0, 16, 24 )
 axis_stretch_horizontal = 1
 axis_stretch_vertical = 1
 
-[sub_resource type="StyleBoxFlat" id=16]
+[sub_resource type="StyleBoxFlat" id=18]
 content_margin_left = 8.0
 content_margin_right = 8.0
 content_margin_top = 8.0
@@ -165,7 +238,7 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
-[sub_resource type="Theme" id=17]
+[sub_resource type="Theme" id=19]
 PopupMenu/colors/font_color = Color( 1, 1, 1, 1 )
 PopupMenu/colors/font_color_accel = Color( 0.7, 0.7, 0.7, 0.8 )
 PopupMenu/colors/font_color_disabled = Color( 0.4, 0.4, 0.4, 0.8 )
@@ -181,7 +254,7 @@ PopupMenu/icons/unchecked = null
 PopupMenu/styles/hover = null
 PopupMenu/styles/labeled_separator_left = null
 PopupMenu/styles/labeled_separator_right = null
-PopupMenu/styles/panel = SubResource( 16 )
+PopupMenu/styles/panel = SubResource( 18 )
 PopupMenu/styles/panel_disabled = null
 PopupMenu/styles/separator = null
 
@@ -220,11 +293,19 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="BackBufferCopy2" type="BackBufferCopy" parent="VU"]
+position = Vector2( 70, 88 )
+copy_mode = 2
+rect = Rect2( -72, -88, 320, 256 )
+
 [node name="Label" type="Label" parent="VU"]
 margin_left = 214.0
 margin_top = 320.0
 margin_right = 254.0
 margin_bottom = 334.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Overlay" type="ColorRect" parent="VU"]
 material = SubResource( 3 )
@@ -235,12 +316,28 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="Overlay2" type="ColorRect" parent="VU"]
+visible = false
+material = SubResource( 5 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BackBufferCopy" type="BackBufferCopy" parent="VU"]
+visible = false
+position = Vector2( 70, 88 )
+copy_mode = 2
+rect = Rect2( -72, -88, 320, 256 )
+
 [node name="lblResponse" type="TextureRect" parent="."]
 margin_left = 274.0
 margin_top = 6.0
 margin_right = 356.0
 margin_bottom = 14.0
-texture = SubResource( 4 )
+texture = SubResource( 6 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -251,7 +348,7 @@ margin_left = 16.0
 margin_top = 8.0
 margin_right = 32.0
 margin_bottom = 16.0
-texture = SubResource( 5 )
+texture = SubResource( 7 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -262,7 +359,7 @@ margin_left = 4.0
 margin_top = 74.0
 margin_right = 20.0
 margin_bottom = 82.0
-texture = SubResource( 6 )
+texture = SubResource( 8 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -273,7 +370,7 @@ margin_left = 4.0
 margin_top = 16.0
 margin_right = 20.0
 margin_bottom = 24.0
-texture = SubResource( 7 )
+texture = SubResource( 9 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -284,7 +381,7 @@ margin_left = 4.0
 margin_top = 138.0
 margin_right = 20.0
 margin_bottom = 146.0
-texture = SubResource( 8 )
+texture = SubResource( 10 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -295,7 +392,7 @@ margin_left = 4.0
 margin_top = 202.0
 margin_right = 20.0
 margin_bottom = 210.0
-texture = SubResource( 9 )
+texture = SubResource( 11 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -306,7 +403,7 @@ margin_left = 16.0
 margin_top = 272.0
 margin_right = 32.0
 margin_bottom = 280.0
-texture = SubResource( 10 )
+texture = SubResource( 12 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -317,7 +414,7 @@ margin_left = 4.0
 margin_top = 266.0
 margin_right = 20.0
 margin_bottom = 274.0
-texture = SubResource( 11 )
+texture = SubResource( 13 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -342,8 +439,8 @@ custom_icons/off = ExtResource( 4 )
 custom_icons/on_disabled = ExtResource( 4 )
 custom_icons/on = ExtResource( 7 )
 custom_icons/off_disabled = ExtResource( 7 )
-custom_styles/focus = SubResource( 12 )
-custom_styles/normal = SubResource( 13 )
+custom_styles/focus = SubResource( 14 )
+custom_styles/normal = SubResource( 15 )
 action_mode = 0
 flat = true
 clip_text = true
@@ -364,8 +461,8 @@ custom_icons/off = ExtResource( 11 )
 custom_icons/on_disabled = ExtResource( 9 )
 custom_icons/on = ExtResource( 10 )
 custom_icons/off_disabled = ExtResource( 9 )
-custom_styles/focus = SubResource( 12 )
-custom_styles/normal = SubResource( 13 )
+custom_styles/focus = SubResource( 14 )
+custom_styles/normal = SubResource( 15 )
 action_mode = 0
 flat = true
 clip_text = true
@@ -379,10 +476,10 @@ margin_top = 20.0
 margin_right = 374.0
 margin_bottom = 44.0
 hint_tooltip = "Use a preset curve."
-custom_styles/hover = SubResource( 14 )
-custom_styles/pressed = SubResource( 14 )
-custom_styles/focus = SubResource( 12 )
-custom_styles/normal = SubResource( 15 )
+custom_styles/hover = SubResource( 16 )
+custom_styles/pressed = SubResource( 16 )
+custom_styles/focus = SubResource( 14 )
+custom_styles/normal = SubResource( 17 )
 flat = false
 clip_text = true
 script = ExtResource( 15 )
@@ -395,7 +492,7 @@ margin_left = 34.0
 margin_top = 28.0
 margin_right = 154.0
 margin_bottom = 146.0
-theme = SubResource( 17 )
+theme = SubResource( 19 )
 items = [ "Linear", ExtResource( 16 ), 0, false, false, 0, 0, null, "", false, "In", ExtResource( 20 ), 0, false, false, 1, 0, null, "", false, "Out", ExtResource( 18 ), 0, false, false, 2, 0, null, "", false, "In-Out", ExtResource( 19 ), 0, false, false, 3, 0, null, "", false, "Out-In", ExtResource( 17 ), 0, false, false, 4, 0, null, "", false, "Even Temp", ExtResource( 22 ), 0, false, false, 5, 0, null, "", false ]
 __meta__ = {
 "_edit_use_anchors_": false

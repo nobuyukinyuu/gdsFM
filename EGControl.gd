@@ -42,7 +42,8 @@ func _on_slider_change(value, which):
 func _on_slider_input(ev, which):
 	var value = which.get_node("Slider").value
 	if ev is InputEventMouseMotion and Input.is_mouse_button_pressed(BUTTON_LEFT):
-		if ["Ar", "Dr", "Sr", "Rr", "Sl", "Tl"].has(which.name):
+		if ["Ar", "Dr", "Sr", "Rr", "Sl", "Tl"].has(which.name):  
+			#Tuning and EG share a script. Don't update on tuning.
 			emit_signal("envelope_changed", value, which.name)
 	
 

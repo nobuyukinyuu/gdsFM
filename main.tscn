@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=2]
+[gd_scene load_steps=42 format=2]
 
 [ext_resource path="res://main.gd" type="Script" id=1]
 [ext_resource path="res://EGControl.tscn" type="PackedScene" id=2]
@@ -28,11 +28,12 @@
 [ext_resource path="res://PanelScope.gd" type="Script" id=26]
 [ext_resource path="res://MIDI.gd" type="Script" id=27]
 [ext_resource path="res://FMCore/Note.cs" type="Script" id=28]
-[ext_resource path="res://PitchControl.tscn" type="PackedScene" id=29]
+[ext_resource path="res://TuningControl.tscn" type="PackedScene" id=29]
 [ext_resource path="res://sys/ui/EnvelopeDisplay.tscn" type="PackedScene" id=30]
 [ext_resource path="res://EGMillisecsInput.gd" type="Script" id=31]
 [ext_resource path="res://gfx/ui/icon_millisecs.svg" type="Texture" id=32]
 [ext_resource path="res://ProgramControl.gd" type="Script" id=33]
+[ext_resource path="res://gfx/ui/godot_icons/tab_behind.png" type="Texture" id=34]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends VSlider
@@ -44,10 +45,22 @@ func _on_Slider_gui_input(event):
 
 "
 
-[sub_resource type="AudioStreamGenerator" id=2]
+[sub_resource type="StyleBoxTexture" id=2]
+content_margin_left = 16.0
+content_margin_right = 8.0
+texture = ExtResource( 34 )
+region_rect = Rect2( 0, 0, 16, 16 )
+margin_left = 5.0
+margin_right = 5.0
+margin_top = 5.0
+expand_margin_left = 3.0
+expand_margin_right = 3.0
+expand_margin_bottom = 3.0
+
+[sub_resource type="AudioStreamGenerator" id=3]
 buffer_length = 0.25
 
-[sub_resource type="GDScript" id=3]
+[sub_resource type="GDScript" id=4]
 script/source = "extends HSlider
 
 func _ready():
@@ -66,7 +79,7 @@ func _on_Slider_value_changed(value):
 	$\"../Label2\".text = \"%s: %s\" % [value, (1-value)*(1-value)]
 "
 
-[sub_resource type="GDScript" id=4]
+[sub_resource type="GDScript" id=5]
 script/source = "extends Timer
 var blep = 0
 
@@ -83,7 +96,7 @@ func _on_Timer_timeout():
 	blep = 0
 "
 
-[sub_resource type="GDScript" id=5]
+[sub_resource type="GDScript" id=6]
 script/source = "extends Label
 
 
@@ -95,7 +108,7 @@ func _physics_process(_delta):
 	pass
 "
 
-[sub_resource type="Animation" id=6]
+[sub_resource type="Animation" id=7]
 tracks/0/type = "value"
 tracks/0/path = NodePath("AnimationPlayer:process_priority")
 tracks/0/interp = 1
@@ -633,10 +646,11 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = -456.0
 margin_top = 24.0
-margin_right = -64.0
+margin_right = -40.0
 margin_bottom = -216.0
-custom_constants/top_margin = 1
-custom_constants/side_margin = 12
+custom_styles/tab_bg = SubResource( 2 )
+custom_constants/top_margin = 8
+custom_constants/side_margin = -1
 tab_align = 0
 __meta__ = {
 "_edit_use_anchors_": false
@@ -735,6 +749,15 @@ __meta__ = {
 
 [node name="Options" parent="TC/Waveform" instance=ExtResource( 25 )]
 
+[node name="Response" type="Control" parent="TC"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+
 [node name="GraphEdit" type="GraphEdit" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -805,7 +828,7 @@ align = 1
 valign = 1
 
 [node name="Audio" type="AudioStreamPlayer" parent="."]
-stream = SubResource( 2 )
+stream = SubResource( 3 )
 volume_db = -10.0
 script = ExtResource( 23 )
 
@@ -824,14 +847,14 @@ max_value = 5.0
 step = 0.1
 value = 1.0
 ticks_on_borders = true
-script = SubResource( 3 )
+script = SubResource( 4 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="ProcessRateTimer" type="Timer" parent="."]
 autostart = true
-script = SubResource( 4 )
+script = SubResource( 5 )
 
 [node name="ProcessRate" type="Label" parent="."]
 anchor_left = 1.0
@@ -868,7 +891,7 @@ margin_right = -6.0
 margin_bottom = 38.0
 text = "Polyphony"
 align = 2
-script = SubResource( 5 )
+script = SubResource( 6 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -925,7 +948,7 @@ __meta__ = {
 }
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-"anims/New Anim" = SubResource( 6 )
+"anims/New Anim" = SubResource( 7 )
 
 [node name="EnvelopeDisplay" parent="." instance=ExtResource( 30 )]
 anchor_left = 1.0
@@ -934,7 +957,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = -456.0
 margin_top = -200.0
-margin_right = -64.0
+margin_right = -40.0
 margin_bottom = -16.0
 [connection signal="value_changed" from="TC2/Program/V/Gain/Slider" to="TC2/Program" method="_on_Gain_value_changed"]
 [connection signal="gui_input" from="TC2/Pitch/H/Par/Slider" to="TC2/Pitch/H/Par/Slider" method="_on_Slider_gui_input"]

@@ -15,10 +15,13 @@ func _ready():
 	#Setup tabs
 	$TC/EGControl.disable(true)
 	$TC.set_tab_title(0, "EG")
+	$TC.set_tab_title(2, "Tune")
+	$TC.set_tab_title(3, "Wave")
 	$TC.set_tab_icon(0, preload("res://gfx/ui/icon_adsr.svg"))
 	$TC.set_tab_icon(1, preload("res://gfx/ui/icon_curve.svg"))
 	$TC.set_tab_icon(2, preload("res://gfx/ui/icon_tuning.svg"))
 	$TC.set_tab_icon(3, preload("res://gfx/ui/icon_waveform.svg"))
+	$TC.set_tab_icon(4, preload("res://gfx/ui/icon_response.svg"))
 	
 	$TC2.set_tab_icon(0, preload("res://gfx/ui/icon_note2.svg"))
 	$TC2.set_tab_icon(1, preload("res://gfx/ui/icon_lfo.svg"))

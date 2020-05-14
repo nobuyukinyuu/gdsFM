@@ -25,7 +25,7 @@ enum {NO, PROCESS_LEFT, PROCESS_MID, PROCESS_RIGHT}  #For input events
 func _ready():
 	elementWidth = texture.get_width()
 	if elementWidth == null:  elementWidth = 10
-	
+
 	for i in 128:
 		tbl.append(0)
 
@@ -80,8 +80,8 @@ func _gui_input(event):
 		for i in range(startPos, min(128, startPos+ (1/groupWidth))):
 
 			#Split mode value.  All values in this group are the same.
-			
 			tbl[i] = val
+			owner.emit_signal("value_changed", i, val)
 
 		update()
 	else:

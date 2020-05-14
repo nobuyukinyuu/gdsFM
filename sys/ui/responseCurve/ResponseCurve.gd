@@ -5,7 +5,7 @@ export(int,1,255) var maxValue = 100  setget set_maxvalue
 
 
 var dirty = false  #When altered this value changes to indicate data is ready to send.
-
+signal value_changed
 
 func set_maxvalue(val):
 	maxValue = val
