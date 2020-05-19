@@ -44,5 +44,8 @@ func _draw():
 
 
 func _on_table_changed(idx, val):
-	tbl[idx] = val
+	if idx==-1:  #Replace entire table.
+		tbl = PoolRealArray(val)
+	else:
+		tbl[idx] = val
 	update()

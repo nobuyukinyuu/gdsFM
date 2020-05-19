@@ -44,3 +44,18 @@ func _on_Split_toggled(pressed, whomst):
 		img.unlock()
 		mask.create_from_image(img,0)
 	pass
+
+
+#Find the first or last split enabled.
+func split_index(last_instance=false):
+	if !last_instance:
+		#Go through entire split
+		for i in get_child_count():
+			var o = get_child(i)
+			if o is CheckButton and o.pressed:  return i
+		return -1
+	else:  #Find the last instance of the split instead.
+		for i in range(get_child_count()-1, -1, -1):
+			var o = get_child(i)
+			if o is CheckButton and o.pressed:  return i
+		return -1

@@ -5,7 +5,7 @@ export(int,1,255) var maxValue = 100  setget set_maxvalue
 
 
 var dirty = false  #When altered this value changes to indicate data is ready to send.
-signal value_changed
+signal value_changed  #emitted in $VU
 
 func set_maxvalue(val):
 	maxValue = val
@@ -42,3 +42,7 @@ func pass_table(to, property:String):
 		to.set(property, output)
 	else:
 		print("ResponseCurve: Can't find the given object to set the '", property,"' field.")
+
+#Updates the entire preview table at once.
+func updatePreviewTable():
+	emit_signal("value_changed", -1, $VU.tbl)
