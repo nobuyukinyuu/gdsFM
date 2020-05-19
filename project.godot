@@ -34,6 +34,9 @@ _global_script_class_icons={
 
 config/name="gdsFM"
 run/main_scene="res://main.tscn"
+boot_splash/image="res://gfx/logos/icon256.png"
+boot_splash/fullsize=false
+boot_splash/bg_color=Color( 0.0627451, 0.0627451, 0.0627451, 1 )
 config/icon="res://gfx/logos/icon64.png"
 
 [autoload]
