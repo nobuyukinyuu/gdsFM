@@ -58,7 +58,7 @@ expand_margin_right = 3.0
 expand_margin_bottom = 3.0
 
 [sub_resource type="AudioStreamGenerator" id=3]
-buffer_length = 0.25
+buffer_length = 0.15
 
 [sub_resource type="GDScript" id=4]
 script/source = "extends HSlider
@@ -762,9 +762,9 @@ margin_bottom = -4.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 16.0
-margin_top = 16.0
+margin_top = 104.0
 margin_right = -840.0
-margin_bottom = -104.0
+margin_bottom = -16.0
 snap_distance = 16
 script = ExtResource( 14 )
 __meta__ = {
@@ -829,7 +829,7 @@ valign = 1
 
 [node name="Audio" type="AudioStreamPlayer" parent="."]
 stream = SubResource( 3 )
-volume_db = -10.0
+volume_db = -4.0
 script = ExtResource( 23 )
 
 [node name="PreviewNote" type="Node" parent="Audio"]
@@ -872,10 +872,10 @@ __meta__ = {
 [node name="btnValidate" type="Button" parent="."]
 anchor_top = 1.0
 anchor_bottom = 1.0
-margin_left = 16.0
-margin_top = -64.0
-margin_right = 99.0
-margin_bottom = -16.0
+margin_left = 360.0
+margin_top = -560.0
+margin_right = 443.0
+margin_bottom = -512.0
 disabled = true
 text = "Validate AL"
 __meta__ = {
@@ -923,9 +923,9 @@ antialiased = true
 anchor_top = 1.0
 anchor_bottom = 1.0
 margin_left = 16.0
-margin_top = -88.0
+margin_top = -584.0
 margin_right = 83.0
-margin_bottom = -74.0
+margin_bottom = -570.0
 text = "Algorithm:"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -935,10 +935,10 @@ __meta__ = {
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 112.0
-margin_top = -64.0
-margin_right = -840.0
-margin_bottom = -16.0
+margin_left = 16.0
+margin_top = -560.0
+margin_right = -936.0
+margin_bottom = -512.0
 text = "Custom"
 icon = ExtResource( 13 )
 items = [ "4x Serial Modulation", ExtResource( 6 ), false, 0, null, "Double Mod 3x Serial", ExtResource( 5 ), false, 1, null, "Double Mod (Mode 1)", ExtResource( 7 ), false, 2, null, "Double Mod (Mode 2)", ExtResource( 8 ), false, 3, null, "2x Serial, 2x Parallel", ExtResource( 9 ), false, 4, null, "Common Modulator", ExtResource( 10 ), false, 5, null, "2x Serial + 2 Plain", ExtResource( 11 ), false, 6, null, "4x Parallel (Plain)", ExtResource( 12 ), false, 7, null, "Custom", ExtResource( 13 ), false, 8, null ]

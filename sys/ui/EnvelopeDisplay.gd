@@ -107,6 +107,12 @@ func update_env():
 	$ADSR/"2".size_flags_stretch_ratio = sr
 	$ADSR/"3".size_flags_stretch_ratio = rr
 	
+	if $ADSR/"1".size_flags_stretch_ratio==0:
+		$ADSR/"1".visible=false
+		$ADSR/"0".tl=sl*tl
+	else:
+		$ADSR/"1".visible=true
+	
 	$ADSR/Spacer.size_flags_stretch_ratio = lerp(2,0, (ar+dr+sr+rr) / 5.0)
 	
 	update()

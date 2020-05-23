@@ -83,6 +83,8 @@ public class oscillators : Node
 
 			case Waveforms.TRI:
 				return TRITABLE[(int)(Math.Abs(n)*20)] * sReflect;
+			case Waveforms.TRI|Waveforms.USE_DUTY:
+				return n >= duty? 0.0:  TRITABLE[(int)(Math.Abs(n)*20)] * sReflect;
 
 			case Waveforms.SAW:
 				return (1.0 - (n * 2.0)) * sReflect; 

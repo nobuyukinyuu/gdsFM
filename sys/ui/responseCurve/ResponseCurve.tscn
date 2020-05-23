@@ -1,4 +1,4 @@
-[gd_scene load_steps=46 format=2]
+[gd_scene load_steps=48 format=2]
 
 [ext_resource path="res://sys/ui/responseCurve/VUMeter.gd" type="Script" id=1]
 [ext_resource path="res://sys/ui/responseCurve/Splits.gd" type="Script" id=2]
@@ -24,6 +24,8 @@
 [ext_resource path="res://gfx/ui/icon_12th_root.svg" type="Texture" id=22]
 [ext_resource path="res://gfx/ui/vu/tick.png" type="Texture" id=23]
 [ext_resource path="res://gfx/ui/vu/grabber.png" type="Texture" id=24]
+[ext_resource path="res://gfx/fonts/numerics_5x8.tres" type="BitmapFont" id=25]
+[ext_resource path="res://gfx/ui/vu/minmax_slider_label.png" type="Texture" id=26]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0, 0, 0, 1 )
@@ -522,18 +524,56 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="sldMax" type="VSlider" parent="."]
+[node name="sldMin" type="VSlider" parent="."]
 margin_left = 352.0
 margin_top = 64.0
-margin_right = 376.0
+margin_right = 368.0
 margin_bottom = 264.0
 custom_icons/tick = ExtResource( 23 )
 custom_icons/grabber_highlight = ExtResource( 24 )
 custom_icons/grabber = ExtResource( 24 )
 custom_styles/slider = SubResource( 20 )
 custom_styles/grabber_area = SubResource( 21 )
-value = 50.0
 tick_count = 11
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="sldMax" type="VSlider" parent="."]
+margin_left = 368.0
+margin_top = 64.0
+margin_right = 378.0
+margin_bottom = 264.0
+custom_icons/tick = ExtResource( 23 )
+custom_icons/grabber_highlight = ExtResource( 24 )
+custom_icons/grabber = ExtResource( 24 )
+custom_styles/slider = SubResource( 20 )
+custom_styles/grabber_area = SubResource( 21 )
+value = 100.0
+tick_count = 11
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="lblMinMax" type="Label" parent="."]
+margin_left = 356.0
+margin_top = 270.0
+margin_right = 371.0
+margin_bottom = 278.0
+custom_fonts/font = ExtResource( 25 )
+custom_colors/font_color = Color( 0.188235, 0.631373, 0.752941, 1 )
+text = "00/00"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextureRect" type="TextureRect" parent="."]
+modulate = Color( 1, 1, 1, 0.65098 )
+margin_left = 355.0
+margin_top = 54.0
+margin_right = 380.0
+margin_bottom = 59.0
+texture = ExtResource( 26 )
 __meta__ = {
 "_edit_use_anchors_": false
 }

@@ -17,6 +17,7 @@ public class Note : Node, IComparable<Note>
 
     public double Velocity  => midi_velocity/128.0;  //Grab velocity as a float value 0-1.
 
+    public bool[] delayed = {false,false,false,false};  //The state of the note's envelope phase.  Gets activated once delay is exceeded.
     public bool pressed = true;     //The current state of whether the note is on or off.
     public int releaseSample = 0;  //The sample at which noteOff was received.
 
@@ -102,6 +103,18 @@ public const int NOTE_A4 = 69;   // Nice.
     {
         // return samples / sample_rate * hz;
         return this.phase[idx];
+    }
+
+    //Resets the phase index to 0.  Useful for syncing note phase or when delay is used.  
+    public void ResetPhase(int idx)
+    {
+        phase[idx] = 0;
+    }
+    public void ResetPhase()
+    {
+        for(int i=0; i < phase.Count; i++){
+        phase[i] = 0;
+        }
     }
 
     //Iterates the phase accumulator a certain number of samples ahead based on the current pitch.

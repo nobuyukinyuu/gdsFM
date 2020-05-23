@@ -25,18 +25,18 @@ public class Envelope : Node
         recalc_adsr();
     }
 
-    public Envelope(string name)
-    {
-        ownerName = name;
-    }
+    public Envelope(string name){ ownerName = name; }
+    public Envelope(int id){ this.opID=id; }
 
     [System.Runtime.Serialization.IgnoreDataMember]
     public string ownerName;  // Debug purposes
+    [System.Runtime.Serialization.IgnoreDataMember]
+    public int opID;  // Operator index typically associated with this envelope. Used to reset delay phases.
 
     //STANDARD FM EG STUFF
 	double ar=31;						//Attack
-	double dr=0;						//Decay
-	double sr=0;						//Sustain
+	double dr=31;						//Decay
+	double sr=Double.Epsilon;			//Sustain
 	double rr = 15;                      //Release
 	double sl=100.0;                      //Sustain level
     double tl = 100;                     //Total level  (attenuation)
@@ -86,14 +86,14 @@ public class Envelope : Node
     public double Dt2 { get => dt2; set => set_detune2(value); }
     public double FixedFreq { get => fixed_frequency; set {fixed_frequency = value;  update_multiplier();} }
 
-    public double Delay { get => delay; set => delay = value; }
+    public double Delay { get => delay; set {_delay = value*SampleRate / 1000; delay=value;} }
 
 
 
     // True, internal values referenced by the operator to reduce re-calculating
     // these values when the above EG slider value changes.
-    public double _attackTime;
-    public double _decayTime;
+    public double _attackTime = double.Epsilon;
+    public double _decayTime = double.Epsilon;
     public double _susTime = float.MaxValue/5;
     public double _releaseTime = 100; //Calculated from rr when set
     public double _susLevel = 1.0;
@@ -101,6 +101,7 @@ public class Envelope : Node
 	public double _freqMult = 1.0;  //Octave multiplier (MUL)
 	public double _coarseDetune = 1;
 	public double _detune = 1;
+    public double _delay;
 	
     public double totalMultiplier = 1;  //Precalculated value of mul+dt+dt2 or the fixed frequency. See update_multiplier().
 
@@ -120,25 +121,35 @@ public class Envelope : Node
         double output=0;
 
         //Determine the envelope phase.
-        if (s < _attackTime) { // Attack phase.
-            //Interpolate between 0 and the total level.
-            output= GDSFmFuncs.EaseFast(0.0, 1.0, s / _attackTime, ac);
+        if (s < _delay)  {return 0;} else if (s >= _delay && note.delayed[opID]==false) {note.ResetPhase(opID);  
+        note.delayed[opID]=true;}
+            if(Double.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
 
-        } else if ((s >= _attackTime) && (s < _ad) ) {  //Decay phase.
+        if (s-_delay < _attackTime) { // Attack phase.
+            //Interpolate between 0 and the total level.
+            output= GDSFmFuncs.EaseFast(0.0, 1.0, (s-_delay) / _attackTime, ac);
+            if(Double.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
+
+        } else if ((s-_delay >= _attackTime) && (s-_delay < _ad) ) {  //Decay phase.
             //Interpolate between the total level and sustain level.
-            output= GDSFmFuncs.EaseFast(1.0, _susLevel, (s-_attackTime) / _decayTime, dc);
+            output= GDSFmFuncs.EaseFast(1.0, _susLevel, (s-(_attackTime+_delay)) / _decayTime, dc);
+            if(Double.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
 
         // } else if ((s >= _ad) && !noteOff ) {  //Sustain phase.
-        } else if ((s >= _ad) ) {  //Sustain phase.
+        } else if ((s-delay >= _ad) ) {  //Sustain phase.
             //Interpolate between sustain level and 0.
-            output= GDSFmFuncs.EaseFast(_susLevel, 0, (s-_ad) / _susTime, sc);
+            output= GDSFmFuncs.EaseFast(_susLevel, 0, (s-_delay-_ad) / _susTime, sc);
+            if(Double.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
         }
 
-        if(Double.IsNaN(output)) System.Diagnostics.Debugger.Break();
+        // #if DEBUG
+        // if(Double.IsNaN(output)) System.Diagnostics.Debugger.Break();
+        // #endif
 
         if (noteOff && (s-releaseSample) < _releaseTime)  //Apply release envelope.
         {
             output *= GDSFmFuncs.EaseFast(1.0, 0.0, (s-releaseSample) / _releaseTime, rc);
+            if(Double.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
         } else if (noteOff && (s-releaseSample) >= _releaseTime) {
             return 0;
         }
@@ -147,7 +158,8 @@ public class Envelope : Node
         if(Double.IsNaN(output)) 
         {
             System.Diagnostics.Debugger.Break();  //Stop. NaN propagation. This should never trigger but if it does prepare for pain
-            throw new ArithmeticException("NaN encountered in calculated envelope output");
+            return 0;
+            // throw new ArithmeticException("NaN encountered in calculated envelope output");
         }
         #endif
 
@@ -158,11 +170,11 @@ public class Envelope : Node
     //Called when ADSR properties change
     void recalc_adsr()
     {
-        _egLength = _attackTime + _decayTime + _susTime + _releaseTime;
+        _egLength = _attackTime + _decayTime + _susTime + _releaseTime + _delay;
 
-        _ad  = _attackTime + _decayTime;
-        _ads = _ad + _susTime;
-        _adr = _ad + _releaseTime;
+        _ad  = _attackTime + _decayTime + _delay;
+        _ads = _ad + _susTime + _delay;
+        _adr = _ad + _releaseTime + _delay;
 
         //TODO:  Recalculate lookup tables at the specified curve exponential.
         //      Probably should be done using properties for each curve value of the ADSR component.

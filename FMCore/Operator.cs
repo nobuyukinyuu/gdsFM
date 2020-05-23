@@ -25,7 +25,7 @@ public class Operator
         this.name = name;
         //TODO: Proper ID check. Right now we just assume operators are named "OP1" etc based on OP number.
         this.id = Int32.Parse(name.Substring(2)) -1;  
-        eg = new Envelope(name);
+        eg = new Envelope(this.id);
     }
 
     //Iterate over our connections, then mix and modulate them before returning the final modulated value.

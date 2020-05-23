@@ -23,7 +23,7 @@ public class Channel : List<Note>
         for(int i=0; i<this.Count; i++) //Note note in this)   //FIXME:  InvalidOperationException, collection modified.  For instead of foreach?
         {
             Note note = this[i];
-            if(note.IsDestroyable()) FlagForDeletion(note);
+            if(note != null && note.IsDestroyable()) FlagForDeletion(note);
         }
     }
 
