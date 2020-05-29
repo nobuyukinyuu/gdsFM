@@ -29,7 +29,7 @@ public class oscillators : Node
 	public override void _Ready()
 	{
 		// gen_sin_table(2048);
-		gen_sin_table(4096);
+		gen_sin_table(9600);  //Sounds better at high frequencies....
 	}
 
 

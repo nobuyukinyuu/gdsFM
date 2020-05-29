@@ -20,12 +20,14 @@
 [ext_resource path="res://gfx/ui/godot_icons/icon_curve_out.svg" type="Texture" id=18]
 [ext_resource path="res://gfx/ui/godot_icons/icon_curve_in_out.svg" type="Texture" id=19]
 [ext_resource path="res://gfx/ui/godot_icons/icon_curve_in.svg" type="Texture" id=20]
-[ext_resource path="res://gfx/fonts/spelunkid_font.tres" type="BitmapFont" id=21]
+[ext_resource path="res://sys/ui/responseCurve/PresetMenu.theme" type="Theme" id=21]
 [ext_resource path="res://gfx/ui/icon_12th_root.svg" type="Texture" id=22]
 [ext_resource path="res://gfx/ui/vu/tick.png" type="Texture" id=23]
 [ext_resource path="res://gfx/ui/vu/grabber.png" type="Texture" id=24]
 [ext_resource path="res://gfx/fonts/numerics_5x8.tres" type="BitmapFont" id=25]
 [ext_resource path="res://gfx/ui/vu/minmax_slider_label.png" type="Texture" id=26]
+[ext_resource path="res://gfx/ui/godot_icons/icon_action_paste.svg" type="Texture" id=27]
+[ext_resource path="res://gfx/ui/godot_icons/icon_action_copy.svg" type="Texture" id=28]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0, 0, 0, 1 )
@@ -224,43 +226,6 @@ texture = ExtResource( 14 )
 region_rect = Rect2( 0, 0, 16, 24 )
 axis_stretch_horizontal = 1
 axis_stretch_vertical = 1
-
-[sub_resource type="StyleBoxFlat" id=18]
-content_margin_left = 8.0
-content_margin_right = 8.0
-content_margin_top = 8.0
-content_margin_bottom = 8.0
-bg_color = Color( 0, 0, 0, 1 )
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color( 0.188235, 0.631373, 0.752941, 1 )
-border_blend = true
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-
-[sub_resource type="Theme" id=19]
-PopupMenu/colors/font_color = Color( 1, 1, 1, 1 )
-PopupMenu/colors/font_color_accel = Color( 0.7, 0.7, 0.7, 0.8 )
-PopupMenu/colors/font_color_disabled = Color( 0.4, 0.4, 0.4, 0.8 )
-PopupMenu/colors/font_color_hover = Color( 0.360784, 1, 0.490196, 1 )
-PopupMenu/constants/hseparation = 4
-PopupMenu/constants/vseparation = 10
-PopupMenu/fonts/font = ExtResource( 21 )
-PopupMenu/icons/checked = null
-PopupMenu/icons/radio_checked = null
-PopupMenu/icons/radio_unchecked = null
-PopupMenu/icons/submenu = null
-PopupMenu/icons/unchecked = null
-PopupMenu/styles/hover = null
-PopupMenu/styles/labeled_separator_left = null
-PopupMenu/styles/labeled_separator_right = null
-PopupMenu/styles/panel = SubResource( 18 )
-PopupMenu/styles/panel_disabled = null
-PopupMenu/styles/separator = null
 
 [sub_resource type="StyleBoxFlat" id=20]
 draw_center = false
@@ -518,7 +483,7 @@ margin_left = 34.0
 margin_top = 28.0
 margin_right = 154.0
 margin_bottom = 146.0
-theme = SubResource( 19 )
+theme = ExtResource( 21 )
 items = [ "Linear", ExtResource( 16 ), 0, false, false, 0, 0, null, "", false, "In", ExtResource( 20 ), 0, false, false, 1, 0, null, "", false, "Out", ExtResource( 18 ), 0, false, false, 2, 0, null, "", false, "In-Out", ExtResource( 19 ), 0, false, false, 3, 0, null, "", false, "Out-In", ExtResource( 17 ), 0, false, false, 4, 0, null, "", false, "Even Temp", ExtResource( 22 ), 0, false, false, 5, 0, null, "", false ]
 __meta__ = {
 "_edit_use_anchors_": false
@@ -562,7 +527,7 @@ margin_right = 371.0
 margin_bottom = 278.0
 custom_fonts/font = ExtResource( 25 )
 custom_colors/font_color = Color( 0.188235, 0.631373, 0.752941, 1 )
-text = "00/00"
+text = "00/[]"
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -577,3 +542,16 @@ texture = ExtResource( 26 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="CPMenu" type="PopupMenu" parent="."]
+margin_left = 392.0
+margin_top = 192.0
+margin_right = 512.0
+margin_bottom = 250.0
+theme = ExtResource( 21 )
+items = [ "Copy", ExtResource( 28 ), 0, false, false, 0, 0, null, "", false, "", null, 0, false, false, 2, 0, null, "", true, "Paste", ExtResource( 27 ), 0, false, false, 2, 0, null, "", false ]
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="value_changed" from="sldMin" to="." method="_on_MinMax_value_changed"]
+[connection signal="value_changed" from="sldMax" to="." method="_on_MinMax_value_changed"]

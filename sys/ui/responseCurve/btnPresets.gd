@@ -32,7 +32,7 @@ func _ready():
 	$EaseSubmenu.queue_free()
 	
 	
-	p.add_icon_item(preload("res://gfx/ui/icon_reset.svg"), "Default")
+#	p.add_icon_item(preload("res://gfx/ui/icon_reset.svg"), "Default")
 	p.add_separator("All Sides")
 #	p.add_submenu_item("Left / Right ", "EaseSubmenu")
 #	p.add_submenu_item("Right / Left ", "EaseSubmenu")
@@ -49,8 +49,9 @@ func _ready():
 	p.add_submenu_item("RIGHT: Ascending", "Ease4")
 	p.add_submenu_item("RIGHT: Descending ", "Ease5")
 
-#	p.add_separator()
-#	p.add_icon_item(preload("res://gfx/ui/icon_reset.svg"), "Default")
+	p.add_separator()
+	p.add_icon_item(preload("res://gfx/ui/icon_reset.svg"), "Default")
+	p.set_item_accelerator(10, KEY_D)
 
 	p.rect_size.x += 32
 

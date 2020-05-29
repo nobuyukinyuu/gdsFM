@@ -44,8 +44,15 @@ func _ready():
 
 func _gui_input(event):
 	var process = NO
-	if event is InputEventMouseButton and Input.is_mouse_button_pressed(BUTTON_LEFT): process = PROCESS_LEFT
 	if event is InputEventMouseMotion and Input.is_mouse_button_pressed(BUTTON_LEFT): process = PROCESS_LEFT
+	if event is InputEventMouseButton: 
+		if event.button_index == BUTTON_LEFT and event.pressed: 
+			process = PROCESS_LEFT
+		if event.button_index == BUTTON_RIGHT and !event.pressed:
+			#Popup copipe menu
+			process = PROCESS_RIGHT
+			var pop:PopupMenu = owner.get_node("CPMenu")
+			pop.popup(Rect2(get_global_mouse_position(), pop.rect_size))
 	
 	if process == PROCESS_LEFT:
 		var xy = get_table_pos()
