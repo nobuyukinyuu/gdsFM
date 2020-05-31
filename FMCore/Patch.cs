@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 //Todo:   PatchNote:Patch extension??  Might reduce confusion overall?
 public class Patch : Resource
@@ -144,14 +145,16 @@ public class Patch : Resource
         // TODO!!!!!!!! FIX CONCURRENT LIST MODIFICATION IN SEPARATE THREADS.  FIXME FIXME FIXME
         // NOTES COME IN AS AN EVENT ON A SEPARATE THREAD, SO MODIFICATION (NOTE DELETION) MUST BE QUEUED TO THE NEXT SYNCED PROCESS THREAD
         for (int i = 0; i < notes.Count; i++) //Note note in notes)
+        // Parallel.For (0, notes.Count, delegate(int i) 
         {
-            if (notes[i] ==null) continue;
+            if (i >= notes.Count || notes[i] == null) continue;
+            // if (notes[i] ==null) return;
             output += mix(notes[i]);
     
         //    //Check if the note needs to die.
         //     if (notes[i].IsDestroyable())  notes[i].Destroy();
 
-        }
+        } 
 
 
         // Shitty average based mixing of total notes being played again.  Count is an O(1) operation. 
@@ -159,10 +162,30 @@ public class Patch : Resource
         return output;
     }
 
+    //TODO:  Figure out why this is slow and if it is actually processing the tasks in parallel
+    //      Consider trying to spawn a bunch of tasks in a for loop and somehow await the results of all before continuing
+    public double mixAsync(List<Note> notes)
+    {
+        var task = Task<Double>.Run(  () => 
+            {
+                double output=0;  //Why do I have to declare the initial value in a value type? Is it because this is a lambda?  Why?
+                for (int i = 0; i < notes.Count; i++)
+                {
+                    if (notes[i] ==null) continue;
+                    // if (notes[i] ==null) return;
+                    output += mix(notes[i]);
+                } 
+                return output;
+            } );
+
+        return task.Result / 2;
+    }
+
     public double mix(Note note){ 
         double avg = 0.0;  //Output average
 
         foreach (Operator op in connections)
+        // Parallel.ForEach(connections, delegate(Operator op)
         {	
             //Get running average of sample output of all operators connected to output.
             avg += op.request_sample(note.phase[op.id], note); 
@@ -172,7 +195,7 @@ public class Patch : Resource
             // note.Accumulate(op.id,1, op.EG.totalMultiplier, op.EG.SampleRate);
             note.Iterate(1);
 
-        }
+        } //);
 
         #if DEBUG  //We probably don't need this in release mode
             //If assertion failed, we'd get a divide by zero here.

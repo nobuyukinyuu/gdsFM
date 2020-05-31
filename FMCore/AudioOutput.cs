@@ -17,13 +17,13 @@ public Note previewNote;  //Monophonic note used to preview the patch.
 
 public Channel PreviewNotes = new Channel();
 
-
     Node global;
 
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
+
         global = GetNode("/root/global");
         MixRate = (float) global.Get("sample_rate");
 
@@ -38,6 +38,8 @@ public Channel PreviewNotes = new Channel();
         // //prefill buffer pool
         // for(int i=0; i<bufferpool.Length; i++){ bufferpool[i] = new Vector2(0.0f,0.0f); }
 
+
+
         fill_buffer();   //prefill output buffer
         Play();
 
@@ -51,7 +53,6 @@ public Channel PreviewNotes = new Channel();
         PreviewNotes.FlagInactiveNotes();
         PreviewNotes.Flush();
     }
-
 
 
     //Fills the buffer using Patch.cs
@@ -124,9 +125,9 @@ public Channel PreviewNotes = new Channel();
     {
         Note note = new Note(note_number, velocity);
         note._channel = PreviewNotes;
+        PreviewNotes.CheckPolyphony();  //NOTE: This can really slow down the process if attached to a debugger, so be careful
         PreviewNotes.Add(note);
-        return note;
-    
+        return note;    
     }
 
     //Adds a note for a specific MIDI key, and attaches NoteOff signal from the specified handler. If we have no patch, note won't be added.

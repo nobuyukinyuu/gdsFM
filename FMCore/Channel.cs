@@ -6,9 +6,9 @@ using System.Collections.Generic;
 public class Channel : List<Note>
 {
     #if DEBUG
-        int maxPolyphony=21;
+        int maxPolyphony=18;
     #else
-        int maxPolyphony=48;
+        int maxPolyphony=72;
     #endif
 
     public Stack<Note> _flaggedForDeletion = new Stack<Note>();
