@@ -8,7 +8,7 @@ public class Note : Node, IComparable<Note>
     public double base_hz = 440.0;  //Always fixed compared to the hz field;  used to return to normal after a pitch bend or lfo calc
 	public double hz = 440.0;  //Current frequency at any given time.
     
-    public int samples = 0;  //Samples elapsed.  Sample timer.  TODO:  Separate phase timer from envelope timer???? (Currently synced)
+    public int samples = 0;  //Samples elapsed.  Sample timer. 
     public List<Double> phase = new List<double>{0,0,0,0};  //Phase accumulator. This holds the sum of all previous Note.Iterate() periods. Allows smooth pitch changes.
 
     [Export]

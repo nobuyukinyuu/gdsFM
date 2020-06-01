@@ -137,6 +137,23 @@ public class Patch : Resource
     public Patch(double sample_rate) => Patch.sample_rate = sample_rate;
     // public Patch() {}  //Default constructor.
 
+
+    //Request multiple samples from this patch for a requested note.  Maybe better for parallelizing notes?
+    public double[] request_samples(Note note, int nSamples=1)
+    {
+        var output = new double[nSamples];
+        for(int i=0; i < nSamples; i++)
+        {
+            for (int j=0; j < connections.Length; j++)
+            {	
+                Operator op = connections[j];
+                output[i] = op.request_sample(note.phase[op.id], note); 
+            }
+            note.Iterate(1);
+        }
+        return output;
+    }
+
     //Multiple note polyphony
     public double mix(List<Note> notes)
     {
@@ -193,9 +210,10 @@ public class Patch : Resource
             //Iterate the sample timer.
             // note.Iterate(op.id, 1, op.EG.totalMultiplier, sample_rate);
             // note.Accumulate(op.id,1, op.EG.totalMultiplier, op.EG.SampleRate);
-            note.Iterate(1);
+            // note.Iterate(1);
 
         } //);
+        note.Iterate(1);
 
         #if DEBUG  //We probably don't need this in release mode
             //If assertion failed, we'd get a divide by zero here.

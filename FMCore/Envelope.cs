@@ -226,7 +226,7 @@ public class Envelope : Node
 	
         rr = val;
         if (val <= 0) {
-            _releaseTime = float.MaxValue/5.0;  //Stupid workaround to avoid Double.PositiveInfinity.  Who's gonna hold a note for 2.264668e+299 hours?
+            _releaseTime = SampleRate * 1800;  //Workaround to avoid Double.PositiveInfinity and stuck notes.  30 minutes release
         } else {
             _releaseTime = get_curve_secs(BaseSecs.RR, val) * SampleRate;
         }

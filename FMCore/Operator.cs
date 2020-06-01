@@ -94,7 +94,7 @@ public class Operator
             output *= eg._totalLevel;  //Finally, Attenuate total level.  ADSR was applied to output earlier depending on FB.
         }
 
-        //Iterate the sample timer and phase accumulator.
+        //Iterate the phase accumulator.
         Finalize: 
           note.Accumulate(id,1, eg.FixedFreq>0? eg.totalMultiplier/note.hz : eg.totalMultiplier, eg.SampleRate);
 
