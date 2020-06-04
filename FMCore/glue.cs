@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Reflection;
 using System.Linq;
+using System.Threading;
 
 //"Glue" class used for interacting with GDScript code only
 public class glue : Node
@@ -125,6 +126,33 @@ public static class GDSFmFuncs
     public static Decimal lerp(Decimal value1, Decimal value2, Decimal amount)
     {
         return value1 + (value2 - value1) * amount;
+    }
+
+
+    //Provides an atomic add operation during parallel processing.  "Optimistically concurrent" func; loops until thread-safe
+    public static double InterlockedAdd (ref double location1, double value)
+    {
+        double newCurrentValue = location1; // Non-volatile read, so may be stale
+        while (true)
+        {
+            double currentValue = newCurrentValue;
+            double newValue = currentValue + value;
+            newCurrentValue = Interlocked.CompareExchange(ref location1, newValue, currentValue);
+
+            if (newCurrentValue == currentValue)    return newValue;
+        }
+    }
+    public static float InterlockedAdd (ref float location1, float value)
+    {
+        float newCurrentValue = location1; // Non-volatile read, so may be stale
+        while (true)
+        {
+            float currentValue = newCurrentValue;
+            float newValue = currentValue + value;
+            newCurrentValue = Interlocked.CompareExchange(ref location1, newValue, currentValue);
+
+            if (newCurrentValue == currentValue)    return newValue;
+        }
     }
 }
 

@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 // using System.Buffers;
 
 public class AudioOutput : AudioStreamPlayer
@@ -39,8 +40,12 @@ public Channel PreviewNotes = new Channel();
         // for(int i=0; i<bufferpool.Length; i++){ bufferpool[i] = new Vector2(0.0f,0.0f); }
 
 
+        //Set up the multithreading environment if we're to use multithreading
+        int workerthreads, iothreads;
+        System.Threading.ThreadPool.GetMinThreads(out workerthreads, out iothreads);
+        System.Threading.ThreadPool.SetMaxThreads(workerthreads*2, iothreads*2);
 
-        fill_buffer();   //prefill output buffer
+        fill_buffer3();   //prefill output buffer
         Play();
 
 
@@ -49,7 +54,7 @@ public Channel PreviewNotes = new Channel();
     // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(float delta)
     {
-        fill_buffer();
+        fill_buffer2();
         PreviewNotes.FlagInactiveNotes();
         PreviewNotes.Flush();
     }
@@ -80,7 +85,66 @@ public Channel PreviewNotes = new Channel();
         // #endif
     }
 
+    //Parallelized buffer fill.  Seems less processor efficient in debug mode.....
+    void fill_buffer2()
+    {
+        int frames = buf.GetFramesAvailable();
+        bufferdata = new Vector2[frames];
 
+        object _lock = new object();
+
+        Parallel.For(0, PreviewNotes.Count, delegate(int i)
+        {
+            if (patch != null)
+            {
+                
+                var output = patch.request_samples(PreviewNotes[i], frames);
+
+                //Assemble the output samples into the buffer.
+                Parallel.For(0, frames, delegate(int j) 
+                {
+                    lock(_lock) {  //Using a normal lock because the spinlocks below aren't guaranteed to be atomic and make fuzzy artifacts... maybe fix one day..
+                        bufferdata[j].x += (float) output[j];  //TODO:  Stereo mixing maybe
+                        bufferdata[j].y += (float) output[j];  //TODO:  Stereo mixing maybe   
+                    }
+                    
+                    // System.Threading.Interlocked.Exchange(ref bufferdata[j].x, GDSFmFuncs.InterlockedAdd(ref bufferdata[j].x, (float) output[j]) );
+                    // System.Threading.Interlocked.Exchange(ref bufferdata[j].y, GDSFmFuncs.InterlockedAdd(ref bufferdata[j].y, (float) output[j]) );
+
+                } );
+            }
+        } );
+
+        //TODO:  Attenuate the samples here with another parallel For loop on the final buffer.  Automatic gain control maybe applied here?
+
+        buf.PushBuffer(bufferdata); 
+    }
+
+    //This may be a serial process, but for some reason is faster than fill_buffer().  Maybe because there's less function calls?
+    void fill_buffer3()
+    {
+        int frames = buf.GetFramesAvailable();
+        bufferdata = new Vector2[frames];
+
+        for(int i=0; i < PreviewNotes.Count; i++)
+        {
+            if (patch != null)
+            {
+                var output = patch.request_samples(PreviewNotes[i], frames);
+
+                //Assemble the output samples into the buffer.
+                for(int j=0; j < frames; j++)
+                {
+                    bufferdata[j].x += (float) output[j];  //TODO:  Stereo mixing maybe
+                    bufferdata[j].y += (float) output[j];  //TODO:  Stereo mixing maybe   
+                } 
+            }
+        }
+
+        //TODO:  Attenuate the samples here with another parallel For loop on the final buffer.  Automatic gain control maybe applied here?
+
+        buf.PushBuffer(bufferdata); 
+    }
 
 
     //TODO:  MOVE ME TO A DISCRETE MIXER OR SOMETHING?
@@ -125,7 +189,7 @@ public Channel PreviewNotes = new Channel();
     {
         Note note = new Note(note_number, velocity);
         note._channel = PreviewNotes;
-        PreviewNotes.CheckPolyphony();  //NOTE: This can really slow down the process if attached to a debugger, so be careful
+        // PreviewNotes.CheckPolyphony();  //NOTE: This can really slow down the process if attached to a debugger, so be careful
         PreviewNotes.Add(note);
         return note;    
     }
