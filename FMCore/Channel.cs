@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class Channel : List<Note>
 {
     #if DEBUG
-        int maxPolyphony=18;
+        int maxPolyphony=24;
     #else
         int maxPolyphony=72;
     #endif
@@ -20,7 +20,7 @@ public class Channel : List<Note>
 
     public void FlagInactiveNotes()
     {
-        for(int i=0; i<this.Count; i++) //Note note in this)   //FIXME:  InvalidOperationException, collection modified.  For instead of foreach?
+        for(int i=0; i<this.Count; i++) 
         {
             Note note = this[i];
             if(note != null && note.IsDestroyable()) FlagForDeletion(note);

@@ -59,7 +59,7 @@ window/vsync/use_vsync=false
 
 [editor_plugins]
 
-enabled=PoolStringArray( "mono_debugger", "zoomy" )
+enabled=PoolStringArray( "launchy", "mono_debugger", "zoomy" )
 
 [input]
 

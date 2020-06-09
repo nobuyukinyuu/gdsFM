@@ -5,6 +5,17 @@ const note_names = ["A-", "A#", "B-", "C-", "C#", "D-", "D#", "E-", "F-", "F#", 
 const noteColors = preload("res://gfx/noteColors/5th.png")
 const noteFont = preload("res://gfx/fonts/NoteFont.tres")
 
+const ratios = [ #0.71,
+	0.78, 0.87, 1, 1.41, 1.57, 1.73, 2, 2.82, 3, 
+	3.14, 3.46, 4, 4.24, 4.71, 5, 5.19, 5.65,
+	6, 6.28, 6.92, 7, 7.07, 7.85, 8, 8.48, 
+	8.65, 9, 9.42, 9.89, 10, 10.38, 10.99, 11,
+	11.3, 12, 12.11, 12.56, 12.72, 13, 13.84, 14,
+	14.1, 14.13, 15, 15.55, 15.57, 15.7, 16.96, 17.27,
+	17.3, 18.37, 18.84, 19.03, 19.78, 20.41, 20.76, 
+	21.2, 21.98, 22.49, 23.55, 24.22, 25.95, 34, 
+	]
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	
@@ -34,6 +45,16 @@ func _ready():
 	
 	$Presets.get_popup().add_icon_override("radio_unchecked", uncheck)
 	$Presets.get_popup().add_icon_override("radio_checked", check)
+	
+	
+	#Populate the ratio presets.
+	for i in ratios.size():
+		var g = $Ratios/Pop/Grid
+		var p = $Ratios/Pop/Grid/"0".duplicate()
+		p.name = str(i+1)
+		p.text = str(ratios[i])
+		g.add_child(p)
+		p.owner = owner
 	
 	
 	#Really hacky way to get our spinbox to auto-select all text when clicking.
@@ -86,3 +107,8 @@ func _on_txtHz_gui_input(event):
 	elif event is InputEventKey and event.scancode == KEY_ESCAPE:
 		$txtHz.get_child(0).text = "%s %s" % [$txtHz.value, $txtHz.suffix]
 
+
+
+func _on_Ratios_pressed():
+	$Ratios/Pop.popup_centered()
+	pass # Replace with function body.

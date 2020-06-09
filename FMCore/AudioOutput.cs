@@ -11,9 +11,10 @@ public static float MixRate = 44100.0f;  //This is set to a global var sample_ra
 AudioStreamGeneratorPlayback buf;  //Playback buffer
 Vector2[] bufferdata = new Vector2[8192];
 
-public Patch patch;  // FM Instrument Patch
+    private Patch patch;  // FM Instrument Patch
+    public Patch Patch { get => patch; set => patch = value; }
 
-public Note previewNote;  //Monophonic note used to preview the patch.
+    public Note previewNote;  //Monophonic note used to preview the patch.
     // public Note PreviewNote () {return previewNote;}
 
 public Channel PreviewNotes = new Channel();
@@ -104,10 +105,13 @@ public Channel PreviewNotes = new Channel();
                 Parallel.For(0, frames, delegate(int j) 
                 {
                     lock(_lock) {  //Using a normal lock because the spinlocks below aren't guaranteed to be atomic and make fuzzy artifacts... maybe fix one day..
-                        bufferdata[j].x += (float) output[j];  //TODO:  Stereo mixing maybe
-                        bufferdata[j].y += (float) output[j];  //TODO:  Stereo mixing maybe   
+
+                        //TODO:  Applies patch mixing globally. If multiple programs are being mixed this needs to change so mixing is applied per-patch.
+                        //      Global mixing is only used here for a slight speed boost.
+                        bufferdata[j].x += (float) output[j] * 0.1f * patch.gain;  //TODO:  Stereo mixing maybe
+                        bufferdata[j].y += (float) output[j] * 0.1f * patch.gain;  //TODO:  Stereo mixing maybe   
                     }
-                    
+
                     // System.Threading.Interlocked.Exchange(ref bufferdata[j].x, GDSFmFuncs.InterlockedAdd(ref bufferdata[j].x, (float) output[j]) );
                     // System.Threading.Interlocked.Exchange(ref bufferdata[j].y, GDSFmFuncs.InterlockedAdd(ref bufferdata[j].y, (float) output[j]) );
 
@@ -135,8 +139,10 @@ public Channel PreviewNotes = new Channel();
                 //Assemble the output samples into the buffer.
                 for(int j=0; j < frames; j++)
                 {
-                    bufferdata[j].x += (float) output[j];  //TODO:  Stereo mixing maybe
-                    bufferdata[j].y += (float) output[j];  //TODO:  Stereo mixing maybe   
+                    //TODO:  Applies patch mixing globally. If multiple programs are being mixed this needs to change so mixing is applied per-patch.
+                    //      Global mixing is only used here for a slight speed boost.
+                    bufferdata[j].x += (float) output[j] * 0.1f * patch.gain;  //TODO:  Stereo mixing maybe
+                    bufferdata[j].y += (float) output[j] * 0.1f * patch.gain;  //TODO:  Stereo mixing maybe   
                 } 
             }
         }
@@ -189,7 +195,7 @@ public Channel PreviewNotes = new Channel();
     {
         Note note = new Note(note_number, velocity);
         note._channel = PreviewNotes;
-        // PreviewNotes.CheckPolyphony();  //NOTE: This can really slow down the process if attached to a debugger, so be careful
+        PreviewNotes.CheckPolyphony();  //NOTE: This can really slow down the process if attached to a debugger, so be careful
         PreviewNotes.Add(note);
         return note;    
     }

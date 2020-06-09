@@ -14,8 +14,13 @@ public class Patch : Resource
     // This value should typically be initialized to whatever the global sample rate is.
     public static double sample_rate = 44100.0;
 
+
     Operator[] connections = new Operator[0];  // This is filled in by the algorithm validator and used when mixing.
     Dictionary<String, Operator> operators = new Dictionary<string, Operator>();  // A list of all valid operators created by the algorithm validator.
+
+
+    public float gain = 1.0f;  //Straight multiplier to the end output.  Use db2linear conversion.
+
 
     // Wires up a patch using a valid dictionary of connections from the algorithm validator. Format: {PatchName("Output"):{InputOpNames}, Operator1Name:{InputOps}, ...}
     public bool WireUp(String input)
@@ -147,7 +152,7 @@ public class Patch : Resource
             for (int j=0; j < connections.Length; j++)
             {	
                 Operator op = connections[j];
-                output[i] = op.request_sample(note.phase[op.id], note); 
+                output[i] += op.request_sample(note.phase[op.id], note); 
             }
             note.Iterate(1);
         }

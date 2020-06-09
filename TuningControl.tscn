@@ -1,11 +1,18 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://EGControl.gd" type="Script" id=1]
 [ext_resource path="res://gfx/fonts/spelunkid_font.tres" type="BitmapFont" id=2]
 [ext_resource path="res://FixedFreq.gd" type="Script" id=3]
 [ext_resource path="res://gfx/fonts/NoteFont.tres" type="BitmapFont" id=4]
+[ext_resource path="res://EGMillisecsInput.gd" type="Script" id=5]
+[ext_resource path="res://gfx/ui/icon_ratio_x.svg" type="Texture" id=6]
+[ext_resource path="res://gfx/fonts/numerics_5x8b.tres" type="BitmapFont" id=7]
 
 [sub_resource type="StyleBoxEmpty" id=1]
+
+[sub_resource type="StyleBoxFlat" id=3]
+content_margin_left = 8.0
+draw_center = false
 
 [sub_resource type="GDScript" id=2]
 script/source = "extends VSlider
@@ -16,10 +23,6 @@ func _on_Slider_gui_input(event):
 		if abs(value) < 4:  value = 0
 
 "
-
-[sub_resource type="StyleBoxFlat" id=3]
-content_margin_left = 8.0
-draw_center = false
 
 [sub_resource type="GDScript" id=4]
 script/source = "extends VSlider
@@ -135,28 +138,58 @@ margin_bottom = 175.0
 custom_fonts/font = ExtResource( 4 )
 text = "A-4"
 
-[node name="Slider" type="VSlider" parent="H/FixedFreq"]
-visible = false
-margin_top = 56.0
-margin_right = 88.0
-margin_bottom = 202.0
+[node name="Blanker3" type="Panel" parent="H/FixedFreq"]
+margin_top = 179.0
+margin_right = 117.0
+margin_bottom = 187.0
+rect_min_size = Vector2( 0, 8 )
+custom_styles/panel = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Ratios" type="Button" parent="H/FixedFreq"]
+margin_top = 191.0
+margin_right = 117.0
+margin_bottom = 223.0
+rect_min_size = Vector2( 0, 32 )
+text = "Ratio Presets"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Pop" type="PopupDialog" parent="H/FixedFreq/Ratios"]
+visible = true
+margin_left = 646.0
+margin_top = -106.0
+margin_right = 1024.0
+margin_bottom = 153.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Grid" type="GridContainer" parent="H/FixedFreq/Ratios/Pop"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = -8.0
+margin_bottom = -7.99998
+custom_constants/vseparation = 2
+custom_constants/hseparation = 2
+columns = 8
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="0" type="Button" parent="H/FixedFreq/Ratios/Pop/Grid"]
+margin_right = 45.0
+margin_bottom = 243.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-min_value = -200.0
-max_value = 200.0
-tick_count = 21
-ticks_on_borders = true
-script = SubResource( 2 )
-
-[node name="Val" type="Label" parent="H/FixedFreq"]
-visible = false
-margin_top = 56.0
-margin_right = 88.0
-margin_bottom = 64.0
-custom_fonts/font = ExtResource( 2 )
-text = "0"
-align = 1
-valign = 2
+custom_fonts/font = ExtResource( 7 )
+text = "0.71"
 
 [node name="Seperator" type="PanelContainer" parent="H"]
 margin_left = 121.0
@@ -199,6 +232,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 max_value = 16.0
 step = 0.5
+allow_greater = true
 tick_count = 17
 ticks_on_borders = true
 
@@ -206,10 +240,43 @@ ticks_on_borders = true
 margin_top = 206.0
 margin_right = 117.0
 margin_bottom = 214.0
+mouse_filter = 0
+mouse_default_cursor_shape = 2
 custom_fonts/font = ExtResource( 2 )
 text = "0"
 align = 1
 valign = 2
+script = ExtResource( 5 )
+positive_only = true
+disable_step = true
+
+[node name="Popup" type="PopupPanel" parent="H/Mul/Val"]
+visible = true
+margin_left = 62.0
+margin_top = 12.0
+margin_right = 181.0
+margin_bottom = 46.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Edit" type="LineEdit" parent="H/Mul/Val/Popup"]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 115.0
+margin_bottom = 30.0
+custom_fonts/font = ExtResource( 2 )
+custom_colors/selection_color = Color( 0.0784314, 0, 0.980392, 0.501961 )
+custom_colors/font_color_selected = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 0.690196, 0.690196, 0.690196, 1 )
+text = "1.0"
+align = 2
+max_length = 6
+right_icon = ExtResource( 6 )
+caret_blink = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Dt2" type="VBoxContainer" parent="H" groups=[
 "slider",
@@ -325,18 +392,11 @@ align = 1
 valign = 2
 
 [node name="TODO" type="Label" parent="."]
-margin_left = 1017.0
-margin_top = 10.0
-margin_right = 1270.0
-margin_bottom = 143.0
-text = "TODO:
-LFO Depth,
-Freq slide time
-Freq slide amount (Semitones per sec?)
-Freq slide curve?
-
-
-ADD PMD BACK TO SLIDER GROUP"
+margin_left = 8.052
+margin_top = 238.688
+margin_right = 82.052
+margin_bottom = 252.688
+text = "Mult"
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -344,6 +404,6 @@ __meta__ = {
 [connection signal="value_changed" from="H/FixedFreq/txtHz" to="H/FixedFreq" method="_on_txtHz_value_changed"]
 [connection signal="item_selected" from="H/FixedFreq/Presets" to="H/FixedFreq" method="_on_Presets_item_selected"]
 [connection signal="pressed" from="H/FixedFreq/Presets" to="H/FixedFreq" method="_on_Presets_pressed"]
-[connection signal="gui_input" from="H/FixedFreq/Slider" to="H/FixedFreq/Slider" method="_on_Slider_gui_input"]
+[connection signal="pressed" from="H/FixedFreq/Ratios" to="H/FixedFreq" method="_on_Ratios_pressed"]
 [connection signal="gui_input" from="H/Dt/Slider" to="H/Dt/Slider" method="_on_Slider_gui_input"]
 [connection signal="gui_input" from="H/PMD/Slider" to="H/PMD/Slider" method="_on_Slider_gui_input"]

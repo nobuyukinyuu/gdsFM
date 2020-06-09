@@ -1,4 +1,4 @@
-[gd_scene load_steps=42 format=2]
+[gd_scene load_steps=44 format=2]
 
 [ext_resource path="res://main.gd" type="Script" id=1]
 [ext_resource path="res://EGControl.tscn" type="PackedScene" id=2]
@@ -34,6 +34,8 @@
 [ext_resource path="res://gfx/ui/icon_millisecs.svg" type="Texture" id=32]
 [ext_resource path="res://ProgramControl.gd" type="Script" id=33]
 [ext_resource path="res://gfx/ui/godot_icons/tab_behind.png" type="Texture" id=34]
+[ext_resource path="res://sys/ui/PitchDisplay.tscn" type="PackedScene" id=35]
+[ext_resource path="res://PitchControl.gd" type="Script" id=36]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends VSlider
@@ -150,6 +152,7 @@ __meta__ = {
 }
 
 [node name="Program" type="Control" parent="TC2"]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -264,9 +267,7 @@ text = "0"
 align = 1
 valign = 2
 
-[node name="Gain" type="HBoxContainer" parent="TC2/Program/V" groups=[
-"slider",
-]]
+[node name="Gain" type="HBoxContainer" parent="TC2/Program/V"]
 margin_top = 32.0
 margin_right = 344.0
 margin_bottom = 48.0
@@ -290,9 +291,11 @@ margin_right = 308.0
 margin_bottom = 16.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-max_value = 2.0
-step = 0.01
-value = 1.0
+min_value = -12.0
+max_value = 12.0
+step = 1.0
+allow_greater = true
+allow_lesser = true
 tick_count = 11
 ticks_on_borders = true
 
@@ -317,63 +320,107 @@ margin_right = -4.0
 margin_bottom = -4.0
 
 [node name="Pitch" type="Control" parent="TC2"]
-visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
 margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
+script = ExtResource( 36 )
 
-[node name="H" type="HBoxContainer" parent="TC2/Pitch"]
+[node name="V" type="VSplitContainer" parent="TC2/Pitch"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-custom_constants/separation = 4
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Par" type="VBoxContainer" parent="TC2/Pitch/H" groups=[
+[node name="H" type="HBoxContainer" parent="TC2/Pitch/V"]
+margin_right = 344.0
+margin_bottom = 210.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/separation = 0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Pal" type="VBoxContainer" parent="TC2/Pitch/V/H" groups=[
 "slider",
 ]]
-margin_right = 56.0
-margin_bottom = 324.0
+margin_right = 49.0
+margin_bottom = 210.0
 size_flags_horizontal = 3
 
-[node name="PitchSlide" type="Label" parent="TC2/Pitch/H/Par"]
-margin_right = 56.0
+[node name="Label" type="Label" parent="TC2/Pitch/V/H/Pal"]
+margin_right = 49.0
 margin_bottom = 8.0
 custom_fonts/font = ExtResource( 4 )
-text = "AtkRate"
+custom_colors/font_color = Color( 1, 0.835294, 0.835294, 1 )
+text = "~Atk"
 align = 1
 
-[node name="Slider" type="VSlider" parent="TC2/Pitch/H/Par"]
+[node name="Slider" type="VSlider" parent="TC2/Pitch/V/H/Pal"]
 margin_top = 12.0
-margin_right = 56.0
-margin_bottom = 312.0
+margin_right = 49.0
+margin_bottom = 198.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+min_value = -100.0
+tick_count = 21
+ticks_on_borders = true
+script = SubResource( 1 )
+
+[node name="Val" type="Label" parent="TC2/Pitch/V/H/Pal"]
+margin_top = 202.0
+margin_right = 49.0
+margin_bottom = 210.0
+custom_fonts/font = ExtResource( 4 )
+text = "0"
+align = 1
+valign = 2
+
+[node name="Par" type="VBoxContainer" parent="TC2/Pitch/V/H" groups=[
+"slider",
+]]
+margin_left = 49.0
+margin_right = 98.0
+margin_bottom = 210.0
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="TC2/Pitch/V/H/Par"]
+margin_right = 49.0
+margin_bottom = 8.0
+custom_fonts/font = ExtResource( 4 )
+text = "+Atk"
+align = 1
+
+[node name="Slider" type="VSlider" parent="TC2/Pitch/V/H/Par"]
+margin_top = 12.0
+margin_right = 49.0
+margin_bottom = 198.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 max_value = 10000.0
-step = 0.01
+step = 1.0
 exp_edit = true
 allow_greater = true
 tick_count = 11
 ticks_on_borders = true
 
-[node name="Val" type="Label" parent="TC2/Pitch/H/Par"]
-margin_top = 316.0
-margin_right = 56.0
-margin_bottom = 324.0
+[node name="Val" type="Label" parent="TC2/Pitch/V/H/Par"]
+margin_top = 202.0
+margin_right = 49.0
+margin_bottom = 210.0
 mouse_filter = 0
+mouse_default_cursor_shape = 2
 custom_fonts/font = ExtResource( 4 )
 text = "0"
 align = 1
 valign = 2
 script = ExtResource( 31 )
 
-[node name="Popup" type="PopupPanel" parent="TC2/Pitch/H/Par/Val"]
+[node name="Popup" type="PopupPanel" parent="TC2/Pitch/V/H/Par/Val"]
 margin_left = 28.0
 margin_top = 20.0
 margin_right = 147.0
@@ -383,7 +430,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Edit" type="LineEdit" parent="TC2/Pitch/H/Par/Val/Popup"]
+[node name="Edit" type="LineEdit" parent="TC2/Pitch/V/H/Par/Val/Popup"]
 margin_left = 4.0
 margin_top = 4.0
 margin_right = 115.0
@@ -401,25 +448,26 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Pal" type="VBoxContainer" parent="TC2/Pitch/H" groups=[
+[node name="Pdl" type="VBoxContainer" parent="TC2/Pitch/V/H" groups=[
 "slider",
 ]]
-margin_left = 60.0
-margin_right = 112.0
-margin_bottom = 324.0
+margin_left = 98.0
+margin_right = 147.0
+margin_bottom = 210.0
 size_flags_horizontal = 3
 
-[node name="PitchSlide" type="Label" parent="TC2/Pitch/H/Pal"]
-margin_right = 52.0
+[node name="Label" type="Label" parent="TC2/Pitch/V/H/Pdl"]
+margin_right = 49.0
 margin_bottom = 8.0
 custom_fonts/font = ExtResource( 4 )
-text = "AtkLvl"
+custom_colors/font_color = Color( 1, 0.84624, 0.476563, 1 )
+text = "~Dcay"
 align = 1
 
-[node name="Slider" type="VSlider" parent="TC2/Pitch/H/Pal"]
+[node name="Slider" type="VSlider" parent="TC2/Pitch/V/H/Pdl"]
 margin_top = 12.0
-margin_right = 52.0
-margin_bottom = 312.0
+margin_right = 49.0
+margin_bottom = 198.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 min_value = -100.0
@@ -427,55 +475,56 @@ tick_count = 21
 ticks_on_borders = true
 script = SubResource( 1 )
 
-[node name="Val" type="Label" parent="TC2/Pitch/H/Pal"]
-margin_top = 316.0
-margin_right = 52.0
-margin_bottom = 324.0
+[node name="Val" type="Label" parent="TC2/Pitch/V/H/Pdl"]
+margin_top = 202.0
+margin_right = 49.0
+margin_bottom = 210.0
 custom_fonts/font = ExtResource( 4 )
 text = "0"
 align = 1
 valign = 2
 
-[node name="Pdr" type="VBoxContainer" parent="TC2/Pitch/H" groups=[
+[node name="Pdr" type="VBoxContainer" parent="TC2/Pitch/V/H" groups=[
 "slider",
 ]]
-margin_left = 116.0
-margin_right = 172.0
-margin_bottom = 324.0
+margin_left = 147.0
+margin_right = 196.0
+margin_bottom = 210.0
 size_flags_horizontal = 3
 
-[node name="PitchSlide" type="Label" parent="TC2/Pitch/H/Pdr"]
-margin_right = 56.0
+[node name="Label" type="Label" parent="TC2/Pitch/V/H/Pdr"]
+margin_right = 49.0
 margin_bottom = 8.0
 custom_fonts/font = ExtResource( 4 )
-text = "DecayRt"
+text = "+Dcay"
 align = 1
 
-[node name="Slider" type="VSlider" parent="TC2/Pitch/H/Pdr"]
+[node name="Slider" type="VSlider" parent="TC2/Pitch/V/H/Pdr"]
 margin_top = 12.0
-margin_right = 56.0
-margin_bottom = 312.0
+margin_right = 49.0
+margin_bottom = 198.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 max_value = 10000.0
-step = 0.01
+step = 1.0
 exp_edit = true
 allow_greater = true
 tick_count = 11
 ticks_on_borders = true
 
-[node name="Val" type="Label" parent="TC2/Pitch/H/Pdr"]
-margin_top = 316.0
-margin_right = 56.0
-margin_bottom = 324.0
+[node name="Val" type="Label" parent="TC2/Pitch/V/H/Pdr"]
+margin_top = 202.0
+margin_right = 49.0
+margin_bottom = 210.0
 mouse_filter = 0
+mouse_default_cursor_shape = 2
 custom_fonts/font = ExtResource( 4 )
 text = "0"
 align = 1
 valign = 2
 script = ExtResource( 31 )
 
-[node name="Popup" type="PopupPanel" parent="TC2/Pitch/H/Pdr/Val"]
+[node name="Popup" type="PopupPanel" parent="TC2/Pitch/V/H/Pdr/Val"]
 margin_left = -36.0
 margin_top = 20.0
 margin_right = 83.0
@@ -485,7 +534,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Edit" type="LineEdit" parent="TC2/Pitch/H/Pdr/Val/Popup"]
+[node name="Edit" type="LineEdit" parent="TC2/Pitch/V/H/Pdr/Val/Popup"]
 margin_left = 4.0
 margin_top = 4.0
 margin_right = 115.0
@@ -503,25 +552,26 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Psl" type="VBoxContainer" parent="TC2/Pitch/H" groups=[
+[node name="Psl" type="VBoxContainer" parent="TC2/Pitch/V/H" groups=[
 "slider",
 ]]
-margin_left = 176.0
-margin_right = 228.0
-margin_bottom = 324.0
+margin_left = 196.0
+margin_right = 245.0
+margin_bottom = 210.0
 size_flags_horizontal = 3
 
-[node name="PitchSlide" type="Label" parent="TC2/Pitch/H/Psl"]
-margin_right = 52.0
+[node name="Label" type="Label" parent="TC2/Pitch/V/H/Psl"]
+margin_right = 49.0
 margin_bottom = 8.0
 custom_fonts/font = ExtResource( 4 )
+custom_colors/font_color = Color( 0.701961, 1, 0.819608, 1 )
 text = "SusLv"
 align = 1
 
-[node name="Slider" type="VSlider" parent="TC2/Pitch/H/Psl"]
+[node name="Slider" type="VSlider" parent="TC2/Pitch/V/H/Psl"]
 margin_top = 12.0
-margin_right = 52.0
-margin_bottom = 312.0
+margin_right = 49.0
+margin_bottom = 198.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 min_value = -100.0
@@ -529,55 +579,56 @@ tick_count = 21
 ticks_on_borders = true
 script = SubResource( 1 )
 
-[node name="Val" type="Label" parent="TC2/Pitch/H/Psl"]
-margin_top = 316.0
-margin_right = 52.0
-margin_bottom = 324.0
+[node name="Val" type="Label" parent="TC2/Pitch/V/H/Psl"]
+margin_top = 202.0
+margin_right = 49.0
+margin_bottom = 210.0
 custom_fonts/font = ExtResource( 4 )
 text = "0"
 align = 1
 valign = 2
 
-[node name="Prr" type="VBoxContainer" parent="TC2/Pitch/H" groups=[
+[node name="Prr" type="VBoxContainer" parent="TC2/Pitch/V/H" groups=[
 "slider",
 ]]
-margin_left = 232.0
-margin_right = 288.0
-margin_bottom = 324.0
+margin_left = 245.0
+margin_right = 294.0
+margin_bottom = 210.0
 size_flags_horizontal = 3
 
-[node name="PitchSlide" type="Label" parent="TC2/Pitch/H/Prr"]
-margin_right = 56.0
+[node name="Label" type="Label" parent="TC2/Pitch/V/H/Prr"]
+margin_right = 49.0
 margin_bottom = 8.0
 custom_fonts/font = ExtResource( 4 )
-text = "Release"
+text = "+Rls"
 align = 1
 
-[node name="Slider" type="VSlider" parent="TC2/Pitch/H/Prr"]
+[node name="Slider" type="VSlider" parent="TC2/Pitch/V/H/Prr"]
 margin_top = 12.0
-margin_right = 56.0
-margin_bottom = 312.0
+margin_right = 49.0
+margin_bottom = 198.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 max_value = 10000.0
-step = 0.01
+step = 1.0
 exp_edit = true
 allow_greater = true
 tick_count = 11
 ticks_on_borders = true
 
-[node name="Val" type="Label" parent="TC2/Pitch/H/Prr"]
-margin_top = 316.0
-margin_right = 56.0
-margin_bottom = 324.0
+[node name="Val" type="Label" parent="TC2/Pitch/V/H/Prr"]
+margin_top = 202.0
+margin_right = 49.0
+margin_bottom = 210.0
 mouse_filter = 0
+mouse_default_cursor_shape = 2
 custom_fonts/font = ExtResource( 4 )
 text = "0"
 align = 1
 valign = 2
 script = ExtResource( 31 )
 
-[node name="Popup" type="PopupPanel" parent="TC2/Pitch/H/Prr/Val"]
+[node name="Popup" type="PopupPanel" parent="TC2/Pitch/V/H/Prr/Val"]
 margin_left = -100.0
 margin_top = 20.0
 margin_right = 19.0
@@ -587,7 +638,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Edit" type="LineEdit" parent="TC2/Pitch/H/Prr/Val/Popup"]
+[node name="Edit" type="LineEdit" parent="TC2/Pitch/V/H/Prr/Val/Popup"]
 margin_left = 4.0
 margin_top = 4.0
 margin_right = 115.0
@@ -605,25 +656,26 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Prl" type="VBoxContainer" parent="TC2/Pitch/H" groups=[
+[node name="Prl" type="VBoxContainer" parent="TC2/Pitch/V/H" groups=[
 "slider",
 ]]
-margin_left = 292.0
+margin_left = 294.0
 margin_right = 344.0
-margin_bottom = 324.0
+margin_bottom = 210.0
 size_flags_horizontal = 3
 
-[node name="PitchSlide" type="Label" parent="TC2/Pitch/H/Prl"]
-margin_right = 52.0
+[node name="Label" type="Label" parent="TC2/Pitch/V/H/Prl"]
+margin_right = 50.0
 margin_bottom = 8.0
 custom_fonts/font = ExtResource( 4 )
-text = "RlsLvl"
+custom_colors/font_color = Color( 0.855149, 0.660156, 1, 1 )
+text = "~Rls"
 align = 1
 
-[node name="Slider" type="VSlider" parent="TC2/Pitch/H/Prl"]
+[node name="Slider" type="VSlider" parent="TC2/Pitch/V/H/Prl"]
 margin_top = 12.0
-margin_right = 52.0
-margin_bottom = 312.0
+margin_right = 50.0
+margin_bottom = 198.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 min_value = -100.0
@@ -631,14 +683,24 @@ tick_count = 21
 ticks_on_borders = true
 script = SubResource( 1 )
 
-[node name="Val" type="Label" parent="TC2/Pitch/H/Prl"]
-margin_top = 316.0
-margin_right = 52.0
-margin_bottom = 324.0
+[node name="Val" type="Label" parent="TC2/Pitch/V/H/Prl"]
+margin_top = 202.0
+margin_right = 50.0
+margin_bottom = 210.0
 custom_fonts/font = ExtResource( 4 )
 text = "0"
 align = 1
 valign = 2
+
+[node name="PitchDisplay" parent="TC2/Pitch/V" instance=ExtResource( 35 )]
+margin_top = 222.0
+margin_right = 344.0
+margin_bottom = 324.0
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
+par = 0.0
+pdr = 0.0
+prr = 0.0
 
 [node name="TC" type="TabContainer" parent="."]
 anchor_left = 1.0
@@ -829,7 +891,7 @@ valign = 1
 
 [node name="Audio" type="AudioStreamPlayer" parent="."]
 stream = SubResource( 3 )
-volume_db = -4.0
+volume_db = -6.0
 script = ExtResource( 23 )
 
 [node name="PreviewNote" type="Node" parent="Audio"]
@@ -960,12 +1022,6 @@ margin_top = -200.0
 margin_right = -40.0
 margin_bottom = -16.0
 [connection signal="value_changed" from="TC2/Program/V/Gain/Slider" to="TC2/Program" method="_on_Gain_value_changed"]
-[connection signal="gui_input" from="TC2/Pitch/H/Par/Slider" to="TC2/Pitch/H/Par/Slider" method="_on_Slider_gui_input"]
-[connection signal="gui_input" from="TC2/Pitch/H/Pal/Slider" to="TC2/Pitch/H/Pal/Slider" method="_on_Slider_gui_input"]
-[connection signal="gui_input" from="TC2/Pitch/H/Pdr/Slider" to="TC2/Pitch/H/Pdr/Slider" method="_on_Slider_gui_input"]
-[connection signal="gui_input" from="TC2/Pitch/H/Psl/Slider" to="TC2/Pitch/H/Psl/Slider" method="_on_Slider_gui_input"]
-[connection signal="gui_input" from="TC2/Pitch/H/Prr/Slider" to="TC2/Pitch/H/Prr/Slider" method="_on_Slider_gui_input"]
-[connection signal="gui_input" from="TC2/Pitch/H/Prl/Slider" to="TC2/Pitch/H/Prl/Slider" method="_on_Slider_gui_input"]
 [connection signal="item_selected" from="TC/Waveform/Grid/Waveform" to="." method="_on_Waveform_item_selected"]
 [connection signal="item_selected" from="TC/Waveform/Grid/Waveform2" to="." method="_on_Waveform_item_selected" binds= [ true ]]
 [connection signal="changed" from="GraphEdit" to="." method="_on_GraphEdit_changed"]

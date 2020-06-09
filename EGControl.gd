@@ -27,7 +27,7 @@ func load_settings(instr):
 		if setting.is_in_group("slider"):
 			get_node("H/%s/Slider" % setting.name).value = instr.get(s)
 		elif setting.is_in_group("setting_group"):
-			setting.load_settings(instr)
+			setting.load_settings(instr)  #Applies to FixedFreq settings, maybe others
 
 
 func _on_slider_change(value, which):
@@ -45,7 +45,12 @@ func _on_slider_input(ev, which):
 		if ["Ar", "Dr", "Sr", "Rr", "Sl", "Tl"].has(which.name):  
 			#Tuning and EG share a script. Don't update on tuning.
 			emit_signal("envelope_changed", value, which.name)
-	
+			
+		else:   #DEBUG, check to update mult display
+			if currentEG: 
+				var totalMult = 0.0
+				totalMult += currentEG._freqMult * currentEG._coarseDetune * currentEG._detune
+				$TODO.text = str(totalMult)
 
 
 #Gets a specified slider value.
