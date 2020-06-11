@@ -38,15 +38,29 @@ func _input(event):
 #	if event.is_action_pressed("play"):
 #		global.samples = 0
 #		$Audio.Reset()
-#
-#
-#	if Input.is_action_just_pressed("play"):
-#		OS.clipboard = var2str($GraphEdit.get_connection_list())
-#		print ("Copied.  " + OS.clipboard)
 
 	if Input.is_action_just_pressed("play"):
 		$TC/EGControl.currentEG.CopyEnvelope();
 	
+	if event.is_action("BambooCopy"):
+		pass
+	if event.is_action("BambooPaste") and event.pressed:
+		print ("Attempting paste...")
+		if !$Audio.patch:
+			$Audio.NewPatch()
+			yield(get_tree(),"idle_frame")
+
+		if $Audio.patch:
+			var algorithm = $Audio.patch.BambooPaste()
+			if algorithm < 0 or algorithm > 7:
+				print ("BambooPaste failed.")
+				return
+			print ("Algorithm ", algorithm)
+			_on_Algorithm_item_selected(algorithm)
+			
+			for o in $GraphEdit.get_children():
+				if o.is_in_group("operator"):
+					update_envelope_preview_all(o.get_node("EnvelopeDisplay"), $Audio.patch.GetEG(o.name))
 
 func _on_btnValidate_pressed():
 	$TC/EGControl.disable(true)
@@ -118,7 +132,6 @@ func _on_Algorithm_item_selected(id):
 		$GraphEdit.connect_node(pair[0],0, pair[1],0)
 
 	$GraphEdit.dirty = true
-
 
 func _on_Env_update(value, which):
 	if !lastOperatorEnvelope:  return

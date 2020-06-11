@@ -10,11 +10,11 @@
 
 [sub_resource type="StyleBoxEmpty" id=1]
 
-[sub_resource type="StyleBoxFlat" id=3]
+[sub_resource type="StyleBoxFlat" id=2]
 content_margin_left = 8.0
 draw_center = false
 
-[sub_resource type="GDScript" id=2]
+[sub_resource type="GDScript" id=3]
 script/source = "extends VSlider
 
 # Zero snap
@@ -195,7 +195,7 @@ text = "0.71"
 margin_left = 121.0
 margin_right = 130.0
 margin_bottom = 214.0
-custom_styles/panel = SubResource( 3 )
+custom_styles/panel = SubResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -338,7 +338,7 @@ min_value = -200.0
 max_value = 200.0
 tick_count = 21
 ticks_on_borders = true
-script = SubResource( 2 )
+script = SubResource( 3 )
 
 [node name="Val" type="Label" parent="H/Dt"]
 margin_top = 206.0

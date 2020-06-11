@@ -152,7 +152,6 @@ __meta__ = {
 }
 
 [node name="Program" type="Control" parent="TC2"]
-visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -293,7 +292,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 min_value = -12.0
 max_value = 12.0
-step = 1.0
 allow_greater = true
 allow_lesser = true
 tick_count = 11
@@ -320,6 +318,7 @@ margin_right = -4.0
 margin_bottom = -4.0
 
 [node name="Pitch" type="Control" parent="TC2"]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -402,7 +401,6 @@ margin_bottom = 198.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 max_value = 10000.0
-step = 1.0
 exp_edit = true
 allow_greater = true
 tick_count = 11
@@ -506,7 +504,6 @@ margin_bottom = 198.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 max_value = 10000.0
-step = 1.0
 exp_edit = true
 allow_greater = true
 tick_count = 11
@@ -610,7 +607,6 @@ margin_bottom = 198.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 max_value = 10000.0
-step = 1.0
 exp_edit = true
 allow_greater = true
 tick_count = 11

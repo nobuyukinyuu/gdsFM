@@ -63,7 +63,7 @@ func validate():
 #		connections[key].append(o["from"])
 		test_connections[key][ o["from"] ] = true
 
-	print(test_connections, "\n", get_connection_list())
+#	print(test_connections, "\n", get_connection_list())
 
 	#First, check if the speakers are connected to anything.
 	if !test_connections.has("Output") or test_connections["Output"].empty():
@@ -128,8 +128,8 @@ func validate_loop(me, prior_connections, caller="?") -> bool:
 	else:
 		next_connections = {}
 	
-	print(me, " next: ", next_connections, " prior: ", caller, ", ",
-			 prior_connections)
+#	print(me, " next: ", next_connections, " prior: ", caller, ", ",
+#			 prior_connections)
 	
 	#Check all the next connections for a prior connection.
 	for c in next_connections:

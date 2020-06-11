@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-//Todo:   PatchNote:Patch extension??  Might reduce confusion overall?
 public class Patch : Resource
 {
 
@@ -22,7 +21,46 @@ public class Patch : Resource
     public float gain = 1.0f;  //Straight multiplier to the end output.  Use db2linear conversion.
 
 
-    // Wires up a patch using a valid dictionary of connections from the algorithm validator. Format: {PatchName("Output"):{InputOpNames}, Operator1Name:{InputOps}, ...}
+    int[][][] algorithms = new int[][][]{
+        new int[][]{ new int[]{1,2}, new int[]{2,3}, new int[]{3,4}, new int[]{4,0} }, //Four serial connection
+        new int[][]{ new int[]{1,3}, new int[]{2,3}, new int[]{3,4}, new int[]{4,0} }, //Three double mod serial connection
+        new int[][]{ new int[]{1,4}, new int[]{2,3}, new int[]{3,4}, new int[]{4,0} }, //Double mod 1
+        new int[][]{ new int[]{1,2}, new int[]{2,4}, new int[]{3,4}, new int[]{4,0} }, //Double mod 2
+        new int[][]{ new int[]{1,2}, new int[]{2,0}, new int[]{3,4}, new int[]{4,0} }, //Two serial, two parallel
+        new int[][]{ new int[]{1,2}, new int[]{1,3}, new int[]{1,4}, new int[]{2,0}, new int[]{3,0}, new int[]{4,0} }, //3x parallel, common modulator
+        new int[][]{ new int[]{1,2}, new int[]{2,0}, new int[]{3,0}, new int[]{4,0} }, //Two serial, two sines
+        new int[][]{ new int[]{1,0}, new int[]{2,0}, new int[]{3,0}, new int[]{4,0} }, //Four parallel sines
+    };
+
+
+    //Calls WireUp using a 4OP preset
+    public bool WireUp(int algorithm)
+    {
+        var cs = algorithms[algorithm];  //Order 2 array of int
+
+        var ops=new List<List<int>>();
+        for(int i=0; i < 5; i++)    ops.Add(new List<int>());
+        foreach (int[] pair in cs)  ops[pair[1]].Add(pair[0]);
+
+        var output = "";
+        for(int i=0; i < ops.Count; i++)
+        {
+            if (ops[i].Count == 0) continue;
+            var inputs = "";
+            foreach(int input in ops[i])
+            {
+                inputs +=  (input==0? "Output" : "OP"+input.ToString() ) + ",";
+            }
+            inputs = inputs.Remove(inputs.Length-1);
+            output += String.Format("{0}={1};", i==0? "Output" : "OP"+i.ToString(), inputs);
+        }
+        output = output.Remove(output.Length-1);
+
+        // System.Diagnostics.Debug.Print(output);
+        return WireUp(output);
+    }
+
+    // Wires up a patch using a valid dictionary of connections from the algorithm validator. Format: "Operator1Name=InputOp1,InputOp2; OperatorName2= [...]"
     public bool WireUp(String input)
     {
 
@@ -33,7 +71,7 @@ public class Patch : Resource
             var kv = opConnections.Split("=", false);  //Key-Value pair (array of String[2])
             String[] values = kv[1].Split(",", false);  //List of connections to the operator named in kv[0]
             
-            GD.Print("Adding " + kv[0].Trim() + " to dict");
+            // GD.Print("Adding " + kv[0].Trim() + " to dict");
             dict.Add( kv[0].Trim(), values);            
         }
 
@@ -76,7 +114,7 @@ public class Patch : Resource
             {
                 foreach(String s in dict[opString])   {
                     items.Add(operators[s]);
-                                GD.Print("Adding " + s + " to " + opString + "'s connections");
+                                // GD.Print("Adding " + s + " to " + opString + "'s connections");
                 }
             }
             catch(Exception e){
@@ -239,4 +277,75 @@ public class Patch : Resource
 
         return avg;
     }
+
+
+    //Copies an instrument (this Patch) in an envelope format understood by BambooTracker.
+    public void BambooCopy(int algorithm = 0)
+    {
+        var output = "FM_ENVELOPE:";
+
+        if (operators.ContainsKey("OP1"))  output += Math.Floor(Math.Min(7, operators["OP1"].EG.feedback)).ToString() + ",";
+        output += algorithm.ToString() + ",\n";
+
+        for(int i=0; i < Math.Min(4, operators.Count); i++)
+        {
+            output += operators["OP" + i.ToString()].EG.Ar.ToString();
+            output += ",";
+            output += operators["OP" + i.ToString()].EG.Dr.ToString();
+            output += ",";
+            output += operators["OP" + i.ToString()].EG.Sr.ToString();
+            output += ",";
+            output += operators["OP" + i.ToString()].EG.Rr.ToString();
+            output += ",";
+            output += operators["OP" + i.ToString()].EG.Sl.ToString();
+            output += ",";
+            output += operators["OP" + i.ToString()].EG.Tl.ToString();
+            output += ",";
+            output += operators["OP" + i.ToString()].EG.Ks.ToString();
+            output += ",";
+            output += Math.Floor(operators["OP" + i.ToString()].EG.Mul).ToString();
+            output += ",";
+            output += operators["OP" + i.ToString()].EG.Dt.ToString();  //TODO:  Map to 0-7
+            output += ",-1,\n";
+
+            OS.Clipboard = output;
+        }
+    }
+
+    public int BambooPaste()
+    {
+        if (!OS.Clipboard.StartsWith("FM_ENVELOPE:")) return -1;
+
+        var lines = OS.Clipboard.Substring(12).Split("\n", false);
+        if (lines.Length < 5) return -1;
+
+        int feedback = Int32.Parse(lines[0][0].ToString());
+        int algorithm = Int32.Parse(lines[0][2].ToString());
+
+        if (algorithm > 0 && algorithm < 8)  WireUp(algorithm);
+
+        //Go and try to populate the envelope generators.
+        foreach(Operator op in operators.Values)
+        {
+            string[] val = lines[op.id + 1].Split(",", false);
+            // AR,DR,SR,RR,SL,TL,KS,MUL,DT
+
+            op.EG.Ar = Int32.Parse(val[0]);
+            op.EG.Dr = Int32.Parse(val[1]);
+            op.EG.Sr = Int32.Parse(val[2]);
+            op.EG.Rr = Int32.Parse(val[3]);
+
+            //These mappings might not be perfect.  SL attenuation goes from 0-15 to -93dB, TL goes from 0-127 to -96dB.
+            op.EG.Sl = GD.Db2Linear(-6.2f * (Int32.Parse(val[4]))) * 100 ;
+            op.EG.Tl = GD.Db2Linear(-0.75f * Int32.Parse(val[5])) * 100 ;
+
+            // op.EG.Ks = Int32.Parse(val[6]);  //TODO:  Map key scaling rates to 12th root of 2 defaults and scale down...
+            op.EG.Mul = Int32.Parse(val[7]);
+
+            op.EG.Dt = (Int32.Parse(val[8]) - 3.5) * (100/3.5);  //This may not be correct either....
+        }
+
+        return algorithm;
+    }
+
 }

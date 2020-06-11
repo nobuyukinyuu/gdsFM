@@ -164,6 +164,12 @@ public Channel PreviewNotes = new Channel();
         this.patch = new Patch( rate );        
         return this.patch.WireUp(s);
     }
+    public void NewPatch()
+    {
+        double rate = (float) global.Get("sample_rate");
+        this.patch = new Patch( rate );        
+    }
+
     public bool UpdatePatchFromString(String s)
     {
         double rate = (float) global.Get("sample_rate");
