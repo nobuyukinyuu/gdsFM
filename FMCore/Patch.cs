@@ -324,6 +324,8 @@ public class Patch : Resource
 
         if (algorithm > 0 && algorithm < 8)  WireUp(algorithm);
 
+        operators["OP1"].EG.feedback = feedback / 2.0;  //FIXME:  Key scaling probably is necessary to stop extreme feedback. Deliberately dialed down as a temp workaround.
+
         //Go and try to populate the envelope generators.
         foreach(Operator op in operators.Values)
         {
