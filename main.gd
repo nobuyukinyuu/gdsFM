@@ -56,6 +56,8 @@ func _input(event):
 				print ("BambooPaste failed.")
 				return
 			print ("Algorithm ", algorithm)
+			
+			$Algorithm.select(algorithm)
 			_on_Algorithm_item_selected(algorithm)
 			
 			for o in $GraphEdit.get_children():

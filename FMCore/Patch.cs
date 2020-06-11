@@ -192,6 +192,8 @@ public class Patch : Resource
                 Operator op = connections[j];
                 output[i] += op.request_sample(note.phase[op.id], note); 
             }
+
+            output[i] *= note.Velocity;
             note.Iterate(1);
         }
         return output;
