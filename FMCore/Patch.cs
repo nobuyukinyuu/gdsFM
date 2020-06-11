@@ -322,7 +322,7 @@ public class Patch : Resource
         int feedback = Int32.Parse(lines[0][0].ToString());
         int algorithm = Int32.Parse(lines[0][2].ToString());
 
-        if (algorithm > 0 && algorithm < 8)  WireUp(algorithm);
+        if (algorithm >= 0 && algorithm < 8)  WireUp(algorithm);
 
         operators["OP1"].EG.feedback = feedback / 2.0;  //FIXME:  Key scaling probably is necessary to stop extreme feedback. Deliberately dialed down as a temp workaround.
 

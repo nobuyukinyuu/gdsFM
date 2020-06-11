@@ -46,11 +46,11 @@ func _on_slider_input(ev, which):
 			#Tuning and EG share a script. Don't update on tuning.
 			emit_signal("envelope_changed", value, which.name)
 			
-		else:   #DEBUG, check to update mult display
-			if currentEG: 
-				var totalMult = 0.0
-				totalMult += currentEG._freqMult * currentEG._coarseDetune * currentEG._detune
-				$TODO.text = str(totalMult)
+#		else:   #DEBUG, check to update mult display
+#			if currentEG: 
+#				var totalMult = 0.0
+#				totalMult += currentEG._freqMult * currentEG._coarseDetune * currentEG._detune
+#				$TODO.text = str(totalMult)
 
 
 #Gets a specified slider value.
