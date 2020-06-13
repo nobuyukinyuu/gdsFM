@@ -1,14 +1,14 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://gfx/fonts/spelunkid_font.tres" type="BitmapFont" id=1]
-[ext_resource path="res://WaveformOptions.gd" type="Script" id=2]
+[ext_resource path="res://sys/panels/WaveformOptions.gd" type="Script" id=1]
+[ext_resource path="res://gfx/fonts/spelunkid_font.tres" type="BitmapFont" id=2]
 
 [node name="Options" type="VBoxContainer"]
 anchor_right = 1.0
 margin_top = 84.0
 margin_bottom = 303.0
 custom_constants/separation = 8
-script = ExtResource( 2 )
+script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -22,7 +22,7 @@ rect_min_size = Vector2( 0, 1 )
 margin_top = 9.0
 margin_right = 1280.0
 margin_bottom = 17.0
-custom_fonts/font = ExtResource( 1 )
+custom_fonts/font = ExtResource( 2 )
 text = "Feedback:  0"
 align = 1
 __meta__ = {
@@ -44,7 +44,7 @@ __meta__ = {
 margin_top = 49.0
 margin_right = 1280.0
 margin_bottom = 57.0
-custom_fonts/font = ExtResource( 1 )
+custom_fonts/font = ExtResource( 2 )
 text = "Duty Cycle:  0.5"
 align = 1
 

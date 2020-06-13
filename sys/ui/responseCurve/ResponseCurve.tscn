@@ -1,4 +1,4 @@
-[gd_scene load_steps=48 format=2]
+[gd_scene load_steps=49 format=2]
 
 [ext_resource path="res://sys/ui/responseCurve/VUMeter.gd" type="Script" id=1]
 [ext_resource path="res://sys/ui/responseCurve/Splits.gd" type="Script" id=2]
@@ -28,6 +28,7 @@
 [ext_resource path="res://gfx/ui/vu/minmax_slider_label.png" type="Texture" id=26]
 [ext_resource path="res://gfx/ui/godot_icons/icon_action_paste.svg" type="Texture" id=27]
 [ext_resource path="res://gfx/ui/godot_icons/icon_action_copy.svg" type="Texture" id=28]
+[ext_resource path="res://gfx/fonts/spelunkid_font.tres" type="BitmapFont" id=29]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0, 0, 0, 1 )
@@ -550,6 +551,18 @@ margin_right = 512.0
 margin_bottom = 250.0
 theme = ExtResource( 21 )
 items = [ "Copy", ExtResource( 28 ), 0, false, false, 0, 0, null, "", false, "", null, 0, false, false, 2, 0, null, "", true, "Paste", ExtResource( 27 ), 0, false, false, 2, 0, null, "", false ]
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="lblTitle" type="Label" parent="."]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -14.0
+custom_fonts/font = ExtResource( 29 )
+custom_colors/font_color = Color( 0.188235, 0.631373, 0.752941, 1 )
+align = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }

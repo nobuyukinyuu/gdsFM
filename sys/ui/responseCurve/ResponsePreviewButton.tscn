@@ -114,5 +114,6 @@ margin_left = 16.0
 margin_top = 8.0
 margin_right = 400.0
 margin_bottom = 344.0
+title = "KeyScale Rate"
 [connection signal="pressed" from="." to="." method="_on_ResponseButton_pressed"]
 [connection signal="resized" from="." to="." method="_on_ResponseButton_resized"]

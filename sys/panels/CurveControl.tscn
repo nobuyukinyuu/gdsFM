@@ -2,8 +2,9 @@
 
 [ext_resource path="res://gfx/fonts/spelunkid_font.tres" type="BitmapFont" id=1]
 [ext_resource path="res://vol_curve.shader" type="Shader" id=2]
-[ext_resource path="res://CurveControl.gd" type="Script" id=3]
+[ext_resource path="res://sys/panels/CurveControl.gd" type="Script" id=3]
 [ext_resource path="res://gfx/grid.png" type="Texture" id=4]
+
 
 
 [sub_resource type="StyleBoxTexture" id=1]

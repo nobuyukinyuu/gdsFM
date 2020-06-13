@@ -1,9 +1,9 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://EGControl.gd" type="Script" id=1]
-[ext_resource path="res://gfx/fonts/spelunkid_font.tres" type="BitmapFont" id=2]
-[ext_resource path="res://gfx/ui/icon_millisecs.svg" type="Texture" id=3]
-[ext_resource path="res://EGMillisecsInput.gd" type="Script" id=4]
+[ext_resource path="res://sys/panels/EGControl.gd" type="Script" id=1]
+[ext_resource path="res://sys/panels/EGMillisecsInput.gd" type="Script" id=2]
+[ext_resource path="res://gfx/fonts/spelunkid_font.tres" type="BitmapFont" id=3]
+[ext_resource path="res://gfx/ui/icon_millisecs.svg" type="Texture" id=4]
 
 [node name="EGControl" type="Control"]
 anchor_right = 1.0
@@ -35,7 +35,7 @@ size_flags_horizontal = 3
 [node name="Label" type="Label" parent="H/Ar"]
 margin_right = 90.0
 margin_bottom = 8.0
-custom_fonts/font = ExtResource( 2 )
+custom_fonts/font = ExtResource( 3 )
 text = "Attack"
 align = 1
 
@@ -54,7 +54,7 @@ ticks_on_borders = true
 margin_top = 206.0
 margin_right = 90.0
 margin_bottom = 214.0
-custom_fonts/font = ExtResource( 2 )
+custom_fonts/font = ExtResource( 3 )
 text = "0"
 align = 1
 valign = 2
@@ -70,7 +70,7 @@ size_flags_horizontal = 3
 [node name="Label" type="Label" parent="H/Dr"]
 margin_right = 90.0
 margin_bottom = 8.0
-custom_fonts/font = ExtResource( 2 )
+custom_fonts/font = ExtResource( 3 )
 text = "Decay"
 align = 1
 
@@ -89,7 +89,7 @@ ticks_on_borders = true
 margin_top = 206.0
 margin_right = 90.0
 margin_bottom = 214.0
-custom_fonts/font = ExtResource( 2 )
+custom_fonts/font = ExtResource( 3 )
 text = "0"
 align = 1
 valign = 2
@@ -105,7 +105,7 @@ size_flags_horizontal = 3
 [node name="Label" type="Label" parent="H/Sr"]
 margin_right = 90.0
 margin_bottom = 8.0
-custom_fonts/font = ExtResource( 2 )
+custom_fonts/font = ExtResource( 3 )
 text = "Sustain"
 align = 1
 
@@ -123,7 +123,7 @@ ticks_on_borders = true
 margin_top = 206.0
 margin_right = 90.0
 margin_bottom = 214.0
-custom_fonts/font = ExtResource( 2 )
+custom_fonts/font = ExtResource( 3 )
 text = "0"
 align = 1
 valign = 2
@@ -139,7 +139,7 @@ size_flags_horizontal = 3
 [node name="RR" type="Label" parent="H/Rr"]
 margin_right = 90.0
 margin_bottom = 8.0
-custom_fonts/font = ExtResource( 2 )
+custom_fonts/font = ExtResource( 3 )
 text = "Release"
 align = 1
 
@@ -158,7 +158,7 @@ ticks_on_borders = true
 margin_top = 206.0
 margin_right = 90.0
 margin_bottom = 214.0
-custom_fonts/font = ExtResource( 2 )
+custom_fonts/font = ExtResource( 3 )
 text = "0"
 align = 1
 valign = 2
@@ -174,7 +174,7 @@ size_flags_horizontal = 3
 [node name="SL" type="Label" parent="H/Sl"]
 margin_right = 90.0
 margin_bottom = 8.0
-custom_fonts/font = ExtResource( 2 )
+custom_fonts/font = ExtResource( 3 )
 text = "SusLv"
 align = 1
 
@@ -193,7 +193,7 @@ ticks_on_borders = true
 margin_top = 206.0
 margin_right = 90.0
 margin_bottom = 214.0
-custom_fonts/font = ExtResource( 2 )
+custom_fonts/font = ExtResource( 3 )
 text = "0"
 align = 1
 valign = 2
@@ -209,7 +209,7 @@ size_flags_horizontal = 3
 [node name="TL" type="Label" parent="H/Tl"]
 margin_right = 90.0
 margin_bottom = 8.0
-custom_fonts/font = ExtResource( 2 )
+custom_fonts/font = ExtResource( 3 )
 text = "Vol"
 align = 1
 
@@ -229,7 +229,7 @@ ticks_on_borders = true
 margin_top = 206.0
 margin_right = 90.0
 margin_bottom = 214.0
-custom_fonts/font = ExtResource( 2 )
+custom_fonts/font = ExtResource( 3 )
 text = "0"
 align = 1
 valign = 2
@@ -246,7 +246,7 @@ size_flags_horizontal = 3
 [node name="KS" type="Label" parent="H/Ks"]
 margin_right = 32.0
 margin_bottom = 8.0
-custom_fonts/font = ExtResource( 2 )
+custom_fonts/font = ExtResource( 3 )
 text = "KScl"
 align = 1
 
@@ -264,7 +264,7 @@ ticks_on_borders = true
 margin_top = 206.0
 margin_right = 32.0
 margin_bottom = 214.0
-custom_fonts/font = ExtResource( 2 )
+custom_fonts/font = ExtResource( 3 )
 text = "0"
 align = 1
 valign = 2
@@ -279,7 +279,7 @@ margin_bottom = 214.0
 [node name="Lbl" type="Label" parent="H/Delay"]
 margin_right = 56.0
 margin_bottom = 8.0
-custom_fonts/font = ExtResource( 2 )
+custom_fonts/font = ExtResource( 3 )
 text = "Delay  "
 align = 1
 
@@ -304,11 +304,11 @@ margin_right = 56.0
 margin_bottom = 214.0
 mouse_filter = 0
 mouse_default_cursor_shape = 2
-custom_fonts/font = ExtResource( 2 )
+custom_fonts/font = ExtResource( 3 )
 text = "0"
 align = 1
 valign = 2
-script = ExtResource( 4 )
+script = ExtResource( 2 )
 
 [node name="Popup" type="PopupPanel" parent="H/Delay/Val"]
 visible = true
@@ -325,14 +325,14 @@ margin_left = 4.0
 margin_top = 4.0
 margin_right = 115.0
 margin_bottom = 30.0
-custom_fonts/font = ExtResource( 2 )
+custom_fonts/font = ExtResource( 3 )
 custom_colors/selection_color = Color( 0.0784314, 0, 0.980392, 0.501961 )
 custom_colors/font_color_selected = Color( 1, 1, 1, 1 )
 custom_colors/font_color = Color( 0.690196, 0.690196, 0.690196, 1 )
 text = "0.0"
 align = 2
 max_length = 6
-right_icon = ExtResource( 3 )
+right_icon = ExtResource( 4 )
 caret_blink = true
 __meta__ = {
 "_edit_use_anchors_": false

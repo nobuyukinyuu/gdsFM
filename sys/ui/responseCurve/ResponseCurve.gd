@@ -2,10 +2,14 @@ extends Panel
 
 #Mapped value maximum for the element this control modifies.
 export(int,1,255) var maxValue = 100  setget set_maxvalue
-
+export(String) var title setget set_title
 
 var dirty = false  #When altered this value changes to indicate data is ready to send.
 signal value_changed  #emitted in $VU
+
+func set_title(val):
+	title = val
+	$lblTitle.text = val
 
 func set_maxvalue(val):
 	maxValue = val
@@ -32,6 +36,7 @@ func get_split(value):
 	return output.pressed
 
 
+#Passes the table to the specified field.
 func pass_table(to, property:String):
 	var output:PoolRealArray = PoolRealArray($VU.tbl)
 	

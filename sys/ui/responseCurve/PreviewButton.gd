@@ -12,6 +12,8 @@ func _ready():
 	_on_ResponseButton_resized()
 
 	$Popup/ResponseCurve/chkLinlog.connect("toggled", self, "_on_linlog_toggle")
+	
+	$Popup/ResponseCurve.title = text
 
 
 func _on_ResponseButton_resized():
@@ -23,7 +25,7 @@ func _on_ResponseButton_resized():
 
 
 func _on_ResponseButton_pressed():
-	var pos = get_global_mouse_position()
+	var pos = get_global_mouse_position() - Vector2($Popup.rect_size.x * 0.8, 0)
 #	pos.x -= $Popup/ResponseCurve.rect_size.x
 	$Popup.popup(Rect2(pos, $Popup.rect_size))
 

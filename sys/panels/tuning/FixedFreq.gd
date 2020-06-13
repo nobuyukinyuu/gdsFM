@@ -53,6 +53,10 @@ func _ready():
 		var p = $Ratios/Pop/Grid/"0".duplicate()
 		p.name = str(i+1)
 		p.text = str(ratios[i])
+		
+		if int(ratios[i]) == float(ratios[i]):  #Integer
+			p.icon = preload("res://gfx/ui/icon_integer_zahlen.svg")
+			p.modulate = Color('#bbeeff')
 		g.add_child(p)
 		p.owner = owner
 	
@@ -110,5 +114,8 @@ func _on_txtHz_gui_input(event):
 
 
 func _on_Ratios_pressed():
-	$Ratios/Pop.popup_centered()
+	$Ratios/Pop.rect_position = get_global_mouse_position()
+#	$Ratios/Pop.rect_position.x -= $Ratios/Pop.rect_size.x
+
+	$Ratios/Pop.popup()
 	pass # Replace with function body.

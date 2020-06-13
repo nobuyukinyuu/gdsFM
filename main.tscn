@@ -1,7 +1,7 @@
-[gd_scene load_steps=44 format=2]
+[gd_scene load_steps=45 format=2]
 
 [ext_resource path="res://main.gd" type="Script" id=1]
-[ext_resource path="res://EGControl.tscn" type="PackedScene" id=2]
+[ext_resource path="res://sys/panels/EGControl.tscn" type="PackedScene" id=2]
 [ext_resource path="res://OP-CenterNode.tscn" type="PackedScene" id=3]
 [ext_resource path="res://gfx/fonts/spelunkid_font.tres" type="BitmapFont" id=4]
 [ext_resource path="res://gfx/al1.png" type="Texture" id=5]
@@ -23,19 +23,20 @@
 [ext_resource path="res://gfx/waveforms/0.png" type="Texture" id=21]
 [ext_resource path="res://gfx/waveforms/3.png" type="Texture" id=22]
 [ext_resource path="res://FMCore/AudioOutput.cs" type="Script" id=23]
-[ext_resource path="res://CurveControl.tscn" type="PackedScene" id=24]
-[ext_resource path="res://WaveformOptions.tscn" type="PackedScene" id=25]
+[ext_resource path="res://sys/panels/CurveControl.tscn" type="PackedScene" id=24]
+[ext_resource path="res://sys/panels/WaveformOptions.tscn" type="PackedScene" id=25]
 [ext_resource path="res://PanelScope.gd" type="Script" id=26]
 [ext_resource path="res://MIDI.gd" type="Script" id=27]
 [ext_resource path="res://FMCore/Note.cs" type="Script" id=28]
-[ext_resource path="res://TuningControl.tscn" type="PackedScene" id=29]
+[ext_resource path="res://sys/panels/tuning/TuningControl.tscn" type="PackedScene" id=29]
 [ext_resource path="res://sys/ui/EnvelopeDisplay.tscn" type="PackedScene" id=30]
-[ext_resource path="res://EGMillisecsInput.gd" type="Script" id=31]
+[ext_resource path="res://sys/panels/EGMillisecsInput.gd" type="Script" id=31]
 [ext_resource path="res://gfx/ui/icon_millisecs.svg" type="Texture" id=32]
-[ext_resource path="res://ProgramControl.gd" type="Script" id=33]
+[ext_resource path="res://sys/panels/ProgramControl.gd" type="Script" id=33]
 [ext_resource path="res://gfx/ui/godot_icons/tab_behind.png" type="Texture" id=34]
 [ext_resource path="res://sys/ui/PitchDisplay.tscn" type="PackedScene" id=35]
-[ext_resource path="res://PitchControl.gd" type="Script" id=36]
+[ext_resource path="res://sys/panels/PitchControl.gd" type="Script" id=36]
+[ext_resource path="res://sys/ui/responseCurve/ResponsePreviewButton.tscn" type="PackedScene" id=37]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends VSlider
@@ -757,7 +758,7 @@ __meta__ = {
 }
 
 [node name="lblOsc" type="Label" parent="TC/Waveform/Grid"]
-margin_right = 186.0
+margin_right = 194.0
 margin_bottom = 8.0
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 4 )
@@ -767,8 +768,8 @@ __meta__ = {
 }
 
 [node name="lblMod" type="Label" parent="TC/Waveform/Grid"]
-margin_left = 198.0
-margin_right = 384.0
+margin_left = 206.0
+margin_right = 400.0
 margin_bottom = 8.0
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 4 )
@@ -779,7 +780,7 @@ __meta__ = {
 
 [node name="Waveform" type="OptionButton" parent="TC/Waveform/Grid"]
 margin_top = 20.0
-margin_right = 186.0
+margin_right = 194.0
 margin_bottom = 68.0
 rect_min_size = Vector2( 0, 48 )
 custom_constants/hseparation = 8
@@ -792,9 +793,9 @@ __meta__ = {
 }
 
 [node name="Waveform2" type="OptionButton" parent="TC/Waveform/Grid"]
-margin_left = 198.0
+margin_left = 206.0
 margin_top = 20.0
-margin_right = 384.0
+margin_right = 400.0
 margin_bottom = 68.0
 custom_constants/hseparation = 8
 text = "Sine"
@@ -815,6 +816,24 @@ margin_left = 4.0
 margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
+
+[node name="KSR" parent="TC/Response" instance=ExtResource( 37 )]
+margin_left = 4.0
+margin_right = 120.0
+
+[node name="KSL" parent="TC/Response" instance=ExtResource( 37 )]
+margin_left = -4.0
+margin_top = 104.0
+margin_right = 120.0
+margin_bottom = 200.0
+text = "KeyScale Level"
+
+[node name="VR" parent="TC/Response" instance=ExtResource( 37 )]
+margin_left = 4.0
+margin_top = 208.0
+margin_right = 120.0
+margin_bottom = 304.0
+text = "Velocity"
 
 [node name="GraphEdit" type="GraphEdit" parent="."]
 anchor_right = 1.0
@@ -921,7 +940,7 @@ margin_left = -72.0
 margin_top = 8.0
 margin_right = -8.0
 margin_bottom = 30.0
-text = "Test"
+text = "FPS"
 align = 2
 __meta__ = {
 "_edit_use_anchors_": false
