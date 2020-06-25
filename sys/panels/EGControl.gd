@@ -1,6 +1,6 @@
 extends Control
 
-var currentEG  #:global.Instr  #Current instrument associated with the controls.
+#var global.currentEG  #:global.Instr  #Current instrument associated with the controls.
 
 signal envelope_changed
 
@@ -20,7 +20,7 @@ func load_settings(instr):
 		print("Warning:  Attempting to load EG settings from null")
 		return
 	
-	currentEG = instr
+	global.currentEG = instr
 	
 	for setting in $H.get_children():
 		var s = setting.name
@@ -33,8 +33,8 @@ func load_settings(instr):
 func _on_slider_change(value, which):
 	$H.get_node(which + "/Val").text = str(value).pad_decimals(1)
 	
-	if currentEG:
-		currentEG.set(which, value)
+	if global.currentEG:
+		global.currentEG.set(which, value)
 		
 #		if ["Ar", "Dr", "Sr", "Rr", "Sl", "Tl"].has(which):
 #			emit_signal("envelope_changed", value, which)
@@ -47,9 +47,9 @@ func _on_slider_input(ev, which):
 			emit_signal("envelope_changed", value, which.name)
 			
 #		else:   #DEBUG, check to update mult display
-#			if currentEG: 
+#			if global.currentEG: 
 #				var totalMult = 0.0
-#				totalMult += currentEG._freqMult * currentEG._coarseDetune * currentEG._detune
+#				totalMult += global.currentEG._freqMult * global.currentEG._coarseDetune * global.currentEG._detune
 #				$TODO.text = str(totalMult)
 
 

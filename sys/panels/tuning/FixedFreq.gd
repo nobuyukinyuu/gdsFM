@@ -78,12 +78,12 @@ func load_settings(eg):
 
 
 func _on_chkFixed_toggled(button_pressed):
-	if owner.currentEG:
-		owner.currentEG.FixedFreq = $txtHz.value if button_pressed else 0
+	if global.currentEG:
+		global.currentEG.FixedFreq = $txtHz.value if button_pressed else 0
 
 func update_freq():
-	if owner.currentEG:
-		owner.currentEG.FixedFreq = $txtHz.value
+	if global.currentEG:
+		global.currentEG.FixedFreq = $txtHz.value
 
 func _on_txtHz_value_changed(value):
 	if $chkFixed.pressed:  update_freq()

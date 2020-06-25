@@ -1,6 +1,6 @@
 extends Tabs
 
-var currentEG
+#var global.currentEG
 
 signal envelope_changed
 
@@ -13,7 +13,7 @@ func _ready():
 
 
 func load_settings(envelope):
-	currentEG = envelope
+	global.currentEG = envelope
 	
 	for o in ["a", "s", "d", "r"]:
 		var node = get_node(o.to_upper() + "/Slider")
@@ -26,8 +26,8 @@ func _on_slider_change(value, which):
 	
 	$Disp.get_node(which).material.set_shader_param("curve", value)
 		
-	if currentEG:
-		currentEG.set(which.to_lower() + "c", value)
+	if global.currentEG:
+		global.currentEG.set(which.to_lower() + "c", value)
 		emit_signal("envelope_changed", value, which + "c")
 
 func _on_slider_input(ev, which):

@@ -14,8 +14,8 @@ func _on_slider_change(value, which):
 	
 	_on_envelope_changed()
 	
-#	if currentEG:
-#		currentEG.set(which, value)
+#	if global.currentEG:
+#		global.currentEG.set(which, value)
 
 func _on_slider_input(ev, which):
 	var value = which.get_node("Slider").value

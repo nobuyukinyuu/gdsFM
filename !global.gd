@@ -6,9 +6,10 @@ const EPSILON = 0.00001
 var sample_rate = 44100.0
 var samples = 0  #Global oscillator timer.  Iterated every time an output sample is produced.
 
+var currentEG  #typeof Envelope
+
 # 12-field array containing a LUT of semitone frequencies at all MIDI note numbers.
 #Generated from center tuning (A-4) at 440hz.
-
 # https://www.inspiredacoustics.com/en/MIDI_note_numbers_and_center_frequencies
 var periods = []  #Size 128 +1
 var semitone_ratio = []  #Size 12, used to get a multiplier within an octave

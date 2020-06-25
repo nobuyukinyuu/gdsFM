@@ -39,7 +39,7 @@ func _input(event):
 #		$Audio.Reset()
 
 	if Input.is_action_just_pressed("play"):
-		$TC/EGControl.currentEG.CopyEnvelope();
+		global.currentEG.CopyEnvelope();
 	
 	if event.is_action("BambooCopy"):
 		pass
@@ -102,12 +102,12 @@ func _on_GraphEdit_node_selected(node):
 		update_envelope_preview_all($EnvelopeDisplay, envelope)
 
 func _on_Waveform_item_selected(id, techWaveform:bool=false):
-	if !$TC/EGControl.currentEG:  return
+	if !global.currentEG:  return
 
 	if !techWaveform:
-		$TC/EGControl.currentEG.waveform = id
+		global.currentEG.waveform = id
 	else:
-		$TC/EGControl.currentEG.fmTechnique = id
+		global.currentEG.fmTechnique = id
 
 
 func _on_Algorithm_item_selected(id):
