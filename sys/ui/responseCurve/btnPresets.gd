@@ -109,7 +109,7 @@ func _on_EaseMenu_index_pressed(curveType, parent_index, descending):
 					var j = range_lerp((i-startpos), 0, size, 0, 128)
 #					print (j)
 					tbl[i] = pow(2, (j-127)/12.0) * 100
-				
+	
 
 	owner.get_node("VU").update()
 	owner.updatePreviewTable()

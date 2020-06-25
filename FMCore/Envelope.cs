@@ -22,6 +22,7 @@ public class Envelope : Node
 
     public override void _Ready()
     {
+        ksr.floor = 1;  //Make sure the default KS curve isn't applied to the envelope until the user overrides it. Rate will always be 100% of original.
         recalc_adsr();
     }
 
@@ -71,6 +72,11 @@ public class Envelope : Node
     public double sc = 0.8;  //Sustain curve.  80% Linear, 20% Ease-out.
     public double rc = 0.25;  //Release curve.  Ease-out.
 
+
+    //Response curves.
+    public RTable<Double> vr = new RTable<Double>();  //Velocity response. Sensitivity goes from 0% to 100% (0-1).  Default 0
+    public RTable<Double> ksr = RTable.FromPreset<Double>(RTable.Presets.TWELFTH_ROOT_OF_2);  //KeyScale rate. Lower values shrink envelope timings.
+    public RTable<Double> ksl = RTable.FromPreset<Double>(RTable.Presets.MAX);  //KeyScale level. Multiplies from 0-100% against TL of this envelope.
 
 
     //Property values used to translate "user-friendly" values to internal values, which are different than standard FM values.

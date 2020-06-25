@@ -1,5 +1,8 @@
 extends Node
 
+const MAX = 0x7FFFFFFFFFFFFFFF
+const EPSILON = 0.00001
+
 var sample_rate = 44100.0
 var samples = 0  #Global oscillator timer.  Iterated every time an output sample is produced.
 

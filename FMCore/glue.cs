@@ -50,7 +50,7 @@ public static class GDSFmFuncs
     }
 
     //Ease, but produces values between the range specified.
-    public static double Ease(double first, double last, double percent, double curve=1.0f)
+    public static double Ease(double first, double last, double percent, double curve=1.0)
     {
         double amt = last-first;
         return Ease(percent, curve) * amt + first;

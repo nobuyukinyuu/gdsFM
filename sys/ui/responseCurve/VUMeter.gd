@@ -58,13 +58,11 @@ func _gui_input(event):
 		var xy = get_table_pos()
 		var arpos = xy.x
 		var val = xy.y
-		
-#		var arpos = clamp(int(lerp(0, 127, get_local_mouse_position().x / float(rect_size.x))) , 0, 127)
-#		var val = clamp(lerp(100,0, get_local_mouse_position().y / float(rect_size.y)) , 0, 100)
-#		prints("arpos",arpos,"val",val)
 
 		var vol = maxValue * (val/100.0)
-		if linLog:  vol = (val/float(maxValue)) * (val/float(maxValue)) * maxValue
+		
+		#TODO:  Use this calculation when passing the table.....
+		if linLog:  vol = (val/float(maxValue)) * (val/float(maxValue)) * maxValue  #Convert vol val to log
 		
 		
 		#Generate a cursor to help user set proper map val
@@ -84,11 +82,36 @@ func _gui_input(event):
 #
 
 		#Interpolation methods.
-		for i in range(startPos, min(128, startPos+ (1/groupWidth))):
-
+		if $"../Splits".get_node(String(int(startPos/4))).pressed:
 			#Split mode value.  All values in this group are the same.
-			tbl[i] = val
-			owner.emit_signal("value_changed", i, val)
+			for i in range(startPos, min(128, startPos+ (1/groupWidth))):
+				print(i)
+				tbl[i] = val
+				owner.emit_signal("value_changed", i, val)
+		else:
+			#Interpolate values. startPos remains user-set. Lerp values to the next user point and previous one.
+			#This should be ±4 from the startPos...
+			var reach=4  #should be (1/groupWidth) to account for size differences;  fixme or test later
+			var prevVal:float= tbl[max(0, startPos-reach)]
+			var nextVal:float = tbl[min(123, startPos+reach)]  #Don't interpolate to a value the user can't set.
+
+			#+1 to avoid overwriting the pre column's uservalue. end-exclusive loop avoids overwriting next one
+			var first= max(0,startPos-reach+1)
+			var last = min(128, startPos+reach)
+
+			for i in range(first, startPos):
+				var lerpVal = lerp(prevVal, val, (i-first)/float(startPos-first) )
+#				print("lerp:", i, " to: ", lerpVal)
+				tbl[i] = lerpVal
+				owner.emit_signal("value_changed", i, lerpVal)
+			for i in range(startPos, last):
+				var lerpVal = lerp(val, nextVal, (i-startPos)/float(last-startPos) )
+				print ("lerpos: ", (i-startPos)/float(last-startPos))
+				print("lerp:", i, " to: ", lerpVal)
+				tbl[i] = lerpVal
+				owner.emit_signal("value_changed", i, lerpVal)
+			tbl[startPos] = val  #Put the user value back in its canonical place.
+			owner.emit_signal("value_changed", startPos, val)
 
 		update()
 	else:

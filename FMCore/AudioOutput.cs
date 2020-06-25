@@ -240,7 +240,6 @@ public Channel PreviewNotes = new Channel();
         //Other event signals here, as necessary.
     }
 
-
     public void Pitch(double amt, float range)
     { 
         double rangemod = Math.Pow(2.0, range/12) - 1.0;
@@ -251,16 +250,7 @@ public Channel PreviewNotes = new Channel();
         {
             double base_hz = PreviewNotes[i].base_hz;
             PreviewNotes[i].hz = base_hz * amt;
-            // switch (Math.Sign(amt))
-            // {
-            //     case 1:
-            //         PreviewNotes[i].hz = base_hz + base_hz * Math.Abs(amt);
-            //         return;
-            //     case -1:
-            //         PreviewNotes[i].hz = base_hz - (base_hz / 2 * (amt+1));
-            //         return;
-
-            // }
         }
     }
+
 }

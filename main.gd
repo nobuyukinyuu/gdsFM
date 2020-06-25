@@ -32,7 +32,6 @@ func _ready():
 	$TC/Curve.connect("envelope_changed", self, "_on_Env_update")
 
 
-
 func _input(event):
 #	#DEBUG:  reset EG
 #	if event.is_action_pressed("play"):
