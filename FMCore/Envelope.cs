@@ -14,20 +14,24 @@ public class Envelope : Node
     const Decimal DETUNE_MIN = (2198M / 22M) / DETUNE_440 ;  //Smallest detune multiplier, a fraction of 1.0
     const Decimal DETUNE_MAX = (2212M / 22M) / DETUNE_440;   //Largest detune multiplier, a multiple of 1.0
 
+    void init()
+    {
+        ksr.floor = 1.0;  //Make sure the default KS curve isn't applied to the envelope until the user overrides it. Rate will always be 100% of original.
+        recalc_adsr();
+    }
 
     public Envelope()  //Default ctor.
     {
-        recalc_adsr();
+        init();
     }
 
     public override void _Ready()
     {
-        ksr.floor = 1;  //Make sure the default KS curve isn't applied to the envelope until the user overrides it. Rate will always be 100% of original.
-        recalc_adsr();
+        init();
     }
 
-    public Envelope(string name){ ownerName = name; }
-    public Envelope(int id){ this.opID=id; }
+    public Envelope(string name){ ownerName = name; init(); }
+    public Envelope(int id){ this.opID=id; init();}
 
     [System.Runtime.Serialization.IgnoreDataMember]
     public string ownerName;  // Debug purposes
@@ -74,9 +78,16 @@ public class Envelope : Node
 
 
     //Response curves.
-    public RTable<Double> vr = new RTable<Double>();  //Velocity response. Sensitivity goes from 0% to 100% (0-1).  Default 0
-    public RTable<Double> ksr = RTable.FromPreset<Double>(RTable.Presets.TWELFTH_ROOT_OF_2);  //KeyScale rate. Lower values shrink envelope timings.
+    private RTable<Double> ksr = RTable.FromPreset<Double>(RTable.Presets.TWELFTH_ROOT_OF_2 
+                                                         | RTable.Presets.DESCENDING);      //KeyScale rate. Lower values shrink envelope timings.
     public RTable<Double> ksl = RTable.FromPreset<Double>(RTable.Presets.MAX);  //KeyScale level. Multiplies from 0-100% against TL of this envelope.
+    public RTable<Double> vr = new RTable<Double>();  //Velocity response. Sensitivity goes from 0% to 100% (0-1).  Default 0
+
+
+    public Godot.Collections.Dictionary Ksr { get => ksr.ToDict(); set => ksr.SetValues(value); }
+    public Godot.Collections.Dictionary Ksl { get => ksl.ToDict(); set => ksl.SetValues(value); }
+    public Godot.Collections.Dictionary Vr { get => vr.ToDict(); set => vr.SetValues(value); }
+
 
 
     //Property values used to translate "user-friendly" values to internal values, which are different than standard FM values.
@@ -372,6 +383,7 @@ public class Envelope : Node
             return AudioOutput.MixRate;
         }
     }
+
 }
 
 //Struct for typical length of one part of an Envelope at value 1 on OPNA

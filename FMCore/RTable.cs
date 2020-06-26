@@ -8,7 +8,7 @@ public class RTable<T> : Resource
     public enum Presets {ZERO, FIFTY_PERCENT, ONE, IN, OUT, IN_OUT, TWELFTH_ROOT_OF_2}
 
     public T[] values = new T[128];
-    public double floor, ceiling;
+    public double floor, ceiling=1;
     public bool use_log = false;
 
     public RTable() {}
@@ -33,8 +33,8 @@ public class RTable<T> : Resource
             output.Append(values[i]).Append(",");
         }
 
-        output.Append(", 'floor'=").Append(floor);
-        output.Append(", 'ceiling'=").Append(ceiling);
+        output.Append(", 'floor'=").Append(floor*100.0);
+        output.Append(", 'ceiling'=").Append(ceiling*100.0);
         output.Append(", 'use_log'=").Append(use_log);
         output.Append("]}");
 
@@ -147,8 +147,8 @@ public static class RTableExtensions
     public static void SetValues(this RTable<double> instance, Godot.Collections.Dictionary input)
     {
         //Structure of dict:   {values=[PoolRealArray tbl], minFloor=0.0, maxCeil=1.0, uselog=false...}
-        instance.floor = (double) input["floor"];
-        instance.ceiling = (double) input["ceiling"];
+        instance.floor = (double) input["floor"] / 100.0;
+        instance.ceiling = (double) input["ceiling"] / 100.0;
         instance.use_log = (bool) input["use_log"];
 
         //Convert values to our maximum.
@@ -164,8 +164,8 @@ public static class RTableExtensions
     public static void SetValues(this RTable<Byte> instance, Godot.Collections.Dictionary input)
     {
         //Structure of dict:   {values=[PoolRealArray tbl], minFloor=0.0, maxCeil=1.0, uselog=false...}
-        instance.floor = (double) input["floor"];
-        instance.ceiling = (double) input["ceiling"];
+        instance.floor = (double) input["floor"] / 100.0;
+        instance.ceiling = (double) input["ceiling"] / 100.0;
         instance.use_log = (bool) input["use_log"];
 
         //Convert values to our maximum.
@@ -203,5 +203,27 @@ public static class RTableExtensions
 
         return output;
     }
+
+    //TODO:  EQUIVALENT FOR RTable<Byte>
+    public static Godot.Collections.Dictionary ToDict(this RTable<Double> instance)
+    {
+        // var output = new float[128];
+        var out_tbl = new Godot.Collections.Array(new float[128]);
+        var output = new Godot.Collections.Dictionary();
+
+        for(int i=0; i<128; i++)
+        {
+            out_tbl[i] = (float) (instance[i] * 100.0);
+        }
+
+        output["values"] = out_tbl;
+        output["floor"] = instance.floor * 100.0;
+        output["ceiling"] = instance.ceiling * 100.0;
+        output["use_log"] = instance.use_log;
+
+
+        return output;
+    }
+
 
 }

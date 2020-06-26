@@ -23,11 +23,17 @@ _global_script_classes=[ {
 "class": "PatternNotePorta",
 "language": "GDScript",
 "path": "res://sys/ui/PatternNotePorta.gd"
+}, {
+"base": "Button",
+"class": "ResponseCurvePreviewButton",
+"language": "GDScript",
+"path": "res://sys/ui/responseCurve/PreviewButton.gd"
 } ]
 _global_script_class_icons={
 "EnvelopeDisplay": "",
 "PatternNote": "res://gfx/ui/icon_note.svg",
-"PatternNotePorta": "res://gfx/ui/godot_icons/old_bezier.svg"
+"PatternNotePorta": "res://gfx/ui/godot_icons/old_bezier.svg",
+"ResponseCurvePreviewButton": ""
 }
 
 [application]
@@ -81,6 +87,7 @@ BambooPaste={
 
 [mono]
 
+debugger_agent/wait_for_debugger=true
 debugger_agent/wait_timeout=5000
 
 [rendering]

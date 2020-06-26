@@ -1,0 +1,32 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://sys/ui/responseCurve/ResponsePreviewButton.tscn" type="PackedScene" id=1]
+
+[node name="Response" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="KSR" parent="." instance=ExtResource( 1 )]
+margin_left = 4.0
+margin_right = 120.0
+
+[node name="KSL" parent="." instance=ExtResource( 1 )]
+margin_left = -4.0
+margin_top = 104.0
+margin_right = 120.0
+margin_bottom = 200.0
+text = "KeyScale Level"
+
+[node name="VR" parent="." instance=ExtResource( 1 )]
+margin_left = 4.0
+margin_top = 208.0
+margin_right = 120.0
+margin_bottom = 304.0
+text = "Velocity"

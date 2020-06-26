@@ -1,5 +1,7 @@
 tool
+class_name ResponseCurvePreviewButton
 extends Button
+
 
 export (bool) var use_log setget set_use_log
 
@@ -31,3 +33,12 @@ func _on_ResponseButton_pressed():
 
 func _on_linlog_toggle(val):
 	set_use_log(val)
+
+func fetch_table(envelope, target:String):
+	var new_table:Dictionary = $Popup/ResponseCurve.fetch_table(envelope, target)
+	if !new_table:  print("PreviewButton.gd:  Something went wrong trying to fetch the rTable.....")
+	$P/Preview.refresh_all(new_table.get("values"))
+	set_use_log(new_table.get("use_log", false))
+
+	return new_table
+

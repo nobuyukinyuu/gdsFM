@@ -77,11 +77,15 @@ func set_rtable(envelope, target:String):
 #Fetches a response curve from the RTable<T> specified with target inside the given envelope.
 func fetch_table(envelope, target:String):
 	if envelope:
-		var rtable = envelope.get(target)
+		var input:Dictionary = envelope.get(target) #Should trigger property's "ToDict" func.
 		
-		if rtable:
-			var input = rtable.call("ToGodotArray")
-			$VU.set_table(input)
+		if input:
+			$VU.set_table(input.get("values"))
+			$sldMax.value = input.get("ceiling", 100)
+			$sldMin.value = input.get("floor", 0)
+			$chkLinlog.pressed = input.get("use_log", false)
+#			if target == "Ksr":  print(input)
+			return input
 			
 		else:
 			print("ResponseCurve: Can't find RTable '", target,"' to fetch the table from.")

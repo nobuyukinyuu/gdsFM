@@ -88,6 +88,7 @@ func _on_GraphEdit_node_selected(node):
 		$TC/Tuning.load_settings(envelope)
 		$TC/Curve.load_settings(envelope)
 		$TC/Waveform/Options.load_settings(envelope)
+		$TC/Response.load_settings(envelope)
 
 		$TC/Waveform/Grid/Waveform.select(envelope.waveform)
 		$TC/Waveform/Grid/Waveform2.select(envelope.fmTechnique)

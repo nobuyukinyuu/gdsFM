@@ -1,4 +1,4 @@
-[gd_scene load_steps=45 format=2]
+[gd_scene load_steps=46 format=2]
 
 [ext_resource path="res://main.gd" type="Script" id=1]
 [ext_resource path="res://sys/panels/EGControl.tscn" type="PackedScene" id=2]
@@ -36,7 +36,8 @@
 [ext_resource path="res://gfx/ui/godot_icons/tab_behind.png" type="Texture" id=34]
 [ext_resource path="res://sys/ui/PitchDisplay.tscn" type="PackedScene" id=35]
 [ext_resource path="res://sys/panels/PitchControl.gd" type="Script" id=36]
-[ext_resource path="res://sys/ui/responseCurve/ResponsePreviewButton.tscn" type="PackedScene" id=37]
+[ext_resource path="res://sys/panels/ResponseTables.tscn" type="PackedScene" id=37]
+[ext_resource path="res://sys/panels/ResponseTables.gd" type="Script" id=38]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends VSlider
@@ -808,32 +809,9 @@ __meta__ = {
 
 [node name="Options" parent="TC/Waveform" instance=ExtResource( 25 )]
 
-[node name="Response" type="Control" parent="TC"]
+[node name="Response" parent="TC" instance=ExtResource( 37 )]
 visible = false
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 4.0
-margin_top = 32.0
-margin_right = -4.0
-margin_bottom = -4.0
-
-[node name="KSR" parent="TC/Response" instance=ExtResource( 37 )]
-margin_left = 4.0
-margin_right = 120.0
-
-[node name="KSL" parent="TC/Response" instance=ExtResource( 37 )]
-margin_left = -4.0
-margin_top = 104.0
-margin_right = 120.0
-margin_bottom = 200.0
-text = "KeyScale Level"
-
-[node name="VR" parent="TC/Response" instance=ExtResource( 37 )]
-margin_left = 4.0
-margin_top = 208.0
-margin_right = 120.0
-margin_bottom = 304.0
-text = "Velocity"
+script = ExtResource( 38 )
 
 [node name="GraphEdit" type="GraphEdit" parent="."]
 anchor_right = 1.0

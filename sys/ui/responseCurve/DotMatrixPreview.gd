@@ -42,6 +42,8 @@ func _draw():
 	for i in 3:
 		draw_texture(overlay, Vector2.ZERO)
 
+func refresh_all(new_table:Array):
+	_on_table_changed(-1, new_table)
 
 func _on_table_changed(idx, val):
 	if idx==-1:  #Replace entire table.
