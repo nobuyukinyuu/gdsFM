@@ -45,6 +45,7 @@ script = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+dest_property = "responsebutton"
 
 [node name="Lbl" type="Label" parent="."]
 anchor_top = 1.0

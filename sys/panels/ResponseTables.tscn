@@ -16,6 +16,7 @@ __meta__ = {
 [node name="KSR" parent="." instance=ExtResource( 1 )]
 margin_left = 4.0
 margin_right = 120.0
+dest_property = "Ksr"
 
 [node name="KSL" parent="." instance=ExtResource( 1 )]
 margin_left = -4.0
@@ -23,6 +24,7 @@ margin_top = 104.0
 margin_right = 120.0
 margin_bottom = 200.0
 text = "KeyScale Level"
+dest_property = "Ksl"
 
 [node name="VR" parent="." instance=ExtResource( 1 )]
 margin_left = 4.0
@@ -30,3 +32,4 @@ margin_top = 208.0
 margin_right = 120.0
 margin_bottom = 304.0
 text = "Velocity"
+dest_property = "Vr"

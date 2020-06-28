@@ -57,20 +57,32 @@ func pass_table(to, property:String):
 
 #Like pass_table(), but relies on RTable<T>.SetValues()
 func set_rtable(envelope, target:String):
-	var output:PoolRealArray = PoolRealArray($VU.tbl)
-	
+	var output = {}
+	var values:PoolRealArray = PoolRealArray($VU.tbl)
+
+	#Set values
 	var minimum = global.EPSILON if dont_pass_0 else 0
 	
-	for i in output.size():
-		output[i] = range_lerp( clamp(output[i], minimum, maxValue), 0, 100, 0, maxValue)
+	for i in values.size():
+#		values[i] = range_lerp( clamp(values[i], minimum, maxValue), 0, maxValue, 0, 100)
+		values[i] = clamp(values[i], minimum, 100)
+
+	#Set options
+	output["values"] = values
+	output["use_log"] = $chkLinlog.pressed
+	output["floor"] = $sldMin.value
+	output["ceiling"] = $sldMax.value
 
 	if envelope:
-		var rtable = envelope.get(target)  #Destination RTable<T> output's being sent to.
+#		var rtable = envelope.get(target)  #Destination RTable<T> output's being sent to.
 
-		if rtable:
-			rtable.call("SetValues", output )
+#		if rtable:
+		if property_exists(target, envelope.get_property_list()):
+#			rtable.call("SetValues", output )
+			envelope.set(target, output )
 		else:
-			print("ResponseCurve: Can't find the target RTable '", target,"' to send the table to.")
+			print("ResponseCurve: Can't find the target property '", target,"' to send the table to.")
+			OS.clipboard = var2str(envelope.get_property_list())
 	else:
 		print("ResponseCurve: Can't find the given envelope to set the '", target,"' field.")
 
@@ -102,3 +114,10 @@ func _on_MinMax_value_changed(value):
 	var _min = String($sldMin.value).pad_zeros(2) if $sldMin.value < 100 else "[]"
 	var _max = String($sldMax.value).pad_zeros(2) if $sldMax.value < 100 else "[]"
 	$lblMinMax.text = "%s/%s" % [_min, _max]
+
+
+func property_exists(name:String, input:Array) -> bool:
+	for item in input:
+		if item["name"] == name:  return true
+		
+	return false

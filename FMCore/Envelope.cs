@@ -79,7 +79,7 @@ public class Envelope : Node
 
     //Response curves.
     private RTable<Double> ksr = RTable.FromPreset<Double>(RTable.Presets.TWELFTH_ROOT_OF_2 
-                                                         | RTable.Presets.DESCENDING);      //KeyScale rate. Lower values shrink envelope timings.
+                                                         | RTable.Presets.DESCENDING );      //KeyScale rate. Lower values shrink envelope timings.
     public RTable<Double> ksl = RTable.FromPreset<Double>(RTable.Presets.MAX);  //KeyScale level. Multiplies from 0-100% against TL of this envelope.
     public RTable<Double> vr = new RTable<Double>();  //Velocity response. Sensitivity goes from 0% to 100% (0-1).  Default 0
 

@@ -174,7 +174,6 @@ func update_envelope_preview(env:EnvelopeDisplay, propertyName:String, value):
 			env.rc = value
 
 func update_envelope_preview_all(env:EnvelopeDisplay, eg):
-	print("Update all of ", eg.ownerName)
 	env.Attack = eg.ar
 	env.Decay = eg.dr
 	env.Sustain = eg.sr

@@ -154,6 +154,23 @@ public static class GDSFmFuncs
             if (newCurrentValue == currentValue)    return newValue;
         }
     }
+
+        //Type converter for generic class
+        public static bool TryChangeType<T, TR>(T input, out TR output) where T : IConvertible
+    {
+        bool result = false;
+        try
+        {
+            Type type = Nullable.GetUnderlyingType(typeof(TR));
+            output = (TR)Convert.ChangeType(input, type);
+            result = true;
+        }
+        catch(Exception)
+        {
+            output = default(TR);
+        }
+        return result;
+    }
 }
 
 
