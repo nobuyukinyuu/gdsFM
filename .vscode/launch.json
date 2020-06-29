@@ -4,6 +4,7 @@
 {
     "version": "0.2.0",
     "configurations": [
+        
         {
             "name": "Attach to Mono",
             "request": "attach",
@@ -16,7 +17,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "D:/Projects/godot/Godot_v3.2-stable_mono_win64/Godot_v3.2-stable_mono_win64.exe",
+            "program": "D:/Projects/godot/Godot_v3.2.2-stable_mono_win64/Godot_v3.2.2-stable_mono_win64.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

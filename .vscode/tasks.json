@@ -21,10 +21,13 @@
             "type": "shell",
             "command": "C:/Program Files (x86)/Microsoft Visual Studio/2019/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe",
             "args": [
-                "/p:Configuration=Tools;Platform=Any CPU;GenerateFullPaths=true",
+                "/p:Configuration=Debug;Platform=Any CPU;GenerateFullPaths=true",
                 "/t:Build;"
             ],
-            "group": "build",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
             "presentation": {
                 "reveal": "silent"
             },

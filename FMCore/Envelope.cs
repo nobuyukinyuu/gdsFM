@@ -16,7 +16,8 @@ public class Envelope : Node
 
     void init()
     {
-        ksr.floor = 1.0;  //Make sure the default KS curve isn't applied to the envelope until the user overrides it. Rate will always be 100% of original.
+        ksr.floor = 100.0;  //Make sure the default KS curve isn't applied to the envelope until the user overrides it. Rate will always be 100% of original.
+        ksr.RecalcValues();
         recalc_adsr();
     }
 

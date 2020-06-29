@@ -32,6 +32,15 @@ func _on_ResponseButton_resized():
 	pass # Replace with function body.
 
 
+func _gui_input(event):
+	if event is InputEventMouseButton and event.is_pressed() and event.button_mask==BUTTON_RIGHT:
+		var output = $Popup/ResponseCurve.fetch_table(global.currentEG, dest_property)["precalc_values"]
+		
+#		for i in 128:
+#			global.currentEG.get(name.to_lower()).precalc_values
+		
+		print(name,": ", output)
+
 func _on_ResponseButton_pressed():
 	var pos = get_global_mouse_position() - Vector2($Popup.rect_size.x * 0.8, 0)
 #	pos.x -= $Popup/ResponseCurve.rect_size.x

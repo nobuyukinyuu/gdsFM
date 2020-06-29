@@ -8,7 +8,7 @@ public class RTable<T> : Resource
 
     public T[] precalc_values = new T[128];  //Calculated from values
     public T[] values = new T[128];
-    public double floor, ceiling=100;
+    public double floor=0, ceiling=100;
     public bool use_log = false;
 
     public RTable() {}
@@ -23,23 +23,23 @@ public class RTable<T> : Resource
     //     }
     // }
 
-    //Outputs a JSON-compatible string for marshalling to/from gdscript
-    public override string ToString()
-    {
-        var output = new System.Text.StringBuilder("{'values'=[", 1024);
+    // //Outputs a JSON-compatible string for marshalling to/from gdscript
+    // public override string ToString()
+    // {
+    //     var output = new System.Text.StringBuilder("{'values'=[", 1024);
 
-        for(int i=0; i < values.Length; i++)
-        {
-            output.Append(values[i]).Append(",");
-        }
+    //     for(int i=0; i < values.Length; i++)
+    //     {
+    //         output.Append(values[i]).Append(",");
+    //     }
 
-        output.Append(", 'floor'=").Append(floor*100.0);
-        output.Append(", 'ceiling'=").Append(ceiling*100.0);
-        output.Append(", 'use_log'=").Append(use_log);
-        output.Append("]}");
+    //     output.Append(", 'floor'=").Append(floor);
+    //     output.Append(", 'ceiling'=").Append(ceiling);
+    //     output.Append(", 'use_log'=").Append(use_log);
+    //     output.Append("]}");
 
-        return output.ToString();
-    }
+    //     return output.ToString();
+    // }
 
     public void Reverse()
     {
@@ -58,10 +58,6 @@ public class RTable<T> : Resource
                 var val = Convert.ToDouble( values[i] );
                 val = val * (ceiling/100.0);  //Apply ceiling.
                 val = (floor/100.0) +  val * (1.0-(floor/100.0));  //Apply floor.
-
-                // System.Diagnostics.Debug.Assert( 
-                //             GDSFmFuncs.TryChangeType<Double, T>(val, out precalc_values[i] ) 
-                //         );
 
                 if (typeof(T) == typeof(float) || typeof(T) == typeof(double) || typeof(T) == typeof(byte) )
                 {
@@ -194,6 +190,8 @@ public static class RTableExtensions
         {
             instance.values[i] = (double) vals[i] / 100.0;
         }
+
+        instance.RecalcValues();
     }
 
     // //Input from a float source, value's coming in from 0-100 and should be tamped down to 0-127.
@@ -247,14 +245,18 @@ public static class RTableExtensions
         var out_tbl = new Godot.Collections.Array(new float[128]);
         var output = new Godot.Collections.Dictionary();
 
+        var out_tbl_precalc = new Godot.Collections.Array(new float[128]);
+
         for(int i=0; i<128; i++)
         {
             out_tbl[i] = (float) (instance.values[i] * 100.0);
+            out_tbl_precalc[i] = (float) instance.precalc_values[i];
         }
 
         output["values"] = out_tbl;
-        output["floor"] = instance.floor * 100.0;
-        output["ceiling"] = instance.ceiling * 100.0;
+        output["precalc_values"] = out_tbl_precalc;
+        output["floor"] = instance.floor;
+        output["ceiling"] = instance.ceiling;
         output["use_log"] = instance.use_log;
 
 
