@@ -4,9 +4,13 @@ extends Panel
 export(int,1,255) var maxValue = 100  setget set_maxvalue
 export(String) var title setget set_title
 
+var note_scale = true  #Set to false if the x-axis isn't mapping note numbers.
+var float_scale = true  #Set to false if the y-axis isn't mapping percentage but direct remapped values.
+var rate_scale = false  #Set to true if the y-axis maps a rate (ie:  percentage of original time)
+
 #if true: When marshalling the table to c#, zero values will become epsilon.
 #this is to prevent rate curve calculations or others that don't play well with zeroes producing NaNs.
-export(bool) var dont_pass_0
+#export(bool) var allow_zero
 
 var dirty = false  #When altered this value changes to indicate data is ready to send.
 signal value_changed  #emitted in $VU
@@ -59,7 +63,8 @@ func set_rtable(envelope, target:String):
 	var values:PoolRealArray = PoolRealArray($VU.tbl)
 
 	#Set values
-	var minimum = global.EPSILON if dont_pass_0 else 0
+#	var minimum = global.EPSILON if dont_pass_0 else 0
+	var minimum = 0
 	
 	for i in values.size():
 #		values[i] = range_lerp( clamp(values[i], minimum, maxValue), 0, maxValue, 0, 100)
@@ -70,6 +75,7 @@ func set_rtable(envelope, target:String):
 	output["use_log"] = $chkLinlog.pressed
 	output["floor"] = $sldMin.value
 	output["ceiling"] = $sldMax.value
+#	output["allow_zero"] = allow_zero
 
 	if envelope:
 #		var rtable = envelope.get(target)  #Destination RTable<T> output's being sent to.

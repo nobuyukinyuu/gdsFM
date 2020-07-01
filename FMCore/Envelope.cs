@@ -16,7 +16,7 @@ public class Envelope : Node
 
     void init()
     {
-        ksr.floor = 100.0;  //Make sure the default KS curve isn't applied to the envelope until the user overrides it. Rate will always be 100% of original.
+        // ksr.floor = 100.0;  //Make sure the default KS curve isn't applied to the envelope until the user overrides it. Rate will always be 100% of original.
         ksr.RecalcValues();
         recalc_adsr();
     }
@@ -79,10 +79,12 @@ public class Envelope : Node
 
 
     //Response curves.
-    private RTable<Double> ksr = RTable.FromPreset<Double>(RTable.Presets.TWELFTH_ROOT_OF_2 
-                                                         | RTable.Presets.DESCENDING );      //KeyScale rate. Lower values shrink envelope timings.
-    public RTable<Double> ksl = RTable.FromPreset<Double>(RTable.Presets.MAX);  //KeyScale level. Multiplies from 0-100% against TL of this envelope.
-    public RTable<Double> vr = new RTable<Double>();  //Velocity response. Sensitivity goes from 0% to 100% (0-1).  Default 0
+    private RTable<Double> ksr = RTable.FromPreset<Double>(RTable.Presets.TWELFTH_ROOT_OF_2 | RTable.Presets.DESCENDING, 
+                                                           floor:100, allow_zero:false );      //KeyScale rate. Lower values shrink envelope timings.
+    private RTable<Double> ksl = RTable.FromPreset<Double>(RTable.Presets.LINEAR | RTable.Presets.DESCENDING,
+                                                            floor:100);  //KeyScale level. Multiplies from 0-100% against TL of this envelope.
+    private RTable<Double> vr = RTable.FromPreset<Double>(RTable.Presets.LINEAR 
+                                                         |RTable.Presets.DESCENDING);  //Velocity response. Sensitivity goes from 0% to 100% (0-1).  Default 0
 
 
     public Godot.Collections.Dictionary Ksr { get => ksr.ToDict(); set => ksr.SetValues(value); }
@@ -138,10 +140,14 @@ public class Envelope : Node
         int releaseSample=note.releaseSample;
         double output=0;
 
+        //Determine key scaling rate for this note.
+        double _ksr= ksr[note.midi_note];
+
         //Determine the envelope phase.
-        if (s < _delay)  {return 0;} else if (s >= _delay && note.delayed[opID]==false) {note.ResetPhase(opID);  
-        note.delayed[opID]=true;}
-            if(Double.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
+        if (s < _delay)  {return 0;} //Delay phase.
+        else if (s >= _delay && note.delayed[opID]==false) {note.ResetPhase(opID);  note.delayed[opID]=true;}
+
+        if(Double.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
 
         if (s-_delay < _attackTime) { // Attack phase.
             //Interpolate between 0 and the total level.

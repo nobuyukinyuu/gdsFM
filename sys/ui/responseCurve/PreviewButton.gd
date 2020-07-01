@@ -9,6 +9,15 @@ enum rtable_dests {ENVELOPE, PATCH}
 export(rtable_dests) var target = rtable_dests.ENVELOPE  #Where will the table be passed to?
 export(String) var dest_property  #The envelope/patch property the table from this goes to.
 
+#if true: When marshalling the table to c#, zero values will become epsilon.
+#this is to prevent rate curve calculations or others that don't play well with zeroes producing NaNs.
+#export(bool) var allow_zero = true
+
+export(bool) var note_scale = true  #Set to false if the x-axis isn't mapping note numbers.
+export(bool) var float_scale = true  #Set to false if the y-axis isn't mapping percentage.
+export(bool) var rate_scale = false  #Set to true if the y-axis maps a rate (ie:  percentage of original time)
+
+
 func set_use_log(val):
 	use_log = val
 	$P/Preview/LinLog.visible = val
@@ -23,6 +32,11 @@ func _ready():
 	
 	if dest_property == "":  dest_property = name.capitalize()
 
+	$Popup/ResponseCurve.note_scale = note_scale
+	$Popup/ResponseCurve.float_scale = float_scale
+	$Popup/ResponseCurve.rate_scale = rate_scale
+
+#	$Popup/ResponseCurve.allow_zero = allow_zero
 
 func _on_ResponseButton_resized():
 	$Lbl.text = text

@@ -179,3 +179,26 @@ func set_cursor(volume:String):
 func set_table(table):
 	tbl = table
 	update()
+
+
+func _make_custom_tooltip(for_text):
+	var p = $ToolTipProto.duplicate()
+#	p.text = for_text
+	var pos = get_table_pos()
+	var hint2 = ""
+	
+	if owner.note_scale and pos.x >=12:  #Display a helpful octave indicator on A and C notes.
+		if int(pos.x) % 12 == 0:  hint2 = "n.a-%s\n" % (int(pos.x/12)-1)
+		if int(pos.x) % 12 == 2:  hint2 = "n.c-%s\n" % (int(pos.x/12)-1)
+	
+	var yValue = tbl[int(pos.x)]
+	
+	if owner.float_scale and owner.rate_scale:
+		yValue = 10000.0/ yValue if yValue>0 else 0
+		
+		yValue = str(int(yValue)) + "%" if yValue>0 else "0"
+	elif owner.float_scale:
+		yValue = str(yValue).pad_decimals(2) + "%"
+	
+	p.text = "%sx:%s\ny:%s" % [hint2, pos.x, yValue]
+	return p

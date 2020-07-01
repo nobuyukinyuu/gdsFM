@@ -3,7 +3,7 @@
 [ext_resource path="res://sys/panels/EGControl.gd" type="Script" id=1]
 [ext_resource path="res://sys/panels/EGMillisecsInput.gd" type="Script" id=2]
 [ext_resource path="res://sys/panels/tuning/FixedFreq.gd" type="Script" id=3]
-[ext_resource path="res://gfx/fonts/numerics_5x8b.tres" type="BitmapFont" id=4]
+[ext_resource path="res://gfx/fonts/numerics_5x8.tres" type="BitmapFont" id=4]
 [ext_resource path="res://gfx/fonts/NoteFont.tres" type="BitmapFont" id=5]
 [ext_resource path="res://gfx/fonts/spelunkid_font.tres" type="BitmapFont" id=6]
 [ext_resource path="res://gfx/ui/icon_ratio_x.svg" type="Texture" id=7]
@@ -60,7 +60,7 @@ __meta__ = {
 "setting_group",
 ]]
 margin_right = 117.0
-margin_bottom = 240.0
+margin_bottom = 242.0
 size_flags_horizontal = 3
 script = ExtResource( 3 )
 
@@ -136,14 +136,14 @@ align = 1
 [node name="Presets" type="OptionButton" parent="H/FixedFreq"]
 margin_top = 159.0
 margin_right = 117.0
-margin_bottom = 175.0
+margin_bottom = 177.0
 custom_fonts/font = ExtResource( 5 )
 text = "A-4"
 
 [node name="Blanker3" type="Panel" parent="H/FixedFreq"]
-margin_top = 179.0
+margin_top = 181.0
 margin_right = 117.0
-margin_bottom = 187.0
+margin_bottom = 189.0
 rect_min_size = Vector2( 0, 8 )
 custom_styles/panel = SubResource( 1 )
 __meta__ = {
@@ -151,18 +151,18 @@ __meta__ = {
 }
 
 [node name="Separator2" type="Panel" parent="H/FixedFreq"]
-margin_top = 191.0
+margin_top = 193.0
 margin_right = 117.0
-margin_bottom = 192.0
+margin_bottom = 194.0
 rect_min_size = Vector2( 0, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Blanker4" type="Panel" parent="H/FixedFreq"]
-margin_top = 196.0
+margin_top = 198.0
 margin_right = 117.0
-margin_bottom = 204.0
+margin_bottom = 206.0
 rect_min_size = Vector2( 0, 8 )
 custom_styles/panel = SubResource( 1 )
 __meta__ = {
@@ -170,9 +170,9 @@ __meta__ = {
 }
 
 [node name="Ratios" type="Button" parent="H/FixedFreq"]
-margin_top = 208.0
+margin_top = 210.0
 margin_right = 117.0
-margin_bottom = 240.0
+margin_bottom = 242.0
 rect_min_size = Vector2( 0, 32 )
 text = "Ratio Presets"
 icon = ExtResource( 9 )
@@ -182,6 +182,7 @@ __meta__ = {
 }
 
 [node name="Pop" type="PopupDialog" parent="H/FixedFreq/Ratios"]
+visible = true
 margin_left = 646.0
 margin_top = -106.0
 margin_right = 1024.0
@@ -218,7 +219,7 @@ script = ExtResource( 8 )
 [node name="Seperator" type="PanelContainer" parent="H"]
 margin_left = 121.0
 margin_right = 130.0
-margin_bottom = 240.0
+margin_bottom = 242.0
 custom_styles/panel = SubResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -227,7 +228,7 @@ __meta__ = {
 [node name="Panel" type="Panel" parent="H/Seperator"]
 margin_left = 8.0
 margin_right = 9.0
-margin_bottom = 240.0
+margin_bottom = 242.0
 rect_min_size = Vector2( 1, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -238,7 +239,7 @@ __meta__ = {
 ]]
 margin_left = 134.0
 margin_right = 251.0
-margin_bottom = 240.0
+margin_bottom = 242.0
 size_flags_horizontal = 3
 
 [node name="MUL" type="Label" parent="H/Mul"]
@@ -251,7 +252,7 @@ align = 1
 [node name="Slider" type="VSlider" parent="H/Mul"]
 margin_top = 12.0
 margin_right = 117.0
-margin_bottom = 228.0
+margin_bottom = 230.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 max_value = 16.0
@@ -261,9 +262,9 @@ tick_count = 17
 ticks_on_borders = true
 
 [node name="Val" type="Label" parent="H/Mul"]
-margin_top = 232.0
+margin_top = 234.0
 margin_right = 117.0
-margin_bottom = 240.0
+margin_bottom = 242.0
 mouse_filter = 0
 mouse_default_cursor_shape = 2
 custom_fonts/font = ExtResource( 6 )
@@ -307,7 +308,7 @@ __meta__ = {
 ]]
 margin_left = 255.0
 margin_right = 372.0
-margin_bottom = 240.0
+margin_bottom = 242.0
 size_flags_horizontal = 3
 
 [node name="DT2" type="Label" parent="H/Dt2"]
@@ -320,7 +321,7 @@ align = 1
 [node name="Slider" type="VSlider" parent="H/Dt2"]
 margin_top = 12.0
 margin_right = 117.0
-margin_bottom = 228.0
+margin_bottom = 230.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 min_value = -12.0
@@ -329,9 +330,9 @@ tick_count = 13
 ticks_on_borders = true
 
 [node name="Val" type="Label" parent="H/Dt2"]
-margin_top = 232.0
+margin_top = 234.0
 margin_right = 117.0
-margin_bottom = 240.0
+margin_bottom = 242.0
 custom_fonts/font = ExtResource( 6 )
 text = "0"
 align = 1
@@ -342,7 +343,7 @@ valign = 2
 ]]
 margin_left = 376.0
 margin_right = 493.0
-margin_bottom = 240.0
+margin_bottom = 242.0
 size_flags_horizontal = 3
 
 [node name="DT" type="Label" parent="H/Dt"]
@@ -355,7 +356,7 @@ align = 1
 [node name="Slider" type="VSlider" parent="H/Dt"]
 margin_top = 12.0
 margin_right = 117.0
-margin_bottom = 228.0
+margin_bottom = 230.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 min_value = -200.0
@@ -365,9 +366,9 @@ ticks_on_borders = true
 script = SubResource( 3 )
 
 [node name="Val" type="Label" parent="H/Dt"]
-margin_top = 232.0
+margin_top = 234.0
 margin_right = 117.0
-margin_bottom = 240.0
+margin_bottom = 242.0
 custom_fonts/font = ExtResource( 6 )
 text = "0"
 align = 1
@@ -376,7 +377,7 @@ valign = 2
 [node name="Separator2" type="Panel" parent="H"]
 margin_left = 497.0
 margin_right = 498.0
-margin_bottom = 240.0
+margin_bottom = 242.0
 rect_min_size = Vector2( 1, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -385,7 +386,7 @@ __meta__ = {
 [node name="PMD" type="VBoxContainer" parent="H"]
 margin_left = 502.0
 margin_right = 622.0
-margin_bottom = 240.0
+margin_bottom = 242.0
 size_flags_horizontal = 3
 
 [node name="PitchSlide" type="Label" parent="H/PMD"]
@@ -398,7 +399,7 @@ align = 1
 [node name="Slider" type="VSlider" parent="H/PMD"]
 margin_top = 12.0
 margin_right = 120.0
-margin_bottom = 228.0
+margin_bottom = 230.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 min_value = -100.0
@@ -407,9 +408,9 @@ ticks_on_borders = true
 script = SubResource( 4 )
 
 [node name="Val" type="Label" parent="H/PMD"]
-margin_top = 232.0
+margin_top = 234.0
 margin_right = 120.0
-margin_bottom = 240.0
+margin_bottom = 242.0
 custom_fonts/font = ExtResource( 6 )
 text = "0"
 align = 1
