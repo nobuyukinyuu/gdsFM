@@ -106,8 +106,8 @@ func _gui_input(event):
 				owner.emit_signal("value_changed", i, lerpVal)
 			for i in range(startPos, last):
 				var lerpVal = lerp(val, nextVal, (i-startPos)/float(last-startPos) )
-				print ("lerpos: ", (i-startPos)/float(last-startPos))
-				print("lerp:", i, " to: ", lerpVal)
+#				print ("lerpos: ", (i-startPos)/float(last-startPos))
+#				print("lerp:", i, " to: ", lerpVal)
 				tbl[i] = lerpVal
 				owner.emit_signal("value_changed", i, lerpVal)
 			tbl[startPos] = val  #Put the user value back in its canonical place.
@@ -125,7 +125,8 @@ func get_table_pos() -> Vector2:
 
 
 func _draw():
-	
+
+	#Draw the bars.	
 	for i in range(0, rect_size.x, elementWidth):
 		var val =  tbl[ lerp(0, 128, i / float(rect_size.x)) ]
 		var sz = Vector2(10, int(lerp(0, rect_size.y,val/200.0)) * 2 )
@@ -134,23 +135,22 @@ func _draw():
 		if val > 0:  draw_texture(indicator,pos)
 #		if i == 310:  prints("drawrect", i, ":", pos, sz)
 
+	#Draw the minmax indicators for response floor and ceiling.
+	if owner.get_node("sldMax").value < 100:
+		var val = owner.get_node("sldMax").value
+		var y = rect_size.y - (val/100.0 * rect_size.y)
+
+		draw_rect(Rect2(0, 0, rect_size.x, y), ColorN('purple', 0.1))
+		draw_line(Vector2(0,y), Vector2(rect_size.x, y), ColorN('purple', 0.5))
+		
+	if owner.get_node("sldMin").value > 0:
+		var maxval = owner.get_node("sldMax").value / 100.0
+		var minval = owner.get_node("sldMin").value / 100.0
+		var y = rect_size.y - (minval*rect_size.y) * maxval
+		draw_rect(Rect2(0, y, rect_size.x, rect_size.y-y), ColorN('green', 0.1))
+		draw_line(Vector2(0,y), Vector2(rect_size.x, y), ColorN('green', 0.5))
 
 
-##============================ DEBUG:  REMOVE ME ===================================================
-#func _physics_process(delta):
-#	if !OS.is_debug_build():  return
-#	var tblPos = get_table_pos()
-#
-#	var numElements = int(rect_size.x / elementWidth)
-#	var groupWidth = numElements / 128.0  #Value used to stepify between 1/(arraySize) to 1/(VisualElements)
-#	var startPos = int(tblPos.x * groupWidth) * (1/groupWidth)  #Stepified position.
-##
-#
-#	#Show the table positions occupying this column.
-#	$Label.text = ""
-#	for i in range(startPos, min(128, startPos+ (1/groupWidth))):
-#		$Label.text += "\n" + str(tbl[i])
-#
 
 
 #Sets the mouse cursor to something useful
@@ -181,7 +181,7 @@ func set_table(table):
 	update()
 
 
-func _make_custom_tooltip(for_text):
+func _make_custom_tooltip(_for_text):
 	var p = $ToolTipProto.duplicate()
 #	p.text = for_text
 	var pos = get_table_pos()

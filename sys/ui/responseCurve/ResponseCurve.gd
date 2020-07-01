@@ -112,11 +112,13 @@ func updatePreviewTable():
 	emit_signal("value_changed", -1, $VU.tbl)
 
 
-func _on_MinMax_value_changed(value):
+func _on_MinMax_value_changed(_value):
 	#Brackets represent a condensed ligature for "100" in numerics_5x8 font
 	var _min:String = String($sldMin.value).pad_zeros(2) if $sldMin.value < 100 else "[]"
 	var _max:String = String($sldMax.value).pad_zeros(2) if $sldMax.value < 100 else "[]"
 	$lblMinMax.text = "%s/%s" % [_min, _max]
+	
+	$VU.update()
 
 
 func property_exists(name:String, input:Array) -> bool:

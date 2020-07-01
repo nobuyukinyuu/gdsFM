@@ -112,7 +112,7 @@ public class Envelope : Node
 
     // True, internal values referenced by the operator to reduce re-calculating
     // these values when the above EG slider value changes.
-    public double _attackTime = double.Epsilon;
+    public double _attackTime = 50;//double.Epsilon; //Needs to be large enough to avoid a clicking pop under certain circumstances when the phase isn't 0
     public double _decayTime = double.Epsilon;
     public double _susTime = float.MaxValue/5;
     public double _releaseTime = 100; //Calculated from rr when set
