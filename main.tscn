@@ -716,6 +716,7 @@ __meta__ = {
 }
 
 [node name="EGControl" parent="TC" instance=ExtResource( 2 )]
+visible = false
 margin_left = 4.0
 margin_top = 32.0
 margin_right = -4.0
@@ -809,7 +810,10 @@ __meta__ = {
 [node name="Options" parent="TC/Waveform" instance=ExtResource( 25 )]
 
 [node name="Response" parent="TC" instance=ExtResource( 37 )]
-visible = false
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
 script = ExtResource( 38 )
 
 [node name="GraphEdit" type="GraphEdit" parent="."]

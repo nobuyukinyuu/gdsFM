@@ -33,10 +33,9 @@ func _ready():
 
 
 func _input(event):
-#	#DEBUG:  reset EG
-#	if event.is_action_pressed("play"):
-#		global.samples = 0
-#		$Audio.Reset()
+
+	if Input.is_key_pressed(KEY_F12):
+		print (global.currentEG._susTime)
 
 	if Input.is_action_just_pressed("play"):
 		global.currentEG.CopyEnvelope();

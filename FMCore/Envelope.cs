@@ -42,7 +42,7 @@ public class Envelope : Node
     //STANDARD FM EG STUFF
 	double ar=31;						//Attack
 	double dr=31;						//Decay
-	double sr=Double.Epsilon;			//Sustain
+	double sr=7;            			//Sustain
 	double rr = 15;                      //Release
 	double sl=100.0;                      //Sustain level
     double tl = 100;                     //Total level  (attenuation)
@@ -113,8 +113,8 @@ public class Envelope : Node
     // True, internal values referenced by the operator to reduce re-calculating
     // these values when the above EG slider value changes.
     public double _attackTime = 50;//double.Epsilon; //Needs to be large enough to avoid a clicking pop under certain circumstances when the phase isn't 0
-    public double _decayTime = double.Epsilon;
-    public double _susTime = float.MaxValue/5;
+    public double _decayTime = 50;//double.Epsilon;
+    public double _susTime = 1440000; //float.MaxValue/5;  //30-32 seconds, depending on sample rate
     public double _releaseTime = 100; //Calculated from rr when set
     public double _susLevel = 1.0;
     public double _totalLevel = 1.0;

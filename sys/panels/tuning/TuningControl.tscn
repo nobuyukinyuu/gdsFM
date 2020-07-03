@@ -10,9 +10,9 @@
 [ext_resource path="res://sys/panels/tuning/RatioPresetButton.gd" type="Script" id=8]
 [ext_resource path="res://gfx/ui/icon_tuning.svg" type="Texture" id=9]
 
-[sub_resource type="StyleBoxEmpty" id=1]
+[sub_resource type="StyleBoxEmpty" id=2]
 
-[sub_resource type="StyleBoxFlat" id=2]
+[sub_resource type="StyleBoxFlat" id=5]
 content_margin_left = 8.0
 draw_center = false
 
@@ -92,7 +92,7 @@ margin_top = 83.0
 margin_right = 117.0
 margin_bottom = 91.0
 rect_min_size = Vector2( 0, 8 )
-custom_styles/panel = SubResource( 1 )
+custom_styles/panel = SubResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -120,7 +120,7 @@ margin_top = 135.0
 margin_right = 117.0
 margin_bottom = 143.0
 rect_min_size = Vector2( 0, 8 )
-custom_styles/panel = SubResource( 1 )
+custom_styles/panel = SubResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -145,7 +145,7 @@ margin_top = 181.0
 margin_right = 117.0
 margin_bottom = 189.0
 rect_min_size = Vector2( 0, 8 )
-custom_styles/panel = SubResource( 1 )
+custom_styles/panel = SubResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -164,7 +164,7 @@ margin_top = 198.0
 margin_right = 117.0
 margin_bottom = 206.0
 rect_min_size = Vector2( 0, 8 )
-custom_styles/panel = SubResource( 1 )
+custom_styles/panel = SubResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -220,7 +220,7 @@ script = ExtResource( 8 )
 margin_left = 121.0
 margin_right = 130.0
 margin_bottom = 242.0
-custom_styles/panel = SubResource( 2 )
+custom_styles/panel = SubResource( 5 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
