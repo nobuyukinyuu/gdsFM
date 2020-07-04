@@ -183,12 +183,17 @@ public static class RTableExtensions
     //Input from a float source, value's coming in from 0-100 and should be tamped down to 0-1.
     public static void SetValues(this RTable<double> instance, Godot.Collections.Dictionary input)
     {
-        GD.Print("attempting to assign RTable.......");
-        GD.Print(input["values"].GetType());
+        // GD.Print("attempting to assign RTable.......");
+        // GD.Print(input["values"].GetType());
+            OS.Alert(instance.floor.ToString());
+
         //Structure of dict:   {values=[PoolRealArray tbl], floor=0, ceiling=100, use_log=false...}
         instance.floor = Convert.ToDouble( input["floor"] ) ;
         instance.ceiling = Convert.ToDouble( input["ceiling"] ) ;
         instance.use_log = Convert.ToBoolean( input["use_log"] );
+
+
+            OS.Alert(instance.floor.ToString());
 
         //Convert values to our maximum.
         var vals= (System.Single[]) input["values"];

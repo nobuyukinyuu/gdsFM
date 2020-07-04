@@ -73,7 +73,7 @@ func set_rtable(envelope, target:String):
 	#Set options
 	output["values"] = values
 	output["use_log"] = $chkLinlog.pressed
-	output["floor"] = $sldMin.value
+	output["floor"] = float($sldMin.value)
 	output["ceiling"] = $sldMax.value
 #	output["allow_zero"] = allow_zero
 

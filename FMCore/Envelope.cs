@@ -42,7 +42,7 @@ public class Envelope : Node
     //STANDARD FM EG STUFF
 	double ar=31;						//Attack
 	double dr=31;						//Decay
-	double sr=7;            			//Sustain
+	double sr=6;            			//Sustain
 	double rr = 15;                      //Release
 	double sl=100.0;                      //Sustain level
     double tl = 100;                     //Total level  (attenuation)
@@ -73,9 +73,9 @@ public class Envelope : Node
 
     //ADSR easing curve values.
     public double ac = -2.0;  //Attack curve.  In-out.
-    public double dc = 0.75;  //Decay curve.  50% Linear, 50% Ease-out.
-    public double sc = 0.8;  //Sustain curve.  80% Linear, 20% Ease-out.
-    public double rc = 0.25;  //Release curve.  Ease-out.
+    public double dc = 0.75;  //Decay curve.  75% Linear, 25% Ease-out.
+    public double sc = 0.5;  //Sustain curve.  50% Linear, 50% Ease-out.
+    public double rc = 0.25;  //Release curve.  75% Ease-out.
 
 
     //Response curves.
@@ -114,7 +114,7 @@ public class Envelope : Node
     // these values when the above EG slider value changes.
     public double _attackTime = 50;//double.Epsilon; //Needs to be large enough to avoid a clicking pop under certain circumstances when the phase isn't 0
     public double _decayTime = 50;//double.Epsilon;
-    public double _susTime = 1440000; //float.MaxValue/5;  //30-32 seconds, depending on sample rate
+    public double _susTime = 2880000; //float.MaxValue/5;  //about a minute, depending on sample rate
     public double _releaseTime = 100; //Calculated from rr when set
     public double _susLevel = 1.0;
     public double _totalLevel = 1.0;
@@ -143,38 +143,43 @@ public class Envelope : Node
         //Determine key scaling rate for this note.
         double _ksr= ksr[note.midi_note];
 
+        //Generate keyScaled envelope times
+        var atkTime = _attackTime * ksr[note.midi_note];
+        var decTime = _decayTime * ksr[note.midi_note];
+        var susTime = _susTime * ksr[note.midi_note];
+        var rlsTime = _releaseTime * ksr[note.midi_note];
+        var ad = atkTime + decTime + _delay;
+
         //Determine the envelope phase.
         if (s < _delay)  {return 0;} //Delay phase.
         else if (s >= _delay && note.delayed[opID]==false) {note.ResetPhase(opID);  note.delayed[opID]=true;}
 
-        if(Double.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
 
-        if (s-_delay < _attackTime) { // Attack phase.
+        if (s-_delay < atkTime) { // Attack phase.
             //Interpolate between 0 and the total level.
-            output= GDSFmFuncs.EaseFast(0.0, 1.0, (s-_delay) / _attackTime, ac);
-            if(Double.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
+            output= GDSFmFuncs.EaseFast(0.0, 1.0, (s-_delay) / atkTime, ac);
+            // if(Double.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
 
-        } else if ((s-_delay >= _attackTime) && (s-_delay < _ad) ) {  //Decay phase.
+        } else if ((s-_delay >= atkTime) && (s-_delay < ad) ) {  //Decay phase.
             //Interpolate between the total level and sustain level.
-            output= GDSFmFuncs.EaseFast(1.0, _susLevel, (s-(_attackTime+_delay)) / _decayTime, dc);
-            if(Double.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
+            output= GDSFmFuncs.EaseFast(1.0, _susLevel, (s-(atkTime+_delay)) / _decayTime, dc);
+            // if(Double.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
 
-        // } else if ((s >= _ad) && !noteOff ) {  //Sustain phase.
-        } else if ((s-delay >= _ad) ) {  //Sustain phase.
+        } else if ((s-delay >= ad) ) {  //Sustain phase.
             //Interpolate between sustain level and 0.
-            output= GDSFmFuncs.EaseFast(_susLevel, 0, (s-_delay-_ad) / _susTime, sc);
-            if(Double.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
+            output= GDSFmFuncs.EaseFast(_susLevel, 0, (s-_delay-ad) / susTime, sc);
+            // if(Double.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
         }
 
         // #if DEBUG
         // if(Double.IsNaN(output)) System.Diagnostics.Debugger.Break();
         // #endif
 
-        if (noteOff && (s-releaseSample) < _releaseTime)  //Apply release envelope.
+        if (noteOff && (s-releaseSample) < rlsTime)  //Apply release envelope.
         {
-            output *= GDSFmFuncs.EaseFast(1.0, 0.0, (s-releaseSample) / _releaseTime, rc);
-            if(Double.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
-        } else if (noteOff && (s-releaseSample) >= _releaseTime) {
+            output *= GDSFmFuncs.EaseFast(1.0, 0.0, (s-releaseSample) / rlsTime, rc);
+            // if(Double.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
+        } else if (noteOff && (s-releaseSample) >= rlsTime) {
             return 0;
         }
 
