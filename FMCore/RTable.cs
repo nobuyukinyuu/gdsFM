@@ -63,6 +63,7 @@ public class RTable<T> : Resource
                 val = (floor/100.0) +  val * (1.0-(floor/100.0));  //Apply floor.
 
                 if (val ==0 && !allow_zero)  val += float.Epsilon;  //Apply epsilon.
+                if (use_log)  val = Math.Pow(val, RTable.LOGFACTOR);  //Apply LinLog conversion (0.5 = 0.1, etc).
 
                 if (typeof(T) == typeof(float) || typeof(T) == typeof(double) || typeof(T) == typeof(byte) )
                 {
@@ -77,6 +78,7 @@ public class RTable<T> : Resource
 
 public static class RTable
 {
+    public const double LOGFACTOR = 3.32192809488736; // Math.Log(0.1) / Math.Log(0.5);  Raising an input value 0.5^LOGFACTOR produces 0.1
     public enum Presets {ZERO, FIFTY_PERCENT, MAX, LINEAR, IN, OUT, IN_OUT, TWELFTH_ROOT_OF_2, DESCENDING=0x100}
     static readonly System.Collections.Generic.Dictionary<Presets, Double> curveMap = new System.Collections.Generic.Dictionary<Presets, double>
     {
@@ -185,15 +187,11 @@ public static class RTableExtensions
     {
         // GD.Print("attempting to assign RTable.......");
         // GD.Print(input["values"].GetType());
-            OS.Alert(instance.floor.ToString());
 
         //Structure of dict:   {values=[PoolRealArray tbl], floor=0, ceiling=100, use_log=false...}
         instance.floor = Convert.ToDouble( input["floor"] ) ;
         instance.ceiling = Convert.ToDouble( input["ceiling"] ) ;
         instance.use_log = Convert.ToBoolean( input["use_log"] );
-
-
-            OS.Alert(instance.floor.ToString());
 
         //Convert values to our maximum.
         var vals= (System.Single[]) input["values"];

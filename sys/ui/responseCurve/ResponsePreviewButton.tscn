@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://gfx/fonts/spelunkid_font.tres" type="BitmapFont" id=1]
 [ext_resource path="res://sys/ui/responseCurve/DotMatrixPreview.gd" type="Script" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://gfx/ui/vu/dotmatrix_empty.png" type="Texture" id=4]
 [ext_resource path="res://sys/ui/responseCurve/ResponseCurve.tscn" type="PackedScene" id=5]
 [ext_resource path="res://gfx/ui/vu/linlog_toggle_log.png" type="Texture" id=6]
+[ext_resource path="res://gfx/fonts/numerics_5x8.tres" type="BitmapFont" id=7]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0, 0, 0, 1 )
@@ -90,7 +91,6 @@ __meta__ = {
 }
 
 [node name="LinLog" type="TextureRect" parent="P/Preview"]
-visible = false
 anchor_left = 1.0
 anchor_right = 1.0
 margin_left = -17.0
@@ -98,6 +98,23 @@ margin_top = 1.0
 margin_right = -1.0
 margin_bottom = 6.0
 texture = SubResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MinMax" type="Label" parent="P/Preview"]
+margin_left = 2.0
+margin_top = 1.0
+margin_right = 42.0
+margin_bottom = 65.0
+custom_fonts/font = ExtResource( 7 )
+custom_colors/font_color = Color( 0.254902, 0.572549, 0.764706, 1 )
+text = "
+
+
+
+
+"
 __meta__ = {
 "_edit_use_anchors_": false
 }

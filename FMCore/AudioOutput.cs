@@ -26,6 +26,7 @@ public Channel PreviewNotes = new Channel();
     public override void _Ready()
     {
 
+        System.Diagnostics.Debug.Print( (Math.Log(0.1) / Math.Log(0.5)).ToString() );
         global = GetNode("/root/global");
         MixRate = (float) global.Get("sample_rate");
 
@@ -227,7 +228,7 @@ public Channel PreviewNotes = new Channel();
         {
             note.Destroy();
         } else {  // Patch is okay.  Set the TTL to prepare the note to be killed off by the Patch when sent the Channel contents.
-            note.ttl = patch.GetReleaseTime();
+            note.ttl = patch.GetReleaseTime(note);
         }
     }
 
@@ -236,7 +237,7 @@ public Channel PreviewNotes = new Channel();
     public void AttachNoteToSignal(Note note, Node signalSource)
     {
         //TODO:  Test when the release time calculation is bound to the Note.  Probably on NoteOff....
-        signalSource.Connect("NoteOff", note as Note, "_on_ReleaseNote", new Godot.Collections.Array(){patch.GetReleaseTime()} );
+        signalSource.Connect("NoteOff", note as Note, "_on_ReleaseNote", new Godot.Collections.Array(){patch.GetReleaseTime(note)} );
         //Other event signals here, as necessary.
     }
 

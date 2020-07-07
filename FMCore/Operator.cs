@@ -55,7 +55,7 @@ public class Operator
                 modulator += connections[i].request_sample(phase,note);
             }
 
-            modulator /= connections.Length;  //mix down to 0.0-1.0f
+            modulator /= connections.Length;  //mix down to 0.0-1.0f.   Is this correct?
             
             if (bypass)  return modulator;
             

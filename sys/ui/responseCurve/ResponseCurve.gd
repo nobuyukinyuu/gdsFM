@@ -14,6 +14,7 @@ var rate_scale = false  #Set to true if the y-axis maps a rate (ie:  percentage 
 
 var dirty = false  #When altered this value changes to indicate data is ready to send.
 signal value_changed  #emitted in $VU
+signal minmax_changed  
 
 func set_title(val):
 	title = val
@@ -73,7 +74,7 @@ func set_rtable(envelope, target:String):
 	#Set options
 	output["values"] = values
 	output["use_log"] = $chkLinlog.pressed
-	output["floor"] = float($sldMin.value)
+	output["floor"] = $sldMin.value
 	output["ceiling"] = $sldMax.value
 #	output["allow_zero"] = allow_zero
 
@@ -119,10 +120,23 @@ func _on_MinMax_value_changed(_value):
 	$lblMinMax.text = "%s/%s" % [_min, _max]
 	
 	$VU.update()
+	emit_signal("minmax_changed", $sldMin.value, $sldMax.value)
 
 
 func property_exists(name:String, input:Array) -> bool:
-	for item in input:
-		if item["name"] == name:  return true
+	#Currently, a bug seems to exist where fetching property list from C# objects aren't properly marshalled
+	#in all circumstances for an export template build.  This doesn't seem to be the case for editor/debug builds
+	#So one workaround may be to ignore the check altogether and simply crash if the property doesn't exist
+	#if we detect we're running a standalone build.  See link for more details:
+	#https://github.com/godotengine/godot/issues/40108   (FIXME)
+	
+	if !OS.has_feature("standalone"):
+		for item in input:
+			if item["name"] == name:  return true
+			
+		return false
+	else:
+		return true  #Skip check
 		
-	return false
+		
+

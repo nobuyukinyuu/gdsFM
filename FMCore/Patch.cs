@@ -152,18 +152,28 @@ public class Patch : Resource
     }
 
     //Total max release time of all operators in the patch, measured in samples.
+    //Used to determine the TTL of a note.  
     // public double GetReleaseTime(Operator[] connections, double lastReleaseTime=float.MaxValue) 
-    public double GetReleaseTime() 
+    public double GetReleaseTime(Note note=null) 
     {
+        const int ONE_MINUTE = 2880000; //1 minute at 48000hz
         //Get the Max release time of all parallel operators connected to the current patch output/operator.
         double parallel_time = 0;  
         for (int i=0; i < connections.Length; i++) //Operator op in connections)
         {
-            parallel_time = Math.Max(parallel_time, connections[i].EG._releaseTime);            
+            var ksr = (note!=null? connections[i].EG.ksr[note.midi_note] : 1.0);
+            var rt = connections[i].EG._releaseTime * ksr;
+            //Sometimes the release time can exceed the audible output of the note if sustain is shorter than infinite.  Choose the shorter of the times.
+            rt = Math.Min(rt, connections[i].EG._ads * ksr);
+
+            if (rt < ONE_MINUTE) parallel_time = Math.Max(parallel_time, rt);  //Now find the maximum of our ttl and the others.
         }
 
+        if (parallel_time == 0) parallel_time = ONE_MINUTE;
         return parallel_time;
     }
+
+
 
     public void ResetConnections(){
         this.connections = null;
@@ -193,7 +203,7 @@ public class Patch : Resource
                 output[i] += op.request_sample(note.phase[op.id], note); 
             }
 
-            output[i] *= note.Velocity;
+            // output[i] *= note.Velocity;   //TODO:  Apply master response curve instead.  Most velocity should be controlled in EG.
             note.Iterate(1);
         }
         return output;
@@ -334,6 +344,11 @@ public class Patch : Resource
             string[] val = lines[op.id + 1].Split(",", false);
             // AR,DR,SR,RR,SL,TL,KS,MUL,DT
 
+            op.EG.waveform = Waveforms.SINE;
+            op.EG.fmTechnique = Waveforms.SINE;
+            op.EG.duty = 0.5;
+            op.EG.UseDuty = false;
+
             op.EG.Ar = Int32.Parse(val[0]);
             op.EG.Dr = Int32.Parse(val[1]);
             op.EG.Sr = Int32.Parse(val[2]);
@@ -343,7 +358,11 @@ public class Patch : Resource
             op.EG.Sl = GD.Db2Linear(-6.2f * (Int32.Parse(val[4]))) * 100 ;
             op.EG.Tl = GD.Db2Linear(-0.75f * Int32.Parse(val[5])) * 100 ;
 
+            var remap= new int[] {100, 50, 25, 0};
+
             // op.EG.Ks = Int32.Parse(val[6]);  //TODO:  Map key scaling rates to 12th root of 2 defaults and scale down...
+            op.EG.ksr = RTable.FromPreset<Double>(RTable.Presets.DESCENDING | RTable.Presets.TWELFTH_ROOT_OF_2, floor: remap[Int32.Parse(val[6])] );
+
             op.EG.Mul = Int32.Parse(val[7]);
 
             op.EG.Dt = (Int32.Parse(val[8]) - 3.5) * (100/3.5);  //This may not be correct either....

@@ -64,25 +64,6 @@ expand_margin_bottom = 3.0
 [sub_resource type="AudioStreamGenerator" id=3]
 buffer_length = 0.15
 
-[sub_resource type="GDScript" id=4]
-script/source = "extends HSlider
-
-func _ready():
-	pass
-
-
-
-func _on_Slider_value_changed(value):
-#	var val =  54.0 / pow(2, value-1)
-#	$\"../Label2\".text = String(val)
-
-	
-	var val = glue.EaseFast(0.25, value)
-	var val2 = ease(0.25, value)
-#	$\"../Label2\".text = \"%s: %s, %s = %s%%\" % [value, val, val2, (val-val2)*100]
-	$\"../Label2\".text = \"%s: %s\" % [value, (1-value)*(1-value)]
-"
-
 [sub_resource type="GDScript" id=5]
 script/source = "extends Timer
 var blep = 0
@@ -125,6 +106,28 @@ tracks/0/keys = {
 "update": 1,
 "values": [ 0 ]
 }
+
+[sub_resource type="GDScript" id=4]
+script/source = "extends HSlider
+
+func _ready():
+	pass
+
+
+
+func _on_Slider_value_changed(value):
+#	var val =  54.0 / pow(2, value-1)
+#	$\"../Label2\".text = String(val)
+
+	
+	var val = glue.EaseFast(0.25, value)
+	var val2 = ease(0.25, value)
+#	$\"../Label2\".text = \"%s: %s, %s = %s%%\" % [value, val, val2, (val-val2)*100]
+	
+#	$\"../Label\".text = \"%s: %s\" % [value, (1-value)*(1-value)]
+#	$\"../Label\".text = \"%s: %s\" % [value, pow(value, 3.32192809)]
+	$\"../Label\".text = \"%s: %s\" % [value, pow(value, 21.8543453)]
+"
 
 [node name="PatchEdit" type="Control"]
 anchor_right = 1.0
@@ -716,7 +719,6 @@ __meta__ = {
 }
 
 [node name="EGControl" parent="TC" instance=ExtResource( 2 )]
-visible = false
 margin_left = 4.0
 margin_top = 32.0
 margin_right = -4.0
@@ -810,6 +812,7 @@ __meta__ = {
 [node name="Options" parent="TC/Waveform" instance=ExtResource( 25 )]
 
 [node name="Response" parent="TC" instance=ExtResource( 37 )]
+visible = false
 margin_left = 4.0
 margin_top = 32.0
 margin_right = -4.0
@@ -892,23 +895,6 @@ script = ExtResource( 23 )
 
 [node name="PreviewNote" type="Node" parent="Audio"]
 script = ExtResource( 28 )
-
-[node name="Slider" type="HSlider" parent="."]
-anchor_top = 1.0
-anchor_bottom = 1.0
-margin_left = 840.0
-margin_top = 8.0
-margin_right = 1096.0
-margin_bottom = 56.0
-min_value = -4.0
-max_value = 5.0
-step = 0.1
-value = 1.0
-ticks_on_borders = true
-script = SubResource( 4 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="ProcessRateTimer" type="Timer" parent="."]
 autostart = true
@@ -1017,6 +1003,32 @@ margin_left = -456.0
 margin_top = -200.0
 margin_right = -40.0
 margin_bottom = -16.0
+
+[node name="Slider" type="HSlider" parent="."]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 640.0
+margin_top = 40.0
+margin_right = 896.0
+margin_bottom = 88.0
+min_value = -4.0
+max_value = 5.0
+step = 0.1
+value = 1.0
+ticks_on_borders = true
+script = SubResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="."]
+margin_left = 584.0
+margin_top = 640.0
+margin_right = 728.0
+margin_bottom = 688.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 [connection signal="value_changed" from="TC2/Program/V/Gain/Slider" to="TC2/Program" method="_on_Gain_value_changed"]
 [connection signal="item_selected" from="TC/Waveform/Grid/Waveform" to="." method="_on_Waveform_item_selected"]
 [connection signal="item_selected" from="TC/Waveform/Grid/Waveform2" to="." method="_on_Waveform_item_selected" binds= [ true ]]
@@ -1024,7 +1036,7 @@ margin_bottom = -16.0
 [connection signal="connection_request" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_connection_request"]
 [connection signal="disconnection_request" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_disconnection_request"]
 [connection signal="node_selected" from="GraphEdit" to="." method="_on_GraphEdit_node_selected"]
-[connection signal="value_changed" from="Slider" to="Slider" method="_on_Slider_value_changed"]
 [connection signal="timeout" from="ProcessRateTimer" to="ProcessRateTimer" method="_on_Timer_timeout"]
 [connection signal="pressed" from="btnValidate" to="." method="_on_btnValidate_pressed"]
 [connection signal="item_selected" from="Algorithm" to="." method="_on_Algorithm_item_selected"]
+[connection signal="value_changed" from="Slider" to="Slider" method="_on_Slider_value_changed"]

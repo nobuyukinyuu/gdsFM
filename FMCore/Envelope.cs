@@ -79,12 +79,12 @@ public class Envelope : Node
 
 
     //Response curves.
-    private RTable<Double> ksr = RTable.FromPreset<Double>(RTable.Presets.TWELFTH_ROOT_OF_2 | RTable.Presets.DESCENDING, 
+    internal RTable<Double> ksr = RTable.FromPreset<Double>(RTable.Presets.TWELFTH_ROOT_OF_2 | RTable.Presets.DESCENDING, 
                                                            floor:100, allow_zero:false );      //KeyScale rate. Lower values shrink envelope timings.
     private RTable<Double> ksl = RTable.FromPreset<Double>(RTable.Presets.LINEAR | RTable.Presets.DESCENDING,
                                                             floor:100);  //KeyScale level. Multiplies from 0-100% against TL of this envelope.
     private RTable<Double> vr = RTable.FromPreset<Double>(RTable.Presets.LINEAR 
-                                                         |RTable.Presets.DESCENDING);  //Velocity response. Sensitivity goes from 0% to 100% (0-1).  Default 0
+                                                         |0);  //Velocity response. Sensitivity goes from 0% to 100% (0-1).  Default 0
 
 
     public Godot.Collections.Dictionary Ksr { get => ksr.ToDict(); set => ksr.SetValues(value); }
@@ -128,7 +128,7 @@ public class Envelope : Node
     //Internal ADSR timer calculating values.
     public double _egLength;  //total envelope length, in samples.  TODO:  Make ASDR true values int?
     double _ad;  //Attack time + decay time
-    double _ads; //Attack, decay, and sustain time.
+    public double _ads; //Attack, decay, and sustain time.
 	double _adr; //Attack, decay, and release time.  Used to check whether the sample offset from release is beyond the need to calculate an easing curve.
 
     //ASDR Getter
@@ -162,7 +162,7 @@ public class Envelope : Node
 
         } else if ((s-_delay >= atkTime) && (s-_delay < ad) ) {  //Decay phase.
             //Interpolate between the total level and sustain level.
-            output= GDSFmFuncs.EaseFast(1.0, _susLevel, (s-(atkTime+_delay)) / _decayTime, dc);
+            output= GDSFmFuncs.EaseFast(1.0, _susLevel, (s-(atkTime+_delay)) / decTime, dc);
             // if(Double.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
 
         } else if ((s-delay >= ad) ) {  //Sustain phase.
@@ -192,7 +192,7 @@ public class Envelope : Node
         }
         #endif
 
-        return output;
+        return output * vr[note.midi_velocity];
     }
 
     //ASDR setters

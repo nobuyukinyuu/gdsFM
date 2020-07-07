@@ -13,7 +13,7 @@
 [ext_resource path="res://sys/panels/EGMillisecsInput.gd" type="Script" id=11]
 [ext_resource path="res://gfx/ui/icon_millisecs.svg" type="Texture" id=12]
 
-[sub_resource type="StyleBoxEmpty" id=2]
+[sub_resource type="StyleBoxEmpty" id=1]
 
 [node name="Response" type="Control"]
 anchor_right = 1.0
@@ -202,7 +202,7 @@ margin_top = 40.0
 margin_right = 392.0
 margin_bottom = 48.0
 rect_min_size = Vector2( 0, 8 )
-custom_styles/panel = SubResource( 2 )
+custom_styles/panel = SubResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }

@@ -9,7 +9,7 @@ func _ready():
 	pass
 
 
-func _process(delta):
+func _physics_process(_delta):
 	if $"../Audio".bufferdata.size() > 0 and visible:
 		update()
 

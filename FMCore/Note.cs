@@ -22,7 +22,7 @@ public class Note : Node, IComparable<Note>
     public int releaseSample = 0;  //The sample at which noteOff was received.
 
     //Set by the mixer handling the channel. Mixer finds the patch being used for this Note, gets total release time, and patch determines when to release from channel.
-    public double ttl = float.MaxValue / 4.0;  
+    public double ttl = 79380000; //30 minutes by default
 
 //Each increment of detune is 1/8 the ratio between a period of 2205/22 at 44100hz sample rate (440hz tone) and 2197/22 (about 441.6hz).
 //This measurement was done against DX7 detune at A-4, where every 22 cycles the tone would change (-detune) samples.
@@ -152,15 +152,6 @@ public const int NOTE_A4 = 69;   // Nice.
     {
         samples += numsamples;
     }
-
-
-    // public void Reset(bool hz=false, bool samples=true, bool velocity = false, bool pressed=true)
-    // {
-    //     if (hz) this.hz = 440.0;
-    //     if (samples) this.samples = 0;
-    //     if (pressed) this.pressed = true;
-    // }
-
 
     //Convenience method for mixers, envelopes, whatever to check if this note is ready to die.
     public bool IsDestroyable()

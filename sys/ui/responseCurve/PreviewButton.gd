@@ -2,6 +2,8 @@ tool
 class_name ResponseCurvePreviewButton
 extends Button
 
+export (int,0,100) var minimum = 0 setget set_min
+export (int,0,100) var maximum = 100 setget set_max
 export (bool) var use_log setget set_use_log
 
 enum rtable_dests {ENVELOPE, PATCH}
@@ -18,6 +20,26 @@ export(bool) var float_scale = true  #Set to false if the y-axis isn't mapping p
 export(bool) var rate_scale = false  #Set to true if the y-axis maps a rate (ie:  percentage of original time)
 
 
+func set_min(val):
+	minimum = val
+	update_minmax()
+func set_max(val):
+	maximum = val
+	update_minmax()
+
+func change_minmax(_min, _max):
+	minimum = _min
+	maximum = _max
+	update_minmax()
+
+func update_minmax():
+	var _min = "[]" if minimum == 100 else String(minimum)
+	if _min == "0": _min = ""
+	var _max = "" if maximum == 100 else String(maximum)
+	
+	if get_node("P/Preview/MinMax"):
+		$P/Preview/MinMax.text = _max + "\n\n\n\n\n" + _min
+
 func set_use_log(val):
 	use_log = val
 	$P/Preview/LinLog.visible = val
@@ -32,9 +54,12 @@ func _ready():
 	
 	if dest_property == "":  dest_property = name.capitalize()
 
+	yield(get_tree(),"idle_frame")
 	$Popup/ResponseCurve.note_scale = note_scale
 	$Popup/ResponseCurve.float_scale = float_scale
 	$Popup/ResponseCurve.rate_scale = rate_scale
+
+	$Popup/ResponseCurve.connect("minmax_changed", self, "change_minmax")
 
 #	$Popup/ResponseCurve.allow_zero = allow_zero
 
