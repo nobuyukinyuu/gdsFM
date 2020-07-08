@@ -19,7 +19,13 @@ public class Patch : Resource
 
 
     public float gain = 1.0f;  //Straight multiplier to the end output.  Use db2linear conversion.
+    public double Transpose = 1.0;  //Master tuning
+    //TODO:  LFO here?
 
+    private double resonance = 1.0;  //Should never be under 1.0
+    private double cutoff = sample_rate;
+    public double CutOff { get => cutoff; set => cutoff = value; }
+    public double Resonance { get => resonance; set => resonance = value; }
 
     readonly int[][][] algorithms = new int[][][]{
         new int[][]{ new int[]{1,2}, new int[]{2,3}, new int[]{3,4}, new int[]{4,0} }, //Four serial connection
@@ -31,6 +37,7 @@ public class Patch : Resource
         new int[][]{ new int[]{1,2}, new int[]{2,0}, new int[]{3,0}, new int[]{4,0} }, //Two serial, two sines
         new int[][]{ new int[]{1,0}, new int[]{2,0}, new int[]{3,0}, new int[]{4,0} }, //Four parallel sines
     };
+
 
 
     //Calls WireUp using a 4OP preset

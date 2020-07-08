@@ -15,7 +15,7 @@ func _ready():
 func _on_Button_pressed():
 	#Ratio is in our text property.  Set mult based on ratio.
 	
-	var popup= $"../.."
+#	var popup= $"../.."
 	var val = float(text)
 
 

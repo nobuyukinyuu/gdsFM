@@ -81,18 +81,9 @@ func validate():
 		connections = test_connections
 		connections_valid = true
 		
-#		#Clear all old connections.
-#		for o in get_children():
-#			if not o.is_in_group("operator"):  continue
-#			o.connections.clear()
-
 		print (connections)
 
-#		for connection in connections:
-#			get_node(connection).connections = connections[connection]
-#
-			
-			
+
 		#For the C# engine:  Tell the mixer to assign connections.
 		#First, construct a string out of the connections because
 		#the marshalling of nested dictionaries is face-melting

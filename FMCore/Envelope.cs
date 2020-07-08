@@ -81,10 +81,10 @@ public class Envelope : Node
     //Response curves.
     internal RTable<Double> ksr = RTable.FromPreset<Double>(RTable.Presets.TWELFTH_ROOT_OF_2 | RTable.Presets.DESCENDING, 
                                                            floor:100, allow_zero:false );      //KeyScale rate. Lower values shrink envelope timings.
-    private RTable<Double> ksl = RTable.FromPreset<Double>(RTable.Presets.LINEAR | RTable.Presets.DESCENDING,
+    private RTable<Double> ksl = RTable.FromPreset<Double>(RTable.Presets.TWELFTH_ROOT_OF_2 | RTable.Presets.DESCENDING,
                                                             floor:100);  //KeyScale level. Multiplies from 0-100% against TL of this envelope.
-    private RTable<Double> vr = RTable.FromPreset<Double>(RTable.Presets.LINEAR 
-                                                         |0);  //Velocity response. Sensitivity goes from 0% to 100% (0-1).  Default 0
+    private RTable<Double> vr = RTable.FromPreset<Double>(RTable.Presets.IN_OUT 
+                                                         |0, floor:100);  //Velocity response. Sensitivity goes from 0% to 100% (0-1).  Default 0
 
 
     public Godot.Collections.Dictionary Ksr { get => ksr.ToDict(); set => ksr.SetValues(value); }
@@ -192,7 +192,7 @@ public class Envelope : Node
         }
         #endif
 
-        return output * vr[note.midi_velocity];
+        return output * ksl[note.midi_note] * vr[note.midi_velocity];
     }
 
     //ASDR setters

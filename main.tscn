@@ -64,7 +64,7 @@ expand_margin_bottom = 3.0
 [sub_resource type="AudioStreamGenerator" id=3]
 buffer_length = 0.15
 
-[sub_resource type="GDScript" id=5]
+[sub_resource type="GDScript" id=4]
 script/source = "extends Timer
 var blep = 0
 
@@ -81,7 +81,7 @@ func _on_Timer_timeout():
 	blep = 0
 "
 
-[sub_resource type="GDScript" id=6]
+[sub_resource type="GDScript" id=5]
 script/source = "extends Label
 
 
@@ -93,7 +93,7 @@ func _physics_process(_delta):
 	pass
 "
 
-[sub_resource type="Animation" id=7]
+[sub_resource type="Animation" id=6]
 tracks/0/type = "value"
 tracks/0/path = NodePath("AnimationPlayer:process_priority")
 tracks/0/interp = 1
@@ -107,7 +107,7 @@ tracks/0/keys = {
 "values": [ 0 ]
 }
 
-[sub_resource type="GDScript" id=4]
+[sub_resource type="GDScript" id=7]
 script/source = "extends HSlider
 
 func _ready():
@@ -309,6 +309,97 @@ margin_bottom = 12.0
 rect_min_size = Vector2( 32, 0 )
 custom_fonts/font = ExtResource( 4 )
 text = "0"
+align = 1
+valign = 2
+
+[node name="CutOff" type="HBoxContainer" parent="TC2/Program/V" groups=[
+"slider",
+]]
+margin_top = 64.0
+margin_right = 344.0
+margin_bottom = 80.0
+size_flags_horizontal = 3
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Lbl" type="Label" parent="TC2/Program/V/CutOff"]
+margin_top = 4.0
+margin_right = 48.0
+margin_bottom = 12.0
+custom_fonts/font = ExtResource( 4 )
+text = "CutOff"
+align = 1
+
+[node name="Slider" type="HSlider" parent="TC2/Program/V/CutOff"]
+margin_left = 52.0
+margin_right = 300.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+min_value = 20.0
+max_value = 44100.0
+value = 44100.0
+exp_edit = true
+allow_greater = true
+tick_count = 13
+ticks_on_borders = true
+
+[node name="Val" type="Label" parent="TC2/Program/V/CutOff"]
+margin_left = 304.0
+margin_top = 4.0
+margin_right = 344.0
+margin_bottom = 12.0
+rect_min_size = Vector2( 32, 0 )
+custom_fonts/font = ExtResource( 4 )
+text = "44100"
+align = 1
+valign = 2
+
+[node name="Resonance" type="HBoxContainer" parent="TC2/Program/V" groups=[
+"slider",
+]]
+margin_top = 96.0
+margin_right = 344.0
+margin_bottom = 112.0
+size_flags_horizontal = 3
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Lbl" type="Label" parent="TC2/Program/V/Resonance"]
+margin_top = 4.0
+margin_right = 72.0
+margin_bottom = 12.0
+custom_fonts/font = ExtResource( 4 )
+text = "Resonance"
+align = 1
+
+[node name="Slider" type="HSlider" parent="TC2/Program/V/Resonance"]
+margin_left = 76.0
+margin_right = 308.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+min_value = 1.0
+max_value = 10.0
+step = 0.1
+value = 1.0
+exp_edit = true
+allow_greater = true
+tick_count = 13
+ticks_on_borders = true
+
+[node name="Val" type="Label" parent="TC2/Program/V/Resonance"]
+margin_left = 312.0
+margin_top = 4.0
+margin_right = 344.0
+margin_bottom = 12.0
+rect_min_size = Vector2( 32, 0 )
+custom_fonts/font = ExtResource( 4 )
+text = "1.0"
 align = 1
 valign = 2
 
@@ -898,7 +989,7 @@ script = ExtResource( 28 )
 
 [node name="ProcessRateTimer" type="Timer" parent="."]
 autostart = true
-script = SubResource( 5 )
+script = SubResource( 4 )
 
 [node name="ProcessRate" type="Label" parent="."]
 anchor_left = 1.0
@@ -935,7 +1026,7 @@ margin_right = -6.0
 margin_bottom = 38.0
 text = "Polyphony"
 align = 2
-script = SubResource( 6 )
+script = SubResource( 5 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -992,7 +1083,7 @@ __meta__ = {
 }
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-"anims/New Anim" = SubResource( 7 )
+"anims/New Anim" = SubResource( 6 )
 
 [node name="EnvelopeDisplay" parent="." instance=ExtResource( 30 )]
 anchor_left = 1.0
@@ -1016,7 +1107,7 @@ max_value = 5.0
 step = 0.1
 value = 1.0
 ticks_on_borders = true
-script = SubResource( 4 )
+script = SubResource( 7 )
 __meta__ = {
 "_edit_use_anchors_": false
 }

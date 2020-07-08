@@ -34,8 +34,8 @@ func _ready():
 
 func _input(event):
 
-	if Input.is_key_pressed(KEY_F12):
-		print (global.currentEG._susTime)
+#	if Input.is_key_pressed(KEY_F12):
+#		print (global.currentEG._susTime)
 
 	if Input.is_action_just_pressed("play"):
 		global.currentEG.CopyEnvelope();

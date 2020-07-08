@@ -14,8 +14,7 @@ func _ready():
 	p.theme = submenu.theme
 
 #	p.connect("index_pressed",self, "_on_Menu_index_pressed")
-#	remove_child(submenu)
-#	p.add_child(submenu)
+
 	
 
 	#FIXME:  THIS IS A HACKY WORKAROUND TO LACK OF PopupMenu.get_current_index()
