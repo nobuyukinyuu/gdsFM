@@ -34,6 +34,9 @@ public class Note : Node, IComparable<Note>
 // If Patches are eventually linked to Notes, requesting samples can be moved here from AudioOutput and the Channel can request samples more directly.
     public List<Double[]> feedbackHistory = new List<Double[]>{new double[]{0.0, 0.0}, new double[]{0.0, 0.0},new double[]{0.0, 0.0},new double[]{0.0, 0.0}, };
 
+//Similar to feedback, to determine running frequency for cutoff filters, a history must be kept per-operator.
+    public List<Double[]> cutoffHistory = new List<Double[]>{new double[]{0.0, 0.0}, new double[]{0.0, 0.0},new double[]{0.0, 0.0},new double[]{0.0, 0.0}, };
+
 //The owner of the Note.  This could be a channel for arbitrary-n notes, or a channel which needs temporary polyphony.
     public Channel _channel; 
 
@@ -152,6 +155,8 @@ public const int NOTE_A4 = 69;   // Nice.
     {
         samples += numsamples;
     }
+
+
 
     //Convenience method for mixers, envelopes, whatever to check if this note is ready to die.
     public bool IsDestroyable()

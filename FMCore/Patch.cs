@@ -211,12 +211,15 @@ public class Patch : Resource
             }
 
             // output[i] *= note.Velocity;   //TODO:  Apply master response curve instead.  Most velocity should be controlled in EG.
+
+            //Iterate the sample timer.  The phase accumulators were already called from the Operators.
             note.Iterate(1);
         }
+
         return output;
     }
 
-    //Multiple note polyphony
+    //Multiple note polyphony.  Old method for original single-thread fill_buffer
     public double mix(List<Note> notes)
     {
         double output = 0.0;
@@ -240,26 +243,6 @@ public class Patch : Resource
         output /= 2;  //TODO:  Maybe don't do this?  Figure out what the velocity is like normally, maybe scale down a tiny bit instead.
         return output;
     }
-
-    //TODO:  Figure out why this is slow and if it is actually processing the tasks in parallel
-    //      Consider trying to spawn a bunch of tasks in a for loop and somehow await the results of all before continuing
-    public double mixAsync(List<Note> notes)
-    {
-        var task = Task<Double>.Run(  () => 
-            {
-                double output=0;  //Why do I have to declare the initial value in a value type? Is it because this is a lambda?  Why?
-                for (int i = 0; i < notes.Count; i++)
-                {
-                    if (notes[i] ==null) continue;
-                    // if (notes[i] ==null) return;
-                    output += mix(notes[i]);
-                } 
-                return output;
-            } );
-
-        return task.Result / 2;
-    }
-
     public double mix(Note note){ 
         double avg = 0.0;  //Output average
 
@@ -287,13 +270,9 @@ public class Patch : Resource
         #endif
 
         avg /= connections.Length;  //Shitty average-based mixing.        
-
         avg *=  note.Velocity;  // TODO:  REMOVE ME WHEN PER-OPERATOR VELOCITY SENSITIVITY IS IMPLEMENTED?
 
         // note.Iterate(1, pitch_avg, sample_rate);
-
-        
-
         return avg;
     }
 
