@@ -98,6 +98,7 @@ public class Operator
         Finalize: 
           note.Accumulate(id,1, eg.FixedFreq>0? eg.totalMultiplier/note.hz : eg.totalMultiplier, eg.SampleRate);
 
+          if (eg.filter.enabled) output = GDSFmLowPass.Filter(output, eg.filter, ref note.cutoffHistory[id][0], ref note.cutoffHistory[id][1]);
           return output;        
     }
 

@@ -58,6 +58,7 @@ public class Envelope : Node
     //CUSTOM STUFF
 	public Waveforms waveform = Waveforms.SINE;
 	public double feedback = 0;  //Operator feedback only used in op chain termini.
+    public GDSFmLowPass.FilterData filter = new GDSFmLowPass.FilterData();  //Lowpass cutoff + resonance filter.
     public bool reflect = false;  //Waveform reflection.  Inverts sine phase, makes sawtooth point to the right, etc.
 
 	public double duty = 0.5;  //Duty cycle is only used for pulse right now
@@ -108,6 +109,9 @@ public class Envelope : Node
 
     public double Delay { get => delay; set {_delay = value*SampleRate / 1000; delay=value;} }
 
+    public bool FilterEnabled { get => filter.enabled; set => filter.enabled = value; }
+    public double CutOff { get => filter.cutoff; set {filter.cutoff = value; filter.Recalc(SampleRate);} }
+    public double Resonance { get => filter.resonanceAmp; set {filter.resonanceAmp = value; filter.Recalc(SampleRate);} }
 
 
     // True, internal values referenced by the operator to reduce re-calculating

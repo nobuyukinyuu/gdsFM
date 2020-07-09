@@ -125,7 +125,7 @@ public Channel PreviewNotes = new Channel();
 
         //TODO:  Attenuate the samples here with another parallel For loop on the final buffer.  Automatic gain control maybe applied here?
 
-        if (patch!=null)  LowPass(patch.CutOff,patch.Resonance);
+        // if (patch!=null)  LowPass(patch.CutOff,patch.Resonance);
         buf.PushBuffer(bufferdata); 
     }
 
@@ -271,24 +271,25 @@ public Channel PreviewNotes = new Channel();
         int streamsize = bufferdata.Length;
 
         /* Main loop */
-        for (streamofs = 0; streamofs < streamsize; streamofs++) {
+        for (streamofs = 0; streamofs < streamsize; streamofs++) 
+        {
+            /* Accelerate vibra by signal-vibra, multiplied by lowpasscutoff */
+            vibraspeed += (bufferdata[streamofs].x - vibrapos) * c;
 
-        /* Accelerate vibra by signal-vibra, multiplied by lowpasscutoff */
-        vibraspeed += (bufferdata[streamofs].x - vibrapos) * c;
+            /* Add velocity to vibra's position */
+            vibrapos += vibraspeed;
 
-        /* Add velocity to vibra's position */
-        vibrapos += vibraspeed;
+            /* Attenuate/amplify vibra's velocity by resonance */
+            vibraspeed *= r;
 
-        /* Attenuate/amplify vibra's velocity by resonance */
-        vibraspeed *= r;
+            /* Check clipping */
+            float temp = (float) vibrapos;
+            Mathf.Clamp(temp, -1.0f, 1.0f);
 
-        /* Check clipping */
-        float temp = (float) vibrapos;
-        Mathf.Clamp(temp, -1.0f, 1.0f);
-
-        /* Store new value */
-        bufferdata[streamofs] = new Vector2(temp,temp);
-        }
+            /* Store new value */
+            bufferdata[streamofs] = new Vector2(temp,temp);
+        }        
     }
+
 
 }
