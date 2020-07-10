@@ -1,7 +1,7 @@
 using System;
 using Godot;
 
-
+//Adapted from https://www.musicdsp.org/en/latest/Filters/27-resonant-iir-lowpass-12db-oct.html
 public static class GDSFmLowPass{
 
 static double vibrapos, vibraspeed;  //Used for global low-pass.  Move to Patch?

@@ -8,7 +8,7 @@ public enum Waveforms {SINE, SAW, TRI, PULSE, ABSINE, WHITE, PINK, BROWN, USE_DU
 
 public class oscillators : Node
 {
-	static Random random = new Random ();
+	// static ThreadSafeRandom random = ThreadSafeRandom ();
 	const double TAU = Mathf.Tau;
 
 	static double[] sintable;
@@ -102,12 +102,12 @@ public class oscillators : Node
 				return n<duty?  pinkr.GetNextValue() : 0.0;
 
 			case Waveforms.BROWN:
-				lastr += random.NextDouble() * 0.2 - 0.1;
+				lastr += ThreadSafeRandom.NextDouble() * 0.2 - 0.1;
 				lastr *= 0.99f;
 				return lastr;
 			case Waveforms.BROWN|Waveforms.USE_DUTY:
 				if (n < duty) {
-					lastr += random.NextDouble() * 0.2 - 0.1;
+					lastr += ThreadSafeRandom.NextDouble() * 0.2 - 0.1;
 					lastr *= 0.99f;
 					return lastr;					
 				} else {
@@ -119,14 +119,14 @@ public class oscillators : Node
 				noise_counter[auxData] += 0b1;
 				noise_counter[auxData] %= Convert.ToByte(auxData);
 
-				if (noise_counter[auxData]==0) lastNoiseValue[auxData]=random.NextDouble() * 2.0 - 1.0;
+				if (noise_counter[auxData]==0) lastNoiseValue[auxData]=ThreadSafeRandom.NextDouble() * 2.0 - 1.0;
 				return lastNoiseValue[auxData];
 
 			case Waveforms.WHITE|Waveforms.USE_DUTY:
 				noise_counter[auxData] += 0b1;
 				noise_counter[auxData] %= Convert.ToByte(auxData);
 
-				if (noise_counter[auxData]==0) lastNoiseValue[auxData]=random.NextDouble() * 2.0 - 1.0;
+				if (noise_counter[auxData]==0) lastNoiseValue[auxData]=ThreadSafeRandom.NextDouble() * 2.0 - 1.0;
 				return n<duty? lastNoiseValue[auxData] : 0.0;
 
 			default:
@@ -142,7 +142,7 @@ class PinkNumber
 {
 private
   int max_key;
-  Random rand= new Random();
+//   private static Random rand= new Random();
   int key;
   int[] white_values = new int[5];
   int range;
@@ -152,17 +152,16 @@ public
 	  max_key = 0x1f; // Five bits set
 	  this.range = range;
 	  key = 0;
-	  for (int i = 0; i < 5; i++)
- white_values[i] = rand.Next() % (range/5);
+	  for (int i=0; i<5; i++)	white_values[i] = ThreadSafeRandom.Next() % (range/5);
 	}
+
   public double GetNextValue()
 	{
 	  int last_key = key;
 	  int sum;
 
 	  key++;
-	  if (key > max_key)
- key = 0;
+	  if (key > max_key)    key = 0;
 	  // Exclusive-Or previous value with current value. This gives
 	  // a list of bits that have changed.
 	  int diff = last_key ^ key;
@@ -172,7 +171,7 @@ public
    // If bit changed get new random number for corresponding
    // white_value
    if ((diff & (1 << i)) > 0 )
-	 white_values[i] = rand.Next() % (range/5);
+	 white_values[i] = ThreadSafeRandom.Next() % (range/5);
    sum += white_values[i];
  }
 	  return sum / 64.0-1.0;
@@ -207,4 +206,35 @@ static class OscMath
 		return Math.Abs(s) < Double.Epsilon;
 	}
 
+}
+
+public static class ThreadSafeRandom
+{
+    private static Random _global = new Random();
+    [ThreadStatic]
+    private static Random _local;
+
+    public static int Next()
+    {
+        Random inst = _local;
+        if (inst == null)
+        {
+            int seed;
+            lock (_global) seed = _global.Next();
+            _local = inst = new Random(seed);
+        }
+        return inst.Next();
+    }
+
+    public static double NextDouble()
+    {
+        Random inst = _local;
+        if (inst == null)
+        {
+            int seed;
+            lock (_global) seed = _global.Next();
+            _local = inst = new Random(seed);
+        }
+        return inst.NextDouble();
+    }
 }
