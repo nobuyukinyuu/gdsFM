@@ -54,11 +54,11 @@ func _ready():
 	
 	if dest_property == "":  dest_property = name.capitalize()
 
-	yield(get_tree(),"idle_frame")
-	$Popup/ResponseCurve.note_scale = note_scale
-	$Popup/ResponseCurve.float_scale = float_scale
-	$Popup/ResponseCurve.rate_scale = rate_scale
-
+	if !Engine.editor_hint:
+		$Popup/ResponseCurve.note_scale = note_scale
+		$Popup/ResponseCurve.float_scale = float_scale
+		$Popup/ResponseCurve.rate_scale = rate_scale
+	
 	$Popup/ResponseCurve.connect("minmax_changed", self, "change_minmax")
 
 #	$Popup/ResponseCurve.allow_zero = allow_zero

@@ -1,23 +1,30 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
 // New Operator class for discrete core.
 
-public class Operator
+public class Operator : Resource
 {
     public String name;
     public int id=0;  //Operator number, used to reference itself in ordered datasets specific to operators, like Note.feedback_history
     Operator[] connections = new Operator[0];
     public Operator[] Connections { get => connections; set => connections = value; }
     bool bypass = false;
-
     public bool Bypass { get => bypass; set => bypass = value; }
 
     //Envelope generator
     Envelope eg;// = new Envelope(name);
-    
-
     public Envelope EG { get => eg; set => eg = value; }
+
+
+    //LFO stuff.
+    //Banks are used to determine which bank this operator should access for its PMD and AMD.  If -1, the operator will not apply LFO.
+    public int lfoBankAmp = -1;
+    public int lfoBankPitch = -1;
+    //Sensitivity variables for amplitude and pitch.  These are normalized from 0-1.
+    public double pms, ams;
+
 
     //Ctor to give me a name
     public Operator(string name)
@@ -29,7 +36,7 @@ public class Operator
     }
 
     //Iterate over our connections, then mix and modulate them before returning the final modulated value.
-    public double request_sample(double phase, Note note)
+    public double request_sample(double phase, Note note, List<LFO> LFOs = null, int lfoBufPos = 0)
     {
         
         double output = 0.0;        
@@ -69,9 +76,11 @@ public class Operator
             output = oscillators.wave(phase, eg.waveform | eg._use_duty, eg.duty, eg.reflect, 128-note.midi_note);  
 
 
+            //TODO:  Apply Amplitude LFO here.  Grab the calculation from the bank associated with this Operator and multiply it with eg._totalLevel.
             //Determine the EG position and attenuate.
             output *= adsr;
             output *= eg._totalLevel;  
+
             
         } else {  // Terminus.  No further modulation required. 
 
@@ -91,13 +100,17 @@ public class Operator
 
             }
 
+            //TODO:  Apply Amplitude LFO here.  Grab the calculation from the bank associated with this Operator and multiply it with eg._totalLevel.
             output *= eg._totalLevel;  //Finally, Attenuate total level.  ADSR was applied to output earlier depending on FB.
         }
 
         //Iterate the phase accumulator.
         Finalize: 
-          note.Accumulate(id,1, eg.FixedFreq>0? eg.totalMultiplier/note.hz : eg.totalMultiplier, eg.SampleRate);
+          //TODO:  Apply Pitch LFO here.  Grab the calculation from the bank associated with this Operator and multiply it with eg.totalMultiplier.
+          var lfoMult = (lfoBankPitch>=0 && LFOs != null) ? LFOs[lfoBankPitch].GetPitchMult(lfoBufPos, note.samples, pms) : 1.0;          
+          note.Accumulate(id,1, eg.FixedFreq>0? eg.totalMultiplier/note.hz * lfoMult: eg.totalMultiplier * lfoMult, eg.SampleRate);
 
+          //Apply the filter.
           if (eg.filter.enabled) output = GDSFmLowPass.Filter(output, eg.filter, ref note.cutoffHistory[id][0], ref note.cutoffHistory[id][1]);
           return output;        
     }

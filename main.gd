@@ -4,8 +4,6 @@ var lastOperatorEnvelope  #Preview from GraphNode of last operator selected.
 
 
 func _ready():
-	#Setup patch
-	$TC2/Program.patch = $Audio.patch  #Currently a global preview patch!
 	
 	#Setup oscilloscope
 	var newpts = []
@@ -31,6 +29,10 @@ func _ready():
 	$TC/EGControl.connect("envelope_changed", self, "_on_Env_update")
 	$TC/Curve.connect("envelope_changed", self, "_on_Env_update")
 
+	if !$Audio.patch:
+		$Audio.NewPatch()
+		yield(get_tree(),"idle_frame")
+		global.currentPatch = $Audio.patch
 
 func _input(event):
 

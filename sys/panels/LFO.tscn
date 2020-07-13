@@ -1,0 +1,489 @@
+[gd_scene load_steps=18 format=2]
+
+[ext_resource path="res://gfx/ui/icon_millisecs.svg" type="Texture" id=1]
+[ext_resource path="res://gfx/waveforms/1.png" type="Texture" id=2]
+[ext_resource path="res://gfx/waveforms/6.png" type="Texture" id=3]
+[ext_resource path="res://gfx/waveforms/5.png" type="Texture" id=4]
+[ext_resource path="res://sys/panels/EGMillisecsInput.gd" type="Script" id=5]
+[ext_resource path="res://gfx/fonts/spelunkid_font.tres" type="BitmapFont" id=6]
+[ext_resource path="res://gfx/fonts/NoteFont.tres" type="BitmapFont" id=7]
+[ext_resource path="res://gfx/waveforms/4.png" type="Texture" id=8]
+[ext_resource path="res://gfx/waveforms/3.png" type="Texture" id=9]
+[ext_resource path="res://gfx/waveforms/2.png" type="Texture" id=10]
+[ext_resource path="res://gfx/waveforms/7.png" type="Texture" id=11]
+[ext_resource path="res://gfx/waveforms/0.png" type="Texture" id=12]
+[ext_resource path="res://sys/panels/LFO.gd" type="Script" id=13]
+[ext_resource path="res://sys/panels/LFOSemitonePopup.gd" type="Script" id=14]
+
+[sub_resource type="Theme" id=5]
+default_font = ExtResource( 7 )
+Button/colors/font_color = Color( 0.88, 0.88, 0.88, 1 )
+Button/colors/font_color_disabled = Color( 0.9, 0.9, 0.9, 0.2 )
+Button/colors/font_color_hover = Color( 0.94, 0.94, 0.94, 1 )
+Button/colors/font_color_pressed = Color( 1, 1, 1, 1 )
+Button/constants/hseparation = 2
+Button/fonts/font = null
+Button/styles/disabled = null
+Button/styles/focus = null
+Button/styles/hover = null
+Button/styles/normal = null
+Button/styles/pressed = null
+
+[sub_resource type="ButtonGroup" id=2]
+
+[sub_resource type="StyleBoxEmpty" id=3]
+
+[node name="LFO" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -932.0
+margin_bottom = -244.0
+script = ExtResource( 13 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="chkEnable" type="CheckButton" parent="."]
+margin_left = 212.0
+margin_top = -5.0
+margin_right = 348.0
+margin_bottom = 35.0
+custom_fonts/font = ExtResource( 6 )
+custom_constants/check_vadjust = 2
+custom_constants/hseparation = 4
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="Banks" type="HBoxContainer" parent="."]
+margin_left = 84.0
+margin_top = 8.0
+margin_right = 158.0
+margin_bottom = 28.0
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="0" type="Button" parent="Banks"]
+margin_right = 22.0
+margin_bottom = 20.0
+theme = SubResource( 5 )
+toggle_mode = true
+pressed = true
+group = SubResource( 2 )
+text = "A"
+
+[node name="1" type="Button" parent="Banks"]
+margin_left = 26.0
+margin_right = 48.0
+margin_bottom = 20.0
+theme = SubResource( 5 )
+toggle_mode = true
+group = SubResource( 2 )
+text = "B"
+
+[node name="2" type="Button" parent="Banks"]
+margin_left = 52.0
+margin_right = 74.0
+margin_bottom = 20.0
+theme = SubResource( 5 )
+toggle_mode = true
+group = SubResource( 2 )
+text = "C"
+
+[node name="Separator2" type="Panel" parent="."]
+margin_left = 6.0
+margin_top = 35.5
+margin_right = 338.0
+margin_bottom = 36.5
+rect_min_size = Vector2( 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="lblLFO" type="Label" parent="."]
+margin_left = 4.0
+margin_top = 8.0
+margin_right = 76.0
+margin_bottom = 28.0
+custom_fonts/font = ExtResource( 6 )
+text = "LFO Bank:"
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="lblLFO2" type="Label" parent="."]
+margin_left = 4.0
+margin_top = 48.0
+margin_right = 76.0
+margin_bottom = 68.0
+custom_fonts/font = ExtResource( 6 )
+text = "Waveform:"
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Waveform" type="OptionButton" parent="."]
+margin_left = 4.0
+margin_top = 72.0
+margin_right = 198.0
+margin_bottom = 120.0
+rect_min_size = Vector2( 0, 48 )
+custom_constants/hseparation = 8
+text = "Sine"
+icon = ExtResource( 12 )
+items = [ "Sine", ExtResource( 12 ), false, 0, null, "Sawtooth", ExtResource( 2 ), false, 1, null, "Stepped Tri", ExtResource( 10 ), false, 2, null, "Square/Pulse", ExtResource( 9 ), false, 3, null, "Absolute Sine", ExtResource( 8 ), false, 4, null, "White Noise", ExtResource( 4 ), false, 5, null, "Pink Noise", ExtResource( 3 ), false, 6, null, "Brown Noise", ExtResource( 11 ), false, 7, null ]
+selected = 0
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="chkReflect" type="CheckButton" parent="."]
+anchor_right = 0.0232558
+margin_left = 204.0
+margin_top = 72.0
+margin_right = 340.0
+margin_bottom = 120.0
+custom_fonts/font = ExtResource( 6 )
+text = "Reflect"
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="Separator" type="Panel" parent="."]
+margin_left = 4.0
+margin_top = 144.0
+margin_right = 336.0
+margin_bottom = 145.0
+rect_min_size = Vector2( 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="V" type="VBoxContainer" parent="."]
+margin_left = 4.0
+margin_top = 168.0
+margin_right = 336.0
+margin_bottom = 288.0
+custom_constants/separation = 16
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="Depth" type="HBoxContainer" parent="V" groups=[
+"slider",
+]]
+margin_right = 332.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="V/Depth"]
+margin_top = 4.0
+margin_right = 48.0
+margin_bottom = 12.0
+custom_fonts/font = ExtResource( 6 )
+text = "~Depth"
+align = 1
+
+[node name="Slider" type="HSlider" parent="V/Depth"]
+margin_left = 52.0
+margin_right = 320.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+max_value = 100.0
+step = 0.01
+exp_edit = true
+allow_greater = true
+tick_count = 21
+ticks_on_borders = true
+
+[node name="Val" type="Label" parent="V/Depth"]
+margin_left = 324.0
+margin_top = 4.0
+margin_right = 332.0
+margin_bottom = 12.0
+mouse_filter = 0
+mouse_default_cursor_shape = 2
+custom_fonts/font = ExtResource( 6 )
+text = "0"
+align = 1
+valign = 2
+script = ExtResource( 14 )
+
+[node name="Popup" type="PopupPanel" parent="V/Depth/Val"]
+visible = true
+margin_left = 20.0
+margin_top = -4.0
+margin_right = 236.0
+margin_bottom = 40.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Grid" type="GridContainer" parent="V/Depth/Val/Popup"]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 212.0
+margin_bottom = 40.0
+custom_constants/vseparation = 8
+columns = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="V/Depth/Val/Popup/Grid"]
+margin_top = -1.0
+margin_right = 176.0
+margin_bottom = 11.0
+rect_min_size = Vector2( 0, 12 )
+mouse_filter = 0
+custom_fonts/font = ExtResource( 6 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 1
+custom_constants/shadow_offset_y = 1
+text = "Semitones:   "
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="lblValue" type="Label" parent="V/Depth/Val/Popup/Grid"]
+margin_left = 180.0
+margin_top = -1.0
+margin_right = 208.0
+margin_bottom = 11.0
+rect_min_size = Vector2( 0, 12 )
+custom_fonts/font = ExtResource( 7 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 1
+custom_constants/shadow_offset_y = 1
+text = "0"
+align = 2
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Slider" type="HSlider" parent="V/Depth/Val/Popup/Grid"]
+margin_top = 20.0
+margin_right = 176.0
+margin_bottom = 36.0
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.75
+max_value = 12.0
+tick_count = 13
+ticks_on_borders = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="OK" type="Button" parent="V/Depth/Val/Popup/Grid"]
+margin_left = 180.0
+margin_top = 20.0
+margin_right = 208.0
+margin_bottom = 36.0
+custom_fonts/font = ExtResource( 6 )
+text = "OK"
+
+[node name="CycleTime" type="HBoxContainer" parent="V" groups=[
+"slider",
+]]
+margin_top = 32.0
+margin_right = 332.0
+margin_bottom = 48.0
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="V/CycleTime"]
+margin_top = 4.0
+margin_right = 48.0
+margin_bottom = 12.0
+custom_fonts/font = ExtResource( 6 )
+text = "+Cycle"
+align = 1
+
+[node name="Slider" type="HSlider" parent="V/CycleTime"]
+margin_left = 52.0
+margin_right = 320.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+max_value = 10000.0
+step = 0.1
+exp_edit = true
+allow_greater = true
+tick_count = 11
+ticks_on_borders = true
+
+[node name="Val" type="Label" parent="V/CycleTime"]
+margin_left = 324.0
+margin_top = 4.0
+margin_right = 332.0
+margin_bottom = 12.0
+mouse_filter = 0
+mouse_default_cursor_shape = 2
+custom_fonts/font = ExtResource( 6 )
+text = "0"
+align = 1
+valign = 2
+script = ExtResource( 5 )
+
+[node name="Popup" type="PopupPanel" parent="V/CycleTime/Val"]
+margin_left = 28.0
+margin_top = 20.0
+margin_right = 147.0
+margin_bottom = 54.0
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Edit" type="LineEdit" parent="V/CycleTime/Val/Popup"]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 115.0
+margin_bottom = 30.0
+custom_fonts/font = ExtResource( 6 )
+custom_colors/selection_color = Color( 0.0784314, 0, 0.980392, 0.501961 )
+custom_colors/font_color_selected = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 0.690196, 0.690196, 0.690196, 1 )
+text = "0.0"
+align = 2
+max_length = 6
+right_icon = ExtResource( 1 )
+caret_blink = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Delay" type="HBoxContainer" parent="V" groups=[
+"slider",
+]]
+margin_top = 64.0
+margin_right = 332.0
+margin_bottom = 80.0
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="V/Delay"]
+margin_top = 4.0
+margin_right = 48.0
+margin_bottom = 12.0
+custom_fonts/font = ExtResource( 6 )
+text = "+Delay"
+align = 1
+
+[node name="Slider" type="HSlider" parent="V/Delay"]
+margin_left = 52.0
+margin_right = 320.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+max_value = 10000.0
+step = 1.0
+exp_edit = true
+allow_greater = true
+tick_count = 11
+ticks_on_borders = true
+
+[node name="Val" type="Label" parent="V/Delay"]
+margin_left = 324.0
+margin_top = 4.0
+margin_right = 332.0
+margin_bottom = 12.0
+mouse_filter = 0
+mouse_default_cursor_shape = 2
+custom_fonts/font = ExtResource( 6 )
+text = "0"
+align = 1
+valign = 2
+script = ExtResource( 5 )
+
+[node name="Popup" type="PopupPanel" parent="V/Delay/Val"]
+margin_left = 28.0
+margin_top = 20.0
+margin_right = 147.0
+margin_bottom = 54.0
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Edit" type="LineEdit" parent="V/Delay/Val/Popup"]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 115.0
+margin_bottom = 30.0
+custom_fonts/font = ExtResource( 6 )
+custom_colors/selection_color = Color( 0.0784314, 0, 0.980392, 0.501961 )
+custom_colors/font_color_selected = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 0.690196, 0.690196, 0.690196, 1 )
+text = "0.0"
+align = 2
+max_length = 6
+right_icon = ExtResource( 1 )
+caret_blink = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Blanker" type="Panel" parent="V"]
+visible = false
+margin_top = 96.0
+margin_right = 332.0
+margin_bottom = 104.0
+rect_min_size = Vector2( 0, 8 )
+custom_styles/panel = SubResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Separator3" type="Panel" parent="V"]
+margin_top = 96.0
+margin_right = 332.0
+margin_bottom = 97.0
+rect_min_size = Vector2( 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="GridContainer" type="GridContainer" parent="V"]
+margin_top = 113.0
+margin_right = 332.0
+margin_bottom = 137.0
+custom_constants/hseparation = 32
+columns = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="chkLegato" type="CheckBox" parent="V/GridContainer"]
+margin_right = 140.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 6 )
+custom_constants/hseparation = 8
+pressed = true
+text = "Legato Mode"
+
+[node name="chkSync" type="CheckBox" parent="V/GridContainer"]
+margin_left = 172.0
+margin_right = 332.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 6 )
+custom_constants/hseparation = 8
+pressed = true
+text = "Sync on New Note"
+[connection signal="toggled" from="chkEnable" to="." method="_on_chkEnable_toggled"]
+[connection signal="item_selected" from="Waveform" to="." method="_on_Waveform_item_selected"]
+[connection signal="toggled" from="chkReflect" to="." method="_on_chkReflect_toggled"]
+[connection signal="popup_hide" from="V/Depth/Val/Popup" to="V/Depth/Val" method="_on_Popup_popup_hide"]
+[connection signal="gui_input" from="V/Depth/Val/Popup/Grid/Label" to="V/Depth/Val" method="_on_Label_gui_input"]
+[connection signal="gui_input" from="V/Depth/Val/Popup/Grid/Slider" to="V/Depth/Val" method="_on_Slider_gui_input"]
+[connection signal="value_changed" from="V/Depth/Val/Popup/Grid/Slider" to="V/Depth/Val" method="_on_Slider_value_changed"]
+[connection signal="pressed" from="V/Depth/Val/Popup/Grid/OK" to="V/Depth/Val" method="_on_OK_pressed"]

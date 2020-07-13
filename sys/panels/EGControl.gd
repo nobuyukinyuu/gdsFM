@@ -1,7 +1,5 @@
 extends Control
 
-#var global.currentEG  #:global.Instr  #Current instrument associated with the controls.
-
 signal envelope_changed
 
 
@@ -28,6 +26,10 @@ func load_settings(instr):
 			get_node("H/%s/Slider" % setting.name).value = instr.get(s)
 		elif setting.is_in_group("setting_group"):
 			setting.load_settings(instr)  #Applies to FixedFreq settings, maybe others
+
+	#Only the tuning control has this.
+	if get_node_or_null("H/PMS/Banks"):
+		$H/PMS/Banks.load_settings()
 
 
 func _on_slider_change(value, which):

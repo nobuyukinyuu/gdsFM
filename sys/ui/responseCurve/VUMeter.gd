@@ -85,7 +85,7 @@ func _gui_input(event):
 		if $"../Splits".get_node(String(int(startPos/4))).pressed:
 			#Split mode value.  All values in this group are the same.
 			for i in range(startPos, min(128, startPos+ (1/groupWidth))):
-				print(i)
+#				print(i)
 				tbl[i] = val
 				owner.emit_signal("value_changed", i, val)
 		else:

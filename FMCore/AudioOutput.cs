@@ -28,8 +28,6 @@ public Channel PreviewNotes = new Channel();
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-
-        System.Diagnostics.Debug.Print( (Math.Log(0.1) / Math.Log(0.5)).ToString() );
         global = GetNode("/root/global");
         MixRate = (float) global.Get("sample_rate");
 
@@ -96,8 +94,11 @@ public Channel PreviewNotes = new Channel();
         int frames = buf.GetFramesAvailable();
         bufferdata = new Vector2[frames];
 
-        object _lock = new object();
+        //Process the LFOs.
+        patch.UpdateLFOs(frames);
 
+        //Ask the Patch to process the notes.
+        object _lock = new object();
         Parallel.For(0, PreviewNotes.Count, delegate(int i)
         {
             if (patch != null)
@@ -204,6 +205,14 @@ public Channel PreviewNotes = new Channel();
     //Adds a note of the specific MIDI key to the preview notes.
     public Note AddNote(int note_number, int velocity)
     {
+        if (patch != null)
+        {
+            foreach (LFO lfo in patch.LFOs)
+            {
+                if (lfo.keySync) lfo.Reset();
+            }
+        }
+
         Note note = new Note(note_number, velocity);
         note._channel = PreviewNotes;
         PreviewNotes.CheckPolyphony();  //NOTE: This can really slow down the process if attached to a debugger, so be careful

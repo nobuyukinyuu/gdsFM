@@ -7,6 +7,7 @@ var sample_rate = 44100.0
 var samples = 0  #Global oscillator timer.  Iterated every time an output sample is produced.
 
 var currentEG  #typeof Envelope
+var currentPatch  #typeof Patch
 
 # 12-field array containing a LUT of semitone frequencies at all MIDI note numbers.
 #Generated from center tuning (A-4) at 440hz.

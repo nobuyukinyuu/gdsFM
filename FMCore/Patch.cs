@@ -10,6 +10,11 @@ public class Patch : Resource
         Patch() {}
     #endif
 
+    //This ctor can be used to set the sample rate used in phase calculations by a patch. The algorithm validator should do it when making a patch.
+    //TODO:  This ctor should also initialize the LFOs with the sample rate given, if LFOs are always allocated.....
+    public Patch(double sample_rate) { Patch.sample_rate = sample_rate; LFO.sample_rate = sample_rate;}
+
+
     // This value should typically be initialized to whatever the global sample rate is.
     public static double sample_rate = 44100.0;
 
@@ -20,7 +25,10 @@ public class Patch : Resource
 
     public float gain = 1.0f;  //Straight multiplier to the end output.  Use db2linear conversion.
     public double Transpose = 1.0;  //Master tuning
-    //TODO:  LFO here?
+
+    //List of LFOs available for operators to use.  3 initialized at first.  Operator will attempt to procure an LFO reference from list if its bank > -1.
+    public List<LFO> LFOs = new List<LFO>( new LFO[] {new LFO(sample_rate), new LFO(sample_rate), new LFO(sample_rate)} );
+
 
     private double resonance = 1.0;  //Should never be under 1.0
     private double cutoff = sample_rate;
@@ -141,6 +149,7 @@ public class Patch : Resource
         return true;
     }
 
+    //Adds a new operator to the specified collection.  Used when wiring up an algorithm from Godot.
     private void AddOp(string name, Dictionary<String, Operator> collection)
     {
         if (name=="Output") return;
@@ -152,11 +161,19 @@ public class Patch : Resource
         return null;
     }
 
+    //Used by Godot to fetch an envelope.
     public Envelope GetEG(string opName)
     {
         var op = GetOperator(opName);
         return op?.EG;
     }
+    //Used by Godot to fetch an LFO from our banks.
+    public LFO GetLFO(int bank)
+    {
+        if ( bank<0 || bank>=LFOs.Count) return null;
+        return LFOs[bank];
+    }
+
 
     //Total max release time of all operators in the patch, measured in samples.
     //Used to determine the TTL of a note.  
@@ -193,10 +210,16 @@ public class Patch : Resource
         //Nothing here yet.  Would reset EG, curves, waveforms etc.
     }
 
-    //This ctor can be used to set the sample rate used in phase calculations by a patch. The algorithm validator should do it when making a patch.
-    public Patch(double sample_rate) => Patch.sample_rate = sample_rate;
-    // public Patch() {}  //Default constructor.
 
+    public void UpdateLFOs(int buffer_size=8192)
+    {
+        //TODO:  Make this a parallel process?
+        foreach(LFO lfo in LFOs)
+        {
+            lfo.UpdateBuffer(buffer_size);
+        }
+
+    }
 
     //Request multiple samples from this patch for a requested note.  Maybe better for parallelizing notes?
     public double[] request_samples(Note note, int nSamples=1)
@@ -207,13 +230,14 @@ public class Patch : Resource
             for (int j=0; j < connections.Length; j++)
             {	
                 Operator op = connections[j];
-                output[i] += op.request_sample(note.phase[op.id], note); 
+                output[i] += op.request_sample(note.phase[op.id], note, LFOs, i); 
             }
 
-            // output[i] *= note.Velocity;   //TODO:  Apply master response curve instead.  Most velocity should be controlled in EG.
+            // output[i] *= note.Velocity;   //TODO:  Apply master response curve here instead.  Most velocity should be controlled in EG.
 
             //Iterate the sample timer.  The phase accumulators were already called from the Operators.
             note.Iterate(1);
+
         }
 
         return output;
@@ -275,6 +299,7 @@ public class Patch : Resource
         // note.Iterate(1, pitch_avg, sample_rate);
         return avg;
     }
+
 
 
     //Copies an instrument (this Patch) in an envelope format understood by BambooTracker.

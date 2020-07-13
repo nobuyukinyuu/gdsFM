@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://sys/panels/EGControl.gd" type="Script" id=1]
 [ext_resource path="res://sys/panels/EGMillisecsInput.gd" type="Script" id=2]
@@ -9,6 +9,9 @@
 [ext_resource path="res://gfx/ui/icon_ratio_x.svg" type="Texture" id=7]
 [ext_resource path="res://sys/panels/tuning/RatioPresetButton.gd" type="Script" id=8]
 [ext_resource path="res://gfx/ui/icon_tuning.svg" type="Texture" id=9]
+[ext_resource path="res://sys/panels/LFO_bank_buttongroup.tres" type="ButtonGroup" id=10]
+[ext_resource path="res://sys/panels/LFOBankSelect.gd" type="Script" id=11]
+[ext_resource path="res://sys/panels/tuning/PMS.gd" type="Script" id=12]
 
 [sub_resource type="StyleBoxEmpty" id=1]
 
@@ -26,15 +29,19 @@ func _on_Slider_gui_input(event):
 
 "
 
-[sub_resource type="GDScript" id=4]
-script/source = "extends VSlider
-
-# Zero snap
-func _on_Slider_gui_input(event):
-	if event is InputEventMouseButton and !event.pressed:
-		if abs(value) < 3:  value = 0
-
-"
+[sub_resource type="Theme" id=5]
+default_font = ExtResource( 5 )
+Button/colors/font_color = Color( 0.88, 0.88, 0.88, 1 )
+Button/colors/font_color_disabled = Color( 0.9, 0.9, 0.9, 0.2 )
+Button/colors/font_color_hover = Color( 0.94, 0.94, 0.94, 1 )
+Button/colors/font_color_pressed = Color( 1, 1, 1, 1 )
+Button/constants/hseparation = 2
+Button/fonts/font = null
+Button/styles/disabled = null
+Button/styles/focus = null
+Button/styles/hover = null
+Button/styles/normal = null
+Button/styles/pressed = null
 
 [node name="TuningControl" type="Control"]
 anchor_right = 1.0
@@ -182,7 +189,6 @@ __meta__ = {
 }
 
 [node name="Pop" type="PopupDialog" parent="H/FixedFreq/Ratios"]
-visible = true
 margin_left = 646.0
 margin_top = -106.0
 margin_right = 1024.0
@@ -383,44 +389,110 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="PMD" type="VBoxContainer" parent="H"]
+[node name="PMS" type="VBoxContainer" parent="H" groups=[
+"setting_group",
+]]
 margin_left = 502.0
 margin_right = 622.0
 margin_bottom = 242.0
 size_flags_horizontal = 3
+script = ExtResource( 12 )
 
-[node name="PitchSlide" type="Label" parent="H/PMD"]
+[node name="Label" type="Label" parent="H/PMS"]
 margin_right = 120.0
 margin_bottom = 8.0
 custom_fonts/font = ExtResource( 6 )
-text = "LFO PitchMod"
+text = "LFO Amount"
 align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="Slider" type="VSlider" parent="H/PMD"]
+[node name="Slider" type="VSlider" parent="H/PMS"]
 margin_top = 12.0
 margin_right = 120.0
-margin_bottom = 230.0
+margin_bottom = 193.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-min_value = -100.0
+step = 0.1
 tick_count = 21
 ticks_on_borders = true
-script = SubResource( 4 )
 
-[node name="Val" type="Label" parent="H/PMD"]
-margin_top = 234.0
+[node name="Val" type="Label" parent="H/PMS"]
+margin_top = 197.0
 margin_right = 120.0
-margin_bottom = 242.0
+margin_bottom = 205.0
 custom_fonts/font = ExtResource( 6 )
 text = "0"
 align = 1
 valign = 2
 
+[node name="Separator3" type="Panel" parent="H/PMS"]
+margin_top = 209.0
+margin_right = 120.0
+margin_bottom = 210.0
+rect_min_size = Vector2( 1, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="lblBank" type="Label" parent="H/PMS"]
+modulate = Color( 1, 1, 1, 0.376471 )
+margin_top = 214.0
+margin_right = 120.0
+margin_bottom = 222.0
+custom_fonts/font = ExtResource( 6 )
+text = "Bank:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Banks" type="HBoxContainer" parent="H/PMS"]
+margin_top = 226.0
+margin_right = 120.0
+margin_bottom = 242.0
+alignment = 1
+script = ExtResource( 11 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+lfo_type = 2
+
+[node name="0" type="Button" parent="H/PMS/Banks"]
+margin_left = 23.0
+margin_right = 45.0
+margin_bottom = 16.0
+theme = SubResource( 5 )
+toggle_mode = true
+group = ExtResource( 10 )
+text = "A"
+
+[node name="1" type="Button" parent="H/PMS/Banks"]
+margin_left = 49.0
+margin_right = 71.0
+margin_bottom = 16.0
+theme = SubResource( 5 )
+toggle_mode = true
+group = ExtResource( 10 )
+text = "B"
+
+[node name="2" type="Button" parent="H/PMS/Banks"]
+margin_left = 75.0
+margin_right = 97.0
+margin_bottom = 16.0
+theme = SubResource( 5 )
+toggle_mode = true
+group = ExtResource( 10 )
+text = "C"
+
 [node name="TODO" type="Label" parent="."]
+visible = false
 anchor_top = 1.0
 anchor_bottom = 1.0
-margin_top = -14.0
-margin_right = 74.0
+margin_left = 18.0
+margin_top = 96.0
+margin_right = 92.0
+margin_bottom = 110.0
 text = "Mult"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -431,4 +503,5 @@ __meta__ = {
 [connection signal="pressed" from="H/FixedFreq/Presets" to="H/FixedFreq" method="_on_Presets_pressed"]
 [connection signal="pressed" from="H/FixedFreq/Ratios" to="H/FixedFreq" method="_on_Ratios_pressed"]
 [connection signal="gui_input" from="H/Dt/Slider" to="H/Dt/Slider" method="_on_Slider_gui_input"]
-[connection signal="gui_input" from="H/PMD/Slider" to="H/PMD/Slider" method="_on_Slider_gui_input"]
+[connection signal="gui_input" from="H/PMS/Slider" to="H/PMS/Slider" method="_on_Slider_gui_input"]
+[connection signal="value_changed" from="H/PMS/Slider" to="H/PMS" method="_on_Slider_value_changed"]

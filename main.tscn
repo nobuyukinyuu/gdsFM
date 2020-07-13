@@ -37,10 +37,9 @@
 [ext_resource path="res://sys/ui/PitchDisplay.tscn" type="PackedScene" id=35]
 [ext_resource path="res://sys/panels/PitchControl.gd" type="Script" id=36]
 [ext_resource path="res://sys/panels/ResponseTables.tscn" type="PackedScene" id=37]
+[ext_resource path="res://sys/panels/LFO.tscn" type="PackedScene" id=38]
 
-[sub_resource type="StyleBoxEmpty" id=1]
-
-[sub_resource type="GDScript" id=8]
+[sub_resource type="GDScript" id=4]
 script/source = "extends VSlider
 
 # Zero snap
@@ -50,7 +49,7 @@ func _on_Slider_gui_input(event):
 
 "
 
-[sub_resource type="StyleBoxTexture" id=2]
+[sub_resource type="StyleBoxTexture" id=5]
 content_margin_left = 16.0
 content_margin_right = 8.0
 texture = ExtResource( 34 )
@@ -62,10 +61,10 @@ expand_margin_left = 3.0
 expand_margin_right = 3.0
 expand_margin_bottom = 3.0
 
-[sub_resource type="AudioStreamGenerator" id=3]
+[sub_resource type="AudioStreamGenerator" id=6]
 buffer_length = 0.15
 
-[sub_resource type="GDScript" id=4]
+[sub_resource type="GDScript" id=7]
 script/source = "extends Timer
 var blep = 0
 
@@ -82,7 +81,7 @@ func _on_Timer_timeout():
 	blep = 0
 "
 
-[sub_resource type="GDScript" id=5]
+[sub_resource type="GDScript" id=8]
 script/source = "extends Label
 
 
@@ -94,7 +93,7 @@ func _physics_process(_delta):
 	pass
 "
 
-[sub_resource type="Animation" id=6]
+[sub_resource type="Animation" id=9]
 tracks/0/type = "value"
 tracks/0/path = NodePath("AnimationPlayer:process_priority")
 tracks/0/interp = 1
@@ -108,7 +107,7 @@ tracks/0/keys = {
 "values": [ 0 ]
 }
 
-[sub_resource type="GDScript" id=7]
+[sub_resource type="GDScript" id=10]
 script/source = "extends HSlider
 
 func _ready():
@@ -313,182 +312,10 @@ text = "0"
 align = 1
 valign = 2
 
-[node name="LFO" type="Control" parent="TC2"]
+[node name="LFO" parent="TC2" instance=ExtResource( 38 )]
 visible = false
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 4.0
-margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
-
-[node name="lblLFO" type="Label" parent="TC2/LFO"]
-margin_left = 4.0
-margin_top = 4.0
-margin_right = 108.0
-margin_bottom = 18.0
-custom_fonts/font = ExtResource( 4 )
-text = "LFO Waveform:"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Waveform" type="OptionButton" parent="TC2/LFO"]
-margin_left = 4.0
-margin_top = 24.0
-margin_right = 198.0
-margin_bottom = 72.0
-rect_min_size = Vector2( 0, 48 )
-custom_constants/hseparation = 8
-text = "Sine"
-icon = ExtResource( 21 )
-items = [ "Sine", ExtResource( 21 ), false, 0, null, "Sawtooth", ExtResource( 15 ), false, 1, null, "Stepped Tri", ExtResource( 19 ), false, 2, null, "Square/Pulse", ExtResource( 22 ), false, 3, null, "Absolute Sine", ExtResource( 18 ), false, 4, null, "White Noise", ExtResource( 17 ), false, 5, null, "Pink Noise", ExtResource( 16 ), false, 6, null, "Brown Noise", ExtResource( 20 ), false, 7, null ]
-selected = 0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="chkReflect" type="CheckButton" parent="TC2/LFO"]
-margin_left = 208.0
-margin_top = 24.0
-margin_right = 340.0
-margin_bottom = 72.0
-text = "Reflect"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="LFO" type="VBoxContainer" parent="TC2/LFO"]
-margin_left = 8.0
-margin_top = 80.0
-margin_right = 340.0
-margin_bottom = 200.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="LfoDepth" type="HBoxContainer" parent="TC2/LFO/LFO" groups=[
-"slider",
-]]
-margin_right = 332.0
-margin_bottom = 16.0
-size_flags_horizontal = 3
-
-[node name="Label" type="Label" parent="TC2/LFO/LFO/LfoDepth"]
-margin_top = 4.0
-margin_right = 72.0
-margin_bottom = 12.0
-custom_fonts/font = ExtResource( 4 )
-text = "~PitchAmt"
-align = 1
-
-[node name="Slider" type="HSlider" parent="TC2/LFO/LFO/LfoDepth"]
-margin_left = 76.0
-margin_right = 320.0
-margin_bottom = 16.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-min_value = -100.0
-tick_count = 21
-ticks_on_borders = true
-
-[node name="Val" type="Label" parent="TC2/LFO/LFO/LfoDepth"]
-margin_left = 324.0
-margin_top = 4.0
-margin_right = 332.0
-margin_bottom = 12.0
-custom_fonts/font = ExtResource( 4 )
-text = "0"
-align = 1
-valign = 2
-
-[node name="LfoTime" type="HBoxContainer" parent="TC2/LFO/LFO" groups=[
-"slider",
-]]
-margin_top = 20.0
-margin_right = 332.0
-margin_bottom = 36.0
-size_flags_horizontal = 3
-
-[node name="Label" type="Label" parent="TC2/LFO/LFO/LfoTime"]
-margin_top = 4.0
-margin_right = 72.0
-margin_bottom = 12.0
-custom_fonts/font = ExtResource( 4 )
-text = "+CyclTime"
-align = 1
-
-[node name="Slider" type="HSlider" parent="TC2/LFO/LFO/LfoTime"]
-margin_left = 76.0
-margin_right = 320.0
-margin_bottom = 16.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-max_value = 10000.0
-exp_edit = true
-allow_greater = true
-tick_count = 11
-ticks_on_borders = true
-
-[node name="Val" type="Label" parent="TC2/LFO/LFO/LfoTime"]
-margin_left = 324.0
-margin_top = 4.0
-margin_right = 332.0
-margin_bottom = 12.0
-mouse_filter = 0
-mouse_default_cursor_shape = 2
-custom_fonts/font = ExtResource( 4 )
-text = "0"
-align = 1
-valign = 2
-script = ExtResource( 31 )
-
-[node name="Popup" type="PopupPanel" parent="TC2/LFO/LFO/LfoTime/Val"]
-margin_left = 28.0
-margin_top = 20.0
-margin_right = 147.0
-margin_bottom = 54.0
-__meta__ = {
-"_edit_group_": true,
-"_edit_use_anchors_": false
-}
-
-[node name="Edit" type="LineEdit" parent="TC2/LFO/LFO/LfoTime/Val/Popup"]
-margin_left = 4.0
-margin_top = 4.0
-margin_right = 115.0
-margin_bottom = 30.0
-custom_fonts/font = ExtResource( 4 )
-custom_colors/selection_color = Color( 0.0784314, 0, 0.980392, 0.501961 )
-custom_colors/font_color_selected = Color( 1, 1, 1, 1 )
-custom_colors/font_color = Color( 0.690196, 0.690196, 0.690196, 1 )
-text = "0.0"
-align = 2
-max_length = 6
-right_icon = ExtResource( 32 )
-caret_blink = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Blanker" type="Panel" parent="TC2/LFO/LFO"]
-margin_top = 40.0
-margin_right = 332.0
-margin_bottom = 48.0
-rect_min_size = Vector2( 0, 8 )
-custom_styles/panel = SubResource( 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Separator" type="Panel" parent="TC2/LFO/LFO"]
-margin_top = 52.0
-margin_right = 332.0
-margin_bottom = 53.0
-rect_min_size = Vector2( 0, 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Pitch" type="Control" parent="TC2"]
 visible = false
@@ -541,7 +368,7 @@ size_flags_vertical = 3
 min_value = -100.0
 tick_count = 21
 ticks_on_borders = true
-script = SubResource( 8 )
+script = SubResource( 4 )
 
 [node name="Val" type="Label" parent="TC2/Pitch/V/H/Pal"]
 margin_top = 202.0
@@ -644,7 +471,7 @@ size_flags_vertical = 3
 min_value = -100.0
 tick_count = 21
 ticks_on_borders = true
-script = SubResource( 8 )
+script = SubResource( 4 )
 
 [node name="Val" type="Label" parent="TC2/Pitch/V/H/Pdl"]
 margin_top = 202.0
@@ -747,7 +574,7 @@ size_flags_vertical = 3
 min_value = -100.0
 tick_count = 21
 ticks_on_borders = true
-script = SubResource( 8 )
+script = SubResource( 4 )
 
 [node name="Val" type="Label" parent="TC2/Pitch/V/H/Psl"]
 margin_top = 202.0
@@ -850,7 +677,7 @@ size_flags_vertical = 3
 min_value = -100.0
 tick_count = 21
 ticks_on_borders = true
-script = SubResource( 8 )
+script = SubResource( 4 )
 
 [node name="Val" type="Label" parent="TC2/Pitch/V/H/Prl"]
 margin_top = 202.0
@@ -879,7 +706,7 @@ margin_left = -456.0
 margin_top = 24.0
 margin_right = -40.0
 margin_bottom = -216.0
-custom_styles/tab_bg = SubResource( 2 )
+custom_styles/tab_bg = SubResource( 5 )
 custom_constants/top_margin = 8
 custom_constants/side_margin = -1
 tab_align = 0
@@ -1057,7 +884,7 @@ align = 1
 valign = 1
 
 [node name="Audio" type="AudioStreamPlayer" parent="."]
-stream = SubResource( 3 )
+stream = SubResource( 6 )
 volume_db = -6.0
 script = ExtResource( 23 )
 
@@ -1066,7 +893,7 @@ script = ExtResource( 28 )
 
 [node name="ProcessRateTimer" type="Timer" parent="."]
 autostart = true
-script = SubResource( 4 )
+script = SubResource( 7 )
 
 [node name="ProcessRate" type="Label" parent="."]
 anchor_left = 1.0
@@ -1101,7 +928,7 @@ margin_right = -6.0
 margin_bottom = 38.0
 text = "Polyphony"
 align = 2
-script = SubResource( 5 )
+script = SubResource( 8 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -1153,7 +980,7 @@ __meta__ = {
 }
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-"anims/New Anim" = SubResource( 6 )
+"anims/New Anim" = SubResource( 9 )
 
 [node name="EnvelopeDisplay" parent="." instance=ExtResource( 30 )]
 anchor_left = 1.0
@@ -1177,7 +1004,7 @@ max_value = 5.0
 step = 0.1
 value = 1.0
 ticks_on_borders = true
-script = SubResource( 7 )
+script = SubResource( 10 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
