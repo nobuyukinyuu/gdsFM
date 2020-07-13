@@ -54,7 +54,7 @@ custom_fonts/font = ExtResource( 6 )
 custom_constants/check_vadjust = 2
 custom_constants/hseparation = 4
 __meta__ = {
-"_edit_use_anchors_": true
+"_edit_use_anchors_": false
 }
 
 [node name="Banks" type="HBoxContainer" parent="."]
@@ -140,7 +140,7 @@ icon = ExtResource( 12 )
 items = [ "Sine", ExtResource( 12 ), false, 0, null, "Sawtooth", ExtResource( 2 ), false, 1, null, "Stepped Tri", ExtResource( 10 ), false, 2, null, "Square/Pulse", ExtResource( 9 ), false, 3, null, "Absolute Sine", ExtResource( 8 ), false, 4, null, "White Noise", ExtResource( 4 ), false, 5, null, "Pink Noise", ExtResource( 3 ), false, 6, null, "Brown Noise", ExtResource( 11 ), false, 7, null ]
 selected = 0
 __meta__ = {
-"_edit_use_anchors_": true
+"_edit_use_anchors_": false
 }
 
 [node name="chkReflect" type="CheckButton" parent="."]
@@ -152,7 +152,7 @@ margin_bottom = 120.0
 custom_fonts/font = ExtResource( 6 )
 text = "Reflect"
 __meta__ = {
-"_edit_use_anchors_": true
+"_edit_use_anchors_": false
 }
 
 [node name="Separator" type="Panel" parent="."]
@@ -172,7 +172,7 @@ margin_right = 336.0
 margin_bottom = 288.0
 custom_constants/separation = 16
 __meta__ = {
-"_edit_use_anchors_": true
+"_edit_use_anchors_": false
 }
 
 [node name="Depth" type="HBoxContainer" parent="V" groups=[
@@ -455,30 +455,40 @@ __meta__ = {
 margin_top = 113.0
 margin_right = 332.0
 margin_bottom = 137.0
-custom_constants/hseparation = 32
-columns = 2
+custom_constants/hseparation = 16
+columns = 3
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="chkLegato" type="CheckBox" parent="V/GridContainer"]
-margin_right = 140.0
+margin_right = 95.0
 margin_bottom = 24.0
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 6 )
-custom_constants/hseparation = 8
+custom_constants/hseparation = 6
 pressed = true
-text = "Legato Mode"
+text = "Legato"
 
 [node name="chkSync" type="CheckBox" parent="V/GridContainer"]
-margin_left = 172.0
+margin_left = 111.0
+margin_right = 206.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 6 )
+custom_constants/hseparation = 6
+pressed = true
+text = "Key Sync"
+
+[node name="chkSync2" type="CheckBox" parent="V/GridContainer"]
+margin_left = 222.0
 margin_right = 332.0
 margin_bottom = 24.0
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 6 )
-custom_constants/hseparation = 8
+custom_constants/hseparation = 6
 pressed = true
-text = "Sync on New Note"
+text = "Phase Sync"
 [connection signal="toggled" from="chkEnable" to="." method="_on_chkEnable_toggled"]
 [connection signal="item_selected" from="Waveform" to="." method="_on_Waveform_item_selected"]
 [connection signal="toggled" from="chkReflect" to="." method="_on_chkReflect_toggled"]
@@ -487,3 +497,5 @@ text = "Sync on New Note"
 [connection signal="gui_input" from="V/Depth/Val/Popup/Grid/Slider" to="V/Depth/Val" method="_on_Slider_gui_input"]
 [connection signal="value_changed" from="V/Depth/Val/Popup/Grid/Slider" to="V/Depth/Val" method="_on_Slider_value_changed"]
 [connection signal="pressed" from="V/Depth/Val/Popup/Grid/OK" to="V/Depth/Val" method="_on_OK_pressed"]
+[connection signal="toggled" from="V/GridContainer/chkSync" to="." method="_on_keySync_toggled"]
+[connection signal="toggled" from="V/GridContainer/chkSync2" to="." method="_on_oscSync_toggled"]

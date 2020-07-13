@@ -59,7 +59,7 @@ public class Operator : Resource
             // First, mix the parallel modulators.
             for (var i=0; i < connections.Length; i++)
             {
-                modulator += connections[i].request_sample(phase,note);
+                modulator += connections[i].request_sample(phase,note, LFOs, lfoBufPos);
             }
 
             modulator /= connections.Length;  //mix down to 0.0-1.0f.   Is this correct?

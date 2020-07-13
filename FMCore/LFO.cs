@@ -33,7 +33,8 @@ public class LFO : Resource //: Node
     public double currentOscillation = 1.0;  //This value is precalculated whenever the sample timer changes.  Reference it when applying totalMultiplier to save CPU.
 
     //Extra Options
-    public bool keySync=true;  //Affects resets on the accumulator when a new key is pressed, otherwise the oscillator continues to cycle it from previous position.
+    public bool keySync=true;  //Affects resets on the sample timer when a new key is pressed; if disabled, delay is only used to affect an LFO's phase offset.
+    public bool oscSync=true;  //Affects resets on the accumulator when a new key is pressed, otherwise the oscillator continues to cycle it from previous position.
     public bool legato = true;  //TODO:  If disabled, quantizes LFO values to nearest 12th root of 2
 
     //Constructors
@@ -65,8 +66,10 @@ public class LFO : Resource //: Node
 
     public virtual void Reset()
     {
-        samples=0;
-        if (keySync)  phase = 0.0;
+        if (keySync)  samples=0;
+        if (oscSync){ phase = 0.0;  
+            if (!keySync)  Accumulate(delay); } //When there's oscillator sync but no key sync, presume the delay specifies a phase offset.
+        
     }
 
     //Calculates a multiplier at the current LFO's sample position.  Used for Operators' pitch modulation sensitivity.
@@ -90,7 +93,7 @@ public class LFO : Resource //: Node
     //Calculates a multiplier at the specified buffer position.  Used for Operators' pitch modulation sensitivity.
     public virtual double GetPitchMult(int idx, int noteSamples, double sensitivity=1.0)
     {
-        if (noteSamples < delay)  //Determine if the note is mature enough to have LFO applied.
+        if (samples < delay)  //Determine if the note is mature enough to have LFO applied.
         {
             return 1.0;  //No adjustment to the LFO multiplier.  Wait until delay's passed.
         } else {
@@ -108,7 +111,7 @@ public class LFO : Resource //: Node
     //Calculates a multiplier at the current LFO's sample position.  Used for Operators' total amplitude modulation sensitivity.
     public virtual double GetAmpMult(int noteSamples, double sensitivity=1.0)
     {
-        if (noteSamples < delay)
+        if (samples < delay)
         {
             return 1.0;  //No adjustment to the LFO multiplier.  Wait until delay's passed.
         } else {
@@ -123,7 +126,7 @@ public class LFO : Resource //: Node
     //Calculates a multiplier at the specified buffer position.  Used for Operators' total amplitude modulation sensitivity.
     public virtual double GetAmpMult(int idx, int noteSamples, double sensitivity=1.0)
     {
-        if (noteSamples < delay)
+        if (samples < delay)
         {
             return 1.0;  //No adjustment to the LFO multiplier.  Wait until delay's passed.
         } else {

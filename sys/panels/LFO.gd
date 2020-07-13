@@ -39,6 +39,8 @@ func load_settings():
 	$Waveform.select(currentLFO.waveform)
 	$chkEnable.pressed = currentLFO.enabled
 	$chkReflect.pressed = currentLFO.reflect_waveform
+	$V/GridContainer/chkSync.pressed = currentLFO.keySync
+	$V/GridContainer/chkSync2.pressed = currentLFO.oscSync
 	
 	for setting in $V.get_children():
 		if !setting.is_in_group("slider"):  continue
@@ -69,3 +71,9 @@ func _on_Waveform_item_selected(index):
 
 func _on_chkReflect_toggled(button_pressed):
 	if currentLFO:  currentLFO.reflect_waveform = button_pressed
+
+
+func _on_keySync_toggled(button_pressed):
+	if currentLFO:  currentLFO.keySync = button_pressed
+func _on_oscSync_toggled(button_pressed):
+	if currentLFO:  currentLFO.oscSync = button_pressed

@@ -209,7 +209,7 @@ public Channel PreviewNotes = new Channel();
         {
             foreach (LFO lfo in patch.LFOs)
             {
-                if (lfo.keySync) lfo.Reset();
+                lfo.Reset();
             }
         }
 

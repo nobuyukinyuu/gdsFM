@@ -503,5 +503,4 @@ __meta__ = {
 [connection signal="pressed" from="H/FixedFreq/Presets" to="H/FixedFreq" method="_on_Presets_pressed"]
 [connection signal="pressed" from="H/FixedFreq/Ratios" to="H/FixedFreq" method="_on_Ratios_pressed"]
 [connection signal="gui_input" from="H/Dt/Slider" to="H/Dt/Slider" method="_on_Slider_gui_input"]
-[connection signal="gui_input" from="H/PMS/Slider" to="H/PMS/Slider" method="_on_Slider_gui_input"]
 [connection signal="value_changed" from="H/PMS/Slider" to="H/PMS" method="_on_Slider_value_changed"]
