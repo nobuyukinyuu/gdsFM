@@ -4,11 +4,10 @@
 [ext_resource path="res://gfx/fonts/spelunkid_font.tres" type="BitmapFont" id=2]
 
 [node name="Options" type="VBoxContainer"]
-anchor_right = 1.0
 margin_top = 84.0
-margin_right = -872.0
+margin_right = 408.0
 margin_bottom = 319.0
-custom_constants/separation = 8
+custom_constants/separation = 6
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -20,9 +19,9 @@ margin_bottom = 1.0
 rect_min_size = Vector2( 0, 1 )
 
 [node name="lblFeedback" type="Label" parent="."]
-margin_top = 9.0
+margin_top = 7.0
 margin_right = 408.0
-margin_bottom = 17.0
+margin_bottom = 15.0
 custom_fonts/font = ExtResource( 2 )
 text = "Feedback:  0"
 align = 1
@@ -31,9 +30,9 @@ __meta__ = {
 }
 
 [node name="FB" type="HSlider" parent="."]
-margin_top = 25.0
+margin_top = 21.0
 margin_right = 408.0
-margin_bottom = 41.0
+margin_bottom = 37.0
 max_value = 8.0
 step = 0.05
 ticks_on_borders = true
@@ -42,17 +41,17 @@ __meta__ = {
 }
 
 [node name="lblDuty" type="Label" parent="."]
-margin_top = 49.0
+margin_top = 43.0
 margin_right = 408.0
-margin_bottom = 57.0
+margin_bottom = 51.0
 custom_fonts/font = ExtResource( 2 )
 text = "Duty Cycle:  0.5"
 align = 1
 
 [node name="DutyCycle" type="HSlider" parent="."]
-margin_top = 65.0
+margin_top = 57.0
 margin_right = 408.0
-margin_bottom = 81.0
+margin_bottom = 73.0
 max_value = 1.0
 step = 0.01
 value = 0.5
@@ -60,38 +59,38 @@ tick_count = 11
 ticks_on_borders = true
 
 [node name="LineSep2" type="Panel" parent="."]
-margin_top = 89.0
+margin_top = 79.0
 margin_right = 408.0
-margin_bottom = 90.0
+margin_bottom = 80.0
 rect_min_size = Vector2( 0, 1 )
 
 [node name="Spacer" type="Control" parent="."]
-margin_top = 98.0
+margin_top = 86.0
 margin_right = 408.0
-margin_bottom = 98.0
+margin_bottom = 86.0
 
 [node name="chkReflect" type="CheckButton" parent="."]
-margin_top = 106.0
+margin_top = 92.0
 margin_right = 408.0
-margin_bottom = 146.0
+margin_bottom = 132.0
 text = "Reflect Waveform"
 
 [node name="chkUseDuty" type="CheckButton" parent="."]
-margin_top = 154.0
+margin_top = 138.0
 margin_right = 408.0
-margin_bottom = 194.0
+margin_bottom = 178.0
 text = "Use Duty Cycle (Higher CPU)"
 
 [node name="LineSep3" type="Panel" parent="."]
-margin_top = 202.0
+margin_top = 184.0
 margin_right = 408.0
-margin_bottom = 203.0
+margin_bottom = 185.0
 rect_min_size = Vector2( 0, 1 )
 
 [node name="OscBank" type="HBoxContainer" parent="."]
-margin_top = 211.0
+margin_top = 191.0
 margin_right = 408.0
-margin_bottom = 235.0
+margin_bottom = 215.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
