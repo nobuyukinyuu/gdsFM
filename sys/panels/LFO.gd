@@ -41,6 +41,7 @@ func load_settings():
 	$chkReflect.pressed = currentLFO.reflect_waveform
 	$V/GridContainer/chkSync.pressed = currentLFO.keySync
 	$V/GridContainer/chkSync2.pressed = currentLFO.oscSync
+	$V/GridContainer/chkLegato.pressed = currentLFO.legato
 	
 	for setting in $V.get_children():
 		if !setting.is_in_group("slider"):  continue
@@ -77,3 +78,5 @@ func _on_keySync_toggled(button_pressed):
 	if currentLFO:  currentLFO.keySync = button_pressed
 func _on_oscSync_toggled(button_pressed):
 	if currentLFO:  currentLFO.oscSync = button_pressed
+func _on_chkLegato_toggled(button_pressed):
+	if currentLFO:  currentLFO.legato = button_pressed

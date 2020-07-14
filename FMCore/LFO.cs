@@ -21,10 +21,13 @@ public class LFO : Resource //: Node
     public double cycleTime = 1;  //Length, in seconds to reach one oscillation of the LFO waveform.
     public int delay = 0;  //Delay, in samples, before the oscillation kicks in.
 
+    public double bias = 0;  //DC offset bias
+
     //Helper properties that allow specifying cycle time and delay in millisecs.
     public double CycleTime { get =>  cycleTime * 1000; set => cycleTime = (value/1000.0); }
     public double Delay { get =>  1000 * delay / sample_rate ; set =>  delay = (int)((value/1000.0)*sample_rate); }
     public double Depth { get => depth*100; set => depth = value/100.0; }
+    public double Bias { get => bias*100; set => bias = value/100.0; }
 
 
     //Running counters
@@ -36,6 +39,10 @@ public class LFO : Resource //: Node
     public bool keySync=true;  //Affects resets on the sample timer when a new key is pressed; if disabled, delay is only used to affect an LFO's phase offset.
     public bool oscSync=true;  //Affects resets on the accumulator when a new key is pressed, otherwise the oscillator continues to cycle it from previous position.
     public bool legato = true;  //TODO:  If disabled, quantizes LFO values to nearest 12th root of 2
+
+
+    public static readonly double[] NEAREST_12 = new double[] //Nearest power of 12, used for quantizing LFO when discrete note (no legato) mode is enabled
+            {0, 0.059463, 0.122462, 0.189207, 0.259921, 0.33484, 0.414214, 0.498307, 0.587401, 0.681793, 0.781797, 0.887749, 1.0};
 
     //Constructors
     public LFO(){}
@@ -82,11 +89,13 @@ public class LFO : Resource //: Node
             //First, apply the sensitivity to the output before converting it to a pitch multiplier.
             //TODO:  Should depth magnitude also be applied here?  
             var output = depth * currentOscillation * sensitivity ;
+            if (!legato) output = NearestSemitone(output);
+
             //Negative number output from the oscillator during precalc should be converted to its reciprocal to represent a lower change in pitch.
             if (output < 0)  {
                 output =  1 / Math.Abs(1-output); 
             } else { output += 1; }
-            return output;  
+            return output+bias;  
         }
     }
 
@@ -99,14 +108,17 @@ public class LFO : Resource //: Node
         } else {
             var osc = buffer[idx];
             var output = depth * osc * sensitivity ;
+            if (!legato) output = NearestSemitone(output);
 
             //Negative number output from the oscillator during precalc should be converted to its reciprocal to represent a lower change in pitch.
             if (output < 0)  {
                 output =  1 / Math.Abs(1-output); 
             } else { output += 1; }
-            return output;  
+
+            return output+bias;  
         }
     }
+
 
     //Calculates a multiplier at the current LFO's sample position.  Used for Operators' total amplitude modulation sensitivity.
     public virtual double GetAmpMult(int noteSamples, double sensitivity=1.0)
@@ -175,6 +187,16 @@ public class LFO : Resource //: Node
         samples += numsamples;
     }
 
+
+    static double NearestSemitone(double input)
+    {
+        var sign = Math.Sign(input);
+        var whole = Math.Truncate(input);
+        var frac = Math.Abs(input - whole);
+
+        var idx = (int) (frac * (NEAREST_12.Length-double.Epsilon));
+        return (NEAREST_12[idx] + (whole>1? whole:0)) * sign ;
+    }
 }
 
 //DummyLFO class used to be below but was deleted because complexity of virtual methods might erase any advantage over 1 or 2 branch statements used to check LFO bank.

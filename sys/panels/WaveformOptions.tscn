@@ -6,7 +6,8 @@
 [node name="Options" type="VBoxContainer"]
 anchor_right = 1.0
 margin_top = 84.0
-margin_bottom = 303.0
+margin_right = -872.0
+margin_bottom = 319.0
 custom_constants/separation = 8
 script = ExtResource( 1 )
 __meta__ = {
@@ -14,13 +15,13 @@ __meta__ = {
 }
 
 [node name="LineSep" type="Panel" parent="."]
-margin_right = 1280.0
+margin_right = 408.0
 margin_bottom = 1.0
 rect_min_size = Vector2( 0, 1 )
 
 [node name="lblFeedback" type="Label" parent="."]
 margin_top = 9.0
-margin_right = 1280.0
+margin_right = 408.0
 margin_bottom = 17.0
 custom_fonts/font = ExtResource( 2 )
 text = "Feedback:  0"
@@ -31,7 +32,7 @@ __meta__ = {
 
 [node name="FB" type="HSlider" parent="."]
 margin_top = 25.0
-margin_right = 1280.0
+margin_right = 408.0
 margin_bottom = 41.0
 max_value = 8.0
 step = 0.05
@@ -42,7 +43,7 @@ __meta__ = {
 
 [node name="lblDuty" type="Label" parent="."]
 margin_top = 49.0
-margin_right = 1280.0
+margin_right = 408.0
 margin_bottom = 57.0
 custom_fonts/font = ExtResource( 2 )
 text = "Duty Cycle:  0.5"
@@ -50,7 +51,7 @@ align = 1
 
 [node name="DutyCycle" type="HSlider" parent="."]
 margin_top = 65.0
-margin_right = 1280.0
+margin_right = 408.0
 margin_bottom = 81.0
 max_value = 1.0
 step = 0.01
@@ -60,36 +61,36 @@ ticks_on_borders = true
 
 [node name="LineSep2" type="Panel" parent="."]
 margin_top = 89.0
-margin_right = 1280.0
+margin_right = 408.0
 margin_bottom = 90.0
 rect_min_size = Vector2( 0, 1 )
 
 [node name="Spacer" type="Control" parent="."]
 margin_top = 98.0
-margin_right = 1280.0
+margin_right = 408.0
 margin_bottom = 98.0
 
 [node name="chkReflect" type="CheckButton" parent="."]
 margin_top = 106.0
-margin_right = 1280.0
+margin_right = 408.0
 margin_bottom = 146.0
 text = "Reflect Waveform"
 
 [node name="chkUseDuty" type="CheckButton" parent="."]
 margin_top = 154.0
-margin_right = 1280.0
+margin_right = 408.0
 margin_bottom = 194.0
 text = "Use Duty Cycle (Higher CPU)"
 
 [node name="LineSep3" type="Panel" parent="."]
 margin_top = 202.0
-margin_right = 1280.0
+margin_right = 408.0
 margin_bottom = 203.0
 rect_min_size = Vector2( 0, 1 )
 
 [node name="OscBank" type="HBoxContainer" parent="."]
 margin_top = 211.0
-margin_right = 1280.0
+margin_right = 408.0
 margin_bottom = 235.0
 __meta__ = {
 "_edit_use_anchors_": false
@@ -97,14 +98,14 @@ __meta__ = {
 
 [node name="Label" type="Label" parent="OscBank"]
 margin_top = 5.0
-margin_right = 1202.0
+margin_right = 330.0
 margin_bottom = 19.0
 size_flags_horizontal = 3
 text = " Custom Oscillator Waveform Bank #"
 
 [node name="SpinBox" type="SpinBox" parent="OscBank"]
-margin_left = 1206.0
-margin_right = 1280.0
+margin_left = 334.0
+margin_right = 408.0
 margin_bottom = 24.0
 align = 2
 editable = false

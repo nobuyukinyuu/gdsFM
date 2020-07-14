@@ -3,6 +3,7 @@ extends Label
 var semitone_or_mult = 0  #Set to 1 for multiplier instead of semitone
 var labels = ["Semitone:", "Multiplier:"]
 
+
 func _gui_input(event):
 	if event is InputEventMouseButton and event.pressed:
 		$Popup.popup()

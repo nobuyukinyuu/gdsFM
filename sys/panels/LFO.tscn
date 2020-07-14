@@ -118,9 +118,9 @@ __meta__ = {
 
 [node name="lblLFO2" type="Label" parent="."]
 margin_left = 4.0
-margin_top = 48.0
+margin_top = 40.0
 margin_right = 76.0
-margin_bottom = 68.0
+margin_bottom = 60.0
 custom_fonts/font = ExtResource( 6 )
 text = "Waveform:"
 valign = 1
@@ -130,9 +130,9 @@ __meta__ = {
 
 [node name="Waveform" type="OptionButton" parent="."]
 margin_left = 4.0
-margin_top = 72.0
+margin_top = 64.0
 margin_right = 198.0
-margin_bottom = 120.0
+margin_bottom = 112.0
 rect_min_size = Vector2( 0, 48 )
 custom_constants/hseparation = 8
 text = "Sine"
@@ -146,9 +146,9 @@ __meta__ = {
 [node name="chkReflect" type="CheckButton" parent="."]
 anchor_right = 0.0232558
 margin_left = 204.0
-margin_top = 72.0
+margin_top = 64.0
 margin_right = 340.0
-margin_bottom = 120.0
+margin_bottom = 112.0
 custom_fonts/font = ExtResource( 6 )
 text = "Reflect"
 __meta__ = {
@@ -157,9 +157,9 @@ __meta__ = {
 
 [node name="Separator" type="Panel" parent="."]
 margin_left = 4.0
-margin_top = 144.0
+margin_top = 132.0
 margin_right = 336.0
-margin_bottom = 145.0
+margin_bottom = 133.0
 rect_min_size = Vector2( 0, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -167,9 +167,9 @@ __meta__ = {
 
 [node name="V" type="VBoxContainer" parent="."]
 margin_left = 4.0
-margin_top = 168.0
+margin_top = 148.0
 margin_right = 336.0
-margin_bottom = 288.0
+margin_bottom = 317.0
 custom_constants/separation = 16
 __meta__ = {
 "_edit_use_anchors_": false
@@ -243,6 +243,7 @@ margin_right = 176.0
 margin_bottom = 11.0
 rect_min_size = Vector2( 0, 12 )
 mouse_filter = 0
+mouse_default_cursor_shape = 2
 custom_fonts/font = ExtResource( 6 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 1
@@ -291,12 +292,51 @@ margin_bottom = 36.0
 custom_fonts/font = ExtResource( 6 )
 text = "OK"
 
-[node name="CycleTime" type="HBoxContainer" parent="V" groups=[
+[node name="Bias" type="HBoxContainer" parent="V" groups=[
 "slider",
 ]]
 margin_top = 32.0
 margin_right = 332.0
 margin_bottom = 48.0
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="V/Bias"]
+margin_top = 4.0
+margin_right = 48.0
+margin_bottom = 12.0
+custom_fonts/font = ExtResource( 6 )
+text = "~Bias "
+
+[node name="Slider" type="HSlider" parent="V/Bias"]
+margin_left = 52.0
+margin_right = 320.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+min_value = -50.0
+max_value = 50.0
+step = 1.0
+tick_count = 11
+ticks_on_borders = true
+
+[node name="Val" type="Label" parent="V/Bias"]
+margin_left = 324.0
+margin_top = 4.0
+margin_right = 332.0
+margin_bottom = 12.0
+mouse_filter = 0
+mouse_default_cursor_shape = 2
+custom_fonts/font = ExtResource( 6 )
+text = "0"
+align = 1
+valign = 2
+
+[node name="CycleTime" type="HBoxContainer" parent="V" groups=[
+"slider",
+]]
+margin_top = 64.0
+margin_right = 332.0
+margin_bottom = 80.0
 size_flags_horizontal = 3
 
 [node name="Label" type="Label" parent="V/CycleTime"]
@@ -364,9 +404,9 @@ __meta__ = {
 [node name="Delay" type="HBoxContainer" parent="V" groups=[
 "slider",
 ]]
-margin_top = 64.0
+margin_top = 96.0
 margin_right = 332.0
-margin_bottom = 80.0
+margin_bottom = 112.0
 size_flags_horizontal = 3
 
 [node name="Label" type="Label" parent="V/Delay"]
@@ -443,18 +483,18 @@ __meta__ = {
 }
 
 [node name="Separator3" type="Panel" parent="V"]
-margin_top = 96.0
+margin_top = 128.0
 margin_right = 332.0
-margin_bottom = 97.0
+margin_bottom = 129.0
 rect_min_size = Vector2( 0, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="GridContainer" type="GridContainer" parent="V"]
-margin_top = 113.0
+margin_top = 145.0
 margin_right = 332.0
-margin_bottom = 137.0
+margin_bottom = 169.0
 custom_constants/hseparation = 16
 columns = 3
 __meta__ = {
@@ -497,5 +537,6 @@ text = "Phase Sync"
 [connection signal="gui_input" from="V/Depth/Val/Popup/Grid/Slider" to="V/Depth/Val" method="_on_Slider_gui_input"]
 [connection signal="value_changed" from="V/Depth/Val/Popup/Grid/Slider" to="V/Depth/Val" method="_on_Slider_value_changed"]
 [connection signal="pressed" from="V/Depth/Val/Popup/Grid/OK" to="V/Depth/Val" method="_on_OK_pressed"]
+[connection signal="toggled" from="V/GridContainer/chkLegato" to="." method="_on_chkLegato_toggled"]
 [connection signal="toggled" from="V/GridContainer/chkSync" to="." method="_on_keySync_toggled"]
 [connection signal="toggled" from="V/GridContainer/chkSync2" to="." method="_on_oscSync_toggled"]
