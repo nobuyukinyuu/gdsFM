@@ -37,6 +37,10 @@ public class Note : Node, IComparable<Note>
 //Similar to feedback, to determine running frequency for cutoff filters, a history must be kept per-operator.
     public List<Double[]> cutoffHistory = new List<Double[]>{new double[]{0.0, 0.0}, new double[]{0.0, 0.0},new double[]{0.0, 0.0},new double[]{0.0, 0.0}, };
 
+//Similar to the above 2 values, this field smooths out the amplitude modulation when the note is attached to a patch with AMS enabled.
+    public List<double> ampBuffer = new List<double>(new double[16]);
+
+
 //The owner of the Note.  This could be a channel for arbitrary-n notes, or a channel which needs temporary polyphony.
     public Channel _channel; 
 

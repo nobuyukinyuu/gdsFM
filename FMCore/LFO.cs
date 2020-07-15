@@ -136,20 +136,30 @@ public class LFO : Resource //: Node
         }
     }
     //Calculates a multiplier at the specified buffer position.  Used for Operators' total amplitude modulation sensitivity.
-    public virtual double GetAmpMult(int idx, int noteSamples, double sensitivity=1.0)
+    public virtual double GetAmpMult(int idx, List<double> ampBuffer, double sensitivity=1.0)
     {
+        double output;
         if (samples < delay)
         {
-            return 1.0;  //No adjustment to the LFO multiplier.  Wait until delay's passed.
+            output = 1.0;  //No adjustment to the LFO multiplier.  Wait until delay's passed.
         } else {
             //The minimum level of amplitude is determined by the sensitivity.  This will be added to the output; the final value will be normalized.
             //The result is that a sensitivity of 0 always keeps output TL at max, and a full sensitivity of 1 will oscillate output from 0-1.            
-            var output = (buffer[idx] * sensitivity) + (1.0-sensitivity);
+            output = (buffer[idx] * sensitivity) + (1.0-sensitivity);
+            output = (output +1) * 0.5;
+        }
+            var average = 0.0;
+            for (int i=0; i < ampBuffer.Count; i++){
+                average += ampBuffer[i];
+            }   average /= ampBuffer.Count;
+
+            ampBuffer.Add(output);
+            ampBuffer.RemoveAt(0);
 
             //Output can range from -1 to 1 at this point, so scale it to the proper level for amplitude output.
-            return (output+1) * 0.5;
-        }
+            return average;
     }
+    // double[] ampBuffer = new double[3];
 
 
     //Gets the oscillator at current phase.
