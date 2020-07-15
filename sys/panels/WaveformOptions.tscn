@@ -1,27 +1,103 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://sys/panels/WaveformOptions.gd" type="Script" id=1]
 [ext_resource path="res://gfx/fonts/spelunkid_font.tres" type="BitmapFont" id=2]
+[ext_resource path="res://gfx/waveforms/1.png" type="Texture" id=3]
+[ext_resource path="res://gfx/waveforms/6.png" type="Texture" id=4]
+[ext_resource path="res://gfx/waveforms/5.png" type="Texture" id=5]
+[ext_resource path="res://gfx/waveforms/4.png" type="Texture" id=6]
+[ext_resource path="res://gfx/waveforms/3.png" type="Texture" id=7]
+[ext_resource path="res://gfx/waveforms/2.png" type="Texture" id=8]
+[ext_resource path="res://gfx/waveforms/7.png" type="Texture" id=9]
+[ext_resource path="res://gfx/waveforms/0.png" type="Texture" id=10]
+[ext_resource path="res://sys/ui/responseCurve/ResponsePreviewButton.tscn" type="PackedScene" id=11]
+
+[sub_resource type="StyleBoxEmpty" id=1]
 
 [node name="Options" type="VBoxContainer"]
 margin_top = 84.0
 margin_right = 408.0
 margin_bottom = 319.0
-custom_constants/separation = 6
+custom_constants/separation = 8
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="LineSep" type="Panel" parent="."]
+[node name="Grid" type="GridContainer" parent="."]
 margin_right = 408.0
-margin_bottom = 1.0
+margin_bottom = 68.0
+custom_constants/vseparation = 12
+custom_constants/hseparation = 12
+columns = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="lblOsc" type="Label" parent="Grid"]
+margin_right = 198.0
+margin_bottom = 8.0
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 2 )
+text = "Oscillator:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="lblMod" type="Label" parent="Grid"]
+margin_left = 210.0
+margin_right = 408.0
+margin_bottom = 8.0
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 2 )
+text = "Modulation Technique: "
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Waveform" type="OptionButton" parent="Grid"]
+margin_top = 20.0
+margin_right = 198.0
+margin_bottom = 68.0
+rect_min_size = Vector2( 0, 48 )
+custom_constants/hseparation = 8
+text = "Sine"
+icon = ExtResource( 10 )
+items = [ "Sine", ExtResource( 10 ), false, 0, null, "Sawtooth", ExtResource( 3 ), false, 1, null, "Stepped Tri", ExtResource( 8 ), false, 2, null, "Square/Pulse", ExtResource( 7 ), false, 3, null, "Absolute Sine", ExtResource( 6 ), false, 4, null, "White Noise", ExtResource( 5 ), false, 5, null, "Pink Noise", ExtResource( 4 ), false, 6, null, "Brown Noise", ExtResource( 9 ), false, 7, null ]
+selected = 0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Waveform2" type="OptionButton" parent="Grid"]
+margin_left = 210.0
+margin_top = 20.0
+margin_right = 408.0
+margin_bottom = 68.0
+custom_constants/hseparation = 8
+text = "Sine"
+icon = ExtResource( 10 )
+items = [ "Sine", ExtResource( 10 ), false, 0, null, "Sawtooth", ExtResource( 3 ), false, 1, null, "Stepped Tri", ExtResource( 8 ), false, 2, null, "Square/Pulse", ExtResource( 7 ), false, 3, null, "Absolute Sine", ExtResource( 6 ), false, 4, null, "White Noise", ExtResource( 5 ), false, 5, null, "Pink Noise", ExtResource( 4 ), false, 6, null, "Brown Noise", ExtResource( 9 ), false, 7, null ]
+selected = 0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LineSep" type="Panel" parent="."]
+margin_top = 76.0
+margin_right = 408.0
+margin_bottom = 77.0
 rect_min_size = Vector2( 0, 1 )
 
-[node name="lblFeedback" type="Label" parent="."]
-margin_top = 7.0
+[node name="Spacer2" type="Control" parent="."]
+margin_top = 85.0
 margin_right = 408.0
-margin_bottom = 15.0
+margin_bottom = 85.0
+
+[node name="lblFeedback" type="Label" parent="."]
+margin_top = 93.0
+margin_right = 408.0
+margin_bottom = 101.0
 custom_fonts/font = ExtResource( 2 )
 text = "Feedback:  0"
 align = 1
@@ -30,9 +106,9 @@ __meta__ = {
 }
 
 [node name="FB" type="HSlider" parent="."]
-margin_top = 21.0
+margin_top = 109.0
 margin_right = 408.0
-margin_bottom = 37.0
+margin_bottom = 125.0
 max_value = 8.0
 step = 0.05
 ticks_on_borders = true
@@ -41,17 +117,17 @@ __meta__ = {
 }
 
 [node name="lblDuty" type="Label" parent="."]
-margin_top = 43.0
+margin_top = 133.0
 margin_right = 408.0
-margin_bottom = 51.0
+margin_bottom = 141.0
 custom_fonts/font = ExtResource( 2 )
 text = "Duty Cycle:  0.5"
 align = 1
 
 [node name="DutyCycle" type="HSlider" parent="."]
-margin_top = 57.0
+margin_top = 149.0
 margin_right = 408.0
-margin_bottom = 73.0
+margin_bottom = 165.0
 max_value = 1.0
 step = 0.01
 value = 0.5
@@ -59,38 +135,72 @@ tick_count = 11
 ticks_on_borders = true
 
 [node name="LineSep2" type="Panel" parent="."]
-margin_top = 79.0
+margin_top = 173.0
 margin_right = 408.0
-margin_bottom = 80.0
+margin_bottom = 174.0
 rect_min_size = Vector2( 0, 1 )
 
 [node name="Spacer" type="Control" parent="."]
-margin_top = 86.0
+margin_top = 182.0
 margin_right = 408.0
-margin_bottom = 86.0
+margin_bottom = 182.0
 
-[node name="chkReflect" type="CheckButton" parent="."]
-margin_top = 92.0
+[node name="H" type="HBoxContainer" parent="."]
+margin_top = 190.0
 margin_right = 408.0
-margin_bottom = 132.0
+margin_bottom = 274.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="chk" type="VBoxContainer" parent="H"]
+margin_right = 303.0
+margin_bottom = 84.0
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.5
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Reflect" type="CheckButton" parent="H/chk"]
+margin_right = 303.0
+margin_bottom = 40.0
 text = "Reflect Waveform"
 
-[node name="chkUseDuty" type="CheckButton" parent="."]
-margin_top = 138.0
-margin_right = 408.0
-margin_bottom = 178.0
+[node name="UseDuty" type="CheckButton" parent="H/chk"]
+margin_top = 44.0
+margin_right = 303.0
+margin_bottom = 84.0
 text = "Use Duty Cycle (Higher CPU)"
 
-[node name="LineSep3" type="Panel" parent="."]
-margin_top = 184.0
+[node name="CustomWave" type="Panel" parent="H"]
+margin_left = 307.0
 margin_right = 408.0
-margin_bottom = 185.0
+margin_bottom = 84.0
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.5
+custom_styles/panel = SubResource( 1 )
+
+[node name="Preview" parent="H/CustomWave" instance=ExtResource( 11 )]
+margin_left = 2.0
+margin_top = -8.0
+margin_right = 98.0
+margin_bottom = 88.0
+rect_min_size = Vector2( 96, 96 )
+text = "Waveform"
+target = 1
+note_scale = false
+
+[node name="LineSep3" type="Panel" parent="."]
+margin_top = 282.0
+margin_right = 408.0
+margin_bottom = 283.0
 rect_min_size = Vector2( 0, 1 )
 
 [node name="OscBank" type="HBoxContainer" parent="."]
-margin_top = 191.0
+margin_top = 291.0
 margin_right = 408.0
-margin_bottom = 215.0
+margin_bottom = 315.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -108,7 +218,9 @@ margin_right = 408.0
 margin_bottom = 24.0
 align = 2
 editable = false
+[connection signal="item_selected" from="Grid/Waveform" to="." method="_on_Waveform_item_selected"]
+[connection signal="item_selected" from="Grid/Waveform2" to="." method="_on_Waveform_item_selected" binds= [ true ]]
 [connection signal="value_changed" from="FB" to="." method="_on_FB_value_changed"]
 [connection signal="value_changed" from="DutyCycle" to="." method="_on_DutyCycle_value_changed"]
-[connection signal="toggled" from="chkReflect" to="." method="_on_chkReflect_toggled"]
-[connection signal="toggled" from="chkUseDuty" to="." method="_on_chkUseDuty_toggled"]
+[connection signal="toggled" from="H/chk/Reflect" to="." method="_on_chkReflect_toggled"]
+[connection signal="toggled" from="H/chk/UseDuty" to="." method="_on_chkUseDuty_toggled"]

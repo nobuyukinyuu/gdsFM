@@ -9,8 +9,22 @@ func load_settings(envelope):
 	global.currentEG = envelope
 	$FB.value = envelope.feedback
 	$DutyCycle.value = envelope.duty
-	$chkReflect.pressed = envelope.reflect
-	$chkUseDuty.pressed = envelope.UseDuty
+	$H/chk/Reflect.pressed = envelope.reflect
+	$H/chk/UseDuty.pressed = envelope.UseDuty
+
+	$Grid/Waveform.select(envelope.waveform)
+	$Grid/Waveform2.select(envelope.fmTechnique)
+
+
+
+func _on_Waveform_item_selected(id, techWaveform:bool=false):
+	if !global.currentEG:  return
+
+	if !techWaveform:
+		global.currentEG.waveform = id
+	else:
+		global.currentEG.fmTechnique = id
+
 
 
 # Feedback

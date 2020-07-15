@@ -91,9 +91,6 @@ func _on_GraphEdit_node_selected(node):
 		$TC/Waveform/Options.load_settings(envelope)
 		$TC/Response.load_settings(envelope)
 
-		$TC/Waveform/Grid/Waveform.select(envelope.waveform)
-		$TC/Waveform/Grid/Waveform2.select(envelope.fmTechnique)
-
 		$TC/EGControl.disable(false)
 #		$TC.enable
 
@@ -102,15 +99,6 @@ func _on_GraphEdit_node_selected(node):
 		
 		print("Selected: ", node.name)
 		update_envelope_preview_all($EnvelopeDisplay, envelope)
-
-func _on_Waveform_item_selected(id, techWaveform:bool=false):
-	if !global.currentEG:  return
-
-	if !techWaveform:
-		global.currentEG.waveform = id
-	else:
-		global.currentEG.fmTechnique = id
-
 
 func _on_Algorithm_item_selected(id):
 	var algo = []

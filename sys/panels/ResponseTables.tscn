@@ -1,8 +1,27 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://sys/ui/responseCurve/ResponsePreviewButton.tscn" type="PackedScene" id=1]
 [ext_resource path="res://gfx/fonts/spelunkid_font.tres" type="BitmapFont" id=2]
 [ext_resource path="res://sys/panels/ResponseTables.gd" type="Script" id=3]
+[ext_resource path="res://sys/panels/AMS.gd" type="Script" id=4]
+[ext_resource path="res://gfx/fonts/NoteFont.tres" type="BitmapFont" id=5]
+[ext_resource path="res://sys/panels/LFOBankSelect.gd" type="Script" id=6]
+
+[sub_resource type="Theme" id=5]
+default_font = ExtResource( 5 )
+Button/colors/font_color = Color( 0.88, 0.88, 0.88, 1 )
+Button/colors/font_color_disabled = Color( 0.9, 0.9, 0.9, 0.2 )
+Button/colors/font_color_hover = Color( 0.94, 0.94, 0.94, 1 )
+Button/colors/font_color_pressed = Color( 1, 1, 1, 1 )
+Button/constants/hseparation = 2
+Button/fonts/font = null
+Button/styles/disabled = null
+Button/styles/focus = null
+Button/styles/hover = null
+Button/styles/normal = null
+Button/styles/pressed = null
+
+[sub_resource type="ButtonGroup" id=6]
 
 [node name="Response" type="Control"]
 anchor_right = 1.0
@@ -160,6 +179,7 @@ __meta__ = {
 [node name="feedback" type="HBoxContainer" parent="V" groups=[
 "slider",
 ]]
+visible = false
 margin_top = 137.0
 margin_right = 408.0
 margin_bottom = 153.0
@@ -199,4 +219,105 @@ custom_fonts/font = ExtResource( 2 )
 text = "0"
 align = 1
 valign = 2
+
+[node name="AMS" type="HBoxContainer" parent="V" groups=[
+"setting_group",
+]]
+margin_top = 137.0
+margin_right = 408.0
+margin_bottom = 156.0
+size_flags_horizontal = 3
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Lbl" type="Label" parent="V/AMS"]
+margin_right = 88.0
+margin_bottom = 19.0
+custom_fonts/font = ExtResource( 2 )
+text = "LFO Amplit.
+Sensitivity"
+align = 1
+
+[node name="Slider" type="HSlider" parent="V/AMS"]
+margin_left = 92.0
+margin_right = 372.0
+margin_bottom = 19.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+max_value = 100.0
+step = 0.1
+allow_greater = true
+tick_count = 11
+ticks_on_borders = true
+
+[node name="Val" type="Label" parent="V/AMS"]
+margin_left = 376.0
+margin_top = 5.0
+margin_right = 408.0
+margin_bottom = 13.0
+rect_min_size = Vector2( 32, 0 )
+custom_fonts/font = ExtResource( 2 )
+text = "0"
+align = 1
+valign = 2
+
+[node name="Banks" type="HBoxContainer" parent="V"]
+margin_top = 172.0
+margin_right = 408.0
+margin_bottom = 188.0
+alignment = 2
+script = ExtResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+lfo_type = 1
+
+[node name="lblBank" type="Label" parent="V/Banks"]
+modulate = Color( 1, 1, 1, 0.376471 )
+margin_left = 238.0
+margin_top = 4.0
+margin_right = 318.0
+margin_bottom = 12.0
+custom_fonts/font = ExtResource( 2 )
+text = "LFO Bank: "
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="0" type="Button" parent="V/Banks"]
+margin_left = 322.0
+margin_right = 344.0
+margin_bottom = 16.0
+theme = SubResource( 5 )
+toggle_mode = true
+group = SubResource( 6 )
+text = "A"
+
+[node name="1" type="Button" parent="V/Banks"]
+margin_left = 348.0
+margin_right = 370.0
+margin_bottom = 16.0
+theme = SubResource( 5 )
+toggle_mode = true
+group = SubResource( 6 )
+text = "B"
+
+[node name="2" type="Button" parent="V/Banks"]
+margin_left = 374.0
+margin_right = 396.0
+margin_bottom = 16.0
+theme = SubResource( 5 )
+toggle_mode = true
+group = SubResource( 6 )
+text = "C"
+
+[node name="Blanker" type="Control" parent="V/Banks"]
+margin_left = 400.0
+margin_right = 408.0
+margin_bottom = 16.0
+rect_min_size = Vector2( 8, 0 )
 [connection signal="toggled" from="V/chkEnableFilter" to="." method="_on_chkEnableFilter_toggled"]
+[connection signal="value_changed" from="V/AMS/Slider" to="V/AMS" method="_on_Slider_value_changed"]

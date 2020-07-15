@@ -23,6 +23,8 @@ func load_settings(envelope):
 		var s = setting.name
 		if setting.is_in_group("slider"):
 			get_node("V/%s/Slider" % setting.name).value = envelope.get(s)
+		elif setting.is_in_group("setting_group"):
+			setting.load_settings()  #Applies to AMS settings, maybe others
 
 	$V/chkEnableFilter.pressed = envelope.FilterEnabled
 

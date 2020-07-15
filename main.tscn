@@ -1,4 +1,4 @@
-[gd_scene load_steps=46 format=2]
+[gd_scene load_steps=38 format=2]
 
 [ext_resource path="res://main.gd" type="Script" id=1]
 [ext_resource path="res://sys/panels/EGControl.tscn" type="PackedScene" id=2]
@@ -14,14 +14,6 @@
 [ext_resource path="res://gfx/al7.png" type="Texture" id=12]
 [ext_resource path="res://gfx/al_custom.png" type="Texture" id=13]
 [ext_resource path="res://OP-GraphEditor.gd" type="Script" id=14]
-[ext_resource path="res://gfx/waveforms/1.png" type="Texture" id=15]
-[ext_resource path="res://gfx/waveforms/6.png" type="Texture" id=16]
-[ext_resource path="res://gfx/waveforms/5.png" type="Texture" id=17]
-[ext_resource path="res://gfx/waveforms/4.png" type="Texture" id=18]
-[ext_resource path="res://gfx/waveforms/2.png" type="Texture" id=19]
-[ext_resource path="res://gfx/waveforms/7.png" type="Texture" id=20]
-[ext_resource path="res://gfx/waveforms/0.png" type="Texture" id=21]
-[ext_resource path="res://gfx/waveforms/3.png" type="Texture" id=22]
 [ext_resource path="res://FMCore/AudioOutput.cs" type="Script" id=23]
 [ext_resource path="res://sys/panels/CurveControl.tscn" type="PackedScene" id=24]
 [ext_resource path="res://sys/panels/WaveformOptions.tscn" type="PackedScene" id=25]
@@ -715,7 +707,6 @@ __meta__ = {
 }
 
 [node name="EGControl" parent="TC" instance=ExtResource( 2 )]
-visible = false
 margin_left = 4.0
 margin_top = 32.0
 margin_right = -4.0
@@ -736,6 +727,7 @@ margin_right = -4.0
 margin_bottom = -4.0
 
 [node name="Waveform" type="Tabs" parent="TC"]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -743,69 +735,9 @@ margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
 
-[node name="Grid" type="GridContainer" parent="TC/Waveform"]
-anchor_right = 1.0
-margin_left = 4.0
-margin_top = 4.0
-margin_right = -4.0
-margin_bottom = 76.0
-custom_constants/vseparation = 12
-custom_constants/hseparation = 12
-columns = 2
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="lblOsc" type="Label" parent="TC/Waveform/Grid"]
-margin_right = 194.0
-margin_bottom = 8.0
-size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 4 )
-text = "Oscillator:"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="lblMod" type="Label" parent="TC/Waveform/Grid"]
-margin_left = 206.0
-margin_right = 400.0
-margin_bottom = 8.0
-size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 4 )
-text = "Modulation Technique: "
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Waveform" type="OptionButton" parent="TC/Waveform/Grid"]
-margin_top = 20.0
-margin_right = 194.0
-margin_bottom = 68.0
-rect_min_size = Vector2( 0, 48 )
-custom_constants/hseparation = 8
-text = "Sine"
-icon = ExtResource( 21 )
-items = [ "Sine", ExtResource( 21 ), false, 0, null, "Sawtooth", ExtResource( 15 ), false, 1, null, "Stepped Tri", ExtResource( 19 ), false, 2, null, "Square/Pulse", ExtResource( 22 ), false, 3, null, "Absolute Sine", ExtResource( 18 ), false, 4, null, "White Noise", ExtResource( 17 ), false, 5, null, "Pink Noise", ExtResource( 16 ), false, 6, null, "Brown Noise", ExtResource( 20 ), false, 7, null ]
-selected = 0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Waveform2" type="OptionButton" parent="TC/Waveform/Grid"]
-margin_left = 206.0
-margin_top = 20.0
-margin_right = 400.0
-margin_bottom = 68.0
-custom_constants/hseparation = 8
-text = "Sine"
-icon = ExtResource( 21 )
-items = [ "Sine", ExtResource( 21 ), false, 0, null, "Sawtooth", ExtResource( 15 ), false, 1, null, "Stepped Tri", ExtResource( 19 ), false, 2, null, "Square/Pulse", ExtResource( 22 ), false, 3, null, "Absolute Sine", ExtResource( 18 ), false, 4, null, "White Noise", ExtResource( 17 ), false, 5, null, "Pink Noise", ExtResource( 16 ), false, 6, null, "Brown Noise", ExtResource( 20 ), false, 7, null ]
-selected = 0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
 [node name="Options" parent="TC/Waveform" instance=ExtResource( 25 )]
+margin_top = 0.0
+margin_bottom = 295.0
 
 [node name="Response" parent="TC" instance=ExtResource( 37 )]
 visible = false
@@ -1018,8 +950,6 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 [connection signal="value_changed" from="TC2/Program/V/Gain/Slider" to="TC2/Program" method="_on_Gain_value_changed"]
-[connection signal="item_selected" from="TC/Waveform/Grid/Waveform" to="." method="_on_Waveform_item_selected"]
-[connection signal="item_selected" from="TC/Waveform/Grid/Waveform2" to="." method="_on_Waveform_item_selected" binds= [ true ]]
 [connection signal="changed" from="GraphEdit" to="." method="_on_GraphEdit_changed"]
 [connection signal="connection_request" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_connection_request"]
 [connection signal="disconnection_request" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_disconnection_request"]
