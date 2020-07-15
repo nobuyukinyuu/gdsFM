@@ -21,7 +21,8 @@ func _on_OK_pressed():
 	if semitone_or_mult:
 		output = $Popup/Grid/Slider.value
 	else:
-		output = pow(2, $Popup/Grid/Slider.value / 12.0) -1
+#		output = pow(2, $Popup/Grid/Slider.value / 12.0) -1
+		output = $Popup/Grid/Slider.value / 12.0
 
 	$"../Slider".value = output * 100
 

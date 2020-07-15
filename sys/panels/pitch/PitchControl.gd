@@ -9,13 +9,23 @@ func _ready():
 			o.get_node("Slider").connect("gui_input", self, "_on_slider_input", [o])
 
 
+func load_settings():
+	if !global.currentPatch:  return
+
+	for setting in $V.get_children():
+		if !setting.is_in_group("slider"):  continue
+		
+		var s = setting.name
+		get_node("V/H/%s/Slider" % setting.name).value = global.currentPatch.get(s)
+
+
 func _on_slider_change(value, which):
 	$V/H.get_node(which + "/Val").text = str(value).pad_decimals(1)
 	
 	_on_envelope_changed()
 	
-#	if global.currentEG:
-#		global.currentEG.set(which, value)
+	if global.currentPatch:
+		global.currentPatch.set(which, value)
 
 func _on_slider_input(ev, which):
 	var value = which.get_node("Slider").value

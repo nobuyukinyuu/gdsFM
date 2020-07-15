@@ -35,6 +35,9 @@ public class Operator : Resource
         eg = new Envelope(this.id);
     }
 
+    //Default ctor.  Don't use this.  Only for godot editor
+    public Operator(){}
+
     //Iterate over our connections, then mix and modulate them before returning the final modulated value.
     public double request_sample(double phase, Note note, List<LFO> LFOs = null, int lfoBufPos = 0)
     {

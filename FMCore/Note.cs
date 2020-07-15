@@ -7,6 +7,7 @@ public class Note : Node, IComparable<Note>
     [Export]
     public double base_hz = 440.0;  //Always fixed compared to the hz field;  used to return to normal after a pitch bend or lfo calc
 	public double hz = 440.0;  //Current frequency at any given time.
+    public double pitchMult = 1.0;  //Pitch multiplier, used by the pitch generator to set hz.
     
     public int samples = 0;  //Samples elapsed.  Sample timer. 
     public List<Double> phase = new List<double>{0,0,0,0};  //Phase accumulator. This holds the sum of all previous Note.Iterate() periods. Allows smooth pitch changes.
@@ -160,6 +161,27 @@ public const int NOTE_A4 = 69;   // Nice.
         samples += numsamples;
     }
 
+
+    //Determine pitch at our current sample position based on the pitch generator from the patch supplied.
+    public double PitchAtSamplePosition(Patch p)
+    {
+        if (samples < p.par){ //Attack phase.
+            return GDSFmFuncs.lerp(p.palMult, p.pdlMult,  samples / (double) p.par);
+
+        // } else if (samples < p._padr) { //Decay phase.
+        } else if ((samples >= p.par) && (samples < p._padr) ) { //Decay phase.
+            return GDSFmFuncs.lerp(p.pdlMult, p.pslMult,   (samples - p.par) / p.pdr);
+
+        } else if (!pressed && (samples-releaseSample) < p.prr){  //Release phase.
+            return GDSFmFuncs.lerp(p.pslMult, p.prlMult,  (samples - releaseSample) /  p.prr);
+
+        } else if (!pressed && (samples-releaseSample) >= p.prr){  //Post-release phase.
+            return p.prlMult;
+
+        } else {  //Sustain phase.
+            return p.pslMult;
+        }
+    }
 
 
     //Convenience method for mixers, envelopes, whatever to check if this note is ready to die.

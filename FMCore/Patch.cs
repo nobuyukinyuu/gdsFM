@@ -30,6 +30,33 @@ public class Patch : Resource
     public List<LFO> LFOs = new List<LFO>( new LFO[] {new LFO(sample_rate), new LFO(sample_rate), new LFO(sample_rate)} );
 
 
+    //Pitch generator.  Rates must always be positive
+    public double pal,pdl,psl,prl;  //Levels, from -100 to 100.
+    public double par,pdr,prr;  //Rates, in samples.
+
+    public double _padr;  //Precalculated attack and decay times combined.
+    public double palMult=1, pdlMult=1, pslMult=1, prlMult=1;  //Multipliers to reference level
+
+    public double Par { get => par / sample_rate * 1000.0; set {par = (value * sample_rate / 1000.0); _padr=par+pdr;} }
+    public double Pdr { get => par / sample_rate * 1000.0; set {pdr = (value * sample_rate / 1000.0);  _padr=par+pdr;} }
+    public double Prr { get => par / sample_rate * 1000.0; set => prr = (value * sample_rate / 1000.0); }
+ 
+    public double Pal { get => par; set => pal = _calcPitch(ref palMult, value); }
+    public double Pdl { get => par; set => pdl = _calcPitch(ref pdlMult, value); }
+    public double Psl { get => par; set => psl = _calcPitch(ref pslMult, value); }
+    public double Prl { get => par; set => prl = _calcPitch(ref prlMult, value); }
+    //Used by pitch level properties to translate values into proper 
+    private double _calcPitch(ref double field, double value)
+    {
+
+        var amt = value / 100.0; 
+        amt = Math.Pow(2, 2*amt) ;  //Magic scaling integer to multiplier
+
+        field = amt;
+        return value;
+    }
+
+    //Stuff that may or may not be used
     private double resonance = 1.0;  //Should never be under 1.0
     private double cutoff = sample_rate;
     public double CutOff { get => cutoff; set => cutoff = value; }
@@ -235,8 +262,21 @@ public class Patch : Resource
 
             // output[i] *= note.Velocity;   //TODO:  Apply master response curve here instead.  Most velocity should be controlled in EG.
 
+            //Recalculate the pitch.
+            note.hz = note.base_hz * note.PitchAtSamplePosition(this);
+
+        #if DEBUG
+        if(Double.IsNaN(note.hz)) 
+        {
+            System.Diagnostics.Debugger.Break();  //Stop. NaN propagation. This should never trigger but if it does prepare for pain
+            // throw new ArithmeticException("NaN encountered in calculated envelope output");
+        }
+        #endif
+
+
             //Iterate the sample timer.  The phase accumulators were already called from the Operators.
             note.Iterate(1);
+
 
         }
 

@@ -92,9 +92,12 @@ public class LFO : Resource //: Node
             if (!legato) output = NearestSemitone(output);
 
             //Negative number output from the oscillator during precalc should be converted to its reciprocal to represent a lower change in pitch.
-            if (output < 0)  {
-                output =  1 / Math.Abs(1-output); 
-            } else { output += 1; }
+            // if (output < 0)  {
+            //     output =  1 / Math.Abs(1-output); 
+            // } else { output += 1; }
+
+            output = Math.Pow(2, output);
+
             return output+bias;  
         }
     }
@@ -111,9 +114,11 @@ public class LFO : Resource //: Node
             if (!legato) output = NearestSemitone(output);
 
             //Negative number output from the oscillator during precalc should be converted to its reciprocal to represent a lower change in pitch.
-            if (output < 0)  {
-                output =  1 / Math.Abs(1-output); 
-            } else { output += 1; }
+            // if (output < 0)  {
+            //     output =  1 / Math.Abs(1-output); 
+            // } else { output += 1; }
+
+            output = Math.Pow(2, output);
 
             return output+bias;  
         }
@@ -200,12 +205,15 @@ public class LFO : Resource //: Node
 
     static double NearestSemitone(double input)
     {
-        var sign = Math.Sign(input);
-        var whole = Math.Truncate(input);
-        var frac = Math.Abs(input - whole);
+        // var sign = Math.Sign(input);
+        // var whole = Math.Truncate(input);
+        // var frac = Math.Abs(input - whole);
 
-        var idx = (int) (frac * (NEAREST_12.Length-double.Epsilon));
-        return (NEAREST_12[idx] + (whole>1? whole:0)) * sign ;
+        // var idx = (int) (frac * (NEAREST_12.Length-double.Epsilon));
+        // return (NEAREST_12[idx] + (whole>1? whole:0)) * sign ;
+
+        return Math.Round(input*12)/12;
+
     }
 }
 
