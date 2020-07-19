@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://sys/panels/WaveformOptions.gd" type="Script" id=1]
 [ext_resource path="res://gfx/fonts/spelunkid_font.tres" type="BitmapFont" id=2]
@@ -11,8 +11,11 @@
 [ext_resource path="res://gfx/waveforms/7.png" type="Texture" id=9]
 [ext_resource path="res://gfx/waveforms/0.png" type="Texture" id=10]
 [ext_resource path="res://sys/ui/responseCurve/ResponsePreviewButton.tscn" type="PackedScene" id=11]
+[ext_resource path="res://gfx/waveforms/8.png" type="Texture" id=12]
 
 [sub_resource type="StyleBoxEmpty" id=1]
+
+[sub_resource type="StyleBoxEmpty" id=2]
 
 [node name="Options" type="VBoxContainer"]
 margin_top = 84.0
@@ -63,7 +66,7 @@ rect_min_size = Vector2( 0, 48 )
 custom_constants/hseparation = 8
 text = "Sine"
 icon = ExtResource( 10 )
-items = [ "Sine", ExtResource( 10 ), false, 0, null, "Sawtooth", ExtResource( 3 ), false, 1, null, "Stepped Tri", ExtResource( 8 ), false, 2, null, "Square/Pulse", ExtResource( 7 ), false, 3, null, "Absolute Sine", ExtResource( 6 ), false, 4, null, "White Noise", ExtResource( 5 ), false, 5, null, "Pink Noise", ExtResource( 4 ), false, 6, null, "Brown Noise", ExtResource( 9 ), false, 7, null ]
+items = [ "Sine", ExtResource( 10 ), false, 0, null, "Sawtooth", ExtResource( 3 ), false, 1, null, "Stepped Tri", ExtResource( 8 ), false, 2, null, "Square/Pulse", ExtResource( 7 ), false, 3, null, "Absolute Sine", ExtResource( 6 ), false, 4, null, "White Noise", ExtResource( 5 ), false, 5, null, "Pink Noise", ExtResource( 4 ), false, 6, null, "Brown Noise", ExtResource( 9 ), false, 7, null, "Waveform", ExtResource( 12 ), false, 8, null ]
 selected = 0
 __meta__ = {
 "_edit_use_anchors_": false
@@ -187,6 +190,8 @@ margin_top = -8.0
 margin_right = 98.0
 margin_bottom = 88.0
 rect_min_size = Vector2( 96, 96 )
+custom_styles/focus = SubResource( 2 )
+disabled = true
 text = "Waveform"
 target = 1
 note_scale = false
@@ -216,11 +221,14 @@ text = " Custom Oscillator Waveform Bank #"
 margin_left = 334.0
 margin_right = 408.0
 margin_bottom = 24.0
+min_value = -1.0
+max_value = 1.0
+value = -1.0
 align = 2
-editable = false
 [connection signal="item_selected" from="Grid/Waveform" to="." method="_on_Waveform_item_selected"]
 [connection signal="item_selected" from="Grid/Waveform2" to="." method="_on_Waveform_item_selected" binds= [ true ]]
 [connection signal="value_changed" from="FB" to="." method="_on_FB_value_changed"]
 [connection signal="value_changed" from="DutyCycle" to="." method="_on_DutyCycle_value_changed"]
 [connection signal="toggled" from="H/chk/Reflect" to="." method="_on_chkReflect_toggled"]
 [connection signal="toggled" from="H/chk/UseDuty" to="." method="_on_chkUseDuty_toggled"]
+[connection signal="value_changed" from="OscBank/SpinBox" to="." method="_on_OscBank_SpinBox_value_changed"]

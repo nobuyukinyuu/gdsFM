@@ -54,7 +54,6 @@ public class RTable<T> : Resource
         for (int i=0; i < values.Length;  i++)
         {
             //Range-remap the values from 0-1 to fit within the floor and ceiling. This reduces recalcs when fetching
-            //TODO:  Remap linLog rescaling!!!!
 
             //Presume values is float or double instead of T. Precalc values will have to be T and upper limits defined based on type.
             // if (typeof(T) == typeof(float) || typeof(T) == typeof(double) )
@@ -74,6 +73,28 @@ public class RTable<T> : Resource
 
         }
     }
+    public void RecalcValue(int i) 
+    {
+        //Range-remap the values from 0-1 to fit within the floor and ceiling. This reduces recalcs when fetching
+
+        //Presume values is float or double instead of T. Precalc values will have to be T and upper limits defined based on type.
+        // if (typeof(T) == typeof(float) || typeof(T) == typeof(double) )
+        var val = Convert.ToDouble( values[i] );
+        val = val * (ceiling/100.0);  //Apply ceiling.
+        val = (floor/100.0) +  val * (1.0-(floor/100.0));  //Apply floor.
+
+        if (val ==0 && !allow_zero)  val += float.Epsilon;  //Apply epsilon.
+        if (use_log)  val = Math.Pow(val, RTable.LOGFACTOR);  //Apply LinLog conversion (0.5 = 0.1, etc).
+
+        if (typeof(T) == typeof(float) || typeof(T) == typeof(double) || typeof(T) == typeof(byte) )
+        {
+            precalc_values[i] = (T) Convert.ChangeType(val, typeof(T));
+        } else {
+            throw new ArrayTypeMismatchException("RTable can't convert to this instance type (" + typeof(T).ToString() + ")");
+        }
+        
+    }
+
 }
 
 public static class RTable
@@ -204,49 +225,13 @@ public static class RTableExtensions
         instance.RecalcValues();
     }
 
-    // //Input from a float source, value's coming in from 0-100 and should be tamped down to 0-127.
-    // public static void SetValues(this RTable<Byte> instance, Godot.Collections.Dictionary input)
-    // {
-    //     //Structure of dict:   {values=[PoolRealArray tbl], minFloor=0.0, maxCeil=1.0, uselog=false...}
-    //     instance.floor = (double) input["floor"] / 100.0;
-    //     instance.ceiling = (double) input["ceiling"] / 100.0;
-    //     instance.use_log = (bool) input["use_log"];
+    public static void SetValue(this RTable<double> instance, int index, double input)
+    {
+        //Convert values to our maximum.
+        instance.values[index] = (double) input / 100.0;
 
-    //     //Convert values to our maximum.
-    //     var vals= (Godot.Collections.Array) input["values"];
-
-    //     for (int i=0; i<vals.Count; i++)
-    //     {
-    //         //The epsilon here makes sure the byte value is never 128 (invalid in 7-bit midi velocity or note scale)
-    //         instance.values[i] = (Byte) ( ((double) vals[i]/100.0) * (128-Single.Epsilon) );
-    //     }
-    // }
-
-    // public static Godot.Collections.Array ToGodotArray(this RTable<Byte> instance)
-    // {
-    //     // var output = new float[128];
-    //     var output = new Godot.Collections.Array(new float[128]);
-
-    //     for(int i=0; i<128; i++)
-    //     {
-    //         output[i] =  Convert.ToInt32(instance.values[i]);  //TODO:  RANGE LERP THIS FROM 0-100 OR ELSE SHIT WILL BREAK LATER.  FIXME!!!
-    //     }
-
-    //     return output;
-    // }
-
-    // public static Godot.Collections.Array ToGodotArray(this RTable<Double> instance)
-    // {
-    //     // var output = new float[128];
-    //     var output = new Godot.Collections.Array(new float[128]);
-
-    //     for(int i=0; i<128; i++)
-    //     {
-    //         output[i] = (float) (instance.values[i] * 100.0);
-    //     }
-
-    //     return output;
-    // }
+        instance.RecalcValue(index);
+    }
 
     //TODO:  EQUIVALENT FOR RTable<Byte>
     public static Godot.Collections.Dictionary ToDict(this RTable<Double> instance)

@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/waveforms.png-b433cbe30b61098ef5667b10de2a42f1.stex"
+path="res://.import/empty5.png-bc027ca44efdc7e506a63a474746c552.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://gfx/waveforms.png"
-dest_files=[ "res://.import/waveforms.png-b433cbe30b61098ef5667b10de2a42f1.stex" ]
+source_file="res://gfx/ui/vu/empty5.png"
+dest_files=[ "res://.import/empty5.png-bc027ca44efdc7e506a63a474746c552.stex" ]
 
 [params]
 

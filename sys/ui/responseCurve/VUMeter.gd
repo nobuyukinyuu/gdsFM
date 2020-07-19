@@ -48,6 +48,7 @@ func _gui_input(event):
 	if event is InputEventMouseButton: 
 		if event.button_index == BUTTON_LEFT and event.pressed: 
 			process = PROCESS_LEFT
+			last_column = get_local_mouse_position().x
 		if event.button_index == BUTTON_RIGHT and !event.pressed:
 			#Popup copipe menu
 			process = PROCESS_RIGHT
@@ -55,7 +56,7 @@ func _gui_input(event):
 			pop.popup(Rect2(get_global_mouse_position(), pop.rect_size))
 	
 	if process == PROCESS_LEFT:
-		var xy = get_table_pos()
+		var xy = get_table_pos(Input.is_key_pressed(KEY_SHIFT))
 		var arpos = xy.x
 		var val = xy.y
 
@@ -118,9 +119,11 @@ func _gui_input(event):
 		Input.set_custom_mouse_cursor(null)
 
 #Returns a vector of the table position and value.
-func get_table_pos() -> Vector2:
-	var arpos = clamp(int(lerp(0, 127, get_local_mouse_position().x / float(rect_size.x))) , 0, 127)
-	var val = clamp(lerp(100,0, get_local_mouse_position().y / float(rect_size.y)) , 0, 100)
+func get_table_pos(lock_x=false) -> Vector2:
+	var mouse = get_local_mouse_position()
+	if lock_x:  mouse.x = last_column
+	var arpos = clamp(int(lerp(0, 127, mouse.x / float(rect_size.x))) , 0, 127)
+	var val = clamp(lerp(100,0, mouse.y / float(rect_size.y)) , 0, 100)
 	return Vector2(arpos, val)
 
 
@@ -200,5 +203,5 @@ func _make_custom_tooltip(_for_text):
 	elif owner.float_scale:
 		yValue = str(yValue).pad_decimals(2) + "%"
 	
-	p.text = "%sx:%s\ny:%s" % [hint2, pos.x, yValue]
+	p.text = "%sx: %s\ny: %s\n0n:%s" % [hint2, pos.x, yValue, String(pos.y).pad_decimals(2)]
 	return p

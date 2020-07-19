@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=2]
+[gd_scene load_steps=35 format=2]
 
 [ext_resource path="res://main.gd" type="Script" id=1]
 [ext_resource path="res://sys/panels/EGControl.tscn" type="PackedScene" id=2]
@@ -15,6 +15,7 @@
 [ext_resource path="res://gfx/al_custom.png" type="Texture" id=13]
 [ext_resource path="res://OP-GraphEditor.gd" type="Script" id=14]
 [ext_resource path="res://sys/panels/pitch/Pitch.tscn" type="PackedScene" id=15]
+[ext_resource path="res://sys/panels/custom_waveform/Waveform.tscn" type="PackedScene" id=16]
 [ext_resource path="res://FMCore/AudioOutput.cs" type="Script" id=23]
 [ext_resource path="res://sys/panels/CurveControl.tscn" type="PackedScene" id=24]
 [ext_resource path="res://sys/panels/WaveformOptions.tscn" type="PackedScene" id=25]
@@ -135,7 +136,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Program" type="Control" parent="TC2"]
+[node name="Patch" type="Control" parent="TC2"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -144,7 +145,7 @@ margin_right = -4.0
 margin_bottom = -4.0
 script = ExtResource( 33 )
 
-[node name="Name" type="HBoxContainer" parent="TC2/Program"]
+[node name="Name" type="HBoxContainer" parent="TC2/Patch"]
 anchor_right = 1.0
 margin_top = 8.0
 margin_right = -4.0
@@ -155,14 +156,14 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="TC2/Program/Name"]
+[node name="Label" type="Label" parent="TC2/Patch/Name"]
 margin_top = 8.0
 margin_right = 48.0
 margin_bottom = 16.0
 custom_fonts/font = ExtResource( 4 )
 text = " Name:"
 
-[node name="LineEdit" type="LineEdit" parent="TC2/Program/Name"]
+[node name="LineEdit" type="LineEdit" parent="TC2/Patch/Name"]
 margin_left = 56.0
 margin_right = 340.0
 margin_bottom = 24.0
@@ -172,7 +173,7 @@ align = 2
 placeholder_text = "(No Name)"
 caret_blink = true
 
-[node name="LineSep" type="Panel" parent="TC2/Program"]
+[node name="LineSep" type="Panel" parent="TC2/Patch"]
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
@@ -183,7 +184,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="TC2/Program"]
+[node name="Label" type="Label" parent="TC2/Patch"]
 modulate = Color( 1, 1, 1, 0.454902 )
 margin_left = 84.0
 margin_top = 224.0
@@ -199,7 +200,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="V" type="VBoxContainer" parent="TC2/Program"]
+[node name="V" type="VBoxContainer" parent="TC2/Patch"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_top = 56.0
@@ -208,7 +209,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Transpose" type="HBoxContainer" parent="TC2/Program/V" groups=[
+[node name="Transpose" type="HBoxContainer" parent="TC2/Patch/V" groups=[
 "slider",
 ]]
 margin_right = 344.0
@@ -219,7 +220,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Lbl" type="Label" parent="TC2/Program/V/Transpose"]
+[node name="Lbl" type="Label" parent="TC2/Patch/V/Transpose"]
 margin_top = 4.0
 margin_right = 72.0
 margin_bottom = 12.0
@@ -227,7 +228,7 @@ custom_fonts/font = ExtResource( 4 )
 text = "Transpose"
 align = 1
 
-[node name="Slider" type="HSlider" parent="TC2/Program/V/Transpose"]
+[node name="Slider" type="HSlider" parent="TC2/Patch/V/Transpose"]
 margin_left = 76.0
 margin_right = 308.0
 margin_bottom = 16.0
@@ -238,7 +239,7 @@ max_value = 24.0
 tick_count = 13
 ticks_on_borders = true
 
-[node name="Val" type="Label" parent="TC2/Program/V/Transpose"]
+[node name="Val" type="Label" parent="TC2/Patch/V/Transpose"]
 margin_left = 312.0
 margin_top = 4.0
 margin_right = 344.0
@@ -249,7 +250,7 @@ text = "0"
 align = 1
 valign = 2
 
-[node name="Gain" type="HBoxContainer" parent="TC2/Program/V"]
+[node name="Gain" type="HBoxContainer" parent="TC2/Patch/V"]
 margin_top = 32.0
 margin_right = 344.0
 margin_bottom = 48.0
@@ -259,7 +260,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Lbl" type="Label" parent="TC2/Program/V/Gain"]
+[node name="Lbl" type="Label" parent="TC2/Patch/V/Gain"]
 margin_top = 4.0
 margin_right = 32.0
 margin_bottom = 12.0
@@ -267,7 +268,7 @@ custom_fonts/font = ExtResource( 4 )
 text = "Gain"
 align = 1
 
-[node name="Slider" type="HSlider" parent="TC2/Program/V/Gain"]
+[node name="Slider" type="HSlider" parent="TC2/Patch/V/Gain"]
 margin_left = 36.0
 margin_right = 308.0
 margin_bottom = 16.0
@@ -280,7 +281,7 @@ allow_lesser = true
 tick_count = 11
 ticks_on_borders = true
 
-[node name="Val" type="Label" parent="TC2/Program/V/Gain"]
+[node name="Val" type="Label" parent="TC2/Patch/V/Gain"]
 margin_left = 312.0
 margin_top = 4.0
 margin_right = 344.0
@@ -298,6 +299,15 @@ margin_bottom = -4.0
 
 [node name="Pitch" parent="TC2" instance=ExtResource( 15 )]
 visible = false
+
+[node name="Wave" parent="TC2" instance=ExtResource( 16 )]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
 
 [node name="TC" type="TabContainer" parent="."]
 anchor_left = 1.0
@@ -558,7 +568,7 @@ margin_bottom = 688.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
-[connection signal="value_changed" from="TC2/Program/V/Gain/Slider" to="TC2/Program" method="_on_Gain_value_changed"]
+[connection signal="value_changed" from="TC2/Patch/V/Gain/Slider" to="TC2/Patch" method="_on_Gain_value_changed"]
 [connection signal="changed" from="GraphEdit" to="." method="_on_GraphEdit_changed"]
 [connection signal="connection_request" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_connection_request"]
 [connection signal="disconnection_request" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_disconnection_request"]

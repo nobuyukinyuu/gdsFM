@@ -12,7 +12,7 @@ public class Patch : Resource
 
     //This ctor can be used to set the sample rate used in phase calculations by a patch. The algorithm validator should do it when making a patch.
     //TODO:  This ctor should also initialize the LFOs with the sample rate given, if LFOs are always allocated.....
-    public Patch(double sample_rate) { Patch.sample_rate = sample_rate; LFO.sample_rate = sample_rate;}
+    public Patch(double sample_rate) { Patch.sample_rate = sample_rate; LFO.sample_rate = sample_rate; InitWaveformBank();}
 
 
     // This value should typically be initialized to whatever the global sample rate is.
@@ -72,6 +72,70 @@ public class Patch : Resource
         new int[][]{ new int[]{1,2}, new int[]{2,0}, new int[]{3,0}, new int[]{4,0} }, //Two serial, two sines
         new int[][]{ new int[]{1,0}, new int[]{2,0}, new int[]{3,0}, new int[]{4,0} }, //Four parallel sines
     };
+
+
+    //Custom Waveform bank stuff
+    public List<RTable<double>> customWaveforms = new List<RTable<double>>();
+    public int WaveformBankSize {get => customWaveforms.Count;}
+    public bool isValidWaveformBank (int idx){
+        if (idx < 0 || idx>=customWaveforms.Count) return false;
+        return true;
+    }
+    public void InitWaveformBank() {if (customWaveforms.Count == 0) AddWaveformBank();}
+    public void AddWaveformBank() {customWaveforms.Add(RTable.FromPreset<Double>(RTable.Presets.FIFTY_PERCENT));}
+    public Godot.Collections.Dictionary GetWaveformBank (int idx, bool returnDefault=false) 
+    {
+        if (!isValidWaveformBank(idx)) {
+            if (returnDefault)  //Return a default table, probably for the operator's preview button.
+            {return RTable.FromPreset<Double>(RTable.Presets.ZERO).ToDict();}
+            return null;
+        }
+        return customWaveforms[idx].ToDict();
+    }
+    public void SetWaveformBank (int idx, Godot.Collections.Dictionary value) {
+        if (!isValidWaveformBank(idx)) return; 
+        customWaveforms[idx].SetValues(value);}
+
+    public void RemoveWaveformBank(int idx=-1)
+    {
+        if (customWaveforms.Count <=1)  return;
+        if (idx==-1) idx = customWaveforms.Count-1;
+
+        var table = customWaveforms[idx];
+
+        //Make sure no operators are using the table anymore.
+        foreach (Operator op in operators.Values)
+        {
+            if (op.customWaveform == table) {
+                op.customWaveform = null;
+                op.waveformBank = -1;
+            }
+        }
+        customWaveforms.RemoveAt(idx);  //This should hopefully dispose of the waveform now that references to it are gone.
+    }
+
+    public void SetWaveformValue(int bank, int index, double value)  //Sets a single value in the destination waveform for immediate feedback.
+    {
+        customWaveforms[bank].SetValue(index, value);
+    }
+
+    public void LoadCustomWaveform(int bank, string opname)  //Loads a waveform into the specified operator for use.
+    {
+        var op = GetOperator(opname);
+        if (op==null){
+            GD.Print("Patch.LoadCustomWaveform:  Can't find operator ", opname);
+            return;
+        }
+
+        if (isValidWaveformBank(bank)){
+            op.customWaveform = customWaveforms[bank];
+            op.waveformBank = bank;
+        } else {
+            // GD.Print("Patch.LoadCustomWaveform:  Invalid bank ", bank);
+            op.customWaveform = null;
+            op.waveformBank = -1;
+        }
+    }
 
 
 
@@ -339,6 +403,7 @@ public class Patch : Resource
         // note.Iterate(1, pitch_avg, sample_rate);
         return avg;
     }
+
 
 
 

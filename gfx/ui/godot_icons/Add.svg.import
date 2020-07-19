@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/waveforms.png-b044c79d8ab3e63893ebfa8d7c55c444.stex"
+path="res://.import/Add.svg-7d5cbe1f2170bd79845b62197e42958d.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://waveforms.png"
-dest_files=[ "res://.import/waveforms.png-b044c79d8ab3e63893ebfa8d7c55c444.stex" ]
+source_file="res://gfx/ui/godot_icons/Add.svg"
+dest_files=[ "res://.import/Add.svg-7d5cbe1f2170bd79845b62197e42958d.stex" ]
 
 [params]
 

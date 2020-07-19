@@ -106,4 +106,6 @@ func send_table():
 			pass
 
 
-
+#Used by preview buttons which don't utilize their associated ResponseCurve.
+func shallow_update_preview(table):
+	$P/Preview.refresh_all(table.get("values"))

@@ -4,11 +4,10 @@ using System;
 using System.Runtime.CompilerServices;
 
 [Flags]
-public enum Waveforms {SINE, SAW, TRI, PULSE, ABSINE, WHITE, PINK, BROWN, USE_DUTY=0x100};
+public enum Waveforms {SINE, SAW, TRI, PULSE, ABSINE, WHITE, PINK, BROWN, CUSTOM, USE_DUTY=0x100};
 
 public class oscillators : Node
 {
-	// static ThreadSafeRandom random = ThreadSafeRandom ();
 	const double TAU = Mathf.Tau;
 
 	static double[] sintable;
@@ -135,7 +134,15 @@ public class oscillators : Node
 
 	}
 
+	//Custom waveform function
+	public static double wave(double n, RTable<double> auxData=null){
+		if (auxData==null) return 0.0;
+		n %= 1.0;
+		return auxData[(int)(Math.Abs(n)*auxData.values.Length -double.Epsilon)];
+	}
 }
+
+
 
 // Pink noise generator
 class PinkNumber

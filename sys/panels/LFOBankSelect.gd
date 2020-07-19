@@ -24,7 +24,7 @@ func load_settings():
 		print ("Can't get operator for LFO bank? ", id)
 		return
 
-	print("Setting lfo operator,", operator)
+#	print("Setting lfo operator,", operator)
 
 	set_no_bank()
 	var currentBank = operator.get(bankTypeNames[lfo_type])

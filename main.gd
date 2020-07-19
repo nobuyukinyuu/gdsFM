@@ -3,6 +3,7 @@ extends Control
 var lastOperatorEnvelope  #Preview from GraphNode of last operator selected.
 
 
+
 func _ready():
 	
 	#Setup oscilloscope
@@ -33,6 +34,8 @@ func _ready():
 		$Audio.NewPatch()
 		yield(get_tree(),"idle_frame")
 		global.currentPatch = $Audio.patch
+		
+	$TC2/Wave.fetch_table()
 
 func _input(event):
 

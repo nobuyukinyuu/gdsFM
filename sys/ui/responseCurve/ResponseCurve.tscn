@@ -227,7 +227,7 @@ region = Rect2( 0, 8, 16, 8 )
 
 [sub_resource type="AtlasTexture" id=14]
 atlas = ExtResource( 6 )
-region = Rect2( 0, 24, 16, 8 )
+region = Rect2( 10, 24, 5, 8 )
 
 [sub_resource type="StyleBoxEmpty" id=15]
 
