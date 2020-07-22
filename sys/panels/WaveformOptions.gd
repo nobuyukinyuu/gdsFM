@@ -61,7 +61,7 @@ func _on_chkUseDuty_toggled(button_pressed):
 
 #Custom waveform.
 func _on_OscBank_SpinBox_value_changed(value):
-	if !global.currentPatch:  return
+	if !global.currentPatch or !global.currentEG:  return
 	var spin:SpinBox = $OscBank/SpinBox
 	var bankSize = global.currentPatch.WaveformBankSize
 	

@@ -9,7 +9,7 @@ func _ready():
 		o.get_node("Slider").connect("value_changed", self, "_on_slider_change", [o.name])
 		o.get_node("Slider").connect("gui_input", self, "_on_slider_input", [o])
 
-		o.get_node("Val").modulate.a = 0.3
+		o.get_node("Val").modulate.a = 0.5
 
 
 func load_settings(envelope):
@@ -22,7 +22,7 @@ func load_settings(envelope):
 
 
 func _on_slider_change(value, which):
-	get_node(which + "/Val").text = str(value).pad_decimals(1)
+	get_node(which + "/Val").text = str(value).pad_decimals(2)
 	
 	$Disp.get_node(which).material.set_shader_param("curve", value)
 		

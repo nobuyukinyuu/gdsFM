@@ -69,10 +69,11 @@ static double vibrapos, vibraspeed;  //Used for global low-pass.  Move to Patch?
         public bool enabled = false;  //Used by Envelope to determine whether to pass the sample to the cutoff filter.
         public double cutoff=44100;  //Cutoff frequency.  Should probably default to sample_rate.
         public double resonanceAmp=1.0;  //Resonance amplitude.  MUST BE >= 1.0, NO EXCEPTIONS.
-        public double w; // Pole angle
-        public double q; // Pole magnitude
-        public double r;  //res
-        public double c; //cut
+
+[System.Runtime.Serialization.IgnoreDataMember]        public double w; // Pole angle
+[System.Runtime.Serialization.IgnoreDataMember]        public double q; // Pole magnitude
+[System.Runtime.Serialization.IgnoreDataMember]        public double r; //res
+[System.Runtime.Serialization.IgnoreDataMember]        public double c; //cut
 
 
         public FilterData() {Recalc(44100, 1.0);}
@@ -92,7 +93,7 @@ static double vibrapos, vibraspeed;  //Used for global low-pass.  Move to Patch?
             this.w = 2.0 * Math.PI * this.cutoff/sample_rate; // Pole angle
             this.q = 1.0 - w/(2.0*(this.resonanceAmp + 0.5/(1.0+w)) + w - 2.0); // Pole magnitude
             this.r = q*q;
-            this.c = r + 1.0 - 2.0*Math.Cos(w) * q;  //Update to use lookup table
+            this.c = r + 1.0 - 2.0*Math.Cos(w) * q;  //TODO:  Update to use lookup table
         }
 
     }

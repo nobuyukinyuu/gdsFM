@@ -4,6 +4,9 @@ using System;
 //Response / Rate Table.  128 values in either 8-bit format (MIDI velocity, etc) or floating-point
 public class RTable<T> : Resource
 {
+    const string iotype="RTable";
+    readonly string subtype = typeof(T).ToString();
+
     public enum Presets {ZERO, FIFTY_PERCENT, ONE, IN, OUT, IN_OUT, TWELFTH_ROOT_OF_2}
 
     public T[] precalc_values = new T[128];  //Calculated from values with the floor, ceiling, and optional epsilon applied (if zeroes are prohibited)

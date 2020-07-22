@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 //Envelope Generator.  Includes pitch, curve, ADSR, feedback, waveform, etc.
 public class Envelope : Node 
 {
+    const string iotype = "envelope";
 
 //This measurement was done against DX7 detune at A-4, where every 22 cycles the tone would change (-detune) samples at a recording rate of 44100hz.
 //See const definitions in Note.cs for more information about the extra-fine detune increment.
@@ -76,7 +77,7 @@ public class Envelope : Node
     public double ac = -2.0;  //Attack curve.  In-out.
     public double dc = 0.75;  //Decay curve.  75% Linear, 25% Ease-out.
     public double sc = 0.5;  //Sustain curve.  50% Linear, 50% Ease-out.
-    public double rc = 0.25;  //Release curve.  75% Ease-out.
+    public double rc = 0.250;  //Release curve.  75% Ease-out.
 
 
     //Response curves.
@@ -366,7 +367,7 @@ public class Envelope : Node
     {
         var settings=new JsonSerializerSettings();
         settings.ContractResolver = new IgnoreParentPropertiesResolver(true);
-        // settings.Formatting = Formatting.Indented;
+        settings.Formatting = Formatting.Indented;
 
         var output = JsonConvert.SerializeObject(this, settings);
         GD.Print(output);

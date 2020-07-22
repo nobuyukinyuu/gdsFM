@@ -25,6 +25,7 @@ func _ready():
 	$TC2.set_tab_icon(0, preload("res://gfx/ui/icon_note2.svg"))
 	$TC2.set_tab_icon(1, preload("res://gfx/ui/icon_lfo.svg"))
 	$TC2.set_tab_icon(2, preload("res://gfx/ui/icon_pitch.svg"))
+	$TC2.set_tab_icon(3, preload("res://gfx/ui/icon_response.svg"))
 	
 	#Setup envelope connections
 	$TC/EGControl.connect("envelope_changed", self, "_on_Env_update")
@@ -43,7 +44,8 @@ func _input(event):
 #		print (global.currentEG._susTime)
 
 	if Input.is_action_just_pressed("play"):
-		global.currentEG.CopyEnvelope();
+#		global.currentEG.CopyEnvelope();
+		global.currentEG.PrintJson();
 	
 	if event.is_action("BambooCopy"):
 		pass
