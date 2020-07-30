@@ -19,6 +19,8 @@ public class Patch : Resource
     public static double sample_rate = 44100.0;
 
 
+    public string name="";
+    string wiring;  //Set to a valid WireUp() string.  Used to reconnect connections in io.
     Operator[] connections = new Operator[0];  // This is filled in by the algorithm validator and used when mixing.
     Dictionary<String, Operator> operators = new Dictionary<string, Operator>();  // A list of all valid operators created by the algorithm validator.
 
@@ -29,8 +31,47 @@ public class Patch : Resource
     //List of LFOs available for operators to use.  3 initialized at first.  Operator will attempt to procure an LFO reference from list if its bank > -1.
     public List<LFO> LFOs = new List<LFO>( new LFO[] {new LFO(sample_rate), new LFO(sample_rate), new LFO(sample_rate)} );
 
+#region Stereo Panning
+    const float C_PAN = 0.5f;  //Center panning value each side lerps to.
+    public float _panL=1.0f, _panR=1.0f;  //Stereo panning multipliers
 
-    //Pitch generator.  Rates must always be positive
+    float pan = 0.0f;
+    public float Pan {get => pan*100; set => SetPanning(value / 100f);}  /// Gets or sets a value from -100 to 100.
+
+ 
+    /// Takes a value from -1.0 to 1.0 and assigns _panL and _panR to respective values depending on center channel volume C_PAN.
+    public void SetPanning(float val)
+    {
+        pan = val;
+        var amt = Math.Abs(val);
+        float l,r;
+
+        if (val < 0) {  //Pan left channel
+            l = amt;
+            r = 1.0f-amt;
+
+            _panL = GDSFmFuncs.lerp(C_PAN, 1.0f, l);
+            _panR = GDSFmFuncs.lerp(0.0f, C_PAN, r);
+            return;
+
+        } else if (val > 0) {  //Pan right
+            l = 1.0f-amt;
+            r = amt;
+
+            _panL = GDSFmFuncs.lerp(0.0f, C_PAN, l);
+            _panR = GDSFmFuncs.lerp(C_PAN, 1.0f, r);
+            return;    
+
+        } else {  //Center channel.
+            _panL = C_PAN;
+            _panR = C_PAN;
+            return;
+        }
+    }
+#endregion
+
+
+#region Pitch generator.  Rates must always be positive
     public double pal,pdl,psl,prl;  //Levels, from -100 to 100.
     public double par,pdr,prr;  //Rates, in samples.
 
@@ -55,6 +96,7 @@ public class Patch : Resource
         field = amt;
         return value;
     }
+#endregion
 
     //Stuff that may or may not be used
     private double resonance = 1.0;  //Should never be under 1.0
@@ -62,6 +104,7 @@ public class Patch : Resource
     public double CutOff { get => cutoff; set => cutoff = value; }
     public double Resonance { get => resonance; set => resonance = value; }
 
+    //Algorithm presets
     readonly int[][][] algorithms = new int[][][]{
         new int[][]{ new int[]{1,2}, new int[]{2,3}, new int[]{3,4}, new int[]{4,0} }, //Four serial connection
         new int[][]{ new int[]{1,3}, new int[]{2,3}, new int[]{3,4}, new int[]{4,0} }, //Three double mod serial connection
@@ -74,7 +117,7 @@ public class Patch : Resource
     };
 
 
-    //Custom Waveform bank stuff
+#region Custom Waveform bank stuff
     public List<RTable<double>> customWaveforms = new List<RTable<double>>();
     public int WaveformBankSize {get => customWaveforms.Count;}
     public bool isValidWaveformBank (int idx){
@@ -136,10 +179,10 @@ public class Patch : Resource
             op.waveformBank = -1;
         }
     }
+#endregion
 
 
-
-    //Calls WireUp using a 4OP preset
+    ///  Calls WireUp using a 4OP preset.  Typically a value from 0-7.
     public bool WireUp(int algorithm)
     {
         var cs = algorithms[algorithm];  //Order 2 array of int
@@ -166,7 +209,7 @@ public class Patch : Resource
         return WireUp(output);
     }
 
-    // Wires up a patch using a valid dictionary of connections from the algorithm validator. Format: "Operator1Name=InputOp1,InputOp2; OperatorName2= [...]"
+    /// Wires up a patch using a valid dictionary of connections from the algorithm validator. Format: "Operator1Name=InputOp1,InputOp2; OperatorName2= [...]"
     public bool WireUp(String input)
     {
 
@@ -237,10 +280,11 @@ public class Patch : Resource
 
         }
 
+        wiring = input;
         return true;
     }
 
-    //Adds a new operator to the specified collection.  Used when wiring up an algorithm from Godot.
+    ///  Adds a new operator to the specified collection.  Used when wiring up an algorithm from Godot.
     private void AddOp(string name, Dictionary<String, Operator> collection)
     {
         if (name=="Output") return;
@@ -252,13 +296,13 @@ public class Patch : Resource
         return null;
     }
 
-    //Used by Godot to fetch an envelope.
+    /// Used by Godot to fetch an envelope.
     public Envelope GetEG(string opName)
     {
         var op = GetOperator(opName);
         return op?.EG;
     }
-    //Used by Godot to fetch an LFO from our banks.
+    ///  Used by Godot to fetch an LFO from our banks.
     public LFO GetLFO(int bank)
     {
         if ( bank<0 || bank>=LFOs.Count) return null;
@@ -266,8 +310,8 @@ public class Patch : Resource
     }
 
 
-    //Total max release time of all operators in the patch, measured in samples.
-    //Used to determine the TTL of a note.  
+    ///  Total max release time of all operators in the patch, measured in samples.
+    /// Used to determine the TTL of a note.  
     // public double GetReleaseTime(Operator[] connections, double lastReleaseTime=float.MaxValue) 
     public double GetReleaseTime(Note note=null) 
     {
@@ -312,7 +356,7 @@ public class Patch : Resource
 
     }
 
-    //Request multiple samples from this patch for a requested note.  Maybe better for parallelizing notes?
+    /// Request multiple samples from this patch for a requested note.  Maybe better for parallelizing notes?
     public double[] request_samples(Note note, int nSamples=1)
     {
         var output = new double[nSamples];
@@ -347,7 +391,7 @@ public class Patch : Resource
         return output;
     }
 
-    //Multiple note polyphony.  Old method for original single-thread fill_buffer
+    ///Multiple note polyphony.  Old method for original single-thread fill_buffer
     public double mix(List<Note> notes)
     {
         double output = 0.0;
@@ -407,7 +451,7 @@ public class Patch : Resource
 
 
 
-    //Copies an instrument (this Patch) in an envelope format understood by BambooTracker.
+    /// Copies an instrument (this Patch) in an envelope format understood by BambooTracker.
     public void BambooCopy(int algorithm = 0)
     {
         var output = "FM_ENVELOPE:";
@@ -440,6 +484,7 @@ public class Patch : Resource
         }
     }
 
+    /// Pastes envelope data from BambooTracker in a format understood by gdsFM.
     public int BambooPaste()
     {
         if (!OS.Clipboard.StartsWith("FM_ENVELOPE:")) return -1;
@@ -483,8 +528,25 @@ public class Patch : Resource
 
             op.EG.Dt = (Int32.Parse(val[8]) - 3.5) * (100/3.5);  //This may not be correct either....
         }
-
         return algorithm;
+    }
+
+    /// Returns a string with some basic information about the patch.
+    public string GetInfo()
+    {
+        var sw= new System.IO.StringWriter();
+
+        sw.WriteLine("Current Patch:  " + name);
+
+        // sw.WriteLine("Connections: " + connections.Length.ToString());
+
+        for(int i=0; i<connections.Length;i++)
+        {
+            sw.WriteLine(connections[i].ConnectionInfo());
+        }
+
+        sw.WriteLine("Operators: " + operators.Count.ToString());
+        return sw.ToString();
     }
 
 }

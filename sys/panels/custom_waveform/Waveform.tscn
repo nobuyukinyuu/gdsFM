@@ -15,7 +15,7 @@
 [ext_resource path="res://gfx/ui/godot_icons/Add.svg" type="Texture" id=13]
 [ext_resource path="res://gfx/ui/godot_icons/Remove.svg" type="Texture" id=14]
 
-[sub_resource type="StyleBoxFlat" id=16]
+[sub_resource type="StyleBoxFlat" id=1]
 content_margin_left = 8.0
 content_margin_right = 8.0
 content_margin_top = 8.0
@@ -32,19 +32,19 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
-[sub_resource type="AtlasTexture" id=8]
+[sub_resource type="AtlasTexture" id=2]
 atlas = ExtResource( 7 )
 region = Rect2( 0, 0, 16, 8 )
 
-[sub_resource type="AtlasTexture" id=14]
+[sub_resource type="AtlasTexture" id=3]
 atlas = ExtResource( 7 )
 region = Rect2( 10, 24, 5, 8 )
 
-[sub_resource type="AtlasTexture" id=13]
+[sub_resource type="AtlasTexture" id=4]
 atlas = ExtResource( 7 )
 region = Rect2( 0, 8, 16, 8 )
 
-[sub_resource type="StyleBoxFlat" id=6]
+[sub_resource type="StyleBoxFlat" id=5]
 bg_color = Color( 0, 0, 0, 1 )
 border_width_left = 1
 border_width_top = 1
@@ -76,7 +76,7 @@ margin_top = 36.0
 margin_right = -3.05176e-05
 margin_bottom = -3.05176e-05
 mouse_filter = 2
-custom_styles/panel = SubResource( 16 )
+custom_styles/panel = SubResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -87,7 +87,7 @@ margin_left = 2.0
 margin_top = 8.0
 margin_right = 18.0
 margin_bottom = 16.0
-texture = SubResource( 8 )
+texture = SubResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -98,7 +98,7 @@ margin_left = 3.0
 margin_top = 140.0
 margin_right = 8.0
 margin_bottom = 148.0
-texture = SubResource( 14 )
+texture = SubResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -109,7 +109,7 @@ margin_left = 2.0
 margin_top = 272.0
 margin_right = 18.0
 margin_bottom = 280.0
-texture = SubResource( 13 )
+texture = SubResource( 4 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -157,7 +157,7 @@ margin_left = -21.0
 margin_top = -4.0
 margin_right = 45.0
 margin_bottom = 18.0
-custom_styles/normal = SubResource( 6 )
+custom_styles/normal = SubResource( 5 )
 custom_fonts/font = ExtResource( 2 )
 custom_colors/font_color = Color( 0.352941, 0.878431, 0.878431, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )

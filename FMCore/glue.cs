@@ -12,13 +12,9 @@ using System.Threading;
 //"Glue" class used for interacting with GDScript code only
 public class glue : Node
 {
-
-    public static double PowFast(double a, double b) {
-        return GDSFmFuncs.PowFast(a,b);
-    }
-
-    public static double EaseFast(double percent, double curve){
-        return GDSFmFuncs.EaseFast(percent, curve);
+    public override void _Ready()
+    {
+        GDSFmIO.init();
     }
 }
 
@@ -117,6 +113,12 @@ public static class GDSFmFuncs
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float lerp(float value1, float value2, float amount)
+    {
+        return value1 + (value2 - value1) * amount;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double lerp(double value1, double value2, double amount)
     {
         return value1 + (value2 - value1) * amount;
@@ -200,6 +202,18 @@ public class AutoLoadHelper : Node
 
 
 
+public static class GDSFmIO
+{
+    public static JsonSerializerSettings serializerSettings = new JsonSerializerSettings();
+    public static IgnoreParentPropertiesResolver resolver = new IgnoreParentPropertiesResolver(true);
+
+    public static void init()
+    {
+        serializerSettings.ContractResolver = resolver;
+        serializerSettings.Formatting = Formatting.Indented;
+        serializerSettings.NullValueHandling = NullValueHandling.Ignore;
+    }
+}
 
 //ContractResolver which is used to specify only the specific subclass properties should be added when serializing
 public class IgnoreParentPropertiesResolver : DefaultContractResolver

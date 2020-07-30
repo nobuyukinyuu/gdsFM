@@ -51,8 +51,15 @@ public Channel PreviewNotes = new Channel();
         fill_buffer3();   //prefill output buffer
         Play();
 
-
+        // //DEBUG:  Test json lib
+        // GdsFMJson.JSONObject jsonObject = (GdsFMJson.JSONObject) GdsFMJson.JSONData.ReadJSON(input2);
+        // GD.Print(new object[]{"SusTime: ", jsonObject.GetItem("_susTime")});
+        // GD.Print(new object[]{"Bad read (with default): ", jsonObject.GetItem("_badvalue", "Default text.")});
+        // GD.Print(new object[]{"Bad read (without default): ", jsonObject.GetItem("_badvalue")});
     }
+
+    const string input1 = "{\"quiz\":{\"sport\":{\"q1\":{\"question\":\"Which one is correct team name in NBA?\",\"options\":[\"New York Bulls\",\"Los Angeles Kings\",\"Golden State Warriros\",\"Huston Rocket\"],\"answer\":\"Huston Rocket\"}},\"maths\":{\"q1\":{\"question\":\"5 + 7 = ?\",\"options\":[\"10\",\"11\",\"12\",\"13\"],\"answer\":\"12\"},\"q2\":{\"question\":\"12 - 8 = ?\",\"options\":[\"1\",\"2\",\"3\",\"4\"],\"answer\":\"4\"}}}}";
+    const string input2 = "{\"waveform\":0,\"feedback\":0,\"filter\":{\"enabled\":false,\"cutoff\":44100,\"resonanceAmp\":1},\"reflect\":false,\"duty\":0.5,\"_use_duty\":0,\"fmTechnique\":0,\"techDuty\":0.5,\"techReflect\":false,\"ac\":-2,\"dc\":0.75,\"sc\":0.5,\"rc\":0.25,\"_attackTime\":50,\"_decayTime\":50,\"_susTime\":935502.2715098022,\"_releaseTime\":100,\"_susLevel\":1,\"_totalLevel\":1,\"_freqMult\":1,\"_coarseDetune\":1,\"_detune\":1,\"_delay\":0,\"totalMultiplier\":1,\"_egLength\":935702.2715098022,\"_ads\":935602.2715098022}";
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(float delta)
@@ -63,7 +70,7 @@ public Channel PreviewNotes = new Channel();
     }
 
 
-    //Fills the buffer using Patch.cs
+    /// Old single-threaded buffer fill.  Fills the buffer using Patch.cs one frame at a time.
     void fill_buffer()
     {
         if(buf == null)  return;
@@ -88,7 +95,7 @@ public Channel PreviewNotes = new Channel();
         // #endif
     }
 
-    //Parallelized buffer fill.  Seems less processor efficient in debug mode.....
+    /// Parallelized buffer fill.  Seems less processor efficient in debug mode.....
     void fill_buffer2()
     {
         int frames = buf.GetFramesAvailable();
@@ -113,8 +120,8 @@ public Channel PreviewNotes = new Channel();
 
                         //TODO:  Applies patch mixing globally. If multiple programs are being mixed this needs to change so mixing is applied per-patch.
                         //      Global mixing is only used here for a slight speed boost.
-                        bufferdata[j].x += (float) output[j] * 0.1f * patch.gain;  //TODO:  Stereo mixing maybe
-                        bufferdata[j].y += (float) output[j] * 0.1f * patch.gain;  //TODO:  Stereo mixing maybe   
+                        bufferdata[j].x += (float) output[j] * 0.1f * patch._panL * patch.gain;  
+                        bufferdata[j].y += (float) output[j] * 0.1f * patch._panR * patch.gain;  
                     }
 
                     // System.Threading.Interlocked.Exchange(ref bufferdata[j].x, GDSFmFuncs.InterlockedAdd(ref bufferdata[j].x, (float) output[j]) );
@@ -130,7 +137,7 @@ public Channel PreviewNotes = new Channel();
         buf.PushBuffer(bufferdata); 
     }
 
-    //This may be a serial process, but for some reason is faster than fill_buffer().  Maybe because there's less function calls?
+    /// This may be a serial process, but for some reason is faster than fill_buffer().  Maybe because there's less function calls?
     void fill_buffer3()
     {
         int frames = buf.GetFramesAvailable();
@@ -184,7 +191,7 @@ public Channel PreviewNotes = new Channel();
         return this.patch.WireUp(s);
     }
 
-    //Changes bypass value on an individual operator inside the current patch.
+    /// Changes bypass value on an individual operator inside the current patch.
     public Godot.Error Bypass(string opname, bool val)
     {
             if (patch==null) return Godot.Error.DoesNotExist;

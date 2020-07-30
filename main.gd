@@ -7,9 +7,9 @@ var lastOperatorEnvelope  #Preview from GraphNode of last operator selected.
 func _ready():
 	
 	#Setup oscilloscope
-	var newpts = []
-	newpts.resize($Panel.rect_size.x)
-	$Panel/Line2D.points = newpts
+#	var newpts = []
+#	newpts.resize($Panel.rect_size.x)
+#	$Panel/Line2D.points = newpts
 
 	#Setup tabs
 	$TC/EGControl.disable(true)
@@ -45,7 +45,8 @@ func _input(event):
 
 	if Input.is_action_just_pressed("play"):
 #		global.currentEG.CopyEnvelope();
-		global.currentEG.PrintJson();
+#		global.currentEG.PrintJson();
+		pass
 	
 	if event.is_action("BambooCopy"):
 		pass

@@ -16,7 +16,7 @@ func _ready():
 
 func _on_Gain_value_changed(value):
 	$V/Gain/Val.text = str(value) 
-	$Label.text = str(db2linear(value))
+#	$Label.text = str(db2linear(value))
 	
 	if owner.get_node("Audio").Patch:
 		owner.get_node("Audio").Patch.gain = db2linear(value)
@@ -29,3 +29,13 @@ func _on_slider_change(value, which):
 	if owner.get_node("Audio").Patch:
 		owner.get_node("Audio").Patch.set(which, value)
 		
+
+#Patch info
+func _on_Timer_timeout():
+	if !global.currentPatch:  return
+	$Label.text = global.currentPatch.GetInfo()
+
+#Patch name
+func _on_LineEdit_text_changed(new_text):
+	if !global.currentPatch:  return
+	global.currentPatch.name = new_text

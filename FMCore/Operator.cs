@@ -28,7 +28,7 @@ public class Operator : Resource
     public RTable<double> customWaveform;  //Waveform oscillator used when eg.Waveform == Waveforms.CUSTOM
     public int waveformBank = -1; //Used to assist in finding where the customWaveform lives inside the associated Patch.
 
-    //Ctor to give me a name
+    /// Ctor to give me a name
     public Operator(string name)
     {
         this.name = name;
@@ -37,10 +37,43 @@ public class Operator : Resource
         eg = new Envelope(this.id);
     }
 
-    //Default ctor.  Don't use this.  Only for godot editor
+    /// Default ctor.  Don't use this.  Only for godot editor
     public Operator(){}
 
-    //Iterate over our connections, then mix and modulate them before returning the final modulated value.
+
+    /// Iterate over our connections and return info about them.
+    public string ConnectionInfo()
+    {
+        var sb = new System.Text.StringBuilder(name);
+        var once=true;
+
+        var amt = connections.Length;
+
+        if (amt > 1)
+        {
+            sb.Append(" <= (");
+            while (amt > 1)
+            {    
+                var op=connections[amt-1];
+            
+                // if (once) {sb.Append(" <= ("); once=false;}
+                sb.Append(op.ConnectionInfo()).Append(" + ");
+                amt -= 1;
+            } 
+            sb.Append(connections[0].ConnectionInfo());
+            sb.Append(")");
+
+        } else {
+            foreach (Operator op in connections)
+            {
+                if (once) {sb.Append("<="); once=false;}
+                sb.Append(op.ConnectionInfo());
+            }
+        }
+        return sb.ToString();
+    }
+
+    /// Iterate over our connections, then mix and modulate them before returning the final modulated value.
     public double request_sample(double phase, Note note, List<LFO> LFOs = null, int lfoBufPos = 0)
     {
         
@@ -119,7 +152,8 @@ public class Operator : Resource
                 if (eg.waveform== Waveforms.CUSTOM){
                     output = oscillators.wave(note.phase[id], customWaveform) * adsr;  
                 } else {
-                    output = oscillators.wave(note.phase[id], eg.waveform|eg._use_duty, eg.duty, eg.reflect, 128-note.midi_note) * adsr;  //Get a waveform from the oscillator.
+                    //Get a waveform from the oscillator.
+                    output = oscillators.wave(note.phase[id], eg.waveform|eg._use_duty, eg.duty, eg.reflect, 128-note.midi_note) * adsr;  
                 }
 
             }
@@ -141,7 +175,7 @@ public class Operator : Resource
           return output;        
     }
 
-    // Calculate the position and value attenuation as determined by the envelope generator.
+    /// Calculate the position and value attenuation as determined by the envelope generator.
     double calc_eg(Note note)
     {
         //TODO:  Take a sample timer, NoteOff status, and NoteOff position from an external Note resource.

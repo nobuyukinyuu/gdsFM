@@ -7,7 +7,7 @@
 [ext_resource path="res://gfx/fonts/NoteFont.tres" type="BitmapFont" id=5]
 [ext_resource path="res://sys/panels/LFOBankSelect.gd" type="Script" id=6]
 
-[sub_resource type="Theme" id=7]
+[sub_resource type="Theme" id=1]
 default_font = ExtResource( 5 )
 Button/colors/font_color = Color( 0.88, 0.88, 0.88, 1 )
 Button/colors/font_color_disabled = Color( 0.9, 0.9, 0.9, 0.2 )
@@ -21,7 +21,7 @@ Button/styles/hover = null
 Button/styles/normal = null
 Button/styles/pressed = null
 
-[sub_resource type="ButtonGroup" id=6]
+[sub_resource type="ButtonGroup" id=2]
 
 [node name="Response" type="Control"]
 anchor_right = 1.0
@@ -290,27 +290,27 @@ __meta__ = {
 margin_left = 322.0
 margin_right = 344.0
 margin_bottom = 16.0
-theme = SubResource( 7 )
+theme = SubResource( 1 )
 toggle_mode = true
-group = SubResource( 6 )
+group = SubResource( 2 )
 text = "A"
 
 [node name="1" type="Button" parent="V/Banks"]
 margin_left = 348.0
 margin_right = 370.0
 margin_bottom = 16.0
-theme = SubResource( 7 )
+theme = SubResource( 1 )
 toggle_mode = true
-group = SubResource( 6 )
+group = SubResource( 2 )
 text = "B"
 
 [node name="2" type="Button" parent="V/Banks"]
 margin_left = 374.0
 margin_right = 396.0
 margin_bottom = 16.0
-theme = SubResource( 7 )
+theme = SubResource( 1 )
 toggle_mode = true
-group = SubResource( 6 )
+group = SubResource( 2 )
 text = "C"
 
 [node name="Blanker" type="Control" parent="V/Banks"]

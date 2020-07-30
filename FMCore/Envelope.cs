@@ -1,10 +1,9 @@
 using Godot;
 using System;
 
-// using TinyJson;
 using Newtonsoft.Json;
 
-//Envelope Generator.  Includes pitch, curve, ADSR, feedback, waveform, etc.
+/// Envelope Generator.  Includes pitch, curve, ADSR, feedback, waveform, etc.
 public class Envelope : Node 
 {
     const string iotype = "envelope";
@@ -200,8 +199,8 @@ public class Envelope : Node
         return output * ksl[note.midi_note] * vr[note.midi_velocity];
     }
 
-    //ASDR setters
-    //Called when ADSR properties change
+    #region ASDR setters
+    /// Called when ADSR properties change
     void recalc_adsr()
     {
         _egLength = _attackTime + _decayTime + _susTime + _releaseTime + _delay;
@@ -266,16 +265,17 @@ public class Envelope : Node
         }
         recalc_adsr();
     }
+#endregion
 
 
-    //Determines the length of part of an ADSR curve for sample calculation.  
-    //Multiply the output of this method to the sample rate to get that number of samples.
+    /// Determines the length of part of an ADSR curve for sample calculation.  
+    /// Multiply the output of this method to the sample rate to get that number of samples.
 
-    //Consider baking a table of the appropriate length for each easing curve in the ADSR components at 1.0 TL.
-    //For RR, multiply the value output by this table by the level at sustain on KeyOff.  Process until hitting sustain.
-    //Precalculate absolute total length (in samples) of a blip. During KeyOff event, in sustain state whenever KeyOff is detected,
-    //Immediately move the play head to the total length minus RR length.
-    //http://forums.submarine.org.uk/phpBB/viewtopic.php?f=9&t=16
+    // Consider baking a table of the appropriate length for each easing curve in the ADSR components at 1.0 TL.
+    // For RR, multiply the value output by this table by the level at sustain on KeyOff.  Process until hitting sustain.
+    // Precalculate absolute total length (in samples) of a blip. During KeyOff event, in sustain state whenever KeyOff is detected,
+    // Immediately move the play head to the total length minus RR length.
+    // http://forums.submarine.org.uk/phpBB/viewtopic.php?f=9&t=16
     double get_curve_secs(double base_secs, double val, double scaleFactor=1.0, double minlength=0.005)
     {
         //estimated base rates for OPNA at value 1:
@@ -287,11 +287,9 @@ public class Envelope : Node
     }
 
 
-
-
-// =========  PITCH AND TUNING RELATED SETTERS  ===============
+#region =========  PITCH AND TUNING RELATED SETTERS  ===============
  
-    //Whenever a tuning field changes, this should be called to update the precalculated total multiplier amount. 
+    /// Whenever a tuning field changes, this should be called to update the precalculated total multiplier amount. 
     void update_multiplier()
     {
         if (fixed_frequency > 0)
@@ -305,7 +303,7 @@ public class Envelope : Node
     }
 
  
-    //Octave multiplier
+    /// Octave multiplier
 	void _set_octave_multiplier(double val){
 		mul = val;
 		
@@ -315,7 +313,7 @@ public class Envelope : Node
         update_multiplier();
     }
 
-    //Extra fine detune
+    /// Extra fine detune
 	void set_detune(double val){  
 		dt = val;
 		// _detune = 1.0f + (val / 10000.0f);  //approx max multiplier is 1.0 ± 0.01
@@ -337,7 +335,7 @@ public class Envelope : Node
         update_multiplier();
     }
 
-    //Coarse detune (Semitone)
+    /// Coarse detune (Semitone)
     void set_detune2(double val)
     {
         dt2 = val;
@@ -358,10 +356,23 @@ public class Envelope : Node
 
         update_multiplier();
     }
+#endregion
 
 
+#region ================ IO ==================
 
-    // ================ IO ==================
+    // public String ToString()
+    // {
+    //     System.IO.StringWriter sw = new System.IO.StringWriter();
+    //     JsonTextWriter writer = new JsonTextWriter(sw);
+    //     JsonSerializer serializer = new JsonSerializer();
+
+    //     writer.Formatting = Formatting.Indented;
+    //     serializer.Converters.Add()
+
+    //     writer.WriteValue()
+
+    // }
 
     public String PrintJson()
     {
@@ -390,8 +401,10 @@ public class Envelope : Node
 
         return 0;
     }
+#endregion
 
-    //Gets the sample rate from the global singleton
+
+    /// Gets the sample rate from the global singleton
     public double SampleRate {
         get 
         {
@@ -403,7 +416,7 @@ public class Envelope : Node
 
 }
 
-//Struct for typical length of one part of an Envelope at value 1 on OPNA
+/// Struct for typical length of one part of an Envelope at value 1 on OPNA
 struct BaseSecs
 {
     public const double AR = 30;
