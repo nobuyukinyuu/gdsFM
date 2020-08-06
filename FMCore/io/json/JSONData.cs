@@ -346,7 +346,7 @@ namespace GdsFMJson{
         
         public JSONDataError (string errorDescription, string location){
             dataType = JSONDataType.JSON_ERROR;
-            value = errorDescription + "~nJSON Location: " + location;
+            value = errorDescription + "\nJSON Location: " + location;
         }
 
         public override string ToString(){
@@ -497,26 +497,26 @@ namespace GdsFMJson{
         }
     }
 
-    class JSONArray : JSONDataItem, IEnumerable<JSONDataItem>{
+    public class JSONArray : JSONDataItem, IEnumerable<JSONDataItem>{
         List<JSONDataItem> values = new List<JSONDataItem>();
         
         public JSONArray(){
             dataType = JSONDataType.JSON_ARRAY;
         }
 
-        void AddPrim( bool value ){
+        public void AddPrim( bool value ){
             values.Add(JSONData.CreateJSONDataItem(value));
         }
         
-        void AddPrim( int value ){
+        public void AddPrim( int value ){
             values.Add(JSONData.CreateJSONDataItem(value));
         }
         
-        void AddPrim( float value ){
+        public void AddPrim( float value ){
             values.Add(JSONData.CreateJSONDataItem(value));
         }
         
-        void AddPrim( string value ){
+        public void AddPrim( string value ){
             values.Add(JSONData.CreateJSONDataItem(value));
         }
         
@@ -524,7 +524,7 @@ namespace GdsFMJson{
             values.Add(dataItem);
         }
         
-        void RemoveItem( JSONDataItem dataItem ){
+        public void RemoveItem( JSONDataItem dataItem ){
             values.RemoveAll(x => x==dataItem);
             
         }
@@ -577,6 +577,16 @@ namespace GdsFMJson{
             return values.GetEnumerator();
         }
 
+        
+        //Indexer
+        public JSONDataItem this[int i]
+        {
+            get{return values[i];}
+            set{values[i] = value;}
+        }
+
+        public int Length {get => values.Count; }
+
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()  {return GetEnumerator();}
 
         void Clear(){
@@ -615,7 +625,7 @@ namespace GdsFMJson{
         }
     }
 
-    class JSONObject : JSONDataItem, IEnumerable<KeyValuePair<String, JSONDataItem>>{
+    public class JSONObject : JSONDataItem, IEnumerable<KeyValuePair<String, JSONDataItem>>{
         Dictionary<String, JSONDataItem> values = new Dictionary<String, JSONDataItem>();
         
         public JSONObject(){
@@ -629,7 +639,12 @@ namespace GdsFMJson{
         public void AddPrim( string name, int value ){
             values[name] = JSONData.CreateJSONDataItem(value);
         }
-        
+
+        public void AddPrim( string name, double value){
+            //TODO:  FIXME!  Stupid little hack for now to squish down to float.  Pretty sure JSON is double-precision with numbers....
+            values[name] = JSONData.CreateJSONDataItem((float) value);
+        }
+
         public void AddPrim( string name, float value ){
             values[name] = JSONData.CreateJSONDataItem(value);
         }

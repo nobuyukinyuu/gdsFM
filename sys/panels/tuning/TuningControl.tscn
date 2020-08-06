@@ -29,7 +29,7 @@ func _on_Slider_gui_input(event):
 
 "
 
-[sub_resource type="Theme" id=5]
+[sub_resource type="Theme" id=4]
 default_font = ExtResource( 5 )
 Button/colors/font_color = Color( 0.88, 0.88, 0.88, 1 )
 Button/colors/font_color_disabled = Color( 0.9, 0.9, 0.9, 0.2 )
@@ -462,7 +462,7 @@ lfo_type = 2
 margin_left = 23.0
 margin_right = 45.0
 margin_bottom = 16.0
-theme = SubResource( 5 )
+theme = SubResource( 4 )
 toggle_mode = true
 group = ExtResource( 10 )
 text = "A"
@@ -471,7 +471,7 @@ text = "A"
 margin_left = 49.0
 margin_right = 71.0
 margin_bottom = 16.0
-theme = SubResource( 5 )
+theme = SubResource( 4 )
 toggle_mode = true
 group = ExtResource( 10 )
 text = "B"
@@ -480,7 +480,7 @@ text = "B"
 margin_left = 75.0
 margin_right = 97.0
 margin_bottom = 16.0
-theme = SubResource( 5 )
+theme = SubResource( 4 )
 toggle_mode = true
 group = ExtResource( 10 )
 text = "C"

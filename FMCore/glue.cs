@@ -9,6 +9,9 @@ using System.Reflection;
 using System.Linq;
 using System.Threading;
 
+/// Flags for copying and exporting bits of an envelope when serializing.
+[Flags]  public enum EGCopyFlags{NONE=0, EG=1, TUNING=2, CURVE=4, WAVEFORM=8, RTABLES=16, LOWPASS=32, LFO=64, ALL=127};
+
 //"Glue" class used for interacting with GDScript code only
 public class glue : Node
 {

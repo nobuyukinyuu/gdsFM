@@ -611,3 +611,4 @@ __meta__ = {
 }
 [connection signal="value_changed" from="sldMin" to="." method="_on_MinMax_value_changed"]
 [connection signal="value_changed" from="sldMax" to="." method="_on_MinMax_value_changed"]
+[connection signal="index_pressed" from="CPMenu" to="." method="_on_CPMenu_index_pressed"]

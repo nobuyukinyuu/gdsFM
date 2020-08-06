@@ -72,3 +72,10 @@ func add_bank():
 func remove_bank(index):
 	global.currentPatch.RemoveWaveformBank(index)
 
+
+
+func _on_CPMenu_index_pressed(index):
+	if index == 0:  #Copy
+		pass
+	elif index == 1:  #Paste
+		pass 

@@ -70,10 +70,10 @@ static double vibrapos, vibraspeed;  //Used for global low-pass.  Move to Patch?
         public double cutoff=44100;  //Cutoff frequency.  Should probably default to sample_rate.
         public double resonanceAmp=1.0;  //Resonance amplitude.  MUST BE >= 1.0, NO EXCEPTIONS.
 
-[System.Runtime.Serialization.IgnoreDataMember]        public double w; // Pole angle
-[System.Runtime.Serialization.IgnoreDataMember]        public double q; // Pole magnitude
-[System.Runtime.Serialization.IgnoreDataMember]        public double r; //res
-[System.Runtime.Serialization.IgnoreDataMember]        public double c; //cut
+        [System.Runtime.Serialization.IgnoreDataMember]        public double w; // Pole angle
+        [System.Runtime.Serialization.IgnoreDataMember]        public double q; // Pole magnitude
+        [System.Runtime.Serialization.IgnoreDataMember]        public double r; //res
+        [System.Runtime.Serialization.IgnoreDataMember]        public double c; //cut
 
 
         public FilterData() {Recalc(44100, 1.0);}
@@ -94,6 +94,16 @@ static double vibrapos, vibraspeed;  //Used for global low-pass.  Move to Patch?
             this.q = 1.0 - w/(2.0*(this.resonanceAmp + 0.5/(1.0+w)) + w - 2.0); // Pole magnitude
             this.r = q*q;
             this.c = r + 1.0 - 2.0*Math.Cos(w) * q;  //TODO:  Update to use lookup table
+        }
+
+        public override string ToString()
+        {
+            var output=new GdsFMJson.JSONObject();
+            output.AddPrim("enabled", enabled);
+            output.AddPrim("cutoff", cutoff);
+            output.AddPrim("resonanceAmp", resonanceAmp);
+
+            return output.ToString();
         }
 
     }

@@ -1,7 +1,8 @@
 using Godot;
 using System;
 
-using Newtonsoft.Json;
+// using Newtonsoft.Json;
+using GdsFMJson;
 
 /// Envelope Generator.  Includes pitch, curve, ADSR, feedback, waveform, etc.
 public class Envelope : Node 
@@ -361,46 +362,133 @@ public class Envelope : Node
 
 #region ================ IO ==================
 
-    // public String ToString()
+    // public String PrintJson()
     // {
-    //     System.IO.StringWriter sw = new System.IO.StringWriter();
-    //     JsonTextWriter writer = new JsonTextWriter(sw);
-    //     JsonSerializer serializer = new JsonSerializer();
+    //     var settings=new JsonSerializerSettings();
+    //     settings.ContractResolver = new IgnoreParentPropertiesResolver(true);
+    //     settings.Formatting = Formatting.Indented;
 
-    //     writer.Formatting = Formatting.Indented;
-    //     serializer.Converters.Add()
-
-    //     writer.WriteValue()
-
+    //     var output = JsonConvert.SerializeObject(this, settings);
+    //     GD.Print(output);
+    //     return output;
     // }
 
-    public String PrintJson()
-    {
-        var settings=new JsonSerializerSettings();
-        settings.ContractResolver = new IgnoreParentPropertiesResolver(true);
-        settings.Formatting = Formatting.Indented;
 
-        var output = JsonConvert.SerializeObject(this, settings);
-        GD.Print(output);
-        return output;
+    /// Produces a GdsFMIO.JSONObject which can be used for serialization.
+    public JSONObject JsonMetadata(EGCopyFlags flags)
+    {
+        //NOTE:  LFO sensitivity is not added to the json object here.  That's done in Operator with the other Operator-level meta.
+
+        //Begin constructing a new json object.
+        JSONObject p = new JSONObject();
+
+        if (flags.HasFlag(EGCopyFlags.EG)){
+             p.AddPrim("ar", ar);
+             p.AddPrim("dr", dr);
+             p.AddPrim("sr", sr);
+             p.AddPrim("rr", rr);
+             p.AddPrim("sl", sl);
+             p.AddPrim("tl", tl);
+             p.AddPrim("ks", ks);
+             p.AddPrim("delay", delay);
+
+             //TODO:  True meta values
+        }
+        if (flags.HasFlag(EGCopyFlags.CURVE)){
+            p.AddPrim("ac", ac);
+            p.AddPrim("dc", dc);
+            p.AddPrim("sc", sc);
+            p.AddPrim("rc", rc);
+        }
+        if (flags.HasFlag(EGCopyFlags.WAVEFORM)){
+            p.AddPrim("waveform", (int) waveform);
+            p.AddPrim("feedback", feedback);
+            // p.AddPrim("filter", filter);
+            p.AddPrim("reflect", reflect);
+
+            p.AddPrim("duty", duty);
+            p.AddPrim("_use_duty", (int) _use_duty);
+
+            p.AddPrim("fmTechnique", (int) fmTechnique);
+            p.AddPrim("techDuty", techDuty);
+            p.AddPrim("techReflect", techReflect);
+
+            //TODO:  ADD THE RELEVANT CUSTOM WAVEFORM BANK
+        }
+        if (flags.HasFlag(EGCopyFlags.TUNING)){
+             p.AddPrim("mul", mul);
+             p.AddPrim("dt", dt);
+             p.AddPrim("dt2", dt2);
+             p.AddPrim("delay", delay);
+             p.AddPrim("fixed_frequency", fixed_frequency);            
+        }
+        if (flags.HasFlag(EGCopyFlags.LOWPASS)){
+            p.AddItem("filter", JSONData.ReadJSON(filter.ToString()) );
+        }
+
+        if (flags.HasFlag(EGCopyFlags.RTABLES)){
+            p.AddItem("ksr", JSONData.ReadJSON(ksr.ToString()));
+            p.AddItem("ksl", JSONData.ReadJSON(ksl.ToString()));
+            p.AddItem("vr", JSONData.ReadJSON(vr.ToString()));
+        }
+
+        return p;
     }
 
-    public void CopyEnvelope()
+    public override string ToString()
     {
-        //Copy all properties.
-        // var output = TinyJson.JSONWriter.ToJson(this);
-        var output = PrintJson();
-        if (output != null) OS.Clipboard = output;
-
+        //NOTE: DOES NOT CONTAIN OPERATOR SPECIFIC DATA SUCH AS LFO AND WAVEFORM BANK. GET THIS FROM OP OR PATCH INSTEAD.
+        return JsonMetadata(EGCopyFlags.ALL).ToString(); 
     }
 
-    public int ParseEnvelope(string json)
+    /// Takes a string with metadata for an envelope and apply the values inside to this envelope.
+    public string ParseEnvelope(string json)
     {
         //TODO:  Don't do properties, recalculate only if necessary or explicitly specified
-        
 
-        return 0;
+        var j = (JSONObject) JSONData.ReadJSON(json);
+        var needsRecalc = false;
+        
+        int okay = 0;
+        int oops = 0;
+
+        foreach (string name in j.Names())
+        {
+            var field = GetType().GetField(name);
+            if (field == null)  continue;
+
+            else if (__tableNames.Contains(name)){  //Uh oh, ran into a table.  Process this differently
+                var tbl = (JSONObject) j.GetItem(name);
+                var method = field.GetType().GetMethod("SetValues", new Type[] {typeof(JSONObject)} );
+                method.Invoke(field, new object[] {tbl} );
+                continue;
+            }
+
+            //Okay, we determined it's not on any special exclusion or processing list, and it's a valid field.  Process.
+            if (__recalcNames.Contains(name))  needsRecalc = true;
+
+            try{
+                var val = Convert.ChangeType(j.GetItem(name), field.FieldType);
+                field.SetValue(this, val);
+            } catch {
+                oops += 1;
+                continue;
+            }
+            okay += 1;
+        }
+        if (needsRecalc) recalc_adsr();
+        return String.Format("Success: {0},  Failure: {1}", okay, oops);
+
     }
+    /// List used to identify the names of fields that would trigger an envelope recalc.
+    static readonly System.Collections.Generic.List<String> __recalcNames =
+                new System.Collections.Generic.List<String>(
+                new string[] {"ar", "dr", "sr", "rr", "delay", "_delay", "_attackTime", "_decayTime", "_susTime", "_releaseTime"});
+    /// List used to identify the names of fields that need to be handled separately as tables
+    static readonly System.Collections.Generic.List<String> __tableNames = 
+                new System.Collections.Generic.List<string>(
+                    new string[] {"ksr", "ksl", "vr"});
+
 #endregion
 
 

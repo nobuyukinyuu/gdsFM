@@ -118,7 +118,7 @@ public class Operator : Resource
             }
 
 
-            //TODO:  Apply Amplitude LFO here.  Grab the calculation from the bank associated with this Operator and multiply it with eg._totalLevel.
+            //Apply Amplitude LFO here.  Grab the calculation from the bank associated with this Operator and multiply it with eg._totalLevel.
             output *= (lfoBankAmp>=0 && LFOs != null) ? LFOs[lfoBankAmp].GetAmpMult(lfoBufPos, note.ampBuffer, ams) : 1.0;
 
             //Determine the EG position and attenuate.
@@ -158,7 +158,7 @@ public class Operator : Resource
 
             }
 
-            //TODO:  Apply Amplitude LFO here.  Grab the calculation from the bank associated with this Operator and multiply it with eg._totalLevel.
+            //Apply Amplitude LFO here.  Grab the calculation from the bank associated with this Operator and multiply it with eg._totalLevel.
             output *= (lfoBankAmp>=0 && LFOs != null) ? LFOs[lfoBankAmp].GetAmpMult(lfoBufPos, note.ampBuffer, ams) : 1.0;
 
             output *= eg._totalLevel;  //Finally, Attenuate total level.  ADSR was applied to output earlier depending on FB.
@@ -166,7 +166,7 @@ public class Operator : Resource
 
         //Iterate the phase accumulator.
         Finalize: 
-          //TODO:  Apply Pitch LFO here.  Grab the calculation from the bank associated with this Operator and multiply it with eg.totalMultiplier.
+          //Apply Pitch LFO here.  Grab the calculation from the bank associated with this Operator and multiply it with eg.totalMultiplier.
           var lfoMult = (lfoBankPitch>=0 && LFOs != null) ? LFOs[lfoBankPitch].GetPitchMult(lfoBufPos, note.samples, pms) : 1.0;
           note.Accumulate(id,1, eg.FixedFreq>0? eg.totalMultiplier/note.hz * lfoMult: eg.totalMultiplier * lfoMult, eg.SampleRate);
 

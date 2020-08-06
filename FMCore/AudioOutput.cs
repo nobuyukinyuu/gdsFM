@@ -58,9 +58,6 @@ public Channel PreviewNotes = new Channel();
         // GD.Print(new object[]{"Bad read (without default): ", jsonObject.GetItem("_badvalue")});
     }
 
-    const string input1 = "{\"quiz\":{\"sport\":{\"q1\":{\"question\":\"Which one is correct team name in NBA?\",\"options\":[\"New York Bulls\",\"Los Angeles Kings\",\"Golden State Warriros\",\"Huston Rocket\"],\"answer\":\"Huston Rocket\"}},\"maths\":{\"q1\":{\"question\":\"5 + 7 = ?\",\"options\":[\"10\",\"11\",\"12\",\"13\"],\"answer\":\"12\"},\"q2\":{\"question\":\"12 - 8 = ?\",\"options\":[\"1\",\"2\",\"3\",\"4\"],\"answer\":\"4\"}}}}";
-    const string input2 = "{\"waveform\":0,\"feedback\":0,\"filter\":{\"enabled\":false,\"cutoff\":44100,\"resonanceAmp\":1},\"reflect\":false,\"duty\":0.5,\"_use_duty\":0,\"fmTechnique\":0,\"techDuty\":0.5,\"techReflect\":false,\"ac\":-2,\"dc\":0.75,\"sc\":0.5,\"rc\":0.25,\"_attackTime\":50,\"_decayTime\":50,\"_susTime\":935502.2715098022,\"_releaseTime\":100,\"_susLevel\":1,\"_totalLevel\":1,\"_freqMult\":1,\"_coarseDetune\":1,\"_detune\":1,\"_delay\":0,\"totalMultiplier\":1,\"_egLength\":935702.2715098022,\"_ads\":935602.2715098022}";
-
     // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(float delta)
     {

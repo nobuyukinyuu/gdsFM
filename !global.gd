@@ -9,6 +9,10 @@ var samples = 0  #Global oscillator timer.  Iterated every time an output sample
 var currentEG  #typeof Envelope
 var currentPatch  #typeof Patch
 
+# IO flags to specify to gdsFM when copying part of an operator or the entire thing.
+# This enum is duplicated in glue.cs as EGCopyFlags
+enum EGCopy{NONE=0, EG=1, TUNING=2, CURVE=4, WAVEFORM=8, RTABLES=16, LOWPASS=32, ALL=63};
+
 # 12-field array containing a LUT of semitone frequencies at all MIDI note numbers.
 #Generated from center tuning (A-4) at 440hz.
 # https://www.inspiredacoustics.com/en/MIDI_note_numbers_and_center_frequencies

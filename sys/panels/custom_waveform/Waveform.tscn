@@ -240,4 +240,5 @@ items = [ "Add", ExtResource( 13 ), 0, false, false, 0, 0, null, "", false, "", 
 __meta__ = {
 "_edit_use_anchors_": false
 }
+[connection signal="index_pressed" from="CPMenu" to="." method="_on_CPMenu_index_pressed"]
 [connection signal="item_selected" from="H/Banks" to="." method="_on_Banks_item_selected"]

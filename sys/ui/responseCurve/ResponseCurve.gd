@@ -140,3 +140,13 @@ func property_exists(name:String, input:Array) -> bool:
 		
 		
 
+
+# Copy paste
+func _on_CPMenu_index_pressed(index):
+	match index:
+		0:  #Copy
+#			OS.clipboard = 
+			pass
+		1:  #Paste
+			pass
+	pass # Replace with function body.

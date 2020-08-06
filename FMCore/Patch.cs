@@ -18,9 +18,9 @@ public class Patch : Resource
     // This value should typically be initialized to whatever the global sample rate is.
     public static double sample_rate = 44100.0;
 
-
+    public const int VERSION = 1;  // Used to determine which version of the patch instrument this is, for forwards compatibility.
     public string name="";
-    string wiring;  //Set to a valid WireUp() string.  Used to reconnect connections in io.
+    string wiring;  //Set to a valid WireUp() string.  Used to reconnect connections when copypasting or loading from external.
     Operator[] connections = new Operator[0];  // This is filled in by the algorithm validator and used when mixing.
     Dictionary<String, Operator> operators = new Dictionary<string, Operator>();  // A list of all valid operators created by the algorithm validator.
 
@@ -105,7 +105,7 @@ public class Patch : Resource
     public double Resonance { get => resonance; set => resonance = value; }
 
     //Algorithm presets
-    readonly int[][][] algorithms = new int[][][]{
+    readonly static int[][][] algorithms = new int[][][]{
         new int[][]{ new int[]{1,2}, new int[]{2,3}, new int[]{3,4}, new int[]{4,0} }, //Four serial connection
         new int[][]{ new int[]{1,3}, new int[]{2,3}, new int[]{3,4}, new int[]{4,0} }, //Three double mod serial connection
         new int[][]{ new int[]{1,4}, new int[]{2,3}, new int[]{3,4}, new int[]{4,0} }, //Double mod 1

@@ -29,23 +29,30 @@ public class RTable<T> : Resource
         }
     }
 
-//Outputs a JSON-compatible string for marshalling to/from gdscript
+    /// Outputs a JSON-compatible string for marshalling to/from gdscript
     public override string ToString()
     {
-        var output = new System.Text.StringBuilder("{'values'=[", 1024);
+        var output = new GdsFMJson.JSONObject();
+        var v = new GdsFMJson.JSONArray();
 
-        for(int i=0; i < values.Length; i++)
+        if (typeof(T) == typeof(float) || typeof(T) == typeof(double) )
         {
-            output.Append(values[i]).Append(",");
+            for(int i=0; i < values.Length; i++)
+            { v.AddPrim( (float)Convert.ChangeType(values[i], typeof(float)) ); }
+        } else if (typeof(T) == typeof(int) || typeof(T) == typeof(byte) || typeof(T) == typeof(short)) {
+            for(int i=0; i < values.Length; i++)
+            { v.AddPrim( (int)Convert.ChangeType(values[i], typeof(int)) ); }
+
         }
 
-        output.Append(", 'floor'=").Append(floor);
-        output.Append(", 'ceiling'=").Append(ceiling);
-        output.Append(", 'use_log'=").Append(use_log);
-        output.Append("]}");
+        output.AddItem("values", v);
+        output.AddPrim("floor", floor);
+        output.AddPrim("ceiling", ceiling);
+        output.AddPrim("use_log", use_log);
 
         return output.ToString();
     }
+
 
     public void Reverse()
     {
@@ -206,7 +213,7 @@ public static class RTableExtensions
         }
     }
 
-    //Input from a float source, value's coming in from 0-100 and should be tamped down to 0-1.
+    /// Input from a float source, value's coming in from 0-100 and should be tamped down to 0-1.
     public static void SetValues(this RTable<double> instance, Godot.Collections.Dictionary input)
     {
         // GD.Print("attempting to assign RTable.......");
@@ -223,6 +230,27 @@ public static class RTableExtensions
         for (int i=0; i < vals.Length; i++)
         {
             instance.values[i] = (double) vals[i] / 100.0;
+        }
+
+        instance.RecalcValues();
+    }
+
+   //Input from a serialized source, value's coming in from 0-1.
+    public static void SetValues(this RTable<double> instance, GdsFMJson.JSONObject input)
+    {
+        // GD.Print("attempting to assign RTable.......");
+
+        //Structure of dict:   {values=[PoolRealArray tbl], floor=0, ceiling=100, use_log=false...}
+        instance.floor = input.GetItem("floor", (float) instance.floor);
+        instance.ceiling = input.GetItem("ceiling", (float) instance.ceiling);
+        instance.use_log = input.GetItem("use_log", instance.use_log);
+
+        //Convert values to our maximum.
+        var vals= (GdsFMJson.JSONArray) input.GetItem("values");
+
+        for (int i=0; i < vals.Length; i++)
+        {
+            instance.values[i] = vals[i].ToFloat();
         }
 
         instance.RecalcValues();

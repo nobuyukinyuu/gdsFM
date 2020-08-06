@@ -43,9 +43,11 @@ func _input(event):
 #	if Input.is_key_pressed(KEY_F12):
 #		print (global.currentEG._susTime)
 
-	if Input.is_action_just_pressed("play"):
+	if Input.is_action_just_pressed("Output"):
 #		global.currentEG.CopyEnvelope();
 #		global.currentEG.PrintJson();
+		print(global.currentEG.ToString())
+		OS.clipboard = (global.currentEG.ToString())
 		pass
 	
 	if event.is_action("BambooCopy"):
