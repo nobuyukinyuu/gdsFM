@@ -44,10 +44,9 @@ func _input(event):
 #		print (global.currentEG._susTime)
 
 	if Input.is_action_just_pressed("Output"):
-#		global.currentEG.CopyEnvelope();
-#		global.currentEG.PrintJson();
-		print(global.currentEG.ToString())
-		OS.clipboard = (global.currentEG.ToString())
+#		print(global.currentEG.ToString())
+#		OS.clipboard = (global.currentEG.ToString())
+		OS.clipboard = (global.currentPatch.ToString())
 		pass
 	
 	if event.is_action("BambooCopy"):

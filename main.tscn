@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=2]
+[gd_scene load_steps=45 format=2]
 
 [ext_resource path="res://main.gd" type="Script" id=1]
 [ext_resource path="res://sys/panels/EGControl.tscn" type="PackedScene" id=2]
@@ -16,6 +16,11 @@
 [ext_resource path="res://OP-GraphEditor.gd" type="Script" id=14]
 [ext_resource path="res://sys/panels/pitch/Pitch.tscn" type="PackedScene" id=15]
 [ext_resource path="res://sys/panels/custom_waveform/Waveform.tscn" type="PackedScene" id=16]
+[ext_resource path="res://gfx/ui/godot_icons/Load.svg" type="Texture" id=17]
+[ext_resource path="res://gfx/ui/godot_icons/icon_action_copy.svg" type="Texture" id=18]
+[ext_resource path="res://gfx/ui/godot_icons/icon_action_paste.svg" type="Texture" id=19]
+[ext_resource path="res://gfx/ui/godot_icons/Save.svg" type="Texture" id=20]
+[ext_resource path="res://IOMenu.gd" type="Script" id=21]
 [ext_resource path="res://FMCore/AudioOutput.cs" type="Script" id=23]
 [ext_resource path="res://sys/panels/CurveControl.tscn" type="PackedScene" id=24]
 [ext_resource path="res://sys/panels/WaveformOptions.tscn" type="PackedScene" id=25]
@@ -108,6 +113,35 @@ func _on_Slider_value_changed(value):
 #	$\"../Label\".text = \"%s: %s\" % [value, pow(value, 3.32192809)]
 	$\"../Label\".text = \"%s: %s\" % [value, pow(value, 21.8543453)]
 "
+
+[sub_resource type="StyleBoxFlat" id=7]
+draw_center = false
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0, 0.243137, 0.47451, 1 )
+corner_radius_top_left = 5
+corner_radius_bottom_right = 5
+
+[sub_resource type="StyleBoxFlat" id=8]
+draw_center = false
+border_width_bottom = 2
+border_color = Color( 0.0431373, 0.607843, 0.952941, 1 )
+
+[sub_resource type="StyleBoxFlat" id=11]
+content_margin_left = 1.0
+content_margin_top = 1.0
+draw_center = false
+
+[sub_resource type="StyleBoxFlat" id=9]
+draw_center = false
+
+[sub_resource type="StyleBoxLine" id=10]
+color = Color( 0.00392157, 0.227451, 0.443137, 0.733333 )
+grow_begin = -4.0
+grow_end = -4.0
+vertical = true
 
 [node name="PatchEdit" type="Control"]
 anchor_right = 1.0
@@ -554,10 +588,11 @@ __meta__ = {
 }
 
 [node name="lblAlgo" type="Label" parent="."]
+visible = false
 margin_left = 16.0
-margin_top = 16.0
+margin_top = 24.0
 margin_right = 83.0
-margin_bottom = 30.0
+margin_bottom = 38.0
 text = "Algorithm:"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -614,6 +649,92 @@ margin_bottom = 688.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Menu" type="Panel" parent="."]
+margin_left = 16.0
+margin_top = 8.0
+margin_right = 444.0
+margin_bottom = 32.0
+custom_styles/panel = SubResource( 7 )
+script = ExtResource( 21 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="H" type="HBoxContainer" parent="Menu"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_constants/separation = 16
+alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Open" type="ToolButton" parent="Menu/H"]
+margin_left = 79.0
+margin_right = 133.0
+margin_bottom = 24.0
+custom_styles/hover = SubResource( 8 )
+custom_styles/pressed = SubResource( 11 )
+custom_styles/normal = SubResource( 9 )
+text = "Open"
+icon = ExtResource( 17 )
+
+[node name="Save" type="ToolButton" parent="Menu/H"]
+margin_left = 149.0
+margin_right = 197.0
+margin_bottom = 24.0
+custom_styles/hover = SubResource( 8 )
+custom_styles/pressed = SubResource( 11 )
+custom_styles/normal = SubResource( 9 )
+text = "Save"
+icon = ExtResource( 20 )
+
+[node name="Panel" type="Panel" parent="Menu/H"]
+margin_left = 213.0
+margin_right = 213.0
+margin_bottom = 24.0
+custom_styles/panel = SubResource( 10 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Copy" type="ToolButton" parent="Menu/H"]
+modulate = Color( 1, 1, 1, 0.768627 )
+margin_left = 229.0
+margin_right = 279.0
+margin_bottom = 24.0
+custom_styles/hover = SubResource( 8 )
+custom_styles/pressed = SubResource( 11 )
+custom_styles/normal = SubResource( 9 )
+text = "Copy"
+icon = ExtResource( 18 )
+
+[node name="Paste" type="ToolButton" parent="Menu/H"]
+modulate = Color( 1, 1, 1, 0.768627 )
+margin_left = 295.0
+margin_right = 349.0
+margin_bottom = 24.0
+custom_styles/hover = SubResource( 8 )
+custom_styles/pressed = SubResource( 11 )
+custom_styles/normal = SubResource( 9 )
+text = "Paste"
+icon = ExtResource( 19 )
+
+[node name="OpenDialog" type="FileDialog" parent="Menu"]
+visible = true
+margin_left = 264.0
+margin_top = 112.0
+margin_right = 1000.0
+margin_bottom = 496.0
+popup_exclusive = true
+window_title = "Open a File"
+resizable = true
+mode = 0
+access = 2
+filters = PoolStringArray( "*.gfmp;gdsFM Patch" )
+current_dir = "/Projects/godot/Code/gdsFM"
+current_path = "/Projects/godot/Code/gdsFM/"
 [connection signal="text_changed" from="TC2/Patch/Name/LineEdit" to="TC2/Patch" method="_on_LineEdit_text_changed"]
 [connection signal="timeout" from="TC2/Patch/Label/Timer" to="TC2/Patch" method="_on_Timer_timeout"]
 [connection signal="value_changed" from="TC2/Patch/V/Gain/Slider" to="TC2/Patch" method="_on_Gain_value_changed"]
@@ -625,3 +746,4 @@ __meta__ = {
 [connection signal="pressed" from="btnValidate" to="." method="_on_btnValidate_pressed"]
 [connection signal="item_selected" from="Algorithm" to="." method="_on_Algorithm_item_selected"]
 [connection signal="value_changed" from="Slider" to="Slider" method="_on_Slider_value_changed"]
+[connection signal="file_selected" from="Menu/OpenDialog" to="Menu" method="_on_OpenDialog_file_selected"]

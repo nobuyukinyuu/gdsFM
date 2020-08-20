@@ -138,7 +138,7 @@ public class oscillators : Node
 	public static double wave(double n, RTable<double> auxData=null){
 		if (auxData==null) return 0.0;
 		n %= 1.0;
-		return auxData[(int)(Math.Abs(n)*auxData.values.Length -double.Epsilon)];
+		return auxData[(int)(Math.Abs(n)*auxData.values.Length -double.Epsilon)] * 2.0 - 1.0;
 	}
 }
 

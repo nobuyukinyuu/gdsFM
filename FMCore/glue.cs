@@ -11,6 +11,10 @@ using System.Threading;
 
 /// Flags for copying and exporting bits of an envelope when serializing.
 [Flags]  public enum EGCopyFlags{NONE=0, EG=1, TUNING=2, CURVE=4, WAVEFORM=8, RTABLES=16, LOWPASS=32, LFO=64, ALL=127};
+[Flags]  public enum OPCopyFlags{NONE=0, NAME=1, ID=2, EG=4, BYPASS=8, LFO=16, WAVEFORM_BANK=32, WAVEFORM=64, ALL=127,   HEADERS=11};
+[Flags]  public enum PatchCopyFlags{NONE=0, GENERAL=1,  OPS=2, PG=4, LFO=8, WAVEFORMS=16, ALL=255};
+// [Flags]  public enum LFOCopyFlags{NONE=0, NAME=1, TRANSPOSE=2, GAIN=4, PAN=8, OPS=16, PG=32, LFO=64, WAVEFORMS=128, ALL=255};
+
 
 //"Glue" class used for interacting with GDScript code only
 public class glue : Node
@@ -202,7 +206,6 @@ public class AutoLoadHelper : Node
     }
 
 }
-
 
 
 public static class GDSFmIO

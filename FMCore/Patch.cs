@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using GdsFMJson;
 
 public class Patch : Resource
 {
@@ -26,6 +27,7 @@ public class Patch : Resource
 
 
     public float gain = 1.0f;  //Straight multiplier to the end output.  Use db2linear conversion.
+    public float Gain {get => GD.Linear2Db(gain); set => GD.Db2Linear(value);}  //Convenience func
     public double Transpose = 1.0;  //Master tuning
 
     //List of LFOs available for operators to use.  3 initialized at first.  Operator will attempt to procure an LFO reference from list if its bank > -1.
@@ -450,6 +452,48 @@ public class Patch : Resource
 
 
 
+#region ====================== IO ======================
+    public JSONObject JsonMetadata(PatchCopyFlags flags=PatchCopyFlags.ALL)
+    {  
+        //Begin constructing a new json object.
+        JSONObject output = new JSONObject();
+
+        //Add headers.
+        if (flags.HasFlag(PatchCopyFlags.GENERAL)){
+            output.AddPrim("name", name);
+            output.AddPrim("gain", gain);
+            output.AddPrim("transpose", Transpose);
+            output.AddPrim("pan", pan);  //Remember to recalculate this when reloading
+        }
+
+        //Get the operators.
+        if (flags.HasFlag(PatchCopyFlags.OPS)){
+            //Describe the wiring.
+            output.AddPrim("wiring", wiring);
+
+            //Get the data for each operator.
+            foreach (Operator op in operators.Values)
+            {
+                var p = op.JsonMetadata(OPCopyFlags.ALL);
+                output.AddItem(op.name, p);
+            }
+        }
+
+
+        //TODO!!!!!!
+        if (flags.HasFlag(PatchCopyFlags.PG)){}
+        if (flags.HasFlag(PatchCopyFlags.LFO)){}
+        if (flags.HasFlag(PatchCopyFlags.WAVEFORMS)){}
+
+        return output;
+    }
+
+    /// Outputs a representation of this patch which can be used with clipboard and io operations.
+    public override string ToString()
+    {
+        return JsonMetadata().ToJSONString();
+    }
+
 
     /// Copies an instrument (this Patch) in an envelope format understood by BambooTracker.
     public void BambooCopy(int algorithm = 0)
@@ -548,5 +592,6 @@ public class Patch : Resource
         sw.WriteLine("Operators: " + operators.Count.ToString());
         return sw.ToString();
     }
+#endregion
 
 }

@@ -336,7 +336,7 @@ namespace GdsFMJson{
 
         //Method ToPrettyString() Abstract
         public override abstract string ToString();
-        public string ToJSONString(){ 
+        public virtual string ToJSONString(){ 
             return ToString();
         }
     }
@@ -445,7 +445,7 @@ namespace GdsFMJson{
             }
         }
 
-        public new string ToJSONString(){
+        public override string ToJSONString(){
             if (jsonReady == ""){
                 jsonReady = "\"" + JSONData.EscapeJSON(value) + "\"";
             }
@@ -478,7 +478,7 @@ namespace GdsFMJson{
             }
         }
 
-        public new string ToJSONString(){
+        public override string ToJSONString(){
             if (value){
                 return "true";
             } else {
@@ -529,7 +529,7 @@ namespace GdsFMJson{
             
         }
         
-        public new string ToJSONString(){
+        public override string ToJSONString(){
             StringBuilder retString = new StringBuilder(values.Count*2+5);
             bool first = true;
             retString.Append("[");
@@ -620,7 +620,7 @@ namespace GdsFMJson{
             return dataItem.ToString();
         }
 
-        public new string ToJSONString(){
+        public override string ToJSONString(){
             return dataItem.ToJSONString();
         }
     }
@@ -698,7 +698,7 @@ namespace GdsFMJson{
         }
         
         
-        public new string ToJSONString(){
+        public override string ToJSONString(){
             StringBuilder retString = new StringBuilder(values.Count*5+5);
             bool first = true;
             

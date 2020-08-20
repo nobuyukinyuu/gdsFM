@@ -1,11 +1,13 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using GdsFMJson;
 
 // New Operator class for discrete core.
 
 public class Operator : Resource
 {
+    public const string iotype = "operator";
     public String name;
     public int id=0;  //Operator number, used to reference itself in ordered datasets specific to operators, like Note.feedback_history
     Operator[] connections = new Operator[0];
@@ -181,5 +183,49 @@ public class Operator : Resource
         //TODO:  Take a sample timer, NoteOff status, and NoteOff position from an external Note resource.
         return eg.VolumeAtSamplePosition(note);
     }
+
+#region IO
+    public JSONObject JsonMetadata(OPCopyFlags flags= OPCopyFlags.ALL, EGCopyFlags egCopyFlags=EGCopyFlags.ALL)
+    {
+        //Begin constructing a new json object.
+        JSONObject p = new JSONObject();
+
+        //Stuff that you probably wouldn't want to copy over from one operator to another
+        //IE., Stuff you only want if you want to save to disk.  (OPCopyFlags.HEADERS)
+        if (flags.HasFlag(OPCopyFlags.NAME)){   p.AddPrim("name", name);     }
+        if (flags.HasFlag(OPCopyFlags.ID)){     p.AddPrim("id", id);         }
+        if (flags.HasFlag(OPCopyFlags.BYPASS)){ p.AddPrim("bypass", bypass); }
+
+        //Everything else
+        if (flags.HasFlag(OPCopyFlags.EG))      p.AddItem ("eg", eg.JsonMetadata(egCopyFlags));
+
+        if (flags.HasFlag(OPCopyFlags.LFO))
+        {
+            p.AddPrim("lfoBankAmp", lfoBankAmp);
+            p.AddPrim("lfoBankPitch", lfoBankPitch);
+            p.AddPrim("ams", ams);
+            p.AddPrim("pms", pms);
+        }
+        
+        //TODO:  waveform bank stuf
+        //      Do we need to copy the actual waveform in the bank?  Might not be needed for copy, but then again pasting operators 
+        //      between patches like this might wanna preserve it....
+        if (flags.HasFlag(OPCopyFlags.WAVEFORM_BANK))
+        {
+            p.AddPrim("waveformBank", waveformBank);
+        }
+
+        return p;
+    }
+
+    //Probably being used for clipboard reasons.  Omit header and inject iotype.
+    public override string ToString()
+    {
+        var output = JsonMetadata(OPCopyFlags.ALL & ~OPCopyFlags.HEADERS);  //Get meta but without headers.
+        output.AddPrim("_iotype", iotype);
+        return output.ToJSONString(); 
+
+    }
+#endregion
 
 }

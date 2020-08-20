@@ -7,7 +7,7 @@ using GdsFMJson;
 /// Envelope Generator.  Includes pitch, curve, ADSR, feedback, waveform, etc.
 public class Envelope : Node 
 {
-    const string iotype = "envelope";
+    public const string iotype = "envelope";
 
 //This measurement was done against DX7 detune at A-4, where every 22 cycles the tone would change (-detune) samples at a recording rate of 44100hz.
 //See const definitions in Note.cs for more information about the extra-fine detune increment.
@@ -357,7 +357,7 @@ public class Envelope : Node
 
         update_multiplier();
     }
-#endregion
+#endregion //Pitch and tuning
 
 
 #region ================ IO ==================
@@ -381,6 +381,8 @@ public class Envelope : Node
 
         //Begin constructing a new json object.
         JSONObject p = new JSONObject();
+
+        // p.AddPrim("_iotype", iotype);
 
         if (flags.HasFlag(EGCopyFlags.EG)){
              p.AddPrim("ar", ar);
@@ -435,10 +437,13 @@ public class Envelope : Node
         return p;
     }
 
+    //Probably being used for clipboard reasons.  Omit ID header and inject iotype.
     public override string ToString()
     {
         //NOTE: DOES NOT CONTAIN OPERATOR SPECIFIC DATA SUCH AS LFO AND WAVEFORM BANK. GET THIS FROM OP OR PATCH INSTEAD.
-        return JsonMetadata(EGCopyFlags.ALL).ToString(); 
+        var output = JsonMetadata(EGCopyFlags.ALL);
+        output.AddPrim("_iotype", iotype);
+        return output.ToJSONString(); 
     }
 
     /// Takes a string with metadata for an envelope and apply the values inside to this envelope.
@@ -489,7 +494,8 @@ public class Envelope : Node
                 new System.Collections.Generic.List<string>(
                     new string[] {"ksr", "ksl", "vr"});
 
-#endregion
+#endregion //IO
+
 
 
     /// Gets the sample rate from the global singleton
