@@ -661,6 +661,10 @@ namespace GdsFMJson{
             values.Remove(name);
         }
         
+        public bool HasItem( string name) {
+            if (values.ContainsKey(name)) return true;  else return false;
+        }
+
         public JSONDataItem GetItem( string name ){
             if (values.ContainsKey(name)) return values[name];  else throw new KeyNotFoundException("The key '" + name + "' was not found.");
         }

@@ -4,7 +4,7 @@ using System;
 //Response / Rate Table.  128 values in either 8-bit format (MIDI velocity, etc) or floating-point
 public class RTable<T> : Resource
 {
-    const string iotype="RTable";
+    const string _iotype="rtable";
     readonly string subtype = typeof(T).ToString();
 
     public enum Presets {ZERO, FIFTY_PERCENT, ONE, IN, OUT, IN_OUT, TWELFTH_ROOT_OF_2}
@@ -29,8 +29,17 @@ public class RTable<T> : Resource
         }
     }
 
+
     /// Outputs a JSON-compatible string for marshalling to/from gdscript
     public override string ToString()
+    {
+        var output = JsonMetadata();
+        output.AddPrim("_iotype", _iotype);
+        return output.ToJSONString();
+    }
+
+    //TODO:  Get and Set for clipboard compatible data.  Use a JSONObject with iotype and table only...?
+    public GdsFMJson.JSONObject JsonMetadata()
     {
         var output = new GdsFMJson.JSONObject();
         var v = new GdsFMJson.JSONArray();
@@ -50,7 +59,7 @@ public class RTable<T> : Resource
         output.AddPrim("ceiling", ceiling);
         output.AddPrim("use_log", use_log);
 
-        return output.ToString();
+        return output;
     }
 
 
@@ -236,14 +245,17 @@ public static class RTableExtensions
     }
 
    //Input from a serialized source, value's coming in from 0-1.
-    public static void SetValues(this RTable<double> instance, GdsFMJson.JSONObject input)
+    public static void SetValues(this RTable<double> instance, GdsFMJson.JSONObject input, bool tableOnly=false)
     {
         // GD.Print("attempting to assign RTable.......");
 
         //Structure of dict:   {values=[PoolRealArray tbl], floor=0, ceiling=100, use_log=false...}
-        instance.floor = input.GetItem("floor", (float) instance.floor);
-        instance.ceiling = input.GetItem("ceiling", (float) instance.ceiling);
-        instance.use_log = input.GetItem("use_log", instance.use_log);
+
+        if (!tableOnly) {
+            instance.floor = input.GetItem("floor", (float) instance.floor);
+            instance.ceiling = input.GetItem("ceiling", (float) instance.ceiling);
+            instance.use_log = input.GetItem("use_log", instance.use_log);
+        }
 
         //Convert values to our maximum.
         var vals= (GdsFMJson.JSONArray) input.GetItem("values");
@@ -290,4 +302,16 @@ public static class RTableExtensions
     }
 
 
+    /// Takes a compatible JSON string from the clipboard and populates the table with it.
+    public static int FromString(this RTable<Double> instance, string input)
+    {
+        var p = GdsFMJson.JSONData.ReadJSON(input);
+        if (p is GdsFMJson.JSONDataError) return -1;  // JSON malformed.  Exit early.
+        
+        var o = (GdsFMJson.JSONObject) p;
+        if (o.GetItem("_iotype", "") != "rtable") return -2;  //Incorrect iotype.  Exit early.
+
+        instance.SetValues(input);
+        return 0;
+    }
 }

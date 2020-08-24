@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using GdsFMJson;
 
 public class LFO : Resource //: Node
 {
@@ -40,9 +41,33 @@ public class LFO : Resource //: Node
     public bool oscSync=true;  //Affects resets on the accumulator when a new key is pressed, otherwise the oscillator continues to cycle it from previous position.
     public bool legato = true;  //TODO:  If disabled, quantizes LFO values to nearest 12th root of 2
 
+    // public static readonly double[] NEAREST_12 = new double[] //Nearest power of 12, used for quantizing LFO when discrete note (no legato) mode is enabled
+    //         {0, 0.059463, 0.122462, 0.189207, 0.259921, 0.33484, 0.414214, 0.498307, 0.587401, 0.681793, 0.781797, 0.887749, 1.0};
 
-    public static readonly double[] NEAREST_12 = new double[] //Nearest power of 12, used for quantizing LFO when discrete note (no legato) mode is enabled
-            {0, 0.059463, 0.122462, 0.189207, 0.259921, 0.33484, 0.414214, 0.498307, 0.587401, 0.681793, 0.781797, 0.887749, 1.0};
+    /// Typically used to get output for clipboard data.
+    public override string ToString()
+    {
+        var output = JsonMetadata();
+        output.AddPrim ("_iotype", "lfo");
+        return output.ToJSONString();
+    }
+
+    /// Typically used to fetch an object for IO.  For clipboard type output, use ToString().
+    public JSONObject JsonMetadata()
+    {
+        var output = new JSONObject();
+        output.AddPrim("enabled", enabled);
+        output.AddPrim("depth", depth);
+        output.AddPrim("cycleTime", cycleTime);
+        output.AddPrim("delay", delay);
+        output.AddPrim("bias", bias);
+
+        output.AddPrim("keySync", keySync);
+        output.AddPrim("oscSync", oscSync);
+        output.AddPrim("legato", legato);
+
+        return output;
+    }
 
     //Constructors
     public LFO(){}
@@ -79,7 +104,7 @@ public class LFO : Resource //: Node
         
     }
 
-    //Calculates a multiplier at the current LFO's sample position.  Used for Operators' pitch modulation sensitivity.
+    /// Calculates a multiplier at the current LFO's sample position.  Used for Operators' pitch modulation sensitivity.
     public virtual double GetPitchMult(int noteSamples, double sensitivity=1.0)
     {
         if (samples < delay)
@@ -102,7 +127,7 @@ public class LFO : Resource //: Node
         }
     }
 
-    //Calculates a multiplier at the specified buffer position.  Used for Operators' pitch modulation sensitivity.
+    /// Calculates a multiplier at the specified buffer position.  Used for Operators' pitch modulation sensitivity.
     public virtual double GetPitchMult(int idx, int noteSamples, double sensitivity=1.0)
     {
         if (samples < delay)  //Determine if the note is mature enough to have LFO applied.
@@ -125,7 +150,7 @@ public class LFO : Resource //: Node
     }
 
 
-    //Calculates a multiplier at the current LFO's sample position.  Used for Operators' total amplitude modulation sensitivity.
+    /// Calculates a multiplier at the current LFO's sample position.  Used for Operators' total amplitude modulation sensitivity.
     public virtual double GetAmpMult(int noteSamples, double sensitivity=1.0)
     {
         if (samples < delay)
@@ -140,7 +165,7 @@ public class LFO : Resource //: Node
             return (output+1) * 0.5;
         }
     }
-    //Calculates a multiplier at the specified buffer position.  Used for Operators' total amplitude modulation sensitivity.
+    /// Calculates a multiplier at the specified buffer position.  Used for Operators' total amplitude modulation sensitivity.
     public virtual double GetAmpMult(int idx, List<double> ampBuffer, double sensitivity=1.0)
     {
         double output;
@@ -167,7 +192,7 @@ public class LFO : Resource //: Node
     // double[] ampBuffer = new double[3];
 
 
-    //Gets the oscillator at current phase.
+    /// Gets the oscillator at current phase.
     public double Calc(out bool delayed)
     {
         if (samples < delay)
@@ -182,7 +207,7 @@ public class LFO : Resource //: Node
     }
 
 
-    //Recalculates the current level of the LFO.  This should be called whenever sample timer updates.
+    /// Recalculates the current level of the LFO.  This should be called whenever sample timer updates.
     public void Recalc()
     {
         currentOscillation = Calc(out bool delayed);
@@ -196,13 +221,13 @@ public class LFO : Resource //: Node
         // phase += numsamples / sample_rate * (cycleTime*multiplier);
     }
 
-    //Called by the master clock, typically Patch when it wants to update its LFOs during a buffer fill.
+    /// Called by the master clock, typically Patch when it wants to update its LFOs during a buffer fill.
     public void Iterate(int numsamples=1)
     {
         samples += numsamples;
     }
 
-
+    /// Retreives the nearest semitone to a given input position (-1.0 to 1.0)
     static double NearestSemitone(double input)
     {
         // var sign = Math.Sign(input);

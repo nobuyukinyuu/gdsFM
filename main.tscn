@@ -129,15 +129,15 @@ draw_center = false
 border_width_bottom = 2
 border_color = Color( 0.0431373, 0.607843, 0.952941, 1 )
 
-[sub_resource type="StyleBoxFlat" id=11]
+[sub_resource type="StyleBoxFlat" id=9]
 content_margin_left = 1.0
 content_margin_top = 1.0
 draw_center = false
 
-[sub_resource type="StyleBoxFlat" id=9]
+[sub_resource type="StyleBoxFlat" id=10]
 draw_center = false
 
-[sub_resource type="StyleBoxLine" id=10]
+[sub_resource type="StyleBoxLine" id=11]
 color = Color( 0.00392157, 0.227451, 0.443137, 0.733333 )
 grow_begin = -4.0
 grow_end = -4.0
@@ -675,8 +675,8 @@ margin_left = 79.0
 margin_right = 133.0
 margin_bottom = 24.0
 custom_styles/hover = SubResource( 8 )
-custom_styles/pressed = SubResource( 11 )
-custom_styles/normal = SubResource( 9 )
+custom_styles/pressed = SubResource( 9 )
+custom_styles/normal = SubResource( 10 )
 text = "Open"
 icon = ExtResource( 17 )
 
@@ -685,8 +685,8 @@ margin_left = 149.0
 margin_right = 197.0
 margin_bottom = 24.0
 custom_styles/hover = SubResource( 8 )
-custom_styles/pressed = SubResource( 11 )
-custom_styles/normal = SubResource( 9 )
+custom_styles/pressed = SubResource( 9 )
+custom_styles/normal = SubResource( 10 )
 text = "Save"
 icon = ExtResource( 20 )
 
@@ -694,7 +694,7 @@ icon = ExtResource( 20 )
 margin_left = 213.0
 margin_right = 213.0
 margin_bottom = 24.0
-custom_styles/panel = SubResource( 10 )
+custom_styles/panel = SubResource( 11 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -705,8 +705,8 @@ margin_left = 229.0
 margin_right = 279.0
 margin_bottom = 24.0
 custom_styles/hover = SubResource( 8 )
-custom_styles/pressed = SubResource( 11 )
-custom_styles/normal = SubResource( 9 )
+custom_styles/pressed = SubResource( 9 )
+custom_styles/normal = SubResource( 10 )
 text = "Copy"
 icon = ExtResource( 18 )
 
@@ -716,13 +716,12 @@ margin_left = 295.0
 margin_right = 349.0
 margin_bottom = 24.0
 custom_styles/hover = SubResource( 8 )
-custom_styles/pressed = SubResource( 11 )
-custom_styles/normal = SubResource( 9 )
+custom_styles/pressed = SubResource( 9 )
+custom_styles/normal = SubResource( 10 )
 text = "Paste"
 icon = ExtResource( 19 )
 
 [node name="OpenDialog" type="FileDialog" parent="Menu"]
-visible = true
 margin_left = 264.0
 margin_top = 112.0
 margin_right = 1000.0
@@ -735,6 +734,21 @@ access = 2
 filters = PoolStringArray( "*.gfmp;gdsFM Patch" )
 current_dir = "/Projects/godot/Code/gdsFM"
 current_path = "/Projects/godot/Code/gdsFM/"
+
+[node name="SaveDialog" type="FileDialog" parent="Menu"]
+margin_left = 264.0
+margin_top = 112.0
+margin_right = 1000.0
+margin_bottom = 496.0
+popup_exclusive = true
+resizable = true
+access = 2
+filters = PoolStringArray( "*.gfmp;gdsFM Patch" )
+current_dir = "/Projects/godot/Code/gdsFM"
+current_path = "/Projects/godot/Code/gdsFM/"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 [connection signal="text_changed" from="TC2/Patch/Name/LineEdit" to="TC2/Patch" method="_on_LineEdit_text_changed"]
 [connection signal="timeout" from="TC2/Patch/Label/Timer" to="TC2/Patch" method="_on_Timer_timeout"]
 [connection signal="value_changed" from="TC2/Patch/V/Gain/Slider" to="TC2/Patch" method="_on_Gain_value_changed"]
@@ -746,4 +760,10 @@ current_path = "/Projects/godot/Code/gdsFM/"
 [connection signal="pressed" from="btnValidate" to="." method="_on_btnValidate_pressed"]
 [connection signal="item_selected" from="Algorithm" to="." method="_on_Algorithm_item_selected"]
 [connection signal="value_changed" from="Slider" to="Slider" method="_on_Slider_value_changed"]
+[connection signal="pressed" from="Menu/H/Open" to="Menu" method="_on_Open_pressed"]
+[connection signal="pressed" from="Menu/H/Save" to="Menu" method="_on_Save_pressed"]
+[connection signal="pressed" from="Menu/H/Copy" to="Menu" method="_on_Copy_pressed"]
+[connection signal="about_to_show" from="Menu/OpenDialog" to="Menu" method="_on_Dialog_about_to_show"]
 [connection signal="file_selected" from="Menu/OpenDialog" to="Menu" method="_on_OpenDialog_file_selected"]
+[connection signal="about_to_show" from="Menu/SaveDialog" to="Menu" method="_on_Dialog_about_to_show"]
+[connection signal="file_selected" from="Menu/SaveDialog" to="Menu" method="_on_SaveDialog_file_selected"]

@@ -21,7 +21,7 @@ public class Patch : Resource
 
     public const int VERSION = 1;  // Used to determine which version of the patch instrument this is, for forwards compatibility.
     public string name="";
-    string wiring;  //Set to a valid WireUp() string.  Used to reconnect connections when copypasting or loading from external.
+    string wiring="";  //Set to a valid WireUp() string.  Used to reconnect connections when copypasting or loading from external.
     Operator[] connections = new Operator[0];  // This is filled in by the algorithm validator and used when mixing.
     Dictionary<String, Operator> operators = new Dictionary<string, Operator>();  // A list of all valid operators created by the algorithm validator.
 
@@ -33,7 +33,7 @@ public class Patch : Resource
     //List of LFOs available for operators to use.  3 initialized at first.  Operator will attempt to procure an LFO reference from list if its bank > -1.
     public List<LFO> LFOs = new List<LFO>( new LFO[] {new LFO(sample_rate), new LFO(sample_rate), new LFO(sample_rate)} );
 
-#region Stereo Panning
+#region Stereo Panning ======
     const float C_PAN = 0.5f;  //Center panning value each side lerps to.
     public float _panL=1.0f, _panR=1.0f;  //Stereo panning multipliers
 
@@ -88,7 +88,7 @@ public class Patch : Resource
     public double Pdl { get => par; set => pdl = _calcPitch(ref pdlMult, value); }
     public double Psl { get => par; set => psl = _calcPitch(ref pslMult, value); }
     public double Prl { get => par; set => prl = _calcPitch(ref prlMult, value); }
-    //Used by pitch level properties to translate values into proper 
+    /// Used by pitch level properties to translate values into proper multipliers
     private double _calcPitch(ref double field, double value)
     {
 
@@ -97,6 +97,15 @@ public class Patch : Resource
 
         field = amt;
         return value;
+    }
+    /// Recalculates the multipliers and _padr precalcs for the entire pitch gen. Useful for loads.
+    private void RecalcPitchGen()
+    {
+        _padr = par + pdr;
+        _calcPitch(ref palMult, pal);
+        _calcPitch(ref pdlMult, pdl);
+        _calcPitch(ref pslMult, psl);
+        _calcPitch(ref prlMult, prl);
     }
 #endregion
 
@@ -480,10 +489,42 @@ public class Patch : Resource
         }
 
 
-        //TODO!!!!!!
-        if (flags.HasFlag(PatchCopyFlags.PG)){}
-        if (flags.HasFlag(PatchCopyFlags.LFO)){}
-        if (flags.HasFlag(PatchCopyFlags.WAVEFORMS)){}
+        if (flags.HasFlag(PatchCopyFlags.PG))  //Pitch gen. When reloading don't forget to recalc the values not saved
+        {
+            output.AddPrim("pal", pal);
+            output.AddPrim("pdl", pdl);
+            output.AddPrim("psl", psl);
+            output.AddPrim("prl", prl);
+
+            output.AddPrim("par", par);
+            output.AddPrim("pdr", pdr);
+            output.AddPrim("prr", prr);
+        }
+
+        if (flags.HasFlag(PatchCopyFlags.LFO))
+        {
+
+            var lfout = new JSONArray();
+            for(int i=0; i < LFOs.Count; i++)
+            {
+                // lfout.AddItem("ksr", JSONData.ReadJSON(ksr.ToString()));
+                lfout.AddItem(LFOs[i].JsonMetadata());
+            } 
+            output.AddItem("LFOs", lfout);
+        }
+
+        if (flags.HasFlag(PatchCopyFlags.WAVEFORMS))
+        {
+            var p = new JSONArray();
+            for(int i=0; i < customWaveforms.Count; i++)
+            {
+                // lfout.AddItem("ksr", JSONData.ReadJSON(ksr.ToString()));
+                p.AddItem(JSONData.ReadJSON(customWaveforms[i].ToString() ));
+            } 
+            output.AddItem("customWaveforms", p);
+
+        }
+
 
         return output;
     }
@@ -491,9 +532,17 @@ public class Patch : Resource
     /// Outputs a representation of this patch which can be used with clipboard and io operations.
     public override string ToString()
     {
-        return JsonMetadata().ToJSONString();
+        var output=JsonMetadata();
+        output.AddPrim("_iotype", "patch");
+        return output.ToJSONString();
     }
 
+    /// Combine with your io method of choice... No _iotype is specified here
+    public string IOString()
+    {
+        var output=JsonMetadata();
+        return output.ToJSONString();
+    }
 
     /// Copies an instrument (this Patch) in an envelope format understood by BambooTracker.
     public void BambooCopy(int algorithm = 0)
