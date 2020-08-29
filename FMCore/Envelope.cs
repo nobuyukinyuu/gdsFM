@@ -455,9 +455,9 @@ public class Envelope : Node
         }
 
         if (flags.HasFlag(EGCopyFlags.RTABLES)){
-            p.AddItem("ksr", JSONData.ReadJSON(ksr.ToString()));
-            p.AddItem("ksl", JSONData.ReadJSON(ksl.ToString()));
-            p.AddItem("vr", JSONData.ReadJSON(vr.ToString()));
+            p.AddItem("ksr", ksr.JsonMetadata());
+            p.AddItem("ksl", ksl.JsonMetadata());
+            p.AddItem("vr", vr.JsonMetadata());
         }
 
         return p;

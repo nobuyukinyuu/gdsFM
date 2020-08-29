@@ -53,13 +53,13 @@ public class Operator : Resource
 
         if (amt > 1)
         {
-            sb.Append(" <= (");
+            sb.Append(" < (");
             while (amt > 1)
             {    
                 var op=connections[amt-1];
             
                 // if (once) {sb.Append(" <= ("); once=false;}
-                sb.Append(op.ConnectionInfo()).Append(" + ");
+                sb.Append(op.ConnectionInfo()).Append(", ");
                 amt -= 1;
             } 
             sb.Append(connections[0].ConnectionInfo());
@@ -68,7 +68,7 @@ public class Operator : Resource
         } else {
             foreach (Operator op in connections)
             {
-                if (once) {sb.Append("<="); once=false;}
+                if (once) {sb.Append(" } "); once=false;}
                 sb.Append(op.ConnectionInfo());
             }
         }

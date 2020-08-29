@@ -532,7 +532,7 @@ public class Patch : Resource
             for(int i=0; i < customWaveforms.Count; i++)
             {
                 // lfout.AddItem("ksr", JSONData.ReadJSON(ksr.ToString()));
-                p.AddItem(JSONData.ReadJSON(customWaveforms[i].ToString() ));
+                p.AddItem(customWaveforms[i].JsonMetadata());
             } 
             output.AddItem("customWaveforms", p);
 
@@ -590,13 +590,16 @@ public class Patch : Resource
             if (j.HasItem("customWaveforms"))
             {
                 var bankData = (JSONArray) j.GetItem("customWaveforms");
-                ResetWaveformBanks();
+                customWaveforms.Clear();
 
                 for(int i=0; i < bankData.Length; i++)
                 {
                     AddWaveformBank();
                     SetWaveformBank(i, (JSONObject) bankData[i]);
                 }
+
+                //Make sure that if there's no custom waveform banks to re-initialize with a blank one.
+                if (customWaveforms.Count == 0) AddWaveformBank();   
             }
            
 

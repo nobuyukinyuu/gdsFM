@@ -220,10 +220,9 @@ __meta__ = {
 
 [node name="Label" type="Label" parent="TC2/Patch"]
 modulate = Color( 1, 1, 1, 0.454902 )
-margin_left = 8.0
-margin_top = 252.0
-margin_right = 204.0
-margin_bottom = 329.0
+margin_top = 248.0
+margin_right = 196.0
+margin_bottom = 325.0
 grow_vertical = 0
 custom_fonts/font = ExtResource( 4 )
 custom_constants/shadow_offset_x = 1
