@@ -237,9 +237,8 @@ __meta__ = {
 }
 
 [node name="Label" type="Label" parent="V/Depth/Val/Popup/Grid"]
-margin_top = -1.0
 margin_right = 176.0
-margin_bottom = 11.0
+margin_bottom = 12.0
 rect_min_size = Vector2( 0, 12 )
 mouse_filter = 0
 mouse_default_cursor_shape = 2
@@ -255,9 +254,8 @@ __meta__ = {
 
 [node name="lblValue" type="Label" parent="V/Depth/Val/Popup/Grid"]
 margin_left = 180.0
-margin_top = -1.0
 margin_right = 208.0
-margin_bottom = 11.0
+margin_bottom = 12.0
 rect_min_size = Vector2( 0, 12 )
 custom_fonts/font = ExtResource( 7 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )

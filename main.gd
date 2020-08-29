@@ -170,6 +170,9 @@ func update_envelope_preview(env:EnvelopeDisplay, propertyName:String, value):
 			env.rc = value
 
 func update_envelope_preview_all(env:EnvelopeDisplay, eg):
+	if eg == null:
+		print ("update_envelope_preview:  envelope is null")
+		return
 	env.Attack = eg.ar
 	env.Decay = eg.dr
 	env.Sustain = eg.sr
@@ -182,3 +185,19 @@ func update_envelope_preview_all(env:EnvelopeDisplay, eg):
 	env.rc = eg.rc
 	env.update_env()
 	env.update_vol()
+
+#Called when opening a file or pasting a patch.
+func update_ui():
+	for o in $GraphEdit.get_children():
+		if o.is_in_group("operator"):
+#			update_envelope_preview_all(o.get_node("EnvelopeDisplay"), $Audio.patch.GetEG(o.name))
+			var eg = global.currentPatch.GetEG(o.name)
+			update_envelope_preview_all(o.get_node("EnvelopeDisplay"), eg)
+			
+	
+	$TC/EGControl.disable(true)
+
+	$TC2/Patch.reload()
+	$TC2/LFO.reload()
+	$TC2/Pitch.load_settings()
+	$TC2/Wave.reload()

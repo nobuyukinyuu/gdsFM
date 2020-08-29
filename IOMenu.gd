@@ -3,9 +3,31 @@ extends Panel
 
 
 func _on_OpenDialog_file_selected(path):
+	if !global.currentPatch:  
+		print("PatchEdit:  Can't load, patch doesn't exist")
+		return
 	
-	#open file from filesystem, input string to patch paster
-	pass # Replace with function body.
+	var f = File.new()
+	var ferr = f.open(path, File.READ)
+	var err = global.currentPatch.FromString(f.get_as_text())
+	f.close()
+
+	if ferr != OK:
+		print ("File error %s." % ferr)
+	elif err != 0:  
+		print ("Load attempt returned error code %s from patch." % err)
+	else:
+		#Update the UI to reflect the new patch settings.
+		owner.get_node("GraphEdit").wire_up(global.currentPatch.wiring)
+		
+#		for o in $"../GraphEdit".get_children():
+#			if o.is_in_group("operator"):
+#				#Check if operator exists before trying to update the preview.
+#				var eg = global.currentPatch.GetEG(o.name)
+#				if !eg:  continue
+#				owner.update_envelope_preview_all(o.get_node("EnvelopeDisplay"), eg)
+		yield(get_tree(), "idle_frame")
+		owner.update_ui()
 
 
 func _on_SaveDialog_file_selected(path):
@@ -38,3 +60,8 @@ func _on_Copy_pressed():
 	if !global.currentPatch:  return
 	
 	OS.clipboard = global.currentPatch.ToString()
+
+
+func _on_Paste_pressed():
+	owner.update_ui()
+	pass # Replace with function body.

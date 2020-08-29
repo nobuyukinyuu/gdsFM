@@ -20,15 +20,17 @@ public class Patch : Resource
     public static double sample_rate = 44100.0;
 
     public const int VERSION = 1;  // Used to determine which version of the patch instrument this is, for forwards compatibility.
+    public const string _iotype = "patch";
     public string name="";
-    string wiring="";  //Set to a valid WireUp() string.  Used to reconnect connections when copypasting or loading from external.
+    public string wiring="";  //Set to a valid WireUp() string.  Used to reconnect connections when copypasting or loading from external.
     Operator[] connections = new Operator[0];  // This is filled in by the algorithm validator and used when mixing.
     Dictionary<String, Operator> operators = new Dictionary<string, Operator>();  // A list of all valid operators created by the algorithm validator.
 
 
     public float gain = 1.0f;  //Straight multiplier to the end output.  Use db2linear conversion.
     public float Gain {get => GD.Linear2Db(gain); set => GD.Db2Linear(value);}  //Convenience func
-    public double Transpose = 1.0;  //Master tuning
+    public double transpose = 1.0;  //Master tuning
+    public double Transpose {get => Math.Log(transpose, 2) * 12; set => transpose = Math.Pow(2, value/12);}  //Convenience func
 
     //List of LFOs available for operators to use.  3 initialized at first.  Operator will attempt to procure an LFO reference from list if its bank > -1.
     public List<LFO> LFOs = new List<LFO>( new LFO[] {new LFO(sample_rate), new LFO(sample_rate), new LFO(sample_rate)} );
@@ -135,6 +137,8 @@ public class Patch : Resource
         if (idx < 0 || idx>=customWaveforms.Count) return false;
         return true;
     }
+
+    public void ResetWaveformBanks() {customWaveforms.Clear();  InitWaveformBank();}
     public void InitWaveformBank() {if (customWaveforms.Count == 0) AddWaveformBank();}
     public void AddWaveformBank() {customWaveforms.Add(RTable.FromPreset<Double>(RTable.Presets.FIFTY_PERCENT));}
     public Godot.Collections.Dictionary GetWaveformBank (int idx, bool returnDefault=false) 
@@ -148,7 +152,14 @@ public class Patch : Resource
     }
     public void SetWaveformBank (int idx, Godot.Collections.Dictionary value) {
         if (!isValidWaveformBank(idx)) return; 
-        customWaveforms[idx].SetValues(value);}
+        customWaveforms[idx].SetValues(value);
+        }
+
+    public void SetWaveformBank (int idx, JSONObject input)
+    {
+        if (!isValidWaveformBank(idx)) return;
+        customWaveforms[idx].SetValues(input);
+    }
 
     public void RemoveWaveformBank(int idx=-1)
     {
@@ -471,23 +482,25 @@ public class Patch : Resource
         if (flags.HasFlag(PatchCopyFlags.GENERAL)){
             output.AddPrim("name", name);
             output.AddPrim("gain", gain);
-            output.AddPrim("transpose", Transpose);
+            output.AddPrim("transpose", transpose);
             output.AddPrim("pan", pan);  //Remember to recalculate this when reloading
         }
 
         //Get the operators.
         if (flags.HasFlag(PatchCopyFlags.OPS)){
+            var ops = new JSONObject();
             //Describe the wiring.
             output.AddPrim("wiring", wiring);
 
             //Get the data for each operator.
             foreach (Operator op in operators.Values)
             {
+                // var op = connections[i];
                 var p = op.JsonMetadata(OPCopyFlags.ALL);
-                output.AddItem(op.name, p);
+                ops.AddItem(op.name, p);
             }
+            output.AddItem("operators", ops);
         }
-
 
         if (flags.HasFlag(PatchCopyFlags.PG))  //Pitch gen. When reloading don't forget to recalc the values not saved
         {
@@ -501,7 +514,7 @@ public class Patch : Resource
             output.AddPrim("prr", prr);
         }
 
-        if (flags.HasFlag(PatchCopyFlags.LFO))
+        if (flags.HasFlag(PatchCopyFlags.LFO))  //LFO banks.
         {
 
             var lfout = new JSONArray();
@@ -513,7 +526,7 @@ public class Patch : Resource
             output.AddItem("LFOs", lfout);
         }
 
-        if (flags.HasFlag(PatchCopyFlags.WAVEFORMS))
+        if (flags.HasFlag(PatchCopyFlags.WAVEFORMS)) //Waveform banks.
         {
             var p = new JSONArray();
             for(int i=0; i < customWaveforms.Count; i++)
@@ -533,15 +546,117 @@ public class Patch : Resource
     public override string ToString()
     {
         var output=JsonMetadata();
-        output.AddPrim("_iotype", "patch");
+        output.AddPrim("_iotype", _iotype);
         return output.ToJSONString();
     }
 
-    /// Combine with your io method of choice... No _iotype is specified here
+    /// Combine with your io method of choice to save a file... Like ToString, but with version data.
     public string IOString()
     {
         var output=JsonMetadata();
+        output.AddPrim("_iotype", _iotype);
+        output.AddPrim("_version", VERSION);
         return output.ToJSONString();
+    }
+
+
+    /// Attempts to load a JSON string into the patch data.
+    public int FromString(string input)
+    {
+        var p = JSONData.ReadJSON(input);
+        if (p is JSONDataError) return -1;  // JSON malformed.  Exit early.
+        
+        var j = (JSONObject) p;
+        var ver = j.GetItem("_version", -1);
+        if (ver < VERSION) {GD.Print("Patch.FromString:  Unknown version number " , ver); return -2;}
+          else if (ver > VERSION) GD.Print("Patch.FromString:  WARNING, newer patch version", ver ,"detected. Some settings may not load correctly.");
+        if (j.GetItem("_iotype", "") != _iotype) return -3;  //Incorrect iotype.  Exit early.
+
+        //If we got this far, the data is probably okay.  Let's try parsing it.......
+        int okay = 0;
+        int oops = 0;
+        var idk = new List<string>();
+        try
+        {
+
+            //Globals
+            j.Assign("name", ref name);
+            j.Assign("gain", ref gain);
+            j.Assign("transpose", ref transpose);
+            if (j.Assign("pan", ref pan))  SetPanning(pan);
+
+
+            //Setup the waveform banks.
+            if (j.HasItem("customWaveforms"))
+            {
+                var bankData = (JSONArray) j.GetItem("customWaveforms");
+                ResetWaveformBanks();
+
+                for(int i=0; i < bankData.Length; i++)
+                {
+                    AddWaveformBank();
+                    SetWaveformBank(i, (JSONObject) bankData[i]);
+                }
+            }
+           
+
+            //Operators
+            if (j.HasItem("wiring"))
+            {
+                WireUp(j.GetItem("wiring", ""));
+                var ops = (JSONObject) j.GetItem("operators");
+
+                //Get the data for each operator.
+                foreach (Operator op in operators.Values)
+                {
+                  //TODO:  Look for each operator here and populate it.
+                  if (!ops.HasItem(op.name))  continue;
+                  var opData = (JSONObject) ops.GetItem(op.name);
+                    op.FromString(opData.ToJSONString(), true);
+
+                   //Operators can't grab data from a patch's databank by itself.  Feed it the bank that should be appropriate for it.
+                   LoadCustomWaveform(op.waveformBank, op.name);
+
+                }
+
+            }
+
+            //Populate the pitch generator.
+            j.Assign("pal", ref pal);
+            j.Assign("pdl", ref pdl);
+            j.Assign("psl", ref psl);
+            j.Assign("prl", ref prl);
+
+            j.Assign("par", ref par);
+            j.Assign("pdr", ref pdr);
+            j.Assign("prr", ref prr);
+
+            //Populate the LFOs.  
+            var lfoData = j.HasItem("LFOs") ? (JSONArray) j.GetItem("LFOs") : null;
+            if (lfoData != null)
+            {
+                var lfos = new List<LFO>();
+                foreach (JSONDataItem dataItem in lfoData)
+                {
+                    var lfo = new LFO(sample_rate);
+                    int err = lfo.ParseJson((JSONObject) dataItem);
+                    if (err==0)  lfos.Add(lfo);
+                }
+
+                if (lfos.Count > 0)  {LFOs = lfos;}
+                else { LFOs = new List<LFO>( new LFO[] {new LFO(sample_rate), new LFO(sample_rate), new LFO(sample_rate)}); }
+            }
+
+            // if (needsRecalc) recalc_adsr();
+            // GD.Print( String.Format("Success: {0},  Failure: {1}, Unknown fields: {2}", okay, oops, idk.Contents()));
+
+
+
+        } catch {
+            return -1;  // JSON malformed or another error.
+        }
+
+        return 0;
     }
 
     /// Copies an instrument (this Patch) in an envelope format understood by BambooTracker.

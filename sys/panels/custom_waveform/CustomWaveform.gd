@@ -25,6 +25,21 @@ func _ready():
 	var pop = $H/MenuButton.get_popup()
 	pop.connect("index_pressed", self, "_on_menu_item_selected")
 
+func reload():
+	if !global.currentPatch:  return
+	var sz = global.currentPatch.WaveformBankSize
+	
+	$H/Banks.clear()
+	
+	if sz == 0:
+		print ("CustomWaveform:  Waveform bank size is 0...")
+		add_bank()
+
+	for i in sz:
+		$H/Banks.add_item(str(i), i)
+		
+	fetch_table()
+
 func fetch_table(index=0):
 	if !global.currentPatch:  return
 	var input:Dictionary = global.currentPatch.GetWaveformBank(index,false) 

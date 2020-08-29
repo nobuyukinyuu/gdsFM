@@ -15,8 +15,7 @@ func _ready():
 	#Load global patch LFO bank A
 	yield(get_tree(),"idle_frame")
 	yield(get_tree(),"idle_frame")
-	if global.currentPatch:
-		_on_Bank_change("0")
+	reload(0)
 
 
 
@@ -60,6 +59,9 @@ func _on_slider_change(value, which):
 		currentLFO.set(which, value)
 
 
+func reload(which=0):
+	if global.currentPatch:
+		_on_Bank_change(int(which))
 
 
 

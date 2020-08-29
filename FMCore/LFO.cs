@@ -5,6 +5,7 @@ using GdsFMJson;
 
 public class LFO : Resource //: Node
 {
+    public const string _iotype = "lfo";
     // This value should typically be initialized to whatever the global sample rate is.  Require it in the ctor
     public static double sample_rate = 44100.0;
     public bool enabled = false;  //Used by Patch to determine whether it should update the timer and recalculate the phase position from an oscillator.
@@ -44,30 +45,71 @@ public class LFO : Resource //: Node
     // public static readonly double[] NEAREST_12 = new double[] //Nearest power of 12, used for quantizing LFO when discrete note (no legato) mode is enabled
     //         {0, 0.059463, 0.122462, 0.189207, 0.259921, 0.33484, 0.414214, 0.498307, 0.587401, 0.681793, 0.781797, 0.887749, 1.0};
 
-    /// Typically used to get output for clipboard data.
-    public override string ToString()
-    {
-        var output = JsonMetadata();
-        output.AddPrim ("_iotype", "lfo");
-        return output.ToJSONString();
-    }
+    #region IO
+        /// Typically used to get output for clipboard data.
+        public override string ToString()
+        {
+            var output = JsonMetadata();
+            output.AddPrim ("_iotype", _iotype);
+            return output.ToJSONString();
+        }
 
-    /// Typically used to fetch an object for IO.  For clipboard type output, use ToString().
-    public JSONObject JsonMetadata()
-    {
-        var output = new JSONObject();
-        output.AddPrim("enabled", enabled);
-        output.AddPrim("depth", depth);
-        output.AddPrim("cycleTime", cycleTime);
-        output.AddPrim("delay", delay);
-        output.AddPrim("bias", bias);
+        /// Typically used to fetch an object for IO.  For clipboard type output, use ToString().
+        public JSONObject JsonMetadata()
+        {
+            var output = new JSONObject();
+            output.AddPrim("enabled", enabled);
+            output.AddPrim("waveform", (int) waveform);
+            output.AddPrim("reflect_waveform", reflect_waveform);
 
-        output.AddPrim("keySync", keySync);
-        output.AddPrim("oscSync", oscSync);
-        output.AddPrim("legato", legato);
+            output.AddPrim("depth", depth);
+            output.AddPrim("cycleTime", cycleTime);
+            output.AddPrim("delay", delay);
+            output.AddPrim("bias", bias);
 
-        return output;
-    }
+            output.AddPrim("keySync", keySync);
+            output.AddPrim("oscSync", oscSync);
+            output.AddPrim("legato", legato);
+
+            return output;
+        }
+
+        public int FromString(string input, bool ignoreIOtype=false)
+        {
+            var p = JSONData.ReadJSON(input);
+            if (p is JSONDataError) return -1;  // JSON malformed.  Exit early.
+            
+            var j = (JSONObject) p;
+            // var ver = j.GetItem("_version", -1);
+            if (!ignoreIOtype && (j.GetItem("_iotype", "") != _iotype)) return -3;  //Incorrect iotype.  Exit early.
+
+            //If we got this far, the data is probably okay.  Let's try parsing it.......
+            return ParseJson(j);
+        }
+
+        public int ParseJson(JSONObject input)
+        {
+            try{
+                input.Assign("enabled", ref enabled);
+                if (input.HasItem("waveform")) 
+                    waveform = (Waveforms) input.GetItem("waveform", (int) waveform);
+                input.Assign("reflect_waveform", ref reflect_waveform);
+
+                input.Assign("depth", ref depth);
+                input.Assign("cycleTime", ref cycleTime);
+                input.Assign("delay", ref delay);
+                input.Assign("bias", ref bias);
+
+                input.Assign("keySync", ref keySync);
+                input.Assign("oscSync", ref oscSync);
+                input.Assign("legato", ref legato);
+            } catch {
+                return -1;
+            }
+
+            return 0;
+        }
+    #endregion
 
     //Constructors
     public LFO(){}
@@ -96,10 +138,10 @@ public class LFO : Resource //: Node
         return output;
     }
 
-    public virtual void Reset()
+    public virtual void Reset(bool force = false)
     {
-        if (keySync)  samples=0;
-        if (oscSync){ phase = 0.0;  
+        if (keySync || force)  samples=0;
+        if (oscSync || force){ phase = 0.0;  
             if (!keySync)  Accumulate(delay); } //When there's oscillator sync but no key sync, presume the delay specifies a phase offset.
         
     }

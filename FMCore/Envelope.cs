@@ -7,7 +7,7 @@ using GdsFMJson;
 /// Envelope Generator.  Includes pitch, curve, ADSR, feedback, waveform, etc.
 public class Envelope : Node 
 {
-    public const string iotype = "envelope";
+    public const string _iotype = "envelope";
 
 //This measurement was done against DX7 detune at A-4, where every 22 cycles the tone would change (-detune) samples at a recording rate of 44100hz.
 //See const definitions in Note.cs for more information about the extra-fine detune increment.
@@ -135,6 +135,32 @@ public class Envelope : Node
     double _ad;  //Attack time + decay time
     public double _ads; //Attack, decay, and sustain time.
 	double _adr; //Attack, decay, and release time.  Used to check whether the sample offset from release is beyond the need to calculate an easing curve.
+
+
+    /// Performs a full recalculation of all preset values.  Useful for loading/pasting from external sources.
+    public void RecalcAll()
+    {
+        Ar = ar;
+        Dr = dr;
+        Sr = sr;
+        Rr = rr;
+        Sl = sl;
+        Tl = tl;
+        Ks = ks;
+        Mul= mul;
+        Dt = dt;
+        Dt2= dt2;
+        FixedFreq = fixed_frequency;
+        Delay = delay;
+
+        ksr.RecalcValues();
+        ksl.RecalcValues();
+        vr.RecalcValues();
+
+        filter.Recalc(SampleRate);
+        update_multiplier();
+        recalc_adsr();
+    }
 
     //ASDR Getter
     public double VolumeAtSamplePosition(Note note)
@@ -442,11 +468,80 @@ public class Envelope : Node
     {
         //NOTE: DOES NOT CONTAIN OPERATOR SPECIFIC DATA SUCH AS LFO AND WAVEFORM BANK. GET THIS FROM OP OR PATCH INSTEAD.
         var output = JsonMetadata(EGCopyFlags.ALL);
-        output.AddPrim("_iotype", iotype);
+        output.AddPrim("_iotype", _iotype);
         return output.ToJSONString(); 
     }
 
-    /// Takes a string with metadata for an envelope and apply the values inside to this envelope.
+    public int FromString(string input, bool ignoreIOtype)
+    {
+        var p = JSONData.ReadJSON(input);
+        if (p is JSONDataError) return -1;  // JSON malformed.  Exit early.        
+        var j = (JSONObject) p;
+
+        if (!ignoreIOtype && (j.GetItem("_iotype", "") != _iotype)) return -3;  //Incorrect iotype.  Exit early.
+
+        //If we got this far, the data is probably okay.  Let's try parsing it.......
+        // var idk = new List<string>();
+        try
+        {
+             j.Assign("ar", ref ar);
+             j.Assign("dr", ref dr);
+             j.Assign("sr", ref sr);
+             j.Assign("rr", ref rr);
+             j.Assign("sl", ref sl);
+             j.Assign("tl", ref tl);
+             j.Assign("ks", ref ks);
+             j.Assign("delay", ref delay);
+
+            j.Assign("ac", ref ac);
+            j.Assign("dc", ref dc);
+            j.Assign("sc", ref sc);
+            j.Assign("rc", ref rc);
+
+            if (j.HasItem("waveform")) waveform = (Waveforms) j.GetItem("waveform", (int) waveform);
+
+            j.Assign("feedback", ref feedback);
+            // j.Assign("filter", ref filter);
+            j.Assign("reflect", ref reflect);
+
+            j.Assign("duty", ref duty);
+            if (j.HasItem("_use_duty")) _use_duty = (Waveforms) j.GetItem("_use_duty", (int) _use_duty);
+
+
+            if (j.HasItem("fmTechnique")) fmTechnique = (Waveforms) j.GetItem("fmTechnique", (int) fmTechnique);
+            j.Assign("techDuty", ref techDuty);
+            j.Assign("techReflect", ref techReflect);
+
+            j.Assign("mul", ref mul);
+            j.Assign("dt", ref dt);
+            j.Assign("dt2", ref dt2);
+            j.Assign("delay", ref delay);
+            j.Assign("fixed_frequency", ref fixed_frequency);            
+
+            //Get the filter
+            if (j.HasItem("filter"))
+            {
+                var filt = (JSONObject) j.GetItem("filter");
+                filt.Assign("enabled", ref filter.enabled);
+                filt.Assign("cutoff", ref filter.cutoff);
+                filt.Assign("resonanceAmp", ref filter.resonanceAmp);
+            }
+
+
+            //Set the tables
+            if (j.HasItem("ksr"))  ksr.SetValues((JSONObject) j.GetItem("ksr"));
+            if (j.HasItem("ksl"))  ksl.SetValues((JSONObject) j.GetItem("ksl"));
+            if (j.HasItem("vr"))  vr.SetValues((JSONObject) j.GetItem("vr"));
+
+        } catch {
+            return -1;
+        }
+
+        RecalcAll();
+        return 0;
+    }
+
+    /// Takes a string with metadata for an envelope and apply the values inside to this envelope.  DEPRECIATED
     public string ParseEnvelope(string json)
     {
         //TODO:  Don't do properties, recalculate only if necessary or explicitly specified
@@ -482,7 +577,7 @@ public class Envelope : Node
             okay += 1;
         }
         if (needsRecalc) recalc_adsr();
-        return String.Format("Success: {0},  Failure: {1}", okay, oops);
+        return String.Format("Envelope {2}. Success: {0},  Failure: {1}", okay, oops, this.opID);
 
     }
     /// List used to identify the names of fields that would trigger an envelope recalc.

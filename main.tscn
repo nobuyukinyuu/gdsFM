@@ -468,29 +468,29 @@ __meta__ = {
 [node name="OP1" parent="GraphEdit" instance=ExtResource( 3 )]
 margin_left = 24.0
 margin_top = 56.0
-margin_right = 168.0
-margin_bottom = 204.0
+margin_right = 160.0
+margin_bottom = 196.0
 offset = Vector2( 24, 56 )
 
 [node name="OP2" parent="GraphEdit" instance=ExtResource( 3 )]
 margin_left = 224.0
 margin_top = 56.0
-margin_right = 368.0
-margin_bottom = 204.0
+margin_right = 360.0
+margin_bottom = 196.0
 offset = Vector2( 224, 56 )
 
 [node name="OP3" parent="GraphEdit" instance=ExtResource( 3 )]
 margin_left = 56.0
 margin_top = 216.0
-margin_right = 200.0
-margin_bottom = 364.0
+margin_right = 192.0
+margin_bottom = 356.0
 offset = Vector2( 56, 216 )
 
 [node name="OP4" parent="GraphEdit" instance=ExtResource( 3 )]
 margin_left = 256.0
 margin_top = 216.0
-margin_right = 400.0
-margin_bottom = 364.0
+margin_right = 392.0
+margin_bottom = 356.0
 offset = Vector2( 256, 216 )
 
 [node name="Output" type="GraphNode" parent="GraphEdit"]
@@ -523,7 +523,7 @@ valign = 1
 
 [node name="Audio" type="AudioStreamPlayer" parent="."]
 stream = SubResource( 2 )
-volume_db = -6.0
+volume_db = -12.0
 script = ExtResource( 23 )
 
 [node name="PreviewNote" type="Node" parent="Audio"]
@@ -763,6 +763,7 @@ __meta__ = {
 [connection signal="pressed" from="Menu/H/Open" to="Menu" method="_on_Open_pressed"]
 [connection signal="pressed" from="Menu/H/Save" to="Menu" method="_on_Save_pressed"]
 [connection signal="pressed" from="Menu/H/Copy" to="Menu" method="_on_Copy_pressed"]
+[connection signal="pressed" from="Menu/H/Paste" to="Menu" method="_on_Paste_pressed"]
 [connection signal="about_to_show" from="Menu/OpenDialog" to="Menu" method="_on_Dialog_about_to_show"]
 [connection signal="file_selected" from="Menu/OpenDialog" to="Menu" method="_on_OpenDialog_file_selected"]
 [connection signal="about_to_show" from="Menu/SaveDialog" to="Menu" method="_on_Dialog_about_to_show"]

@@ -7,7 +7,7 @@ using GdsFMJson;
 
 public class Operator : Resource
 {
-    public const string iotype = "operator";
+    public const string _iotype = "operator";
     public String name;
     public int id=0;  //Operator number, used to reference itself in ordered datasets specific to operators, like Note.feedback_history
     Operator[] connections = new Operator[0];
@@ -222,10 +222,53 @@ public class Operator : Resource
     public override string ToString()
     {
         var output = JsonMetadata(OPCopyFlags.ALL & ~OPCopyFlags.HEADERS);  //Get meta but without headers.
-        output.AddPrim("_iotype", iotype);
+        output.AddPrim("_iotype", _iotype);
         return output.ToJSONString(); 
-
     }
+
+    /// Attempts to load a JSON string into this operator.!--
+    public int FromString(string input, bool ignoreIOtype)
+    {
+        var p = JSONData.ReadJSON(input);
+        if (p is JSONDataError) return -1;  // JSON malformed.  Exit early.
+        
+        var j = (JSONObject) p;
+        // var ver = j.GetItem("_version", -1);
+        if (!ignoreIOtype && (j.GetItem("_iotype", "") != _iotype)) return -3;  //Incorrect iotype.  Exit early.
+
+        //If we got this far, the data is probably okay.  Let's try parsing it.......
+        // var idk = new List<string>();
+        try
+        {
+            //Globals
+            j.Assign("name", ref name);
+            j.Assign("id", ref id);
+            j.Assign("bypass", ref bypass);
+
+            j.Assign("lfoBankAmp", ref lfoBankAmp);
+            j.Assign("lfoBankPitch", ref lfoBankPitch);
+            j.Assign("ams", ref ams);
+            j.Assign("pms", ref pms);
+
+            j.Assign("waveformBank", ref waveformBank);
+
+            //Envelopes
+            var egData = j.HasItem("eg")? j.GetItem("eg") : null;
+            if (egData != null)
+            {
+                //Tell us how many has parsed
+                GD.Print ( eg.FromString(egData.ToJSONString(), ignoreIOtype) );
+            }
+            
+
+        } catch {
+            return -1;
+        }
+
+        return 0;
+    }
+    public int FromString(string input) { return FromString(input, false); }
+
 #endregion
 
 }

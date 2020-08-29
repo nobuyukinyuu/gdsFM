@@ -7,11 +7,10 @@
 "operator",
 ]]
 margin_right = 136.0
-margin_bottom = 116.0
+margin_bottom = 140.0
 mouse_filter = 1
-custom_constants/separation = 8
+custom_constants/separation = 4
 title = "OP"
-show_close = true
 slot/0/left_enabled = true
 slot/0/left_type = 1
 slot/0/left_color = Color( 0, 0.905882, 1, 1 )
@@ -50,18 +49,18 @@ Sustain = 6
 
 [node name="Label" type="Label" parent="."]
 margin_left = 16.0
-margin_top = 96.0
+margin_top = 92.0
 margin_right = 120.0
-margin_bottom = 110.0
+margin_bottom = 106.0
 text = "Input / Output"
 align = 1
 valign = 1
 
 [node name="Bypass" type="CheckBox" parent="."]
 margin_left = 16.0
-margin_top = 118.0
+margin_top = 110.0
 margin_right = 120.0
-margin_bottom = 142.0
+margin_bottom = 134.0
 custom_constants/hseparation = 8
 text = "Bypass"
 clip_text = true

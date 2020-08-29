@@ -4,7 +4,7 @@ using System;
 //Response / Rate Table.  128 values in either 8-bit format (MIDI velocity, etc) or floating-point
 public class RTable<T> : Resource
 {
-    const string _iotype="rtable";
+    public const string _iotype="rtable";
     readonly string subtype = typeof(T).ToString();
 
     public enum Presets {ZERO, FIFTY_PERCENT, ONE, IN, OUT, IN_OUT, TWELFTH_ROOT_OF_2}
@@ -309,7 +309,7 @@ public static class RTableExtensions
         if (p is GdsFMJson.JSONDataError) return -1;  // JSON malformed.  Exit early.
         
         var o = (GdsFMJson.JSONObject) p;
-        if (o.GetItem("_iotype", "") != "rtable") return -2;  //Incorrect iotype.  Exit early.
+        if (o.GetItem("_iotype", "") != RTable<Double>._iotype) return -2;  //Incorrect iotype.  Exit early.
 
         instance.SetValues(input);
         return 0;

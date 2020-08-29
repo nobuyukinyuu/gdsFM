@@ -180,6 +180,21 @@ public static class GDSFmFuncs
         }
         return result;
     }
+
+    /// Lists the contents of a List<String>.
+    public static string Contents (this System.Collections.Generic.List<String> instance)
+    {
+        var output = new System.Text.StringBuilder();
+
+        output.Append("{");
+        foreach (string s in instance)
+        {
+            output.Append(s).Append(",");
+        }
+        output.Append("}");
+
+        return output.ToString();
+    }
 }
 
 

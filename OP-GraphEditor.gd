@@ -28,6 +28,31 @@ func _ready():
 		if o is GraphNode:
 			o.title = o.name
 
+#Wires up the nodes based on an input string.  Kinda fragile.....
+func wire_up(input:String):
+	clear_connections()
+	
+	#Get all operators connection data
+	var ops = input.split(";", false)
+	for opInfo in ops:
+		var opname = opInfo.split("=", false)[0]
+		var op = get_node_or_null(opname)
+		if !op:
+			print ("GraphEdit:  Can't find operator %s!" % opname)
+			continue
+
+		var cs = opInfo.split("=", false)[1]  #Connections to current operator
+		
+		for cname in cs.split(",", false):
+			var connection = get_node_or_null("cname")
+			if !cname:
+				print ("GraphEdit:  Can't find operator %s!" % opname)
+				continue
+			else:  #Connect our OP node to cname.
+				var err = connect_node(cname, 0, opname, 0)
+				if err != OK:  print("GraphEdit:  Failed to link %s and %s." % [opname, cname])
+	
+	
 
 func _on_GraphEdit_connection_request(from, from_slot, to, to_slot):
 #	prints("request from", from, "slot", from_slot, "to", to, ", slot", to_slot)

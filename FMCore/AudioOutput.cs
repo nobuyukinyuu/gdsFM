@@ -117,8 +117,8 @@ public Channel PreviewNotes = new Channel();
 
                         //TODO:  Applies patch mixing globally. If multiple programs are being mixed this needs to change so mixing is applied per-patch.
                         //      Global mixing is only used here for a slight speed boost.
-                        bufferdata[j].x += (float) output[j] * 0.1f * patch._panL * patch.gain;  
-                        bufferdata[j].y += (float) output[j] * 0.1f * patch._panR * patch.gain;  
+                        bufferdata[j].x += (float) output[j] * 0.5f * patch._panL * patch.gain;  
+                        bufferdata[j].y += (float) output[j] * 0.5f * patch._panR * patch.gain;  
                     }
 
                     // System.Threading.Interlocked.Exchange(ref bufferdata[j].x, GDSFmFuncs.InterlockedAdd(ref bufferdata[j].x, (float) output[j]) );

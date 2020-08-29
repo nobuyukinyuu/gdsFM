@@ -319,17 +319,17 @@ namespace GdsFMJson{
 
         public int dataType = JSONDataType.JSON_NULL;
 
-        public int ToInt(){
+        public virtual int ToInt(){
             Debug.Print ("Unsupported conversion to Int for " + this.ToString());
             return -1;
         }
 
-        public float ToFloat(){
+        public virtual float ToFloat(){
             Debug.Print ("Unsupported conversion to Float for " + this.ToString());
             return -1.0f;
         }
 
-        public bool ToBool(){
+        public virtual bool ToBool(){
             Debug.Print ("Unsupported conversion to Bool for " + this.ToString());
             return false;
         }
@@ -393,12 +393,12 @@ namespace GdsFMJson{
             }
         }
         
-        public new int ToInt(){
+        public override int ToInt(){
             Parse();
             return (int)(value);
         }
 
-        public new float ToFloat(){
+        public override float ToFloat(){
             Parse();
             return value;
         }
@@ -417,11 +417,11 @@ namespace GdsFMJson{
             this.value = value;
         }
 
-        public new int ToInt(){
+        public override int ToInt(){
             return value;
         }
 
-        public new float ToFloat(){
+        public override float ToFloat(){
             return (float)(value);
         }
 
@@ -466,7 +466,7 @@ namespace GdsFMJson{
             this.value = value;
         }
 
-        public new bool ToBool(){
+        public override bool ToBool(){
             return value;
         }
         
@@ -632,6 +632,7 @@ namespace GdsFMJson{
             dataType = JSONDataType.JSON_OBJECT;
         }
 
+    #region Add item primitives
         public void AddPrim( string name, bool value ){
             values[name] = JSONData.CreateJSONDataItem(value);
         }
@@ -656,7 +657,42 @@ namespace GdsFMJson{
         public void AddItem( string name, JSONDataItem dataItem ){
             values[name] = dataItem;
         }
-        
+    #endregion    
+
+    #region Assign ref vars
+        /// Summray:  Assigns a ref var to the value of a key, if it exists.
+        public bool Assign(string name, ref int val)
+        {
+            JSONDataItem item = values.ContainsKey(name)? values[name] : null;
+            if (item != null)  { val = item.ToInt();  return true; }
+            return false;
+        }
+        public bool Assign(string name, ref float val)
+        {
+            JSONDataItem item = values.ContainsKey(name)? values[name] : null;
+            if (item != null) { val = item.ToFloat(); return true; }
+            return false;
+        }
+        public bool Assign(string name, ref double val)
+        {
+            JSONDataItem item = values.ContainsKey(name)? values[name] : null;
+            if (item != null) { val = item.ToFloat(); return true; }
+            return false;
+        }
+        public bool Assign(string name, ref string val)
+        {
+            JSONDataItem item = values.ContainsKey(name)? values[name] : null;
+            if (item != null) { val = item.ToString(); return true; }
+            return false;
+        }
+        public bool Assign(string name, ref bool val)
+        {
+            JSONDataItem item = values.ContainsKey(name)? values[name] : null;
+            if (item != null) { val = item.ToBool(); return true; }
+            return false;
+        }
+    #endregion
+
         public void RemoveItem( string name ){
             values.Remove(name);
         }
@@ -669,6 +705,7 @@ namespace GdsFMJson{
             if (values.ContainsKey(name)) return values[name];  else throw new KeyNotFoundException("The key '" + name + "' was not found.");
         }
         
+    #region Get items
         public string GetItem( string name, string defaultValue ){
             JSONDataItem item = values.ContainsKey(name)? values[name] : null;
             if (item != null){
@@ -700,8 +737,10 @@ namespace GdsFMJson{
             }
             return defaultValue;
         }
+    #endregion    
         
-        
+
+
         public override string ToJSONString(){
             StringBuilder retString = new StringBuilder(values.Count*5+5);
             bool first = true;
