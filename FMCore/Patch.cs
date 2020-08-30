@@ -18,6 +18,7 @@ public class Patch : Resource
 
     // This value should typically be initialized to whatever the global sample rate is.
     public static double sample_rate = 44100.0;
+    public double pitchMod = 1.0;  //Global pitch modifier.  Used by audio output to modify the pitch of samples requested.
 
     public const int VERSION = 1;  // Used to determine which version of the patch instrument this is, for forwards compatibility.
     public const string _iotype = "patch";
@@ -360,11 +361,11 @@ public class Patch : Resource
         this.connections = null;
     }
     public void ResetOperator(string opname){
-        //Nothing here yet.  
+        //TODO:  Nothing here yet.  
     }
     public void ResetOperators()
     {
-        //Nothing here yet.  Would reset EG, curves, waveforms etc.
+        //TODO:  Nothing here yet.  Would reset EG, curves, waveforms etc.
     }
 
 
@@ -379,7 +380,7 @@ public class Patch : Resource
     }
 
     /// Request multiple samples from this patch for a requested note.  Maybe better for parallelizing notes?
-    public double[] request_samples(Note note, int nSamples=1)
+    public double[] request_samples(Note note, int nSamples=1, double pitchMod=1.0)
     {
         var output = new double[nSamples];
         for(int i=0; i < nSamples; i++)
@@ -393,7 +394,7 @@ public class Patch : Resource
             // output[i] *= note.Velocity;   //TODO:  Apply master response curve here instead.  Most velocity should be controlled in EG.
 
             //Recalculate the pitch.
-            note.hz = note.base_hz * note.PitchAtSamplePosition(this);
+            note.hz = note.base_hz * note.PitchAtSamplePosition(this) * pitchMod * this.pitchMod * transpose;
 
         #if DEBUG
         if(Double.IsNaN(note.hz)) 
@@ -406,8 +407,6 @@ public class Patch : Resource
 
             //Iterate the sample timer.  The phase accumulators were already called from the Operators.
             note.Iterate(1);
-
-
         }
 
         return output;

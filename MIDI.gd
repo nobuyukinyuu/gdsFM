@@ -51,8 +51,10 @@ func _input(event):
 
 			MIDI_MESSAGE_PITCH_BEND:
 				var pitch_amt = (event.pitch+0.5) / 8192.0 - 1
-				prints("P: ", event.pitch ,pitch_amt)
+#				prints("P: ", event.pitch ,pitch_amt)
+#				prints("P: ", pitch_amt, pow(2.0, pitch_amt * (2/12.0)) )
 				owner.get_node("Audio").Pitch(pitch_amt, 2)
+				
 
 func _process(delta):
 	#Scan for note pressed.

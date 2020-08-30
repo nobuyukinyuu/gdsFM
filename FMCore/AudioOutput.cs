@@ -200,13 +200,13 @@ public Channel PreviewNotes = new Channel();
     }
 
 
-    //Returns the number of notes that should be currently playing in our preview channel.
+    /// Returns the number of notes that should be currently playing in our preview channel.
     public int Polyphony()
     {
         return PreviewNotes.Count;
     }
 
-    //Adds a note of the specific MIDI key to the preview notes.
+    /// Adds a note of the specific MIDI key to the preview notes.
     public Note AddNote(int note_number, int velocity)
     {
         if (patch != null)
@@ -224,7 +224,7 @@ public Channel PreviewNotes = new Channel();
         return note;    
     }
 
-    //Adds a note for a specific MIDI key, and attaches NoteOff signal from the specified handler. If we have no patch, note won't be added.
+    /// Adds a note for a specific MIDI key, and attaches NoteOff signal from the specified handler. If we have no patch, note won't be added.
     public bool AddNote(int note_number, int velocity, Node handler)
     {
         if (patch==null) return false;
@@ -258,17 +258,11 @@ public Channel PreviewNotes = new Channel();
         //Other event signals here, as necessary.
     }
 
+    /// Used by Godot frontend to change the preview pitch using a bend wheel.
     public void Pitch(double amt, float range)
     { 
-        double rangemod = Math.Pow(2.0, range/12) - 1.0;
-        amt *= rangemod;
-        // if (amt < 0) amt = 1 / Math.Abs(1-amt); else amt +=1;
-        if (amt < 0) amt = 1 / Math.Abs(1-amt); else amt +=1;
-        for(int i=0; i < PreviewNotes.Count; i++)
-        {
-            double base_hz = PreviewNotes[i].base_hz;
-            PreviewNotes[i].hz = base_hz * amt;
-        }
+        double rangemod = Math.Pow(2.0, (range/12) * amt);
+        patch.pitchMod = rangemod;
     }
 
 
