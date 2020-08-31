@@ -6,7 +6,7 @@ signal NoteOff
 #Default keys for keyboard controls.
 const note_names = ["C-", "C#", "D-", "D#", "E-", "F-", "F#", "G-", "G#", "A-", "A#", "B-", ]
 const note_keys = [
-		["z","x","c","v","b","n","m","period", "slash"],
+		["z","x","c","v","b","n","m", "comma" ,"period", "slash"],
 		["a","s","d","f","g","h","j","k","l","semicolon", "Apostrophe", "backslash"],
 		["q","w","e","r","t","y","u","i","o","p","braceleft", "braceright"],
 	]
