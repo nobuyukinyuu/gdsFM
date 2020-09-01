@@ -171,6 +171,7 @@ __meta__ = {
 }
 
 [node name="Patch" type="Control" parent="TC2"]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -387,7 +388,6 @@ margin_bottom = -4.0
 visible = false
 
 [node name="Wave" parent="TC2" instance=ExtResource( 16 )]
-visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0

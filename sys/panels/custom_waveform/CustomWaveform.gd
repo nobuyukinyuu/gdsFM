@@ -90,7 +90,12 @@ func remove_bank(index):
 
 
 func _on_CPMenu_index_pressed(index):
+	var bank = $H/Banks.selected
+	if bank < 0:  return
+	
 	if index == 0:  #Copy
-		pass
-	elif index == 1:  #Paste
-		pass 
+		global.currentPatch.CopyWaveformBank(bank)
+	elif index == 2:  #Paste
+		var err = global.currentPatch.PasteWaveformBank(bank, true)
+		if err !=0:  print("RTable paste status: ", err)
+		fetch_table(bank)

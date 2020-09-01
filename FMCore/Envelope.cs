@@ -80,7 +80,7 @@ public class Envelope : Node
     public double rc = 0.250;  //Release curve.  75% Ease-out.
 
 
-    //Response curves.
+    #region Response Tables.
     internal RTable<Double> ksr = RTable.FromPreset<Double>(RTable.Presets.TWELFTH_ROOT_OF_2 | RTable.Presets.DESCENDING, 
                                                            floor:100, allow_zero:false );      //KeyScale rate. Lower values shrink envelope timings.
     private RTable<Double> ksl = RTable.FromPreset<Double>(RTable.Presets.TWELFTH_ROOT_OF_2 | RTable.Presets.DESCENDING,
@@ -93,6 +93,47 @@ public class Envelope : Node
     public Godot.Collections.Dictionary Ksl { get => ksl.ToDict(); set => ksl.SetValues(value); }
     public Godot.Collections.Dictionary Vr { get => vr.ToDict(); set => vr.SetValues(value); }
 
+    /// Used by the Godot frontend to copy a response table to the clipboard.
+    public void CopyTable (string which)
+    {
+        which = which.ToLower();
+        switch(which)
+        {
+            case "ksr":
+                OS.Clipboard = ksr.ToString();
+                break;
+            case "ksl":
+                OS.Clipboard = ksl.ToString();
+                break;
+            case "vr":
+                OS.Clipboard = vr.ToString();
+                break;
+            default:
+                GD.Print("Envelope.cs:  Unknown response table '", which, "'...");
+                break;
+        }    
+    }
+    /// Used by the Godot frontend to paste into a response table from the clipboard.
+    public void PasteTable(string which)
+    {
+        which = which.ToLower();
+        switch(which)
+        {
+            case "ksr":
+                ksr.FromString(OS.Clipboard, false);
+                break;
+            case "ksl":
+                ksl.FromString(OS.Clipboard, false);
+                break;
+            case "vr":
+                vr.FromString(OS.Clipboard, false);
+                break;
+            default:
+                GD.Print("Envelope.cs:  Unknown response table '", which, "'...");
+                break;
+        }    
+    }
+    #endregion
 
 
     //Property values used to translate "user-friendly" values to internal values, which are different than standard FM values.

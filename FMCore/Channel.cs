@@ -27,6 +27,7 @@ public class Channel : List<Note>
         }
     }
 
+    /// Flushes the inactive notes flagged for deletion in this channel.
     public void Flush()
     {
         while (_flaggedForDeletion.Count>1)
@@ -35,6 +36,18 @@ public class Channel : List<Note>
             this.Remove(note);
             note.QueueFree();
         }
+    }
+
+    /// Flushes all the notes in the channel immediately.  Good for panicing or when engine needs to clear references to stuff before they're accidentally accessed.
+    public void FlushAll()
+    {
+        GD.Print("GDSFM Channel:  Flushing ", this.Count, " notes....");
+        for (int i=0; i < this.Count; i++)
+        {
+            this[i].QueueFree();
+        }
+
+        this.Clear();
     }
 
     public Note FindActiveNote(int midi_note)

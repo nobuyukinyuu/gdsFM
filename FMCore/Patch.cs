@@ -202,6 +202,19 @@ public class Patch : Resource
             op.waveformBank = -1;
         }
     }
+
+    /// Used by godot frontend to get a waveform bank's rTable values.
+    public string CopyWaveformBank(int idx)
+    {
+        var output = customWaveforms[idx].ToString();
+        OS.Clipboard = output;
+        return output;
+    }
+    /// Used by godot frontend to set a waveform bank's rTable values.
+    public int PasteWaveformBank(int idx, bool tableOnly)
+    {
+        return customWaveforms[idx].FromString(OS.Clipboard, tableOnly);
+    }
 #endregion
 
 

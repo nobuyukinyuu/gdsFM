@@ -38,7 +38,7 @@ public class RTable<T> : Resource
         return output.ToJSONString();
     }
 
-    //TODO:  Get and Set for clipboard compatible data.  Use a JSONObject with iotype and table only...?
+    /// TODO:  Get and Set for clipboard compatible data.  Use a JSONObject with iotype and table only...?
     public GdsFMJson.JSONObject JsonMetadata()
     {
         var output = new GdsFMJson.JSONObject();
@@ -303,7 +303,7 @@ public static class RTableExtensions
 
 
     /// Takes a compatible JSON string from the clipboard and populates the table with it.
-    public static int FromString(this RTable<Double> instance, string input)
+    public static int FromString(this RTable<Double> instance, string input, bool tableOnly = true)
     {
         var p = GdsFMJson.JSONData.ReadJSON(input);
         if (p is GdsFMJson.JSONDataError) return -1;  // JSON malformed.  Exit early.
@@ -311,7 +311,7 @@ public static class RTableExtensions
         var o = (GdsFMJson.JSONObject) p;
         if (o.GetItem("_iotype", "") != RTable<Double>._iotype) return -2;  //Incorrect iotype.  Exit early.
 
-        instance.SetValues(input);
+        instance.SetValues(o, tableOnly);
         return 0;
     }
 }

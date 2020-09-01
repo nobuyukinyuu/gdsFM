@@ -11,6 +11,8 @@ func _on_OpenDialog_file_selected(path):
 	
 	var f = File.new()
 	var ferr = f.open(path, File.READ)
+	
+	$"../Audio".StopAll()  #Stop active notes before loading the string in to prevent null access.
 	var err = global.currentPatch.FromString(f.get_as_text())
 	f.close()
 

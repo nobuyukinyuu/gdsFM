@@ -4,6 +4,8 @@ extends Panel
 export(int,1,255) var maxValue = 100  setget set_maxvalue
 export(String) var title setget set_title
 
+var dest_property = ""  #Set typically by a preview button.  Used to copy/paste the values of the table.
+
 var note_scale = true  #Set to false if the x-axis isn't mapping note numbers.
 var float_scale = true  #Set to false if the y-axis isn't mapping percentage but direct remapped values.
 var rate_scale = false  #Set to true if the y-axis maps a rate (ie:  percentage of original time)
@@ -143,10 +145,13 @@ func property_exists(name:String, input:Array) -> bool:
 
 # Copy paste
 func _on_CPMenu_index_pressed(index):
+	#FIXME:  Do all of this locally and not rely on accessing an rTable on the c# end directly?
+	
+	if !global.currentEG:  return
 	match index:
 		0:  #Copy
-#			OS.clipboard = 
-			pass
-		1:  #Paste
-			pass
-	pass # Replace with function body.
+			global.currentEG.CopyTable(dest_property)
+
+		2:  #Paste
+			global.currentEG.PasteTable(dest_property)
+			fetch_table(global.currentEG, dest_property)

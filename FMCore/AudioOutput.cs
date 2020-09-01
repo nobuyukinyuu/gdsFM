@@ -67,6 +67,14 @@ public Channel PreviewNotes = new Channel();
     }
 
 
+    /// Asyncronously flushes the preview channel and waits for an idle frame before continuing execution
+    async public void StopAll()
+    {
+        PreviewNotes.FlushAll();
+        await ToSignal(this.GetTree(), "idle_frame");
+        // GD.Print("Flush OK.");
+    }
+
     /// Old single-threaded buffer fill.  Fills the buffer using Patch.cs one frame at a time.
     void fill_buffer()
     {
