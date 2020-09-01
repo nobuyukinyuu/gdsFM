@@ -585,8 +585,6 @@ public class Patch : Resource
         if (j.GetItem("_iotype", "") != _iotype) return -3;  //Incorrect iotype.  Exit early.
 
         //If we got this far, the data is probably okay.  Let's try parsing it.......
-        int okay = 0;
-        int oops = 0;
         var idk = new List<string>();
         try
         {
@@ -627,7 +625,7 @@ public class Patch : Resource
                   //TODO:  Look for each operator here and populate it.
                   if (!ops.HasItem(op.name))  continue;
                   var opData = (JSONObject) ops.GetItem(op.name);
-                    op.FromString(opData.ToJSONString(), true);
+                    op.FromString(opData.ToJSONString(), true);  // Serialized files don't have IO types for individual envelopes. We assume the data is valid.
 
                    //Operators can't grab data from a patch's databank by itself.  Feed it the bank that should be appropriate for it.
                    LoadCustomWaveform(op.waveformBank, op.name);

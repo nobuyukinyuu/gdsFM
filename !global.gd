@@ -11,7 +11,7 @@ var currentPatch  #typeof Patch
 
 # IO flags to specify to gdsFM when copying part of an operator or the entire thing.
 # This enum is duplicated in glue.cs as EGCopyFlags
-enum EGCopyFlags{NONE=0, EG=1, TUNING=2, CURVE=4, WAVEFORM=8, RTABLES=16, LOWPASS=32, LFO=64, ALL=127}
+enum EGCopyFlags{NONE=0, EG=1, TUNING=4, CURVE=2, WAVEFORM=8, RTABLES=16, LOWPASS=32, LFO=64, ALL=127}
 enum OPCopyFlags{NONE=0, NAME=1,ID=2,EG=4,BYPASS=8, LFO=16, WAVEFORM_BANK=32, WAVEFORM=64, ALL=127, HEADERS=11}
 enum PatchCopyFlags{NONE=0, GENERAL=1,  OPS=2, PG=4, LFO=8, WAVEFORMS=16, ALL=255}
 

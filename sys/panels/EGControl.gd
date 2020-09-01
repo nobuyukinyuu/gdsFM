@@ -64,7 +64,3 @@ func disable(yes:bool):
 	for setting in $H.get_children():
 		if setting.is_in_group("slider"):
 			get_node("H/%s/Slider" % setting.name).editable = !yes
-
-
-
-

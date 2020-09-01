@@ -26,7 +26,6 @@ public class Envelope : Node
     {
         init();
     }
-
     public override void _Ready()
     {
         init();
@@ -34,6 +33,8 @@ public class Envelope : Node
 
     public Envelope(string name){ ownerName = name; init(); }
     public Envelope(int id){ this.opID=id; init();}
+    ~Envelope() { QueueFree(); }
+
 
     [System.Runtime.Serialization.IgnoreDataMember]
     public string ownerName;  // Debug purposes
@@ -428,28 +429,15 @@ public class Envelope : Node
 
 
 #region ================ IO ==================
-
-    // public String PrintJson()
-    // {
-    //     var settings=new JsonSerializerSettings();
-    //     settings.ContractResolver = new IgnoreParentPropertiesResolver(true);
-    //     settings.Formatting = Formatting.Indented;
-
-    //     var output = JsonConvert.SerializeObject(this, settings);
-    //     GD.Print(output);
-    //     return output;
-    // }
-
-
     /// Produces a GdsFMIO.JSONObject which can be used for serialization.
-    public JSONObject JsonMetadata(EGCopyFlags flags)
+    public JSONObject JsonMetadata(EGCopyFlags flags, bool add_iotype=false)
     {
         //NOTE:  LFO sensitivity is not added to the json object here.  That's done in Operator with the other Operator-level meta.
 
         //Begin constructing a new json object.
         JSONObject p = new JSONObject();
 
-        // p.AddPrim("_iotype", iotype);
+        if (add_iotype)  p.AddPrim("_iotype", _iotype);
 
         if (flags.HasFlag(EGCopyFlags.EG)){
              p.AddPrim("ar", ar);
@@ -504,12 +492,18 @@ public class Envelope : Node
         return p;
     }
 
-    //Probably being used for clipboard reasons.  Omit ID header and inject iotype.
+    ///  Used by godot frontend for a direct clipboard copy.
+    public void ClipboardCopy(EGCopyFlags flags)
+    {
+        GD.Print("EGCopyFlags: ", flags);
+        OS.Clipboard = JsonMetadata(flags, true).ToJSONString();
+    }
+
+    //Omit ID header and inject iotype.
     public override string ToString()
     {
         //NOTE: DOES NOT CONTAIN OPERATOR SPECIFIC DATA SUCH AS LFO AND WAVEFORM BANK. GET THIS FROM OP OR PATCH INSTEAD.
-        var output = JsonMetadata(EGCopyFlags.ALL);
-        output.AddPrim("_iotype", _iotype);
+        var output = JsonMetadata(EGCopyFlags.ALL, true);
         return output.ToJSONString(); 
     }
 
@@ -581,54 +575,6 @@ public class Envelope : Node
         RecalcAll();
         return 0;
     }
-
-    /// Takes a string with metadata for an envelope and apply the values inside to this envelope.  DEPRECIATED
-    public string ParseEnvelope(string json)
-    {
-        //TODO:  Don't do properties, recalculate only if necessary or explicitly specified
-
-        var j = (JSONObject) JSONData.ReadJSON(json);
-        var needsRecalc = false;
-        
-        int okay = 0;
-        int oops = 0;
-
-        foreach (string name in j.Names())
-        {
-            var field = GetType().GetField(name);
-            if (field == null)  continue;
-
-            else if (__tableNames.Contains(name)){  //Uh oh, ran into a table.  Process this differently
-                var tbl = (JSONObject) j.GetItem(name);
-                var method = field.GetType().GetMethod("SetValues", new Type[] {typeof(JSONObject)} );
-                method.Invoke(field, new object[] {tbl} );
-                continue;
-            }
-
-            //Okay, we determined it's not on any special exclusion or processing list, and it's a valid field.  Process.
-            if (__recalcNames.Contains(name))  needsRecalc = true;
-
-            try{
-                var val = Convert.ChangeType(j.GetItem(name), field.FieldType);
-                field.SetValue(this, val);
-            } catch {
-                oops += 1;
-                continue;
-            }
-            okay += 1;
-        }
-        if (needsRecalc) recalc_adsr();
-        return String.Format("Envelope {2}. Success: {0},  Failure: {1}", okay, oops, this.opID);
-
-    }
-    /// List used to identify the names of fields that would trigger an envelope recalc.
-    static readonly System.Collections.Generic.List<String> __recalcNames =
-                new System.Collections.Generic.List<String>(
-                new string[] {"ar", "dr", "sr", "rr", "delay", "_delay", "_attackTime", "_decayTime", "_susTime", "_releaseTime"});
-    /// List used to identify the names of fields that need to be handled separately as tables
-    static readonly System.Collections.Generic.List<String> __tableNames = 
-                new System.Collections.Generic.List<string>(
-                    new string[] {"ksr", "ksl", "vr"});
 
 #endregion //IO
 

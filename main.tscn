@@ -1,4 +1,4 @@
-[gd_scene load_steps=45 format=2]
+[gd_scene load_steps=49 format=2]
 
 [ext_resource path="res://main.gd" type="Script" id=1]
 [ext_resource path="res://sys/panels/EGControl.tscn" type="PackedScene" id=2]
@@ -21,6 +21,7 @@
 [ext_resource path="res://gfx/ui/godot_icons/icon_action_paste.svg" type="Texture" id=19]
 [ext_resource path="res://gfx/ui/godot_icons/Save.svg" type="Texture" id=20]
 [ext_resource path="res://IOMenu.gd" type="Script" id=21]
+[ext_resource path="res://gfx/ui/godot_icons/GuiTabMenuHl.svg" type="Texture" id=22]
 [ext_resource path="res://FMCore/AudioOutput.cs" type="Script" id=23]
 [ext_resource path="res://sys/panels/CurveControl.tscn" type="PackedScene" id=24]
 [ext_resource path="res://sys/panels/WaveformOptions.tscn" type="PackedScene" id=25]
@@ -29,10 +30,13 @@
 [ext_resource path="res://FMCore/Note.cs" type="Script" id=28]
 [ext_resource path="res://sys/panels/tuning/TuningControl.tscn" type="PackedScene" id=29]
 [ext_resource path="res://sys/ui/EnvelopeDisplay.tscn" type="PackedScene" id=30]
+[ext_resource path="res://gfx/ui/godot_icons/GuiTabMenu.svg" type="Texture" id=31]
+[ext_resource path="res://sys/ui/CopyMenuDialog.tscn" type="PackedScene" id=32]
 [ext_resource path="res://sys/panels/ProgramControl.gd" type="Script" id=33]
 [ext_resource path="res://gfx/ui/godot_icons/tab_behind.png" type="Texture" id=34]
 [ext_resource path="res://sys/panels/ResponseTables.tscn" type="PackedScene" id=37]
 [ext_resource path="res://sys/panels/LFO.tscn" type="PackedScene" id=38]
+[ext_resource path="res://sys/ui/responseCurve/PresetMenu.theme" type="Theme" id=43]
 
 [sub_resource type="StyleBoxTexture" id=1]
 content_margin_left = 16.0
@@ -171,7 +175,6 @@ __meta__ = {
 }
 
 [node name="Patch" type="Control" parent="TC2"]
-visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -388,6 +391,7 @@ margin_bottom = -4.0
 visible = false
 
 [node name="Wave" parent="TC2" instance=ExtResource( 16 )]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -403,6 +407,8 @@ margin_left = -456.0
 margin_top = 24.0
 margin_right = -40.0
 margin_bottom = -216.0
+custom_icons/menu_highlight = ExtResource( 22 )
+custom_icons/menu = ExtResource( 31 )
 custom_styles/tab_bg = SubResource( 1 )
 custom_constants/top_margin = 8
 custom_constants/side_margin = -1
@@ -748,9 +754,23 @@ current_path = "/Projects/godot/Code/gdsFM/"
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="CPMenu" type="PopupMenu" parent="."]
+margin_left = 1328.0
+margin_top = 112.0
+margin_right = 1432.0
+margin_bottom = 186.0
+theme = ExtResource( 43 )
+items = [ "Copy...", ExtResource( 18 ), 0, false, false, 0, 0, null, "", false, "", null, 0, false, true, 1, 0, null, "", true, "Paste", ExtResource( 19 ), 0, false, false, 2, 0, null, "", false ]
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Dialog" parent="CPMenu" instance=ExtResource( 32 )]
 [connection signal="text_changed" from="TC2/Patch/Name/LineEdit" to="TC2/Patch" method="_on_LineEdit_text_changed"]
 [connection signal="timeout" from="TC2/Patch/Label/Timer" to="TC2/Patch" method="_on_Timer_timeout"]
 [connection signal="value_changed" from="TC2/Patch/V/Gain/Slider" to="TC2/Patch" method="_on_Gain_value_changed"]
+[connection signal="gui_input" from="TC" to="." method="_on_TC_gui_input"]
 [connection signal="changed" from="GraphEdit" to="." method="_on_GraphEdit_changed"]
 [connection signal="connection_request" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_connection_request"]
 [connection signal="disconnection_request" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_disconnection_request"]
@@ -767,3 +787,4 @@ __meta__ = {
 [connection signal="file_selected" from="Menu/OpenDialog" to="Menu" method="_on_OpenDialog_file_selected"]
 [connection signal="about_to_show" from="Menu/SaveDialog" to="Menu" method="_on_Dialog_about_to_show"]
 [connection signal="file_selected" from="Menu/SaveDialog" to="Menu" method="_on_SaveDialog_file_selected"]
+[connection signal="index_pressed" from="CPMenu" to="." method="_on_CPMenu_index_pressed"]

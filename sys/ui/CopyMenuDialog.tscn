@@ -1,0 +1,97 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://gfx/ui/icon_tuning.svg" type="Texture" id=1]
+[ext_resource path="res://gfx/ui/icon_waveform.svg" type="Texture" id=2]
+[ext_resource path="res://gfx/ui/icon_response.svg" type="Texture" id=3]
+[ext_resource path="res://gfx/ui/icon_adsr.svg" type="Texture" id=4]
+[ext_resource path="res://gfx/ui/icon_curve.svg" type="Texture" id=5]
+[ext_resource path="res://gfx/ui/icon_lfo.svg" type="Texture" id=6]
+[ext_resource path="res://gfx/ui/icon_note.svg" type="Texture" id=7]
+[ext_resource path="res://sys/ui/CopyMenuDialog.gd" type="Script" id=8]
+
+[node name="Dialog" type="ConfirmationDialog"]
+margin_left = 64.0
+margin_top = 128.0
+margin_right = 264.0
+margin_bottom = 360.0
+popup_exclusive = true
+window_title = "Copy EG..."
+script = ExtResource( 8 )
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="V" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = -8.0
+margin_bottom = -36.0
+custom_constants/separation = 2
+alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CheckBox" type="CheckBox" parent="V"]
+margin_top = 2.0
+margin_right = 184.0
+margin_bottom = 26.0
+text = "ASDR Envelope"
+icon = ExtResource( 4 )
+
+[node name="CheckBox2" type="CheckBox" parent="V"]
+margin_top = 28.0
+margin_right = 184.0
+margin_bottom = 52.0
+text = "ASDR Curves"
+icon = ExtResource( 5 )
+
+[node name="CheckBox3" type="CheckBox" parent="V"]
+margin_top = 54.0
+margin_right = 184.0
+margin_bottom = 78.0
+text = "Tuning Values"
+icon = ExtResource( 1 )
+
+[node name="CheckBox4" type="CheckBox" parent="V"]
+margin_top = 80.0
+margin_right = 184.0
+margin_bottom = 104.0
+text = "Waveform / FB"
+icon = ExtResource( 2 )
+
+[node name="CheckBox5" type="CheckBox" parent="V"]
+margin_top = 106.0
+margin_right = 184.0
+margin_bottom = 130.0
+text = "Response Tables"
+icon = ExtResource( 3 )
+
+[node name="CheckBox6" type="CheckBox" parent="V"]
+margin_top = 132.0
+margin_right = 184.0
+margin_bottom = 156.0
+text = "Lowpass Filter"
+icon = ExtResource( 7 )
+
+[node name="CheckBox7" type="CheckBox" parent="V"]
+margin_top = 158.0
+margin_right = 184.0
+margin_bottom = 182.0
+text = "LFO Sensitivity"
+icon = ExtResource( 6 )
+
+[node name="Separator" type="Panel" parent="V"]
+margin_top = 184.0
+margin_right = 184.0
+margin_bottom = 185.0
+rect_min_size = Vector2( 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="about_to_show" from="." to="." method="_on_CopyDialog_about_to_show"]
+[connection signal="confirmed" from="." to="." method="_on_Dialog_confirmed"]
+[connection signal="popup_hide" from="." to="." method="_on_CopyDialog_popup_hide"]

@@ -22,6 +22,8 @@ func _ready():
 	$TC.set_tab_icon(3, preload("res://gfx/ui/icon_waveform.svg"))
 	$TC.set_tab_icon(4, preload("res://gfx/ui/icon_response.svg"))
 	
+	$TC.set_popup($CPMenu)	
+	
 	$TC2.set_tab_icon(0, preload("res://gfx/ui/icon_note2.svg"))
 	$TC2.set_tab_icon(1, preload("res://gfx/ui/icon_lfo.svg"))
 	$TC2.set_tab_icon(2, preload("res://gfx/ui/icon_pitch.svg"))
@@ -67,9 +69,7 @@ func _input(event):
 			$Algorithm.select(algorithm)
 			_on_Algorithm_item_selected(algorithm)
 			
-			for o in $GraphEdit.get_children():
-				if o.is_in_group("operator"):
-					update_envelope_preview_all(o.get_node("EnvelopeDisplay"), $Audio.patch.GetEG(o.name))
+			update_smol_envelope_previews()
 
 func _on_btnValidate_pressed():
 	$TC/EGControl.disable(true)
@@ -90,23 +90,11 @@ func _on_GraphEdit_changed(dirty=false):
 func _on_GraphEdit_node_selected(node):
 	if !$Audio.patch:  return
 	if node.is_in_group("operator"):
-		var envelope = $Audio.patch.GetEG(node.name)
-		if !envelope:  return
-		$TC/EGControl.load_settings(envelope)
-		$TC/Tuning.load_settings(envelope)
-		$TC/Curve.load_settings(envelope)
-		$TC/Waveform/Options.load_settings(envelope)
-		$TC/Response.load_settings(envelope)
-
-		$TC/EGControl.disable(false)
-#		$TC.enable
+		select_EG(node.name)
 
 		yield(get_tree(),"idle_frame")
 		lastOperatorEnvelope = node
 		
-		print("Selected: ", node.name)
-		update_envelope_preview_all($EnvelopeDisplay, envelope)
-
 func _on_Algorithm_item_selected(id):
 	var algo = []
 	if id == 8:
@@ -186,6 +174,12 @@ func update_envelope_preview_all(env:EnvelopeDisplay, eg):
 	env.update_env()
 	env.update_vol()
 
+func update_smol_envelope_previews():
+	for o in $GraphEdit.get_children():
+		if o.is_in_group("operator"):
+			update_envelope_preview_all(o.get_node("EnvelopeDisplay"),$Audio.patch.GetEG(o.name))
+	
+
 #Called when opening a file or pasting a patch.
 func update_ui():
 	for o in $GraphEdit.get_children():
@@ -201,3 +195,48 @@ func update_ui():
 	$TC2/LFO.reload()
 	$TC2/Pitch.load_settings()
 	$TC2/Wave.reload()
+
+#Used when loading a new EG to current.
+func select_EG(which):
+	if !$Audio.patch:  return
+
+	var envelope = $Audio.patch.GetEG(which)
+	if !envelope:  return
+	global.currentEG = envelope
+	$TC/EGControl.load_settings(envelope)
+	$TC/Tuning.load_settings(envelope)
+	$TC/Curve.load_settings(envelope)
+	$TC/Waveform/Options.load_settings(envelope)
+	$TC/Response.load_settings(envelope)
+
+	$TC/EGControl.disable(false)
+#		$TC.enable
+	
+	print("Selected: ", which)
+	update_envelope_preview_all($EnvelopeDisplay, envelope)  #Update big preview
+
+
+
+#================ Copy paste menu stuff ==========================
+func _on_CPMenu_index_pressed(index):
+	match index:
+		0:  #Copy
+			$CPMenu/Dialog.current_tab = $TC.current_tab
+			$CPMenu/Dialog.popup(Rect2(get_global_mouse_position() - Vector2(64, 16), Vector2.ONE))
+
+		2:  #Paste
+			if global.currentEG:
+				var err = global.currentEG.FromString(OS.clipboard, false)
+				if err != 0:  
+					print ("Paste returned error ", err, ".")
+				else:
+					select_EG("OP" + str(global.currentEG.opID+1))
+					update_smol_envelope_previews()
+
+
+
+			
+func _on_TC_gui_input(event):
+	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_RIGHT:
+		if Rect2(Vector2.ZERO, Vector2($TC.rect_size.x, 32)).has_point($TC.get_local_mouse_position()):
+			$CPMenu.popup(Rect2(get_global_mouse_position(), Vector2.ONE))

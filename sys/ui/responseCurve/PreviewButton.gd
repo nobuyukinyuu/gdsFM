@@ -50,7 +50,7 @@ func _ready():
 
 	$Popup/ResponseCurve/chkLinlog.connect("toggled", self, "_on_linlog_toggle")
 	$Popup/ResponseCurve.title = text
-	$Popup/ResponseCurve.dest_property = dest_property
+	if !Engine.editor_hint:  $Popup/ResponseCurve.dest_property = dest_property
 	$Popup.connect("popup_hide", self, "send_table")
 	
 	if dest_property == "":  dest_property = name.capitalize()
