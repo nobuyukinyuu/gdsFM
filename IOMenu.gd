@@ -24,12 +24,7 @@ func _on_OpenDialog_file_selected(path):
 		#Update the UI to reflect the new patch settings.
 		owner.get_node("GraphEdit").wire_up(global.currentPatch.wiring)
 		
-#		for o in $"../GraphEdit".get_children():
-#			if o.is_in_group("operator"):
-#				#Check if operator exists before trying to update the preview.
-#				var eg = global.currentPatch.GetEG(o.name)
-#				if !eg:  continue
-#				owner.update_envelope_preview_all(o.get_node("EnvelopeDisplay"), eg)
+
 		yield(get_tree(), "idle_frame")
 		owner.update_ui()
 
@@ -67,5 +62,19 @@ func _on_Copy_pressed():
 
 
 func _on_Paste_pressed():
-	owner.update_ui()
-	pass # Replace with function body.
+	if !global.currentPatch:  
+		print("PatchEdit:  Can't paste, patch doesn't exist")
+		return
+	
+	$"../Audio".StopAll()  #Stop active notes before loading the string in to prevent null access.
+	var err = global.currentPatch.FromString(OS.clipboard, true)  #Second argument specifies to ignore IO version.
+
+	if err != 0:  
+		print ("Paste attempt returned error code %s from patch." % err)
+	else:
+		#Update the UI to reflect the new patch settings.
+		owner.get_node("GraphEdit").wire_up(global.currentPatch.wiring)
+		
+
+		yield(get_tree(), "idle_frame")
+		owner.update_ui()

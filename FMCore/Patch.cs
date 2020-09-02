@@ -572,17 +572,26 @@ public class Patch : Resource
     }
 
 
+    /// Attempts to load a JSON string into the patch data.  Ignores version data;  useful for clipboard paste operations where data is assumed to be fresh.
+    public int FromString(string input) { return FromString(input, false);}
+
     /// Attempts to load a JSON string into the patch data.
-    public int FromString(string input)
+    public int FromString(string input, bool ignoreVersion)
     {
         var p = JSONData.ReadJSON(input);
         if (p is JSONDataError) return -1;  // JSON malformed.  Exit early.
         
         var j = (JSONObject) p;
-        var ver = j.GetItem("_version", -1);
-        if (ver < VERSION) {GD.Print("Patch.FromString:  Unknown version number " , ver); return -2;}
-          else if (ver > VERSION) GD.Print("Patch.FromString:  WARNING, newer patch version", ver ,"detected. Some settings may not load correctly.");
-        if (j.GetItem("_iotype", "") != _iotype) return -3;  //Incorrect iotype.  Exit early.
+
+        if (!ignoreVersion){
+            var ver = j.GetItem("_version", -1);
+            if (ver < VERSION) {GD.Print("Patch.FromString:  Unknown version number " , ver); return -2;}
+            else if (ver > VERSION) GD.Print("Patch.FromString:  WARNING, newer patch version", ver ,"detected. Some settings may not load correctly.");
+        }
+        if (j.GetItem("_iotype", "") != _iotype) {
+            GD.Print("Patch.FromString:  Incorrect iotype.  Expected 'patch', got '", j.GetItem("_iotype", ""), "'.");
+            return -3;  //Incorrect iotype.  Exit early.
+        }
 
         //If we got this far, the data is probably okay.  Let's try parsing it.......
         var idk = new List<string>();
