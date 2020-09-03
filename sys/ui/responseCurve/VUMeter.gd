@@ -19,7 +19,11 @@ var custom_texture=ImageTexture.new()
 var last_column = 0
 var last_value = 0
 
-enum {NO, PROCESS_LEFT, PROCESS_MID, PROCESS_RIGHT}  #For input events
+var lineA=Rect2()  #Line positions for line-drawing (midclick)
+var lineB=Rect2()  #Position is real x/y, size is table array pos + value
+
+
+enum {NO, PROCESS_LEFT, PROCESS_MID, PROCESS_RIGHT, PROCESS_MIDDRAG, PROCESS_MIDUP}  #For input events
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -44,11 +48,18 @@ func _ready():
 
 func _gui_input(event):
 	var process = NO
-	if event is InputEventMouseMotion and Input.is_mouse_button_pressed(BUTTON_LEFT): process = PROCESS_LEFT
+	if event is InputEventMouseMotion:
+		if Input.is_mouse_button_pressed(BUTTON_LEFT): process = PROCESS_LEFT
+		if Input.is_mouse_button_pressed(BUTTON_MIDDLE): process = PROCESS_MIDDRAG
 	if event is InputEventMouseButton: 
 		if event.button_index == BUTTON_LEFT and event.pressed: 
 			process = PROCESS_LEFT
 			last_column = get_local_mouse_position().x
+		if event.button_index == BUTTON_MIDDLE:
+			if event.pressed:  
+				process = PROCESS_MID  
+			else:
+				process = PROCESS_MIDUP
 		if event.button_index == BUTTON_RIGHT and !event.pressed:
 			#Popup copipe menu
 			process = PROCESS_RIGHT
@@ -56,6 +67,7 @@ func _gui_input(event):
 			pop.popup(Rect2(get_global_mouse_position(), pop.rect_size))
 	
 	if process == PROCESS_LEFT:
+		var locking = Input.is_key_pressed(KEY_SHIFT)
 		var xy = get_table_pos(Input.is_key_pressed(KEY_SHIFT))
 		var arpos = xy.x
 		var val = xy.y
@@ -118,9 +130,60 @@ func _gui_input(event):
 	else:
 		Input.set_custom_mouse_cursor(null)
 
+	match process:
+		PROCESS_MID:  #Start drawing a line.
+			var xy = get_table_pos()
+			lineA.position = get_local_mouse_position()
+			lineA.size = xy
+		PROCESS_MIDDRAG:
+			lineB.position = get_local_mouse_position()
+			update()
+			pass
+		PROCESS_MIDUP:
+			process_line()
+
+
+func owner_input(event):
+	if event is InputEventMouseButton: 
+		if event.button_index == BUTTON_MIDDLE and !event.pressed: 
+			process_line()
+	
+
+func process_line():
+	lineB.position.x = clamp(lineB.position.x, 0, rect_size.x)
+	lineB.position.y = clamp(lineB.position.y, 0, rect_size.y)
+	
+	lineB.size = get_table_pos(false, lineB.position)
+	
+
+	#Get start and end values and flip them if the end position was less than the start.	
+	var startval = lineA.size.y
+	var endval = lineB.size.y
+	
+	if lineB.size.x < lineA.size.x:
+		var temp = startval
+		startval = endval
+		endval = temp
+	
+	var startpos = min(lineA.size.x, lineB.size.x)
+	var endpos = max(lineA.size.x, lineB.size.x)
+#	var startval = min(lineA.size.y, lineB.size.y)
+#	var endval = max(lineA.size.y, lineB.size.y)
+
+	for i in range(startpos, endpos):
+		var val = lerp(startval, endval, (i-startpos) / float(endpos-startpos) )
+		tbl[i] = val
+		owner.emit_signal("value_changed", i, val)
+	
+	#finally,
+	lineA = Rect2(0,0,0,0)
+	lineB = Rect2(0,0,0,0)
+	update()
+
+
 #Returns a vector of the table position and value.
-func get_table_pos(lock_x=false) -> Vector2:
-	var mouse = get_local_mouse_position()
+func get_table_pos(lock_x=false, mouse=get_local_mouse_position()) -> Vector2:
+#	var mouse = get_local_mouse_position()
 	if lock_x:  mouse.x = last_column
 	var arpos = clamp(int(lerp(0, 127, mouse.x / float(rect_size.x))) , 0, 127)
 	var val = clamp(lerp(100,0, mouse.y / float(rect_size.y)) , 0, 100)
@@ -153,6 +216,8 @@ func _draw():
 		draw_rect(Rect2(0, y, rect_size.x, rect_size.y-y), ColorN('green', 0.1))
 		draw_line(Vector2(0,y), Vector2(rect_size.x, y), ColorN('green', 0.5))
 
+	#Draw the special process line.
+	draw_line(lineA.position, lineB.position, ColorN("yellow"),1.0,true)
 
 
 
