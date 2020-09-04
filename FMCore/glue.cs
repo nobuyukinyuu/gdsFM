@@ -3,8 +3,8 @@ using Godot;
 using System;
 using System.Runtime.CompilerServices;
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+// using Newtonsoft.Json;
+// using Newtonsoft.Json.Serialization;
 using System.Reflection;
 using System.Linq;
 using System.Threading;
@@ -21,7 +21,7 @@ public class glue : Node
 {
     public override void _Ready()
     {
-        GDSFmIO.init();
+        // GDSFmIO.init();
     }
 }
 
@@ -223,37 +223,37 @@ public class AutoLoadHelper : Node
 }
 
 
-public static class GDSFmIO
-{
-    public static JsonSerializerSettings serializerSettings = new JsonSerializerSettings();
-    public static IgnoreParentPropertiesResolver resolver = new IgnoreParentPropertiesResolver(true);
+// public static class GDSFmIO
+// {
+//     public static JsonSerializerSettings serializerSettings = new JsonSerializerSettings();
+//     public static IgnoreParentPropertiesResolver resolver = new IgnoreParentPropertiesResolver(true);
 
-    public static void init()
-    {
-        serializerSettings.ContractResolver = resolver;
-        serializerSettings.Formatting = Formatting.Indented;
-        serializerSettings.NullValueHandling = NullValueHandling.Ignore;
-    }
-}
+//     public static void init()
+//     {
+//         serializerSettings.ContractResolver = resolver;
+//         serializerSettings.Formatting = Formatting.Indented;
+//         serializerSettings.NullValueHandling = NullValueHandling.Ignore;
+//     }
+// }
 
-//ContractResolver which is used to specify only the specific subclass properties should be added when serializing
-public class IgnoreParentPropertiesResolver : DefaultContractResolver
-{
-    bool IgnoreBase = false;
-    public IgnoreParentPropertiesResolver(bool ignoreBase)
-    {
-        IgnoreBase = ignoreBase;
-    }
-    protected override System.Collections.Generic.IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
-    {
-        var allProps = base.CreateProperties(type, memberSerialization);
-        if (!IgnoreBase) return allProps;
+// //ContractResolver which is used to specify only the specific subclass properties should be added when serializing
+// public class IgnoreParentPropertiesResolver : DefaultContractResolver
+// {
+//     bool IgnoreBase = false;
+//     public IgnoreParentPropertiesResolver(bool ignoreBase)
+//     {
+//         IgnoreBase = ignoreBase;
+//     }
+//     protected override System.Collections.Generic.IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
+//     {
+//         var allProps = base.CreateProperties(type, memberSerialization);
+//         if (!IgnoreBase) return allProps;
 
-        //Choose the properties you want to serialize/deserialize
-        var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.DeclaredOnly;
-        // var props = type.GetProperties(~System.Reflection.BindingFlags.FlattenHierarchy); 
-        var props = type.GetFields(flags); 
+//         //Choose the properties you want to serialize/deserialize
+//         var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.DeclaredOnly;
+//         // var props = type.GetProperties(~System.Reflection.BindingFlags.FlattenHierarchy); 
+//         var props = type.GetFields(flags); 
 
-        return allProps.Where(p => props.Any(a => a.Name == p.PropertyName)).ToList();
-    }
-}
+//         return allProps.Where(p => props.Any(a => a.Name == p.PropertyName)).ToList();
+//     }
+// }
