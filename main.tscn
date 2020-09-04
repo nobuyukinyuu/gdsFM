@@ -1,4 +1,4 @@
-[gd_scene load_steps=49 format=2]
+[gd_scene load_steps=48 format=2]
 
 [ext_resource path="res://main.gd" type="Script" id=1]
 [ext_resource path="res://sys/panels/EGControl.tscn" type="PackedScene" id=2]
@@ -27,7 +27,6 @@
 [ext_resource path="res://sys/panels/WaveformOptions.tscn" type="PackedScene" id=25]
 [ext_resource path="res://PanelScope.gd" type="Script" id=26]
 [ext_resource path="res://MIDI.gd" type="Script" id=27]
-[ext_resource path="res://FMCore/Note.cs" type="Script" id=28]
 [ext_resource path="res://sys/panels/tuning/TuningControl.tscn" type="PackedScene" id=29]
 [ext_resource path="res://sys/ui/EnvelopeDisplay.tscn" type="PackedScene" id=30]
 [ext_resource path="res://gfx/ui/godot_icons/GuiTabMenu.svg" type="Texture" id=31]
@@ -53,21 +52,17 @@ expand_margin_bottom = 3.0
 [sub_resource type="AudioStreamGenerator" id=2]
 buffer_length = 0.15
 
-[sub_resource type="GDScript" id=3]
-script/source = "extends Timer
-var blep = 0
+[sub_resource type="GDScript" id=12]
+script/source = "extends Label
+var lastbuf = 0
 
+# Called when the node enters the scene tree for the first time.
 func _ready():
-	pass
-
-func _process(_delta):
-	blep +=1
 	
+	pass # Replace with function body.
 
-
-func _on_Timer_timeout():
-	owner.get_node(\"ProcessRate\").text = str(blep)
-	blep = 0
+func _process(delta):
+	text = str(Engine.get_frames_per_second())
 "
 
 [sub_resource type="GDScript" id=4]
@@ -531,13 +526,6 @@ stream = SubResource( 2 )
 volume_db = -12.0
 script = ExtResource( 23 )
 
-[node name="PreviewNote" type="Node" parent="Audio"]
-script = ExtResource( 28 )
-
-[node name="ProcessRateTimer" type="Timer" parent="."]
-autostart = true
-script = SubResource( 3 )
-
 [node name="ProcessRate" type="Label" parent="."]
 anchor_left = 1.0
 anchor_right = 1.0
@@ -547,6 +535,7 @@ margin_right = -8.0
 margin_bottom = 30.0
 text = "FPS"
 align = 2
+script = SubResource( 12 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -562,7 +551,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label2" type="Label" parent="."]
+[node name="Polyphony" type="Label" parent="."]
 anchor_left = 1.0
 anchor_right = 1.0
 margin_left = -72.0
@@ -775,7 +764,6 @@ __meta__ = {
 [connection signal="connection_request" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_connection_request"]
 [connection signal="disconnection_request" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_disconnection_request"]
 [connection signal="node_selected" from="GraphEdit" to="." method="_on_GraphEdit_node_selected"]
-[connection signal="timeout" from="ProcessRateTimer" to="ProcessRateTimer" method="_on_Timer_timeout"]
 [connection signal="pressed" from="btnValidate" to="." method="_on_btnValidate_pressed"]
 [connection signal="item_selected" from="Algorithm" to="." method="_on_Algorithm_item_selected"]
 [connection signal="value_changed" from="Slider" to="Slider" method="_on_Slider_value_changed"]

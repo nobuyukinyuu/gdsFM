@@ -17,7 +17,7 @@ Vector2[] bufferdata = new Vector2[8192];
     private Patch patch;  // FM Instrument Patch
     public Patch Patch { get => patch; set => patch = value; }
 
-    public Note previewNote;  //Monophonic note used to preview the patch.
+    // public Note previewNote;  //Monophonic note used to preview the patch.
     // public Note PreviewNote () {return previewNote;}
 
 public Channel PreviewNotes = new Channel();
