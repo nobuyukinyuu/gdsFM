@@ -6,11 +6,6 @@ var lastOperatorEnvelope  #Preview from GraphNode of last operator selected.
 
 func _ready():
 	
-	#Setup oscilloscope
-#	var newpts = []
-#	newpts.resize($Panel.rect_size.x)
-#	$Panel/Line2D.points = newpts
-
 	#Setup tabs
 	$TC/EGControl.disable(true)
 	$TC.set_tab_title(0, "EG")
@@ -240,3 +235,7 @@ func _on_TC_gui_input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_RIGHT:
 		if Rect2(Vector2.ZERO, Vector2($TC.rect_size.x, 32)).has_point($TC.get_local_mouse_position()):
 			$CPMenu.popup(Rect2(get_global_mouse_position(), Vector2.ONE))
+
+
+
+

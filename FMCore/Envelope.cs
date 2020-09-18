@@ -42,14 +42,14 @@ public class Envelope : Node
     public int opID;  // Operator index typically associated with this envelope. Used to reset delay phases.
 
     //STANDARD FM EG STUFF
-	double ar=31;						//Attack
-	double dr=31;						//Decay
-	double sr=6;            			//Sustain
-	double rr = 15;                      //Release
-	double sl=100.0;                      //Sustain level
+    double ar=31;						//Attack
+    double dr=31;						//Decay
+    double sr=6;            			//Sustain
+    double rr = 15;                      //Release
+    double sl=100.0;                      //Sustain level
     double tl = 100;                     //Total level  (attenuation)
     double ks=0;						//Key scale
-	double mul=1.0;					//Frequency multiplier  //double between 0.5 and 15
+    double mul=1.0;					//Frequency multiplier  //double between 0.5 and 15
     double dt=0;                        //_detune
     double dt2=0;                        // Coarse detune (semitone, -12 to 12)
 

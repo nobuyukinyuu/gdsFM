@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://sys/ui/responseCurve/PresetMenu.theme" type="Theme" id=1]
 [ext_resource path="res://gfx/fonts/numerics_7seg.tres" type="BitmapFont" id=2]
@@ -14,6 +14,8 @@
 [ext_resource path="res://gfx/fonts/numerics_5x8.tres" type="BitmapFont" id=12]
 [ext_resource path="res://gfx/ui/godot_icons/Add.svg" type="Texture" id=13]
 [ext_resource path="res://gfx/ui/godot_icons/Remove.svg" type="Texture" id=14]
+[ext_resource path="res://gfx/ui/godot_icons/Load.svg" type="Texture" id=15]
+[ext_resource path="res://gfx/ui/icon_reset.svg" type="Texture" id=16]
 
 [sub_resource type="StyleBoxFlat" id=1]
 content_margin_left = 8.0
@@ -59,6 +61,8 @@ expand_margin_left = 3.0
 expand_margin_right = 4.0
 expand_margin_top = 2.0
 expand_margin_bottom = 3.0
+
+[sub_resource type="ButtonGroup" id=6]
 
 [node name="CustomWaveform" type="Control"]
 margin_right = 344.0
@@ -190,6 +194,153 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="WaveImport" type="ConfirmationDialog" parent="."]
+visible = true
+margin_left = 352.0
+margin_right = 600.0
+margin_bottom = 320.0
+popup_exclusive = true
+window_title = "Import Waveform..."
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Margin" type="MarginContainer" parent="WaveImport"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = -8.0
+margin_bottom = -36.0
+custom_constants/margin_right = 16
+custom_constants/margin_top = 16
+custom_constants/margin_left = 16
+custom_constants/margin_bottom = 48
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="V" type="VBoxContainer" parent="WaveImport/Margin"]
+margin_left = 16.0
+margin_top = 16.0
+margin_right = 241.0
+margin_bottom = 291.0
+custom_constants/separation = 8
+
+[node name="Header" type="Label" parent="WaveImport/Margin/V"]
+margin_right = 225.0
+margin_bottom = 65.0
+text = "Format:  RIFF Wave
+Size:  0 bytes
+Channels: 1
+Sample Rate:  44100 Hz, 16-bit"
+
+[node name="Separator" type="Panel" parent="WaveImport/Margin/V"]
+margin_top = 73.0
+margin_right = 225.0
+margin_bottom = 74.0
+rect_min_size = Vector2( 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="chkSigned" type="CheckButton" parent="WaveImport/Margin/V"]
+margin_top = 82.0
+margin_right = 225.0
+margin_bottom = 122.0
+pressed = true
+text = "Unsigned / Signed"
+
+[node name="chkBits" type="CheckButton" parent="WaveImport/Margin/V"]
+margin_top = 130.0
+margin_right = 225.0
+margin_bottom = 170.0
+text = "8-bit / 16-bit"
+
+[node name="chkStereo" type="CheckButton" parent="WaveImport/Margin/V"]
+margin_top = 178.0
+margin_right = 225.0
+margin_bottom = 218.0
+text = "Stereo"
+
+[node name="Separator2" type="Panel" parent="WaveImport/Margin/V"]
+margin_top = 226.0
+margin_right = 225.0
+margin_bottom = 227.0
+rect_min_size = Vector2( 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Spacer" type="Control" parent="WaveImport/Margin/V"]
+margin_top = 235.0
+margin_right = 225.0
+margin_bottom = 243.0
+rect_min_size = Vector2( 0, 8 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="WaveImport/Margin/V"]
+margin_top = 251.0
+margin_right = 225.0
+margin_bottom = 275.0
+
+[node name="Label" type="Label" parent="WaveImport/Margin/V/HBoxContainer"]
+margin_top = 5.0
+margin_right = 45.0
+margin_bottom = 19.0
+text = "Stride: "
+
+[node name="txtStride" type="LineEdit" parent="WaveImport/Margin/V/HBoxContainer"]
+margin_left = 49.0
+margin_right = 193.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+align = 2
+placeholder_text = "(in bytes)"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="btnStride" type="Button" parent="WaveImport/Margin/V/HBoxContainer"]
+visible = false
+margin_left = 49.0
+margin_right = 135.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+custom_constants/hseparation = 8
+group = SubResource( 6 )
+text = "Stride"
+
+[node name="btnSquish" type="Button" parent="WaveImport/Margin/V/HBoxContainer"]
+margin_left = 197.0
+margin_right = 225.0
+margin_bottom = 24.0
+hint_tooltip = "Automatically set the sampling 
+stride based on the chunk size."
+custom_constants/hseparation = 8
+group = SubResource( 6 )
+icon = ExtResource( 16 )
+
+[node name="Dialog" type="FileDialog" parent="WaveImport"]
+visible = true
+margin_left = -680.0
+margin_top = 352.0
+margin_right = -8.0
+margin_bottom = 744.0
+rect_min_size = Vector2( 640, 392 )
+popup_exclusive = true
+window_title = "Open a File"
+mode = 0
+access = 2
+filters = PoolStringArray( "*.wav; Wave File", "*.raw; Raw data" )
+current_dir = "/Projects/godot/Code/gdsFM"
+current_path = "/Projects/godot/Code/gdsFM/"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="H" type="HBoxContainer" parent="."]
 margin_left = 8.0
 margin_right = 344.0
@@ -236,9 +387,14 @@ custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
 custom_colors/font_color_pressed = Color( 0, 0.789855, 1, 1 )
 text = ":::"
 align = 2
-items = [ "Add", ExtResource( 13 ), 0, false, false, 0, 0, null, "", false, "", null, 0, false, false, 1, 0, null, "", true, "Delete", ExtResource( 14 ), 0, false, false, 5, 0, null, "", false ]
+items = [ "Add", ExtResource( 13 ), 0, false, false, 0, 0, null, "", false, "", null, 0, false, false, 1, 0, null, "", true, "Delete", ExtResource( 14 ), 0, false, false, 5, 0, null, "", false, "", null, 0, false, true, 3, 0, null, "", true, "import...", ExtResource( 15 ), 0, false, false, 4, 0, null, "", false ]
 __meta__ = {
 "_edit_use_anchors_": false
 }
 [connection signal="index_pressed" from="CPMenu" to="." method="_on_CPMenu_index_pressed"]
+[connection signal="about_to_show" from="WaveImport" to="." method="_on_WaveImport_about_to_show"]
+[connection signal="confirmed" from="WaveImport" to="." method="_on_WaveImport_confirmed"]
+[connection signal="popup_hide" from="WaveImport" to="." method="_on_WaveImport_popup_hide"]
+[connection signal="pressed" from="WaveImport/Margin/V/HBoxContainer/btnSquish" to="." method="_on_btnSquish_pressed"]
+[connection signal="file_selected" from="WaveImport/Dialog" to="." method="_on_Dialog_file_selected"]
 [connection signal="item_selected" from="H/Banks" to="." method="_on_Banks_item_selected"]
