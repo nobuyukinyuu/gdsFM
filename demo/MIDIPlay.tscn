@@ -1,0 +1,42 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://demo/MIDIPlay.cs" type="Script" id=1]
+[ext_resource path="res://demo/OpenFileDialog.gd" type="Script" id=2]
+
+[node name="MIDIPlay" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="FileDialog" type="FileDialog" parent="."]
+margin_left = 235.0
+margin_top = 66.0
+margin_right = 977.0
+margin_bottom = 500.0
+window_title = "Open a File"
+mode = 0
+access = 2
+filters = PoolStringArray( "*.mid, *.smf; Standard MIDI Format" )
+current_dir = "/music/midi"
+current_path = "/music/midi/"
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SC" type="ScrollContainer" parent="."]
+margin_left = 26.0
+margin_top = 33.0
+margin_right = 631.0
+margin_bottom = 508.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="SC"]
+margin_bottom = 14.0
+[connection signal="file_selected" from="FileDialog" to="FileDialog" method="_on_FileDialog_file_selected"]
