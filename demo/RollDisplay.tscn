@@ -1,9 +1,37 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://gfx/fonts/spelunkid_font.tres" type="BitmapFont" id=1]
 [ext_resource path="res://gfx/ui/sequencer/piano_roll.png" type="Texture" id=2]
 [ext_resource path="res://gfx/ui/sequencer/piano_roll_red_keys.png" type="Texture" id=3]
 [ext_resource path="res://demo/RollDisplay.gd" type="Script" id=4]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends TextureRect
+
+
+func _ready():
+	pass # Replace with function body.
+
+func _draw():
+	for key in owner.active_keys:
+		var tex = $Sprite.texture
+		var octave = key/12
+		var note = key%12
+		
+		var dest = Rect2()
+		dest.position.x = octave * (tex.get_width()-2)
+		dest.size = tex.get_size()
+		dest.size.y /= 12
+#		dest.position -= Vector2.ONE
+		
+		var src = Rect2()
+		src.position.y = note * tex.get_height() / 12
+		src.size = dest.size
+		src.position += Vector2.ONE
+		
+		draw_texture_rect_region(tex, dest, src)
+#		prints (\"drawing\", dest.position.x)
+"
 
 [node name="Roll0" type="HBoxContainer"]
 margin_right = 564.0
@@ -31,11 +59,13 @@ margin_bottom = 24.0
 rect_min_size = Vector2( 448, 0 )
 texture = ExtResource( 2 )
 stretch_mode = 2
+script = SubResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Sprite" type="Sprite" parent="Roll"]
+visible = false
 texture = ExtResource( 3 )
 centered = false
 offset = Vector2( -1, -1 )

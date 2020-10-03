@@ -54,7 +54,10 @@ namespace MidiDemo{
         for (int i=0; i < 16; i++)
         {
             var pl = (AudioPlayer) player;
-            GetNode<Label>(String.Format("Preview/Roll{0}/Roll/Label", i)).Text = "[" + string.Join(", ", pl.channels[i].ActiveNotes()) + "]";
+            // GetNode<Label>(String.Format("Preview/Roll{0}/Roll/Label", i)).Text = "[" + string.Join(", ", pl.channels[i].ActiveNotes()) + "]";
+            GetNode<Label>(String.Format("Preview/Roll{0}/Roll/Label", i)).Text = "[" + string.Join(", ", pl.channels[i].Count) + "]";
+            GetNode(String.Format("Preview/Roll{0}", i)).Set("program", pl.channels[i].midi_program);
+            GetNode(String.Format("Preview/Roll{0}", i)).Set("active_keys", pl.channels[i].ActiveNotes());
         }
     }    
 

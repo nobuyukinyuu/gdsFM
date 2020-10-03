@@ -257,7 +257,8 @@ public class Operator : Resource
             if (egData != null)
             {
                 //Tell us how many has parsed
-                GD.Print ( eg.FromString(egData.ToJSONString(), ignoreIOtype) );
+                var err = eg.FromString(egData.ToJSONString(), ignoreIOtype);
+                // GD.Print ( err );
             }
             
 

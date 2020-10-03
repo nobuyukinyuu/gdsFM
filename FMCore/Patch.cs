@@ -446,7 +446,7 @@ public class Patch : Resource
 
 
         // Shitty average based mixing of total notes being played again.  Count is an O(1) operation. 
-        output /= 2;  //TODO:  Maybe don't do this?  Figure out what the velocity is like normally, maybe scale down a tiny bit instead.
+        // output /= 2;  //TODO:  Maybe don't do this?  Figure out what the velocity is like normally, maybe scale down a tiny bit instead.
         return output;
     }
 
@@ -454,18 +454,24 @@ public class Patch : Resource
     public double mix(Note note){ 
         double avg = 0.0;  //Output average
 
-        foreach (Operator op in connections)
-        // Parallel.ForEach(connections, delegate(Operator op)
+        // foreach (Operator op in connections)
+        // // Parallel.ForEach(connections, delegate(Operator op)
+        // {	
+        //     //Get running average of sample output of all operators connected to output.
+        //     avg += op.request_sample(note.phase[op.id], note); 
+
+        //     //Iterate the sample timer.
+        //     // note.Iterate(op.id, 1, op.EG.totalMultiplier, sample_rate);
+        //     // note.Accumulate(op.id,1, op.EG.totalMultiplier, op.EG.SampleRate);
+        //     // note.Iterate(1);
+
+        // } //);
+
+        for (int j=0; j < connections.Length; j++)
         {	
-            //Get running average of sample output of all operators connected to output.
-            avg += op.request_sample(note.phase[op.id], note); 
-
-            //Iterate the sample timer.
-            // note.Iterate(op.id, 1, op.EG.totalMultiplier, sample_rate);
-            // note.Accumulate(op.id,1, op.EG.totalMultiplier, op.EG.SampleRate);
-            // note.Iterate(1);
-
-        } //);
+            Operator op = connections[j];
+            avg += op.request_sample(note.phase[op.id], note, LFOs, 0); 
+        }
 
         //Recalculate the pitch.
         note.hz = note.base_hz * note.PitchAtSamplePosition(this) * pitchMod * this.pitchMod * transpose;

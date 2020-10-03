@@ -55,7 +55,7 @@ namespace MidiDemo
         public static Dictionary<int, MidiSharp.Events.MidiEvent> CheckForEvents(MidiSequence sequence)
         {
             var output = new Dictionary<int, MidiSharp.Events.MidiEvent>();
-            for (int i=0; i < sequence.Tracks.Count; i++)
+            for (int i=0; i < Math.Min(16, sequence.Tracks.Count); i++)
             {
                 if (noEventsLeft[i]) continue;
 

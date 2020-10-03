@@ -25,3 +25,6 @@ func _ready():
 func patch_name(p:int):
 	if p < 0 or p>127: return "Unknown"
 	else: return PATCH_NAMES[p]
+
+func _physics_process(delta):
+	$Roll.update()  #TODO:  change this to a setget for active_keys change once event processing is less strenuous

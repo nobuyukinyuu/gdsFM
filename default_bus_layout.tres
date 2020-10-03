@@ -13,16 +13,18 @@ voice/3/pan = 0.0
 [sub_resource type="AudioEffectReverb" id=2]
 resource_name = "Reverb"
 predelay_msec = 200.0
-room_size = 0.66
+room_size = 0.5
+damping = 0.25
 spread = 0.63
 hipass = 0.18
+wet = 0.2
 
 [resource]
 bus/1/name = "reverb"
 bus/1/solo = false
 bus/1/mute = false
 bus/1/bypass_fx = false
-bus/1/volume_db = 0.0
+bus/1/volume_db = -0.130497
 bus/1/send = "Master"
 bus/1/effect/0/effect = SubResource( 1 )
 bus/1/effect/0/enabled = true

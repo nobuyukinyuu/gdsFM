@@ -49,8 +49,8 @@ window_title = "Open a File"
 mode = 0
 access = 2
 filters = PoolStringArray( "*.mid, *.smf; Standard MIDI Format" )
-current_dir = "/music/midi/yuki/more"
-current_path = "/music/midi/yuki/more/"
+current_dir = "/music/midi/midfiles"
+current_path = "/music/midi/midfiles/"
 script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -70,7 +70,7 @@ margin_bottom = 14.0
 
 [node name="Output" type="AudioStreamPlayer" parent="."]
 stream = SubResource( 1 )
-volume_db = -6.568
+bus = "reverb"
 script = ExtResource( 3 )
 
 [node name="Preview" type="VBoxContainer" parent="."]

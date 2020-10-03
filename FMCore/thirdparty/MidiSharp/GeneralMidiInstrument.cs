@@ -70,13 +70,13 @@ namespace MidiSharp
         /// <summary>Nylon Acoustic Guitar</summary>
         NylonAcousticGuitar = 24,
         /// <summary>Steel Acoustic Guitar</summary>
-        SteelAcousticGuitar = 25,
+        SteelGuitar = 25,
         /// <summary>Jazz Electric Guitar</summary>
-        JazzElectricGuitar = 26,
+        JazzGuitar = 26,
         /// <summary>Clean Electric Guitar</summary>
-        CleanElectricGuitar = 27,
+        CleanGuitar = 27,
         /// <summary>Muted Electric Guitar</summary>
-        MutedElectricGuitar = 28,
+        MutedGuitar = 28,
         /// <summary>Overdriven Guitar</summary>
         OverdrivenGuitar = 29,
         /// <summary>Distortion Guitar</summary>
@@ -89,9 +89,9 @@ namespace MidiSharp
         /// <summary>Acoustic Bass</summary>
         AcousticBass = 32,
         /// <summary>Finger Electric Bass</summary>
-        FingerElectricBass = 33,
+        FingerBass = 33,
         /// <summary>Pick Electric Bass</summary>
-        PickElectricBass = 34,
+        PickBass = 34,
         /// <summary>Fretless Bass</summary>
         FretlessBass = 35,
         /// <summary>Slap Bass 1</summary>

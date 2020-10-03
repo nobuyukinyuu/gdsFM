@@ -19,8 +19,8 @@ public static float MixRate = 44100.0f;  //This is set to a global var sample_ra
 
 //Each frame = 1000/MixRate ms. If default tickLen is 1ms, it would take < 44 frame resolution to be tick-accurate.
 //If the tick length is lower due to faster tempo, lower this number to tickLen/frameLen increase accuracy.
-public static int FramesPerEventCheck = 20; 
-public int frameCounter;  //Used to 
+public static int FramesPerEventCheck = 10; 
+public int frameCounter;  //Keeps track of number of frames elapsed
 
 [Signal] public delegate void NoteOff();
 
@@ -29,6 +29,7 @@ AudioStreamGeneratorPlayback buf;  //Playback buffer
 Vector2[] bufferdata = new Vector2[8192];
 
 public Channel[] channels = new Channel[16];
+public Patch[] patchBank = new Patch[127];
 
     Node global;
 
@@ -45,6 +46,35 @@ public Channel[] channels = new Channel[16];
         AudioStreamGenerator stream = (AudioStreamGenerator) this.Stream;
         MixRate = stream.MixRate;  Clock.sample_rate = MixRate;
         buf = (AudioStreamGeneratorPlayback) GetStreamPlayback();
+
+        //FIXME:  IMPLEMENT DRUMS
+        channels[9].Mute = true;
+
+        //Setup the patch bank.
+        const string BANKPATH = "res://demo/bank0/";
+        const string EXT = ".gfmp";
+        for(int i=0; i<patchBank.Length; i++)
+        {
+            patchBank[i] = new Patch(MixRate);
+            var inst = (GeneralMidiInstrument) i;
+            var path= BANKPATH + inst.ToString() + EXT;
+            var dir = new Godot.Directory();
+
+            // GD.Print("Searching for ", path);
+
+            //Search for a bank to overload the initial one!!
+            if (Godot.ResourceLoader.Exists(path) || dir.FileExists(path))
+            {
+                var f = new Godot.File();
+                f.Open(path, File.ModeFlags.Read);
+                patchBank[i].FromString(f.GetAsText());
+                f.Close();
+                GD.Print("Program ", i, " (", inst, ") loaded.");
+            } else {
+                //Init patch.
+                patchBank[i].FromString(glue.INIT_PATCH, true);
+            }
+        }
 
 
         // //Set up the multithreading environment if we're to use multithreading
@@ -78,29 +108,32 @@ public Channel[] channels = new Channel[16];
     void fill_buffer()
     {
         int frames = buf.GetFramesAvailable();
-        var bufferdata = new List<Vector2[]>();  //frames from each channel
+        // var bufferdata = new List<Vector2[]>();  //frames from each channel
+        var bufferdata = new Vector2[channels.Length][];  //frames from each channel
         var output = new Vector2[frames];       //final output
         object _lock = new object();
 
+
         //Get frame data for each channel.
-        Parallel.For(0, channels.Length, delegate(int i) {
+        for(int i=0; i<channels.Length; i++) {
             // lock(_lock)
             // {
                 // if (!channels[i].Empty)  //Fill the buffer for the channel.  If channel is 0, also process clock events.
-                    bufferdata.Add( channels[i].request_samples(frames, ClockEvent, i) );
+                    bufferdata[i] = channels[i].request_samples(frames, ClockEvent, i) ;
             // }
-        } );
+        } //);
 
         //Assemble each set of frame data into the final output buffer.
-        Parallel.For(0, frames, delegate(int i) {
-            lock(_lock)
-            {
-                for(int j=0; j < bufferdata.Count; j++) //Cycle each channel into j.
+        for(int i=0; i<frames; i++) {
+            // lock(_lock)
+            // {
+                for(int j=0; j < channels.Length; j++) //Cycle each channel into j.
                 {
-                    output[i] += bufferdata[j][i];
+                    output[i].x += bufferdata[j][i].x * 0.0625f; //quiet each channel by 1/16
+                    output[i].y += bufferdata[j][i].y * 0.0625f;
                 }
-            }
-        } );
+            // }
+        } //);
 
         buf.PushBuffer(output);
         // Clock.Iterate(frames, MixRate);
@@ -111,7 +144,7 @@ public Channel[] channels = new Channel[16];
     {
         if (frameCounter % FramesPerEventCheck == 0) 
         {
-            frameCounter = 0;  //TODO:  Necessary?
+            // frameCounter = 0;  //TODO:  Necessary?
             // var sequence = (MidiSequence) Owner.Get("sequence");
             var events = Clock.CheckForEvents( sequence );
 
@@ -128,16 +161,26 @@ public Channel[] channels = new Channel[16];
                         Clock.SetTempo(ev.Value, sequence.TicksPerBeatOrFrame );
                         GD.Print("BPM: ", 60000000.0/( ev.Value ));
                         break;
+
                     //Voice channel events.  TODO
+                    case ControllerVoiceMidiEvent ev:
+                        // ev.Channel;
+                        break;
+                    case ProgramChangeVoiceMidiEvent ev:
+                        channels[ev.Channel].midi_program = ev.Number;
+                        channels[ev.Channel].patch = patchBank[ev.Number];
+                        break;
 
                     //Note events
                     case OnNoteVoiceMidiEvent ev:  //note: Can be more specific with "when ev" keyword
-                        AddNote(ch, ev.Note, ev.Velocity);
+                        AddNote(ev.Channel, ev.Note, ev.Velocity);
+                        // AddNote(ch, ev.Note, ev.Velocity);
                         // AddNote(ch, ev.Note, ev.Velocity, this);
                         break;
                     case OffNoteVoiceMidiEvent ev:  
                         // EmitSignal("NoteOff");
-                        var note = channels[ch].FindActiveNote(ev.Note);
+                        var note = channels[ev.Channel].FindActiveNote(ev.Note);
+                        if (note==null) break;
                         note._on_ReleaseNote(ev.Note, channels[channel].patch.GetReleaseTime(note));
                         break;
 
@@ -147,8 +190,8 @@ public Channel[] channels = new Channel[16];
             } // End foreach
         }
 
+        Clock.Iterate(1,channel);
         if (channel==0) {
-            Clock.Iterate();
             frameCounter ++;
         }
     }

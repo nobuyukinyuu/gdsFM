@@ -10,13 +10,19 @@ public class Channel : List<Note>
     //          Ideas:  A "sink" channel or a patch override in Note.  Maybe handle its own AudioServer bus at runtime?
 
     /// Patch associated with this channel.
-    public Patch patch=new Patch(44100);  //TODO:  add property to handle program change?
+    public Patch patch;  //TODO:  add property to handle program change?
+    public int midi_program=0;  //Used for MIDI to identify an associated program with this channel.  Set manually.
+
+    public Channel(double sample_rate=44100) {
+        patch = new Patch(sample_rate);
+        patch.FromString(glue.INIT_PATCH, true);
+    }
 
     private bool mute;  public bool Mute { get => mute; set => mute = value; }
 
 
-#if DEBUG
-    int maxPolyphony=24;
+    #if DEBUG
+        int maxPolyphony=24;
     #else
         int maxPolyphony=72;
     #endif
@@ -97,19 +103,21 @@ public class Channel : List<Note>
         patch.UpdateLFOs(frames);
 
         //Ask the Patch to process the notes.
-        object _lock = new object();
-        double output = 0;
+        // object _lock = new object();
 
         for(int j=0; j < frames; j++ )
         {
             // lock(_lock) {  
-                Parallel.For(0, this.Count, delegate(int i)  //For each note in the channel....
+                // Parallel.For(0, this.Count, delegate(int i)  //For each note in the channel....
+                double output = 0;
+                for(int i=0; i<this.Count;i++)  //For each note in the channel....
                 {
-                    lock(_lock) { output += patch.mix(this[i]); }  
-                } );  //End note loop
+                    // lock(_lock) { output += patch.mix(this[i]); }  
+                     output += patch.mix(this[i]);   
+                } //);  //End note loop
 
-                bufferdata[j].x = (float) output * 0.5f * patch._panL * patch.gain;  
-                bufferdata[j].y = (float) output * 0.5f * patch._panR * patch.gain;  
+                bufferdata[j].x = (float) (output * patch._panL * patch.gain);  
+                bufferdata[j].y = (float) (output * patch._panR * patch.gain);  
                 clockEvents(clockChannel); //Process the clock events for the frame.  Will only happen if channel is 0.
             // }
         } //); //End buffer loop
@@ -121,14 +129,14 @@ public class Channel : List<Note>
 
     public int[] ActiveNotes()
     {
-        var output = new int[Count];
+        var output = new Stack<int>();
 
-        for(int i=0; i < Count; i++)
+        foreach(Note note in this)
         {
-            output[i] = this[i].midi_note;
+            if (note.pressed) output.Push(note.midi_note);
         }
 
-        return output;
+        return output.ToArray();
     }
 
 }
