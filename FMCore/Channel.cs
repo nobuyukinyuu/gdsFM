@@ -2,22 +2,30 @@ using Godot;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 public class Channel : List<Note>
 {
-    #if DEBUG
-        int maxPolyphony=24;
+    // TODO:  If using the channel to request samples from the current patch, handle notes on during a program change.
+    //          Ideas:  A "sink" channel or a patch override in Note.  Maybe handle its own AudioServer bus at runtime?
+
+    /// Patch associated with this channel.
+    public Patch patch=new Patch(44100);  //TODO:  add property to handle program change?
+
+    private bool mute;  public bool Mute { get => mute; set => mute = value; }
+
+
+#if DEBUG
+    int maxPolyphony=24;
     #else
         int maxPolyphony=72;
     #endif
 
+    /// Returns true if the Channel doesn't have any active notes currently.
+    public bool Empty {get => this.Count == 0;}
+
     public Stack<Note> _flaggedForDeletion = new Stack<Note>();
-
-    public void FlagForDeletion(Note note)
-    {
-        _flaggedForDeletion.Push(note);
-    }
-
+    public void FlagForDeletion(Note note){    _flaggedForDeletion.Push(note);    }
     public void FlagInactiveNotes()
     {
         for(int i=0; i<this.Count; i++) 
@@ -71,5 +79,56 @@ public class Channel : List<Note>
     // private static bool isActiveNote(Note x)
     // {return (x.midi_note == midi_note) && (x.pressed) && (x.releaseSample==0);}
 
-}
+    /// Updates the state of the channel by flagging inactive notes and flushing them.
+    public void Update()
+    {
+            FlagInactiveNotes();
+            Flush();
+    }
 
+    /// Retrieves a buffer representing the active notes in this channel.
+    public Vector2[] request_samples(int frames, Action<int> clockEvents, int clockChannel=0)
+    {
+        var bufferdata = new Vector2[frames];
+        if (mute) return bufferdata;
+        if (patch == null) return bufferdata;
+
+        //Process the LFOs.
+        patch.UpdateLFOs(frames);
+
+        //Ask the Patch to process the notes.
+        object _lock = new object();
+        double output = 0;
+
+        for(int j=0; j < frames; j++ )
+        {
+            // lock(_lock) {  
+                Parallel.For(0, this.Count, delegate(int i)  //For each note in the channel....
+                {
+                    lock(_lock) { output += patch.mix(this[i]); }  
+                } );  //End note loop
+
+                bufferdata[j].x = (float) output * 0.5f * patch._panL * patch.gain;  
+                bufferdata[j].y = (float) output * 0.5f * patch._panR * patch.gain;  
+                clockEvents(clockChannel); //Process the clock events for the frame.  Will only happen if channel is 0.
+            // }
+        } //); //End buffer loop
+
+
+
+        return bufferdata;
+    }
+
+    public int[] ActiveNotes()
+    {
+        var output = new int[Count];
+
+        for(int i=0; i < Count; i++)
+        {
+            output[i] = this[i].midi_note;
+        }
+
+        return output;
+    }
+
+}

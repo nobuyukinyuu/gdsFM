@@ -1,0 +1,54 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://gfx/fonts/spelunkid_font.tres" type="BitmapFont" id=1]
+[ext_resource path="res://gfx/ui/sequencer/piano_roll.png" type="Texture" id=2]
+[ext_resource path="res://gfx/ui/sequencer/piano_roll_red_keys.png" type="Texture" id=3]
+[ext_resource path="res://demo/RollDisplay.gd" type="Script" id=4]
+
+[node name="Roll0" type="HBoxContainer"]
+margin_right = 564.0
+margin_bottom = 24.0
+grow_horizontal = 0
+alignment = 2
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="."]
+margin_top = 2.0
+margin_right = 112.0
+margin_bottom = 21.0
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+text = "Ch.1
+Acoustic Piano"
+
+[node name="Roll" type="TextureRect" parent="."]
+margin_left = 116.0
+margin_right = 564.0
+margin_bottom = 24.0
+rect_min_size = Vector2( 448, 0 )
+texture = ExtResource( 2 )
+stretch_mode = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Sprite" type="Sprite" parent="Roll"]
+texture = ExtResource( 3 )
+centered = false
+offset = Vector2( -1, -1 )
+vframes = 12
+
+[node name="Label" type="Label" parent="Roll"]
+margin_left = -1.0
+margin_top = -14.0
+margin_right = 52.0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "[asdfsdf]"
+__meta__ = {
+"_edit_use_anchors_": false
+}

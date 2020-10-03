@@ -393,7 +393,7 @@ public class Patch : Resource
     }
 
     /// Request multiple samples from this patch for a requested note.  Maybe better for parallelizing notes?
-    public double[] request_samples(Note note, int nSamples=1, double pitchMod=1.0)
+    public double[] request_samples(Note note, int nSamples=1, double pitchMod=1.0) //TODO: external timer funcref + execution frequency arguments here.
     {
         var output = new double[nSamples];
         for(int i=0; i < nSamples; i++)
@@ -425,7 +425,7 @@ public class Patch : Resource
         return output;
     }
 
-    ///Multiple note polyphony.  Old method for original single-thread fill_buffer
+    /// Multiple note polyphony.  Old method for original single-thread fill_buffer
     public double mix(List<Note> notes)
     {
         double output = 0.0;
@@ -449,6 +449,8 @@ public class Patch : Resource
         output /= 2;  //TODO:  Maybe don't do this?  Figure out what the velocity is like normally, maybe scale down a tiny bit instead.
         return output;
     }
+
+    /// Requests a single sample frame from a note.
     public double mix(Note note){ 
         double avg = 0.0;  //Output average
 
@@ -464,21 +466,10 @@ public class Patch : Resource
             // note.Iterate(1);
 
         } //);
+
+        //Recalculate the pitch.
+        note.hz = note.base_hz * note.PitchAtSamplePosition(this) * pitchMod * this.pitchMod * transpose;
         note.Iterate(1);
-
-        #if DEBUG  //We probably don't need this in release mode
-            //If assertion failed, we'd get a divide by zero here.
-            if (connections.Length <= 0){
-                var msg = "Patch.mix: No operator connections to patch. This shouldn't happen";
-                GD.PrintErr(msg);
-                throw new System.Exception(msg);
-            }
-        #endif
-
-        avg /= connections.Length;  //Shitty average-based mixing.        
-        avg *=  note.Velocity;  // TODO:  REMOVE ME WHEN PER-OPERATOR VELOCITY SENSITIVITY IS IMPLEMENTED?
-
-        // note.Iterate(1, pitch_avg, sample_rate);
         return avg;
     }
 
