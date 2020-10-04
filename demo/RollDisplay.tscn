@@ -72,13 +72,14 @@ offset = Vector2( -1, -1 )
 vframes = 12
 
 [node name="Label" type="Label" parent="Roll"]
-margin_left = -1.0
-margin_top = -14.0
-margin_right = 52.0
+margin_left = -18.0
+margin_top = -6.0
+margin_right = 35.0
+margin_bottom = 8.0
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
-text = "[asdfsdf]"
+text = "[0]"
 __meta__ = {
 "_edit_use_anchors_": false
 }

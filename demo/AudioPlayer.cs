@@ -19,7 +19,7 @@ public static float MixRate = 44100.0f;  //This is set to a global var sample_ra
 
 //Each frame = 1000/MixRate ms. If default tickLen is 1ms, it would take < 44 frame resolution to be tick-accurate.
 //If the tick length is lower due to faster tempo, lower this number to tickLen/frameLen increase accuracy.
-public static int FramesPerEventCheck = 10; 
+public static int FramesPerEventCheck = 44; 
 public int frameCounter;  //Keeps track of number of frames elapsed
 
 [Signal] public delegate void NoteOff();
@@ -173,15 +173,21 @@ public Patch[] patchBank = new Patch[127];
 
                     //Note events
                     case OnNoteVoiceMidiEvent ev:  //note: Can be more specific with "when ev" keyword
+                        if (ev.Velocity == 0){ //Oh no!  This is an Off event in disguise!
+                            channels[ev.Channel].TurnOffNote(ev.Note);
+                            break; }
+
                         AddNote(ev.Channel, ev.Note, ev.Velocity);
                         // AddNote(ch, ev.Note, ev.Velocity);
                         // AddNote(ch, ev.Note, ev.Velocity, this);
                         break;
                     case OffNoteVoiceMidiEvent ev:  
-                        // EmitSignal("NoteOff");
-                        var note = channels[ev.Channel].FindActiveNote(ev.Note);
-                        if (note==null) break;
-                        note._on_ReleaseNote(ev.Note, channels[channel].patch.GetReleaseTime(note));
+                        // NoteOnEventBailout:
+                        // var note = channels[ev.Channel].FindActiveNote(ev.Note);
+                        // if (note==null) break;
+                        // note._on_ReleaseNote(ev.Note, channels[channel].patch.GetReleaseTime(note));
+
+                        channels[ev.Channel].TurnOffNote(ev.Note);
                         break;
 
                     default:
@@ -285,9 +291,6 @@ public Patch[] patchBank = new Patch[127];
                                 new Godot.Collections.Array(){channels[channel].patch.GetReleaseTime(note)} );
         //Other event signals here, as necessary.
     }
-
-
-
 
 
     /// Used by Godot frontend to change the preview pitch using a bend wheel.

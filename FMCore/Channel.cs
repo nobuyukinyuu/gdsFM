@@ -13,6 +13,8 @@ public class Channel : List<Note>
     public Patch patch;  //TODO:  add property to handle program change?
     public int midi_program=0;  //Used for MIDI to identify an associated program with this channel.  Set manually.
 
+    Dictionary<int, Note> lookupTbl = new Dictionary<int, Note>();  //Dictionary of active notes. Makes for faster lookup.
+
     public Channel(double sample_rate=44100) {
         patch = new Patch(sample_rate);
         patch.FromString(glue.INIT_PATCH, true);
@@ -22,15 +24,46 @@ public class Channel : List<Note>
 
 
     #if DEBUG
-        int maxPolyphony=24;
+        int maxPolyphony=16;
     #else
-        int maxPolyphony=72;
+        int maxPolyphony=64;
     #endif
 
     /// Returns true if the Channel doesn't have any active notes currently.
     public bool Empty {get => this.Count == 0;}
 
     public Stack<Note> _flaggedForDeletion = new Stack<Note>();
+
+    /// Adds a new note to the channel.
+    public new void Add (Note item)
+    {
+        //NOTE:  When notes are no longer active, they still exist in the collection, but because lookupTbl 
+        //      errors out on a key already existing, we may want to consider removing note elements from it
+        //      immediately when a note is turned off. If multiple same-pitch notes are started and stopped
+        //      before old ones are ready to die, the calls to TurnOffNote will fetch the last note added to the table.
+        //      This could potentially leave notes hanging if two On events occur in a row.  
+        //      The alternative is erroring out here during the lookupTbl add, having an inactive notes collection, or...
+
+        base.Add(item);  //Call the superclass.
+        // lookupTbl.Add(item.midi_note, item);  //Throws an error if a note is already active in the same pitch
+        lookupTbl[item.midi_note] = item;   //Overwrites any note references active in the same pitch
+    }
+
+    /// Gets a note from the lookup table, or null.
+    public Note GetNote (int value) {
+        Note output;
+        lookupTbl.TryGetValue(value, out output);
+        return output;
+    }
+
+
+    /// Updates the state of the channel by flagging inactive notes and flushing them.
+    public void Update()
+    {
+            FlagInactiveNotes();
+            Flush();
+    }
+
     public void FlagForDeletion(Note note){    _flaggedForDeletion.Push(note);    }
     public void FlagInactiveNotes()
     {
@@ -48,6 +81,7 @@ public class Channel : List<Note>
         {
             Note note = _flaggedForDeletion.Pop();
             this.Remove(note);
+            lookupTbl.Remove(note.midi_note);
             note.QueueFree();
         }
     }
@@ -62,6 +96,7 @@ public class Channel : List<Note>
         }
 
         this.Clear();
+        lookupTbl.Clear();
     }
 
     public Note FindActiveNote(int midi_note)
@@ -82,15 +117,7 @@ public class Channel : List<Note>
         }
     }
 
-    // private static bool isActiveNote(Note x)
-    // {return (x.midi_note == midi_note) && (x.pressed) && (x.releaseSample==0);}
 
-    /// Updates the state of the channel by flagging inactive notes and flushing them.
-    public void Update()
-    {
-            FlagInactiveNotes();
-            Flush();
-    }
 
     /// Retrieves a buffer representing the active notes in this channel.
     public Vector2[] request_samples(int frames, Action<int> clockEvents, int clockChannel=0)
@@ -127,9 +154,10 @@ public class Channel : List<Note>
         return bufferdata;
     }
 
+    /// Provides a list of active note numbers for display usage.
     public int[] ActiveNotes()
     {
-        var output = new Stack<int>();
+        var output = new Stack<int>(this.Count);
 
         foreach(Note note in this)
         {
@@ -137,6 +165,18 @@ public class Channel : List<Note>
         }
 
         return output.ToArray();
+    }
+
+    /// Manually turns off a note on a given channel.
+    public bool TurnOffNote(int note_number)
+    {
+        Note note = GetNote(note_number);
+        if (note==null) return false;
+        // if (note==null) throw new NullReferenceException("Note not found?");
+ 
+        var ttl = patch.GetReleaseTime(note);
+        note._on_ReleaseNote(note_number, ttl);
+        return true;
     }
 
 }
