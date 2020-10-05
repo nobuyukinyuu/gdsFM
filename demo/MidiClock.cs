@@ -11,7 +11,7 @@ namespace MidiDemo
         public static int frames;  //Frame counter.  Samples elapsed.
         public static int beatLen = 480000;  //beat length, in microseconds.  Set by tempo events.
         public static int ticksPerBeat = 48;  //Beat divider.  Use this with beatLen to calculate a tick length.
-        public static double tickLen;  // Tick length in ms;  set automatically. Equal to beatLen/ticksPerBeat/1000
+        public static double tickLen=10;  // Tick length in ms;  set automatically. Equal to beatLen/ticksPerBeat/1000
 
 
         //Tick timer iterated by the tempo value (microsecs/beat) divided by the tick divider.
@@ -26,6 +26,7 @@ namespace MidiDemo
         {
             frames=0; beatLen = 480000; ticksPerBeat = 48;
             deltaTicks = new double[16];
+            ticksElapsed=0;
             eventPos = new int[16];
             noEventsLeft = new bool[16];
         }

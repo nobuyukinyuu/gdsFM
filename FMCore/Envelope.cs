@@ -60,7 +60,7 @@ public class Envelope : Node
     //CUSTOM STUFF
 	public Waveforms waveform = Waveforms.SINE;
 	public double feedback = 0;  //Operator feedback only used in op chain termini.
-    public GDSFmLowPass.FilterData filter = new GDSFmLowPass.FilterData();  //Lowpass cutoff + resonance filter.
+    public GDSFmLowPass.FilterData filter = new GDSFmLowPass.FilterData(Patch.sample_rate);  //Lowpass cutoff + resonance filter.
     public bool reflect = false;  //Waveform reflection.  Inverts sine phase, makes sawtooth point to the right, etc.
 
 	public double duty = 0.5;  //Duty cycle is only used for pulse right now
@@ -586,7 +586,8 @@ public class Envelope : Node
         {
             //// NOPE NOPE NOPE, NEVERMIND.  This clobbers any semblance of portability.  Use AudioOutput and work on abstracting it from the autoloads.
             // return (double) AutoLoadHelper<Double>.Get("global", "sample_rate");
-            return AudioOutput.MixRate;
+            // return AudioOutput.MixRate;
+            return Patch.sample_rate;
         }
     }
 

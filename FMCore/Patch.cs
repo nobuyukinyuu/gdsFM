@@ -8,7 +8,7 @@ public class Patch : Resource
 {
 
     #if GODOT  //Needs default ctor
-        Patch() {}
+        Patch() {InitWaveformBank();}
     #endif
 
     //This ctor can be used to set the sample rate used in phase calculations by a patch. The algorithm validator should do it when making a patch.
@@ -37,7 +37,7 @@ public class Patch : Resource
     public List<LFO> LFOs = new List<LFO>( new LFO[] {new LFO(sample_rate), new LFO(sample_rate), new LFO(sample_rate)} );
 
 #region Stereo Panning ======
-    const float C_PAN = 0.5f;  //Center panning value each side lerps to.
+    public const float C_PAN = 0.5f;  //Center panning value each side lerps to.
     public float _panL=1.0f, _panR=1.0f;  //Stereo panning multipliers
 
     float pan = 0.0f;
@@ -111,12 +111,6 @@ public class Patch : Resource
         _calcPitch(ref prlMult, prl);
     }
 #endregion
-
-    //Stuff that may or may not be used
-    private double resonance = 1.0;  //Should never be under 1.0
-    private double cutoff = sample_rate;
-    public double CutOff { get => cutoff; set => cutoff = value; }
-    public double Resonance { get => resonance; set => resonance = value; }
 
     //Algorithm presets
     readonly static int[][][] algorithms = new int[][][]{
@@ -387,7 +381,7 @@ public class Patch : Resource
         //TODO:  Make this a parallel process?
         foreach(LFO lfo in LFOs)
         {
-            lfo.UpdateBuffer(buffer_size);
+            lfo.UpdateBuffer(Math.Max(1,buffer_size));
         }
 
     }

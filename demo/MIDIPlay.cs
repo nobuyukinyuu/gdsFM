@@ -9,39 +9,35 @@ namespace MidiDemo{
     {
         public MidiSequence sequence;
         bool isPlaying;
-        AudioStreamPlayer player;
+        AudioPlayer player;
 
     public override void _Ready()
         {
-            player = GetNode<AudioStreamPlayer>("Output");
+            player = GetNode<AudioPlayer>("Output");
         }
 
 
     public void LoadMIDI(string path)
     {
-        using (System.IO.Stream inputStream = System.IO.File.OpenRead(path))
+        try
         {
-            sequence = MidiSequence.Open(inputStream);
-        }
-
-        var lbl = (Label) GetNode("SC/Label");
-        lbl.Text = (string) sequence.ToString();
-
-        //Set the MIDI sequence for the player
-        var pl=(AudioPlayer)player;
-        pl.sequence = sequence;
-
-        //We need to determine the length of a tick for our clock. RN just find the first TempoMetaMidiEvent in track 0
-        //And assume that's what the tempo will always be.  Value of this will be microseconds per quarter.
-        foreach (MidiSharp.Events.MidiEvent ev in sequence.Tracks[0].Events)
-        {
-            if (ev is MidiSharp.Events.Meta.TempoMetaMidiEvent)
+            using (System.IO.Stream inputStream = System.IO.File.OpenRead(path))
             {
-                var data = (MidiSharp.Events.Meta.TempoMetaMidiEvent) ev;
-                GD.Print("BPM: ", 60000000.0/( data.Value ));
-                Clock.SetTempo(data.Value, sequence.TicksPerBeatOrFrame);
+                sequence = MidiSequence.Open(inputStream);
             }
+
+            var lbl = (Label) GetNode("SC/Label");
+            lbl.Text = (string) sequence.ToString();
+
+            Stop();
+
+            //Set the MIDI sequence for the player
+            player.sequence = sequence;
+
+        } catch (MidiParser.MidiParserException e) {
+            GD.Print("WARNING:  Encountered a problem parsing MIDI.\n", e.ToString() );
         }
+
     }
 
     public override void _Process(float delta)
@@ -53,11 +49,10 @@ namespace MidiDemo{
 
         for (int i=0; i < 16; i++)
         {
-            var pl = (AudioPlayer) player;
             // GetNode<Label>(String.Format("Preview/Roll{0}/Roll/Label", i)).Text = "[" + string.Join(", ", pl.channels[i].ActiveNotes()) + "]";
-            GetNode<Label>(String.Format("Preview/Roll{0}/Roll/Label", i)).Text = "[" + string.Join(", ", pl.channels[i].Count) + "]";
-            GetNode(String.Format("Preview/Roll{0}", i)).Set("program", pl.channels[i].midi_program);
-            GetNode(String.Format("Preview/Roll{0}", i)).Set("active_keys", pl.channels[i].ActiveNotes());
+            GetNode<Label>(String.Format("Preview/Roll{0}/Roll/Label", i)).Text = "[" + string.Join(", ", player.channels[i].Count) + "]";
+            GetNode(String.Format("Preview/Roll{0}", i)).Set("program", player.channels[i].midi_program);
+            GetNode(String.Format("Preview/Roll{0}", i)).Set("active_keys", player.channels[i].ActiveNotes());
         }
     }    
 
@@ -75,7 +70,8 @@ namespace MidiDemo{
     public void Stop()
     {
         player.Stop();
-        Clock.Reset();
+        player.StopAll();
+        GetNode<Button>("PlayPause").Pressed = false;
     }
 
     //  // Called every frame. 'delta' is the elapsed time since the previous frame.

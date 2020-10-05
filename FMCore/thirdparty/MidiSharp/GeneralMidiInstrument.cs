@@ -68,7 +68,7 @@ namespace MidiSharp
 
         #region Guitar
         /// <summary>Nylon Acoustic Guitar</summary>
-        NylonAcousticGuitar = 24,
+        NylonGuitar = 24,
         /// <summary>Steel Acoustic Guitar</summary>
         SteelGuitar = 25,
         /// <summary>Jazz Electric Guitar</summary>

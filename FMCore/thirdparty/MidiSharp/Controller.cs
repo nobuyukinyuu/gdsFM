@@ -10,29 +10,29 @@ namespace MidiSharp
     public enum Controller : byte
     {
         /// <summary>Switches between groups of sounds when more than 128 programs are in use.</summary>
-        BankSelectCourse = 0,
+        BankSelectCoarse = 0,
         /// <summary>Sets the modulation wheel to a particular value.</summary>
-        ModulationWheelCourse = 1,
+        ModulationWheelCoarse = 1,
         /// <summary>Often used to control aftertouch.</summary>
-        BreathControllerCourse = 2,
+        BreathControllerCoarse = 2,
         /// <summary>Often used to control aftertouch.</summary>
-        FootPedalCourse = 4,
+        FootPedalCoarse = 4,
         /// <summary>The rate at which portamento slides the pitch between two notes.</summary>
-        PortamentoTimeCourse = 5,
+        PortamentoTimeCoarse = 5,
         /// <summary>Various.</summary>
-        DataEntryCourse = 6,
+        DataEntryCoarse = 6,
         /// <summary>Volume level for a given channel.</summary>
-        VolumeCourse = 7,
+        VolumeCoarse = 7,
         /// <summary>Controls stereo-balance.</summary>
-        BalanceCourse = 8,
+        BalanceCoarse = 8,
         /// <summary>Where the stereo sound should be placed within the sound field.</summary>
-        PanPositionCourse = 10,
+        PanPositionCoarse = 10,
         /// <summary>Percentage of volume.</summary>
-        ExpressionCourse = 11,
+        ExpressionCoarse = 11,
         /// <summary>Various.</summary>
-        EffectControl1Course = 12,
+        EffectControl1Coarse = 12,
         /// <summary>Various.</summary>
-        EffectControl2Course = 13,
+        EffectControl2Coarse = 13,
         /// <summary>Various.</summary>
         GeneralPurposeSlider1 = 16,
         /// <summary>Various.</summary>
@@ -122,11 +122,11 @@ namespace MidiSharp
         /// <summary>Controls which parameter the button and data entry controls affect.</summary>
         NonRegisteredParameterFine = 98,
         /// <summary>Controls which parameter the button and data entry controls affect.</summary>
-        NonRegisteredParameterCourse = 99,
+        NonRegisteredParameterCoarse = 99,
         /// <summary>Controls which parameter the button and data entry controls affect.</summary>
         RegisteredParameterFine = 100,
         /// <summary>Controls which parameter the button and data entry controls affect.</summary>
-        RegisteredParameterCourse = 101,
+        RegisteredParameterCoarse = 101,
         /// <summary>Mutes all sounding notes.</summary>
         AllSoundOff = 120,
         /// <summary>Resets controllers to default states.</summary>

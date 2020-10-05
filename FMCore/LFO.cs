@@ -12,7 +12,7 @@ public class LFO : Resource //: Node
 
     public int id=0;  //LFO bank number.  FIXME:  Needed?
 
-    private double[] buffer;
+    private double[] buffer=new double[1];
 
 
     //User-specified values
@@ -40,7 +40,7 @@ public class LFO : Resource //: Node
     //Extra Options
     public bool keySync=true;  //Affects resets on the sample timer when a new key is pressed; if disabled, delay is only used to affect an LFO's phase offset.
     public bool oscSync=true;  //Affects resets on the accumulator when a new key is pressed, otherwise the oscillator continues to cycle it from previous position.
-    public bool legato = true;  //TODO:  If disabled, quantizes LFO values to nearest 12th root of 2
+    public bool legato = true;  //If disabled, quantizes LFO values to nearest 12th root of 2
 
     // public static readonly double[] NEAREST_12 = new double[] //Nearest power of 12, used for quantizing LFO when discrete note (no legato) mode is enabled
     //         {0, 0.059463, 0.122462, 0.189207, 0.259921, 0.33484, 0.414214, 0.498307, 0.587401, 0.681793, 0.781797, 0.887749, 1.0};

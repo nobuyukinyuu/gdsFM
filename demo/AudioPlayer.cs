@@ -19,7 +19,7 @@ public static float MixRate = 44100.0f;  //This is set to a global var sample_ra
 
 //Each frame = 1000/MixRate ms. If default tickLen is 1ms, it would take < 44 frame resolution to be tick-accurate.
 //If the tick length is lower due to faster tempo, lower this number to tickLen/frameLen increase accuracy.
-public static int FramesPerEventCheck = 44; 
+public static int FramesPerEventCheck = 22; 
 public int frameCounter;  //Keeps track of number of frames elapsed
 
 [Signal] public delegate void NoteOff();
@@ -33,18 +33,16 @@ public Patch[] patchBank = new Patch[127];
 
     Node global;
 
-    public AudioPlayer() {
-        for (int i=0; i<channels.Length; i++){ channels[i]=new Channel(); }
+    public AudioPlayer() {       
+        AudioStreamGenerator stream = (AudioStreamGenerator) this.Stream;
+        MixRate = stream.MixRate;  Clock.sample_rate = MixRate;
+        for (int i=0; i<channels.Length; i++){ channels[i]=new Channel(MixRate); }
     }
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        global = GetNode("/root/global");
-        MixRate = (float) global.Get("sample_rate");
 
-        AudioStreamGenerator stream = (AudioStreamGenerator) this.Stream;
-        MixRate = stream.MixRate;  Clock.sample_rate = MixRate;
         buf = (AudioStreamGeneratorPlayback) GetStreamPlayback();
 
         //FIXME:  IMPLEMENT DRUMS
@@ -59,8 +57,6 @@ public Patch[] patchBank = new Patch[127];
             var inst = (GeneralMidiInstrument) i;
             var path= BANKPATH + inst.ToString() + EXT;
             var dir = new Godot.Directory();
-
-            // GD.Print("Searching for ", path);
 
             //Search for a bank to overload the initial one!!
             if (Godot.ResourceLoader.Exists(path) || dir.FileExists(path))
@@ -101,6 +97,7 @@ public Patch[] patchBank = new Patch[127];
     {
         for (int i=0; i < channels.Length; i++)  channels[i].FlushAll();
         await ToSignal(this.GetTree(), "idle_frame");
+        Clock.Reset();
         // GD.Print("Flush OK.");
     }
 
@@ -115,25 +112,27 @@ public Patch[] patchBank = new Patch[127];
 
 
         //Get frame data for each channel.
-        for(int i=0; i<channels.Length; i++) {
-            // lock(_lock)
-            // {
+        // for(int i=0; i<channels.Length; i++) {
+        Parallel.For(0, channels.Length, delegate(int i) {
+            lock(_lock)
+            {
                 // if (!channels[i].Empty)  //Fill the buffer for the channel.  If channel is 0, also process clock events.
                     bufferdata[i] = channels[i].request_samples(frames, ClockEvent, i) ;
-            // }
-        } //);
+            }
+        } );
 
         //Assemble each set of frame data into the final output buffer.
-        for(int i=0; i<frames; i++) {
+        // for(int i=0; i<frames; i++) {
+        Parallel.For(0, frames, delegate (int i) {
             // lock(_lock)
             // {
                 for(int j=0; j < channels.Length; j++) //Cycle each channel into j.
                 {
-                    output[i].x += bufferdata[j][i].x * 0.0625f; //quiet each channel by 1/16
-                    output[i].y += bufferdata[j][i].y * 0.0625f;
+                    output[i].x += bufferdata[j][i].x * 0.125f; //quiet each channel by 1/16 (0.0625)
+                    output[i].y += bufferdata[j][i].y * 0.125f;
                 }
             // }
-        } //);
+        } );
 
         buf.PushBuffer(output);
         // Clock.Iterate(frames, MixRate);
@@ -163,8 +162,16 @@ public Patch[] patchBank = new Patch[127];
                         break;
 
                     //Voice channel events.  TODO
-                    case ControllerVoiceMidiEvent ev:
-                        // ev.Channel;
+                    case ControllerVoiceMidiEvent ev:  //Continuous controller value.  Switch again.
+                        switch((Controller) ev.Number)
+                        {
+                            case Controller.VolumeCoarse:
+                                channels[ev.Channel].volume = (float)ev.Value / 127.0f;
+                                break;
+                            case Controller.PanPositionCoarse:
+                                channels[ev.Channel].Pan = (float)ev.Value / 63.5f -1;
+                                break;
+                        }
                         break;
                     case ProgramChangeVoiceMidiEvent ev:
                         channels[ev.Channel].midi_program = ev.Number;

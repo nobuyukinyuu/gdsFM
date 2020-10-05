@@ -28,8 +28,8 @@ public Channel PreviewNotes = new Channel();
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        global = GetNode("/root/global");
-        MixRate = (float) global.Get("sample_rate");
+        // global = GetNode("/root/global");
+        // MixRate = (float) global.Get("sample_rate");
 
         AudioStreamGenerator stream = (AudioStreamGenerator) this.Stream;
         MixRate = stream.MixRate;
@@ -177,22 +177,17 @@ public Channel PreviewNotes = new Channel();
     //      settings if explicitly reset and not just re-validated with a new algorithm.
     public bool NewPatchFromString(String s)
     {
-        double rate = (float) global.Get("sample_rate");
-
-        this.patch = new Patch( rate );        
+        this.patch = new Patch( MixRate );        
         return this.patch.WireUp(s);
     }
     public void NewPatch()
     {
-        double rate = (float) global.Get("sample_rate");
-        this.patch = new Patch( rate );        
+        this.patch = new Patch( MixRate );
     }
 
     public bool UpdatePatchFromString(String s)
     {
-        double rate = (float) global.Get("sample_rate");
-
-        if (this.patch == null) this.patch = new Patch(rate);
+        if (this.patch == null) this.patch = new Patch(MixRate);
         return this.patch.WireUp(s);
     }
 

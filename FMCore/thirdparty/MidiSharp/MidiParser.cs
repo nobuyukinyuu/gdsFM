@@ -143,6 +143,7 @@ namespace MidiSharp
             }
             // Let MidiParserExceptions through
             catch (MidiParserException) { throw; }
+            
             // Wrap all other exceptions in MidiParserExceptions
             catch (Exception exc) { throw new MidiParserException("Failed to parse MIDI file.", exc, pos); }
         }

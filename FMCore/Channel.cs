@@ -20,8 +20,43 @@ public class Channel : List<Note>
         patch.FromString(glue.INIT_PATCH, true);
     }
 
+    //Stuff related to the channel's sample requesting functionality
     private bool mute;  public bool Mute { get => mute; set => mute = value; }
+    public double volume = 1.0;  private float pan, _panL=0.5f, _panR=0.5f ;
 
+    /// Takes a value from -1.0 to 1.0 and assigns _panL and _panR to respective values depending on center channel volume C_PAN.
+    public float Pan
+    {
+        get => pan;
+        set {
+            float val = value;
+            pan = val;
+            var amt = Math.Abs(val);
+            float l,r;
+
+            if (val < 0) {  //Pan left channel
+                l = amt;
+                r = 1.0f-amt;
+
+                _panL = GDSFmFuncs.lerp(Patch.C_PAN, 1.0f, l);
+                _panR = GDSFmFuncs.lerp(0.0f, Patch.C_PAN, r);
+                return;
+
+            } else if (val > 0) {  //Pan right
+                l = 1.0f-amt;
+                r = amt;
+
+                _panL = GDSFmFuncs.lerp(0.0f, Patch.C_PAN, l);
+                _panR = GDSFmFuncs.lerp(Patch.C_PAN, 1.0f, r);
+                return;    
+
+            } else {  //Center channel.
+                _panL = Patch.C_PAN;
+                _panR = Patch.C_PAN;
+                return;
+            }
+        } //End Set
+    }
 
     #if DEBUG
         int maxPolyphony=16;
@@ -89,7 +124,7 @@ public class Channel : List<Note>
     /// Flushes all the notes in the channel immediately.  Good for panicing or when engine needs to clear references to stuff before they're accidentally accessed.
     public void FlushAll()
     {
-        GD.Print("GDSFM Channel:  Flushing ", this.Count, " notes....");
+        // GD.Print("GDSFM Channel:  Flushing ", this.Count, " notes....");
         for (int i=0; i < this.Count; i++)
         {
             this[i].QueueFree();
@@ -135,16 +170,16 @@ public class Channel : List<Note>
         for(int j=0; j < frames; j++ )
         {
             // lock(_lock) {  
-                // Parallel.For(0, this.Count, delegate(int i)  //For each note in the channel....
                 double output = 0;
+                // Parallel.For(0, this.Count, delegate(int i)  //For each note in the channel....
                 for(int i=0; i<this.Count;i++)  //For each note in the channel....
                 {
                     // lock(_lock) { output += patch.mix(this[i]); }  
                      output += patch.mix(this[i]);   
                 } //);  //End note loop
 
-                bufferdata[j].x = (float) (output * patch._panL * patch.gain);  
-                bufferdata[j].y = (float) (output * patch._panR * patch.gain);  
+                bufferdata[j].x = (float) (output * patch._panL * patch.gain * volume * _panL);  
+                bufferdata[j].y = (float) (output * patch._panR * patch.gain * volume * _panR);  
                 clockEvents(clockChannel); //Process the clock events for the frame.  Will only happen if channel is 0.
             // }
         } //); //End buffer loop
@@ -170,7 +205,8 @@ public class Channel : List<Note>
     /// Manually turns off a note on a given channel.
     public bool TurnOffNote(int note_number)
     {
-        Note note = GetNote(note_number);
+        // Note note = GetNote(note_number);
+        Note note = FindActiveNote(note_number);
         if (note==null) return false;
         // if (note==null) throw new NullReferenceException("Note not found?");
  
