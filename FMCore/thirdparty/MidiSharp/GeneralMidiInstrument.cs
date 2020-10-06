@@ -13,7 +13,7 @@ namespace MidiSharp
         /// <summary>Acoustic Grand</summary>
         AcousticGrand = 0,
         /// <summary>Bright Acoustic</summary>
-        BrightAcoustic = 1,
+        BrightPiano = 1,
         /// <summary>Electric Grand</summary>
         ElectricGrand = 2,
         /// <summary>Honky Tonk</summary>
@@ -117,8 +117,8 @@ namespace MidiSharp
         TremoloStrings = 44,
         /// <summary>Pizzicato Strings</summary>
         PizzicatoStrings = 45,
-        /// <summary>Orchestral Strings</summary>
-        OrchestralStrings = 46,
+        /// <summary>Orchestral Harp</summary>
+        OrchestralHarp = 46,
         /// <summary>Timpani</summary>
         Timpani = 47,
         #endregion

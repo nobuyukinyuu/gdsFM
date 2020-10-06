@@ -128,8 +128,8 @@ public Patch[] patchBank = new Patch[127];
             // {
                 for(int j=0; j < channels.Length; j++) //Cycle each channel into j.
                 {
-                    output[i].x += bufferdata[j][i].x * 0.125f; //quiet each channel by 1/16 (0.0625)
-                    output[i].y += bufferdata[j][i].y * 0.125f;
+                    output[i].x += bufferdata[j][i].x * 0.25f; //quiet each channel by 1/16 (0.0625)
+                    output[i].y += bufferdata[j][i].y * 0.25f;
                 }
             // }
         } );

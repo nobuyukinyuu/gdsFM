@@ -31,9 +31,6 @@ func _ready():
 	yield (get_tree(), "idle_frame")
 	yield (get_tree(), "idle_frame")
 	
-#	var x = InputMap.get_action_list("BambooCopy")[0]
-#	for s in x.get_property_list():
-#		print(s["name"],"= ", x.get(s["name"]))
 
 
 func _input(event):
