@@ -293,10 +293,12 @@ public Patch[] patchBank = new Patch[127];
     //Might be possible to do this in the note, but TTL can't be determined without a Patch to calculate the release envelope.
     public void AttachNoteToSignal(int channel, Note note, Node signalSource)
     {
-        //TODO:  Test when the release time calculation is bound to the Note.  Probably on NoteOff....
-        signalSource.Connect("NoteOff", note as Note, "_on_ReleaseNote", 
-                                new Godot.Collections.Array(){channels[channel].patch.GetReleaseTime(note)} );
-        //Other event signals here, as necessary.
+
+        //Commented out, for now.  Try using Channel.TurnOffNote instead.
+
+        // signalSource.Connect("NoteOff", note as Note, "_on_ReleaseNote", 
+        //                         new Godot.Collections.Array(){channels[channel].patch.GetReleaseTime(note)} );
+
     }
 
 

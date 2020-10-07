@@ -117,18 +117,25 @@ public class Channel : List<Note>
             Note note = _flaggedForDeletion.Pop();
             this.Remove(note);
             lookupTbl.Remove(note.midi_note);
-            note.QueueFree();
+
+            note.Destroy();
+            // note.QueueFree();
         }
     }
 
     /// Flushes all the notes in the channel immediately.  Good for panicing or when engine needs to clear references to stuff before they're accidentally accessed.
     public void FlushAll()
     {
-        // GD.Print("GDSFM Channel:  Flushing ", this.Count, " notes....");
-        for (int i=0; i < this.Count; i++)
-        {
-            this[i].QueueFree();
-        }
+
+        // TODO:  Find a threadsafe alternative to this which doesn't leverage Godot
+
+        // // GD.Print("GDSFM Channel:  Flushing ", this.Count, " notes....");
+        // for (int i=0; i < this.Count; i++)
+        // {
+        //     this[i].QueueFree();
+        // }
+
+
 
         this.Clear();
         lookupTbl.Clear();
@@ -140,7 +147,7 @@ public class Channel : List<Note>
         return Find((Note x) => (x.midi_note == n) && (x.pressed==true) && (x.releaseSample==0));
     }
 
-    //Deals with the channel exceeding its polyphony limit.
+    /// Deals with the channel exceeding its polyphony limit.
     public void CheckPolyphony()
     {
         while (this.Count > maxPolyphony)
@@ -202,15 +209,15 @@ public class Channel : List<Note>
         return output.ToArray();
     }
 
-    /// Manually turns off a note on a given channel.
-    public bool TurnOffNote(int note_number)
+    /// Manually turns off a note on a given channel.  Release time is dependent on patch if no ttl_override is given.
+    public bool TurnOffNote(int note_number, int ttl_override=-1)
     {
         // Note note = GetNote(note_number);
         Note note = FindActiveNote(note_number);
         if (note==null) return false;
         // if (note==null) throw new NullReferenceException("Note not found?");
  
-        var ttl = patch.GetReleaseTime(note);
+        var ttl = (ttl_override>-1) ?  ttl_override : patch.GetReleaseTime(note);
         note._on_ReleaseNote(note_number, ttl);
         return true;
     }

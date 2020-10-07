@@ -45,6 +45,8 @@ func _input(event):
 			MIDI_MESSAGE_NOTE_OFF:
 #				$"../Audio".TurnOffNote(event.pitch)
 				emit_signal("NoteOff", event.pitch)
+				owner.get_node("Audio").TurnOffNote(event.pitch)
+				
 
 			MIDI_MESSAGE_PITCH_BEND:
 				var pitch_amt = (event.pitch+0.5) / 8192.0 - 1
@@ -64,6 +66,7 @@ func _process(delta):
 				print(n, " Pitch: %s" % [notenum])
 					
 			elif Input.is_action_just_released(n):
-					emit_signal("NoteOff", notenum)
+				emit_signal("NoteOff", notenum)
+				owner.get_node("Audio").TurnOffNote(notenum)
 
 

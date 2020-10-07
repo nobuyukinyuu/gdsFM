@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 [Flags]
 public enum Waveforms {SINE, SAW, TRI, PULSE, ABSINE, WHITE, PINK, BROWN, CUSTOM, USE_DUTY=0x100};
 
-public class oscillators : Node
+public class oscillators //: Node
 {
 	const double TAU = Mathf.Tau;
 
@@ -14,7 +14,7 @@ public class oscillators : Node
 
 
 	//Used for periodic noise
-	static byte[] noise_counter = new byte[129];   //Extra field is to accomodate 
+	static byte[] noise_counter = new byte[129];   //Extra field is to accomodate white noise chunkyness
 	static double[] lastNoiseValue = new double[129];
 
 	static PinkNumber pinkr = new PinkNumber() ; 
@@ -24,12 +24,14 @@ public class oscillators : Node
 							-0.6f, -0.8f, -1.0f, -0.8f, -0.6f, -0.4f, -0.2f};
 
 
+	//MOVED TO GLUE.CS ---
+
 	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
-	{
-		// gen_sin_table(2048);
-		gen_sin_table(9600);  //Sounds better at high frequencies....
-	}
+	// public override void _Ready()
+	// {
+	// 	// gen_sin_table(2048);
+	// 	gen_sin_table(9600);  //Sounds better at high frequencies....
+	// }
 
 
 	public static void gen_sin_table(int res) {

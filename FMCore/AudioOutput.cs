@@ -62,8 +62,9 @@ public Channel PreviewNotes = new Channel();
     public override void _Process(float delta)
     {
         fill_buffer2();
-        PreviewNotes.FlagInactiveNotes();
-        PreviewNotes.Flush();
+        PreviewNotes.Update();
+        // PreviewNotes.FlagInactiveNotes();
+        // PreviewNotes.Flush();
     }
 
 
@@ -241,14 +242,15 @@ public Channel PreviewNotes = new Channel();
         Note note = PreviewNotes.FindActiveNote(note_number);        
         if (note==null) throw new NullReferenceException("Note not found?");
 
-        note.releaseSample = note.samples;
-        note.pressed = false;
+        // note.releaseSample = note.samples;
+        // note.pressed = false;
 
         if (patch==null) // Uh oh, no patch right now.  Probably should just kill the note.
         {
             note.Destroy();
         } else {  // Patch is okay.  Set the TTL to prepare the note to be killed off by the Patch when sent the Channel contents.
-            note.ttl = patch.GetReleaseTime(note);
+            var ttl = patch.GetReleaseTime(note);
+            note._on_ReleaseNote(note_number, ttl);
         }
     }
 
@@ -256,10 +258,14 @@ public Channel PreviewNotes = new Channel();
     //Might be possible to do this in the note, but TTL can't be determined without a Patch to calculate the release envelope.
     public void AttachNoteToSignal(Note note, Node signalSource)
     {
-        //TODO:  Test when the release time calculation is bound to the Note.  Probably on NoteOff....
-        signalSource.Connect("NoteOff", note as Note, "_on_ReleaseNote", new Godot.Collections.Array(){patch.GetReleaseTime(note)} );
-        //Other event signals here, as necessary.
+
+        //Commented out, for now.  Try using Channel.TurnOffNote instead.
+
+        // signalSource.Connect("NoteOff", note as Note, "_on_ReleaseNote", 
+        //                         new Godot.Collections.Array(){channels[channel].patch.GetReleaseTime(note)} );
+
     }
+
 
     /// Used by Godot frontend to change the preview pitch using a bend wheel.
     public void Pitch(double amt, float range)

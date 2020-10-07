@@ -2,7 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-public class Note : Node, IComparable<Note>
+public class Note : IComparable<Note>
 {
     [Export]
     public double base_hz = 440.0;  //Always fixed compared to the hz field;  used to return to normal after a pitch bend or lfo calc
@@ -75,24 +75,20 @@ public const int NOTE_A4 = 69;   // Nice.
         this.midi_velocity = velocity;
     }
 
-    public override void _Ready()
+    public static void gen_period_table()
     {
+
         if (periods.Length == 0)
         {
             periods = new double[129]; // Extra field accounts for G#9
-            gen_period_table();
-        }
-    }
 
-    public static void gen_period_table()
-    {
-        for (int i=0; i < periods.Length; i++)
-        {
-            periods[i] = 440.0 * Math.Pow(2.0, (i-NOTE_A4)/12.0);
-        }
-        // GD.Print("FMCore:  Note period table generated.");
-        // foreach (double val in periods)  {GD.Print(val);}
-    
+            for (int i=0; i < periods.Length; i++)
+            {
+                periods[i] = 440.0 * Math.Pow(2.0, (i-NOTE_A4)/12.0);
+            }
+            // GD.Print("FMCore:  Note period table generated.");
+            // foreach (double val in periods)  {GD.Print(val);}
+        }    
     }
 
     public static double lookup_frequency(int note_number)
@@ -197,8 +193,10 @@ public const int NOTE_A4 = 69;   // Nice.
             _channel.Remove(this);
         }
 
-        QueueFree();
-        // Free();
+        //TODO:  Find out if nulling one's self here would be threadsafe....
+        _channel = null;
+
+        // QueueFree();
 
     }
 
