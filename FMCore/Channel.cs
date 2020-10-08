@@ -187,7 +187,8 @@ public class Channel : List<Note>
 
                 bufferdata[j].x = (float) (output * patch._panL * patch.gain * volume * _panL);  
                 bufferdata[j].y = (float) (output * patch._panR * patch.gain * volume * _panR);  
-                clockEvents(clockChannel); //Process the clock events for the frame.  Will only happen if channel is 0.
+                clockEvents(clockChannel); //Process the clock events for the frame.  
+                                          //This delegate should only iterate the clock on one channel, to sync other channels to the audio frame.
             // }
         } //); //End buffer loop
 

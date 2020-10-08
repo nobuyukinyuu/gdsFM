@@ -29,10 +29,11 @@ namespace MidiDemo{
             var lbl = (Label) GetNode("SC/Label");
             lbl.Text = (string) sequence.ToString();
 
-            Stop();
+            Stop();  //Stop the player and clear the channels.
 
-            //Set the MIDI sequence for the player
+            //Set the MIDI sequence for the player.
             player.sequence = sequence;
+            Clock.Reset(sequence.Tracks.Count);  //RESET THE CLOCK.  This properly sets the number of tracks for the clock to check.
 
         } catch (MidiParser.MidiParserException e) {
             GD.Print("WARNING:  Encountered a problem parsing MIDI.\n", e.ToString() );
@@ -70,7 +71,7 @@ namespace MidiDemo{
     public void Stop()
     {
         player.Stop();
-        player.StopAll();
+        player.ClearAllChannels();
         GetNode<Button>("PlayPause").Pressed = false;
     }
 

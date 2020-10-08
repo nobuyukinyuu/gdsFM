@@ -19,7 +19,7 @@ public static float MixRate = 44100.0f;  //This is set to a global var sample_ra
 
 //Each frame = 1000/MixRate ms. If default tickLen is 1ms, it would take < 44 frame resolution to be tick-accurate.
 //If the tick length is lower due to faster tempo, lower this number to tickLen/frameLen increase accuracy.
-public static int FramesPerEventCheck = 22; 
+public static int FramesPerEventCheck = 1; 
 public int frameCounter;  //Keeps track of number of frames elapsed
 
 [Signal] public delegate void NoteOff();
@@ -93,11 +93,10 @@ public Patch[] patchBank = new Patch[127];
 
 
     /// Asyncronously flushes the preview channel and waits for an idle frame before continuing execution
-    async public void StopAll()
+    async public void ClearAllChannels()
     {
         for (int i=0; i < channels.Length; i++)  channels[i].FlushAll();
         await ToSignal(this.GetTree(), "idle_frame");
-        Clock.Reset();
         // GD.Print("Flush OK.");
     }
 
@@ -141,18 +140,15 @@ public Patch[] patchBank = new Patch[127];
     //This is used as a delegate that executes every sample frame.
     void ClockEvent(int channel)
     {
-        if (frameCounter % FramesPerEventCheck == 0) 
+        if (frameCounter >= FramesPerEventCheck) 
         {
-            // frameCounter = 0;  //TODO:  Necessary?
-            // var sequence = (MidiSequence) Owner.Get("sequence");
+            frameCounter = 0;  //Reset the amount of frames needed to check for events again.
             var events = Clock.CheckForEvents( sequence );
 
             // Handle events here
-            foreach (int ch in events.Keys)
+            foreach (MidiSharp.Events.MidiEvent midiEvent in events)
             {
-                var midiEvent = events[ch];  //MIDI event.  Derives from MidiSharp.Events.MidiEvent
                 //Determine event type and handle accordingly
-
                 switch(midiEvent)
                 {
                     //Meta events.  TODO
@@ -185,15 +181,8 @@ public Patch[] patchBank = new Patch[127];
                             break; }
 
                         AddNote(ev.Channel, ev.Note, ev.Velocity);
-                        // AddNote(ch, ev.Note, ev.Velocity);
-                        // AddNote(ch, ev.Note, ev.Velocity, this);
                         break;
                     case OffNoteVoiceMidiEvent ev:  
-                        // NoteOnEventBailout:
-                        // var note = channels[ev.Channel].FindActiveNote(ev.Note);
-                        // if (note==null) break;
-                        // note._on_ReleaseNote(ev.Note, channels[channel].patch.GetReleaseTime(note));
-
                         channels[ev.Channel].TurnOffNote(ev.Note);
                         break;
 
@@ -203,8 +192,10 @@ public Patch[] patchBank = new Patch[127];
             } // End foreach
         }
 
-        Clock.Iterate(1,channel);
-        if (channel==0) {
+        // Clock.Iterate(1,channel);
+        //Don't iterate the frame counter unless we're sure all the channels have had a chance to process.
+        if (channel==channels.Length-1) {
+            Clock.Iterate();
             frameCounter ++;
         }
     }
