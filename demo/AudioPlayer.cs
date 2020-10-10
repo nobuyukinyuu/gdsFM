@@ -22,7 +22,6 @@ public static float MixRate = 44100.0f;  //This is set to a global var sample_ra
 public static int FramesPerEventCheck = 1; 
 public int frameCounter;  //Keeps track of number of frames elapsed
 
-[Signal] public delegate void NoteOff();
 
 public MidiSequence sequence;
 AudioStreamGeneratorPlayback buf;  //Playback buffer
@@ -155,6 +154,7 @@ public Patch[] patchBank = new Patch[127];
                     case TempoMetaMidiEvent ev:
                         Clock.SetTempo(ev.Value, sequence.TicksPerBeatOrFrame );
                         GD.Print("BPM: ", 60000000.0/( ev.Value ));
+                        FramesPerEventCheck = (int)(Clock.tickFrameLen/4);
                         break;
 
                     //Voice channel events.  TODO
