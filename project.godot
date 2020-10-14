@@ -51,7 +51,6 @@ config/icon="res://gfx/logos/icon64.png"
 global="*res://!global.gd"
 PinkNoise="*res://PinkNoiseGenerator.gd"
 gen="*res://!oscillators.gd"
-cgen="*res://FMCore/oscillators.cs"
 glue="*res://FMCore/glue.cs"
 
 [debug]

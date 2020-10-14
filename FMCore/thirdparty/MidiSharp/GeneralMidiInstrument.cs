@@ -214,13 +214,13 @@ namespace MidiSharp
         VoiceLead = 85,
         /// <summary>Fifths Lead</summary>
         FifthsLead = 86,
-        /// <summary>Base Lead</summary>
-        BaseLead = 87,
+        /// <summary>Bass + Lead</summary>
+        BassLead = 87,
         #endregion
 
         #region Synth Pad
         /// <summary>NewAge Pad</summary>
-        NewAgePad = 88,
+        Fantasia = 88,
         /// <summary>Warm Pad</summary>
         WarmPad = 89,
         /// <summary>Polysynth Pad</summary>
@@ -250,8 +250,8 @@ namespace MidiSharp
         Brightness = 100,
         /// <summary>Goblin</summary>
         Goblin = 101,
-        /// <summary>Echos</summary>
-        Echos = 102,
+        /// <summary>Echoes</summary>
+        Echoes = 102,
         /// <summary>SciFi</summary>
         SciFi = 103,
         #endregion

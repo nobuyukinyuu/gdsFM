@@ -110,14 +110,14 @@ public Patch[] patchBank = new Patch[127];
 
 
         //Get frame data for each channel.
-        // for(int i=0; i<channels.Length; i++) {
-        Parallel.For(0, channels.Length, delegate(int i) {
-            lock(_lock)
+        for(int i=0; i<channels.Length; i++) {
+        // Parallel.For(0, channels.Length, delegate(int i) {
+        //     lock(_lock)
             {
                 // if (!channels[i].Empty)  //Fill the buffer for the channel.  If channel is 0, also process clock events.
                     bufferdata[i] = channels[i].request_samples(frames, ClockEvent, i) ;
             }
-        } );
+        } //);
 
         //Assemble each set of frame data into the final output buffer.
         // for(int i=0; i<frames; i++) {
@@ -126,8 +126,8 @@ public Patch[] patchBank = new Patch[127];
             // {
                 for(int j=0; j < channels.Length; j++) //Cycle each channel into j.
                 {
-                    output[i].x += bufferdata[j][i].x * 0.25f; //quiet each channel by 1/16 (0.0625)
-                    output[i].y += bufferdata[j][i].y * 0.25f;
+                    output[i].x += bufferdata[j][i].x * 0.3f; //quiet each channel by 1/16 (0.0625)
+                    output[i].y += bufferdata[j][i].y * 0.3f;
                 }
             // }
         } );
@@ -139,10 +139,11 @@ public Patch[] patchBank = new Patch[127];
     //This is used as a delegate that executes every sample frame.
     void ClockEvent(int channel)
     {
-        if (frameCounter >= FramesPerEventCheck) 
-        {
-            frameCounter = 0;  //Reset the amount of frames needed to check for events again.
-            var events = Clock.CheckForEvents( sequence );
+        if (channel==channels.Length-1) {        
+        // if (frameCounter >= FramesPerEventCheck) 
+        // {
+        //     frameCounter = 0;  //Reset the amount of frames needed to check for events again.
+            var events = Clock.CheckForEvents( sequence ) ?? System.Linq.Enumerable.Empty<MidiSharp.Events.MidiEvent>();
 
             // Handle events here
             foreach (MidiSharp.Events.MidiEvent midiEvent in events)
@@ -154,7 +155,6 @@ public Patch[] patchBank = new Patch[127];
                     case TempoMetaMidiEvent ev:
                         Clock.SetTempo(ev.Value, sequence.TicksPerBeatOrFrame );
                         GD.Print("BPM: ", 60000000.0/( ev.Value ));
-                        FramesPerEventCheck = (int)(Clock.tickFrameLen/4);
                         break;
 
                     //Voice channel events.  TODO
@@ -190,9 +190,8 @@ public Patch[] patchBank = new Patch[127];
                         break;
                 } //End switch
             } // End foreach
-        }
+        } //End frame counter event check
 
-        // Clock.Iterate(1,channel);
         //Don't iterate the frame counter unless we're sure all the channels have had a chance to process.
         if (channel==channels.Length-1) {
             Clock.Iterate();
