@@ -11,9 +11,17 @@ namespace MidiDemo{
         bool isPlaying;
         AudioPlayer player;
 
+        Queue<int[]> noteBuffer = new Queue<int[]>();  //Active note buffer.
+
     public override void _Ready()
         {
             player = GetNode<AudioPlayer>("Output");
+
+
+            //Determine how many frames of delay the audio buffer is in order to make active keys display at the correct time.
+            var buflen_t = (AudioStreamGenerator) player.Stream;
+            var buf_size = Godot.Engine.GetFramesPerSecond() * buflen_t.BufferLength;
+
         }
 
 
@@ -48,9 +56,9 @@ namespace MidiDemo{
     {
         GetNode<Label>("Time").Text = Math.Floor(Clock.BeatsElapsed).ToString() + "\n" + Clock.SecondsElapsed.ToString();
 
+        if (!player.Playing) return;
         for (int i=0; i < 16; i++)
         {
-            // GetNode<Label>(String.Format("Preview/Roll{0}/Roll/Label", i)).Text = "[" + string.Join(", ", pl.channels[i].ActiveNotes()) + "]";
             GetNode<Label>(String.Format("Preview/Roll{0}/Roll/Label", i)).Text = "[" + string.Join(", ", player.channels[i].Count) + "]";
             GetNode(String.Format("Preview/Roll{0}", i)).Set("program", player.channels[i].midi_program);
             GetNode(String.Format("Preview/Roll{0}", i)).Set("active_keys", player.channels[i].ActiveNotes());

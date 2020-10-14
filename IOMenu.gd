@@ -1,7 +1,7 @@
 extends Panel
 
 func _ready():
-	$OpenDialog.current_dir = ProjectSettings.globalize_path("res://") + "patches/"
+	$OpenDialog.current_dir = ProjectSettings.globalize_path("res://") + "demo/bank0/"
 	print (OS.get_executable_path().get_base_dir())
 
 func _on_OpenDialog_file_selected(path):

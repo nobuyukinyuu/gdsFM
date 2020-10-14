@@ -187,6 +187,8 @@ func update_ui():
 	$TC/EGControl.disable(true)
 
 	$TC2/Patch.reload()
+
+	yield(get_tree(), "idle_frame")
 	$TC2/LFO.reload()
 	$TC2/Pitch.load_settings()
 	$TC2/Wave.reload()

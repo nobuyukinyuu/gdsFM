@@ -43,7 +43,8 @@ namespace MidiDemo
             beatLen = beatLength;  ticksPerBeat = divider;
             // tickLen = (beatLen / (double)ticksPerBeat) / 1000.0;  //Tick length in ms
             tickLen = (sample_rate * beatLen) / (double)ticksPerBeat / 1000000.0; //Tick length in frames
-            threshold = (int) tickLen;
+            // threshold = (int) (tickLen/4);
+            threshold = (int) (tickLen);
         }
 
         // After each iteration, check if timeElapsed[channel] >= events[eventPos].DeltaTime. 
@@ -77,22 +78,11 @@ namespace MidiDemo
                     var offset = ticks - lastEventTime[i];
 
                     if (offset >= eventDelta)  //Then there's an event here we have to process.
-                    // if (offset >= cachedDelta[i])  //Then there's an event here we have to process.
                     {
-
-                        // if (ev is MidiSharp.Events.Meta.TempoMetaMidiEvent) //Process immediately
-                        // {
-                        //     var tmp= (MidiSharp.Events.Meta.TempoMetaMidiEvent) ev;
-                        //     SetTempo(tmp.Value, sequence.TicksPerBeatOrFrame);
-                        // } else {
-                        //     //Add the current event to the output queue.  Check for events remaining.
-                        //     //We'll try checking if we need to process the next event on the next loop.
-                        //     output.Add(ev);
-                        // }
 
                         output.Add(ev);
 
-                        eventPos[i] += 1;
+                        eventPos[i] ++;
                         lastEventTime[i] = ticks; 
 
                         continue;
@@ -115,6 +105,7 @@ namespace MidiDemo
 
 
             ticks++;  //Move up the tick counter.
+            // ticks+=0.25f;  //Move up the tick counter.
 
             return output;  //List of events from all tracks that need to be triggered.  The MIDI channel is determined by the event.
         }

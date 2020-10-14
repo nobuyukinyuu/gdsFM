@@ -84,13 +84,15 @@ public class Patch : Resource
     public double palMult=1, pdlMult=1, pslMult=1, prlMult=1;  //Multipliers to reference level
 
     public double Par { get => par / sample_rate * 1000.0; set {par = (value * sample_rate / 1000.0); _padr=par+pdr;} }
-    public double Pdr { get => par / sample_rate * 1000.0; set {pdr = (value * sample_rate / 1000.0);  _padr=par+pdr;} }
-    public double Prr { get => par / sample_rate * 1000.0; set => prr = (value * sample_rate / 1000.0); }
+    public double Pdr { get => pdr / sample_rate * 1000.0; set {pdr = (value * sample_rate / 1000.0);  _padr=par+pdr;} }
+    public double Prr { get => prr / sample_rate * 1000.0; set => prr = (value * sample_rate / 1000.0); }
  
-    public double Pal { get => par; set => pal = _calcPitch(ref palMult, value); }
-    public double Pdl { get => par; set => pdl = _calcPitch(ref pdlMult, value); }
-    public double Psl { get => par; set => psl = _calcPitch(ref pslMult, value); }
-    public double Prl { get => par; set => prl = _calcPitch(ref prlMult, value); }
+    //Rates, in ms.
+    public double Pal { get => pal; set => pal = _calcPitch(ref palMult, value); }
+    public double Pdl { get => pdl; set => pdl = _calcPitch(ref pdlMult, value); }
+    public double Psl { get => psl; set => psl = _calcPitch(ref pslMult, value); }
+    public double Prl { get => prl; set => prl = _calcPitch(ref prlMult, value); }
+
     /// Used by pitch level properties to translate values into proper multipliers
     private double _calcPitch(ref double field, double value)
     {
@@ -512,9 +514,10 @@ public class Patch : Resource
             output.AddPrim("psl", psl);
             output.AddPrim("prl", prl);
 
-            output.AddPrim("par", par);
-            output.AddPrim("pdr", pdr);
-            output.AddPrim("prr", prr);
+            //These values are calculated from the sample length back into the millisec length.  FIXME:  There may be drift over time..?
+            output.AddPrim("par", Par);
+            output.AddPrim("pdr", Pdr);
+            output.AddPrim("prr", Prr);
         }
 
         if (flags.HasFlag(PatchCopyFlags.LFO))  //LFO banks.
@@ -640,9 +643,16 @@ public class Patch : Resource
             j.Assign("psl", ref psl);
             j.Assign("prl", ref prl);
 
-            j.Assign("par", ref par);
-            j.Assign("pdr", ref pdr);
-            j.Assign("prr", ref prr);
+            //We can't use Assign() to automatically recalculate rates because properties can't be passed as a ref param, so do it manually.
+            Par = j.GetItem("par", 0);
+            Pdr = j.GetItem("pdr", 0);
+            Prr = j.GetItem("prr", 0);
+
+            // j.Assign("par", ref Par);
+            // j.Assign("pdr", ref Pdr);
+            // j.Assign("prr", ref Prr);
+
+            RecalcPitchGen();
 
             //Populate the LFOs.  
             var lfoData = j.HasItem("LFOs") ? (JSONArray) j.GetItem("LFOs") : null;

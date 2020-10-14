@@ -12,7 +12,7 @@ func _ready():
 func load_settings():
 	if !global.currentPatch:  return
 
-	for setting in $V.get_children():
+	for setting in $V/H.get_children():
 		if !setting.is_in_group("slider"):  continue
 		
 		var s = setting.name
