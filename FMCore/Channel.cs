@@ -172,6 +172,14 @@ public class Channel : List<Note>
         patch.UpdateLFOs(frames);
 
         //Ask the Patch to process the notes.
+
+        //TODO:  When changing this back to a parallelized routine with Patch.request_samples, get the clock events for the entire buffer
+        //      as specific frames the CHANNEL volume and pan (and later, pitch adjust) should be.  Probably need to calculate it in advance.
+        //      Instead of being a delegate, clock events could be a traditional func which provides a buffer of the exact state on each frame
+        //      for each channel, called once per fill, and the channel's specific states sent to the individual channels for parallel processing.
+        //      Perhaps an array of structs containing pan, volume, pitch and other cc data? Or would class instances be faster?
+        //      If events aren't buffered all at once and precalculated, then processing of them can only occur BETWEEN buffers.  Not good...
+
         // object _lock = new object();
 
         for(int j=0; j < frames; j++ )
@@ -218,7 +226,7 @@ public class Channel : List<Note>
         if (note==null) return false;
         // if (note==null) throw new NullReferenceException("Note not found?");
  
-        var ttl = (ttl_override>-1) ?  ttl_override : patch.GetReleaseTime(note);
+        var ttl = (ttl_override>-1) ?  ttl_override : patch.GetReleaseTime(note_number);
         note._on_ReleaseNote(note_number, ttl);
         return true;
     }

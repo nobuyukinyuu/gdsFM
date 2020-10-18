@@ -160,8 +160,8 @@ public Channel PreviewNotes = new Channel();
                 {
                     //TODO:  Applies patch mixing globally. If multiple programs are being mixed this needs to change so mixing is applied per-patch.
                     //      Global mixing is only used here for a slight speed boost.
-                    bufferdata[j].x += (float) output[j] * 0.1f * patch.gain;  //TODO:  Stereo mixing maybe
-                    bufferdata[j].y += (float) output[j] * 0.1f * patch.gain;  //TODO:  Stereo mixing maybe   
+                    bufferdata[j].x += (float) output[j] * 0.5f * patch._panL * patch.gain;  
+                    bufferdata[j].y += (float) output[j] * 0.5f * patch._panR * patch.gain;  
                 } 
             }
         }
@@ -249,7 +249,7 @@ public Channel PreviewNotes = new Channel();
         {
             note.Destroy();
         } else {  // Patch is okay.  Set the TTL to prepare the note to be killed off by the Patch when sent the Channel contents.
-            var ttl = patch.GetReleaseTime(note);
+            var ttl = patch.GetReleaseTime(note_number);
             note._on_ReleaseNote(note_number, ttl);
         }
     }

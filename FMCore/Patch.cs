@@ -343,16 +343,16 @@ public class Patch : Resource
 
 
     ///  Total max release time of all operators in the patch, measured in samples.
-    /// Used to determine the TTL of a note.  
+    /// Used to determine the TTL of a note.  Note
     // public double GetReleaseTime(Operator[] connections, double lastReleaseTime=float.MaxValue) 
-    public double GetReleaseTime(Note note=null) 
+    public int GetReleaseTime(int note_number=0) 
     {
         const int ONE_MINUTE = 2880000; //1 minute at 48000hz
         //Get the Max release time of all parallel operators connected to the current patch output/operator.
         double parallel_time = 0;  
         for (int i=0; i < connections.Length; i++) //Operator op in connections)
         {
-            var ksr = (note!=null? connections[i].EG.ksr[note.midi_note] : 1.0);
+            var ksr = connections[i].EG.ksr[note_number];
             var rt = connections[i].EG._releaseTime * ksr;
             //Sometimes the release time can exceed the audible output of the note if sustain is shorter than infinite.  Choose the shorter of the times.
             rt = Math.Min(rt, connections[i].EG._ads * ksr);
@@ -361,7 +361,7 @@ public class Patch : Resource
         }
 
         if (parallel_time == 0) parallel_time = ONE_MINUTE;
-        return parallel_time;
+        return (int) Math.Ceiling(parallel_time);
     }
 
 

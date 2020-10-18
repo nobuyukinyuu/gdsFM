@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using MidiSharp;
 
 
@@ -11,7 +12,7 @@ namespace MidiDemo{
         bool isPlaying;
         AudioPlayer player;
 
-        Queue<int[]> noteBuffer = new Queue<int[]>();  //Active note buffer.
+        Queue<int[]>[] noteBuffer = new Queue<int[]>[16];  //Active note buffer.
 
     public override void _Ready()
         {
@@ -20,7 +21,19 @@ namespace MidiDemo{
 
             //Determine how many frames of delay the audio buffer is in order to make active keys display at the correct time.
             var buflen_t = (AudioStreamGenerator) player.Stream;
-            var buf_size = Godot.Engine.GetFramesPerSecond() * buflen_t.BufferLength;
+            var buf_size = Godot.Engine.IterationsPerSecond * buflen_t.BufferLength;
+
+            //Initialize the queues.
+            for(int i=0; i < noteBuffer.Length; i++)
+            {
+                noteBuffer[i] = new Queue<int[]>((int)buf_size);  //Create queue of buffer_length.
+                
+                //Fill the buffer with an empty array.
+                for (int j=0; j < buf_size; j++)
+                {
+                    noteBuffer[i].Enqueue( new int[0] );
+                }
+            }
 
         }
 
@@ -49,20 +62,26 @@ namespace MidiDemo{
 
     }
 
-    public override void _Process(float delta)
-    {
-    }    
+    // public override void _Process(float delta)   {    }    
     public override void _PhysicsProcess(float delta)
     {
         GetNode<Label>("Time").Text = Math.Floor(Clock.BeatsElapsed).ToString() + "\n" + Clock.SecondsElapsed.ToString();
 
         if (!player.Playing) return;
-        for (int i=0; i < 16; i++)
+        // for (int i=0; i < 16; i++)
+        Parallel.For (0, 16, delegate(int i)
         {
+            //Enqueue the active notes just processed to the buffer to retrieve later.
+            noteBuffer[i].Enqueue(player.channels[i].ActiveNotes());
+
             GetNode<Label>(String.Format("Preview/Roll{0}/Roll/Label", i)).Text = "[" + string.Join(", ", player.channels[i].Count) + "]";
             GetNode(String.Format("Preview/Roll{0}", i)).Set("program", player.channels[i].midi_program);
-            GetNode(String.Format("Preview/Roll{0}", i)).Set("active_keys", player.channels[i].ActiveNotes());
-        }
+
+            // int[] keys;
+            // var ok = noteBuffer[i].TryDequeue(out keys);  //Will set ok true if dequeue success, otherwise keys will be null
+            // GetNode(String.Format("Preview/Roll{0}", i)).Set("active_keys",  ok? keys: new int[0] );
+            GetNode(String.Format("Preview/Roll{0}", i)).Set("active_keys",  noteBuffer[i].Dequeue() ?? new int[0] );
+        } );
     }    
 
     /// Plays or pauses the midi
@@ -83,11 +102,30 @@ namespace MidiDemo{
         GetNode<Button>("PlayPause").Pressed = false;
     }
 
-    //  // Called every frame. 'delta' is the elapsed time since the previous frame.
-    //  public override void _Process(float delta)
-    //  {
-    //      
-    //  }
-    }
-}
+    }  //End Class
+} //End Namespace
 
+//  public class FixedQueue<T> : System.Collections.Concurrent.ConcurrentQueue<T>
+// {
+//     private readonly object syncObject = new object();
+
+//     public int Size { get; private set; }
+
+//     public FixedQueue(int size)
+//     {
+//         Size = size;
+//     }
+
+//     public new void Enqueue(T obj)
+//     {
+//         base.Enqueue(obj);
+//         lock (syncObject)
+//         {
+//             while (base.Count > Size)
+//             {
+//                 T outObj;
+//                 base.TryDequeue(out outObj);
+//             }
+//         }
+//     }
+// }

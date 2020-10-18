@@ -80,6 +80,9 @@ public Patch[] patchBank = new Patch[127];
         // fill_buffer();   //prefill output buffer
         // Play();
 
+        //Prefill output buffer
+        buf.PushBuffer(new Vector2[buf.GetFramesAvailable()]);
+
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -139,7 +142,10 @@ public Patch[] patchBank = new Patch[127];
     //This is used as a delegate that executes every sample frame.
     void ClockEvent(int channel)
     {
-        if (channel==channels.Length-1) {        
+        //FIXME:  restore the original early exit when not on a tick.
+
+        if (channel==channels.Length-1) 
+        {        
         // if (frameCounter >= FramesPerEventCheck) 
         // {
         //     frameCounter = 0;  //Reset the amount of frames needed to check for events again.
@@ -180,6 +186,10 @@ public Patch[] patchBank = new Patch[127];
                             channels[ev.Channel].TurnOffNote(ev.Note);
                             break; }
 
+                        //FIXME:  When changing the buffer fill algorithm to a parallized one requesting sample batches, this won't work anymore
+                        //        Because Channel will be requesting an entire buffer from Patch at once and clock events won't be able to execute in the middle.
+                        //        Precalculate for each channel the frame that notes should be activated, as well as all other audio state changes......
+                        //        This probably includes CCs......
                         AddNote(ev.Channel, ev.Note, ev.Velocity);
                         break;
                     case OffNoteVoiceMidiEvent ev:  

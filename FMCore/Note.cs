@@ -120,38 +120,15 @@ public const int NOTE_A4 = 69;   // Nice.
         }
     }
 
-    //Iterates the phase accumulator a certain number of samples ahead based on the current pitch.
-    public void Iterate(int idx, int numsamples, double sample_rate=44100.0)
-    {
-        phase[idx] += numsamples / sample_rate * hz;
-        samples += numsamples;
-    }
 
-    //Iterates the phase accumulator a certain number of samples ahead based on the current pitch+multiplier (like temporary pitch modifiers from an Envelope/Pattern)
-    public void Iterate(int idx, int numsamples, double multiplier, double sample_rate)
-    {
-        phase[idx] += numsamples / sample_rate * (hz*multiplier);
-        samples += numsamples;
-    }
-
-    //Iterates the phase accumulator one sample ahead based on the phase alteration given to it from an outside source (like output from an Operator or EG fixed rate).
-    public void Iterate(int idx, double phaseAmt)
-    {
-        this.phase[idx] += phaseAmt;
-        samples += 1;
-    }
-
-    //Increment the phase accumulator without moving the timer forward.
-    public void Accumulate(int idx, double phaseAmt)
-    {
-        this.phase[idx] += phaseAmt;
-    }
+    /// Increments the phase accumulator, which controls the timbre of the note's overall sound.
     public void Accumulate(int idx, int numsamples, double multiplier, double sample_rate)
     {
         phase[idx] += numsamples / sample_rate * (hz*multiplier);
     }
 
-    public void Iterate(int numsamples=1)
+    //Iterates the sample timer.  
+    public virtual void Iterate(int numsamples=1)
     {
         samples += numsamples;
     }
@@ -219,6 +196,54 @@ public const int NOTE_A4 = 69;   // Nice.
             pressed = false;
             ttl = releaseTime;      
         }
+    }
+
+}
+
+public struct PrecalculatedNoteReleaseData
+{
+    // public static Patch patch;  //Patch used to calculate the releaseTime
+    public int offFrame;  //The frame in which the noteOff event is guaranteed to occur.  If <= 0, time is assumed to be infinite (manual NoteOff).
+    public int releaseTime;  //The number of samples since the offFrame before we're considered nukeable.  
+    public int killFrame;  //The frame when it's okay to kill off the note and remove it from a channel.
+}
+
+
+/// Represents a note with a precalculated time to live.
+public class PrecalculatedNote : Note 
+{
+    public PrecalculatedNoteReleaseData predetermined;
+    /// Creates a note with a predetermined length.
+    public PrecalculatedNote (Patch patch, int framesBeforeNoteOff, int note_number, int velocity=0)
+    {
+        //Having a note with predetermined length is ideal for static playback, since the note will automatically trigger its off state,
+        //Allowing parallel batching of notes, since a full buffer of frames can be requested without needing external processing of the note state.
+        //The instance of nodes cannot destroy itself currently (it's not clear if this is safe) so manual destruction needs to occur after processing's finished.
+
+        //NOTE:  Precalculating this information means if you change the patch this note references, it would need to be recalculated.
+        predetermined.offFrame = framesBeforeNoteOff;
+        predetermined.releaseTime = patch.GetReleaseTime(note_number);
+        predetermined.killFrame = predetermined.releaseTime + predetermined.offFrame;  
+
+        this.midi_velocity = velocity;
+        this.midi_note = note_number;
+        this.hz = lookup_frequency(note_number);
+        this.base_hz = hz;
+
+    }
+
+
+    //Iterates the sample timer.  
+    public override void Iterate(int numsamples=1)
+    {
+        samples += numsamples;
+
+        //TODO:  Consider creating a subclass of PredeterminedLengthNote which overrides this method to check the stuff below, for faster operation.
+        if (samples >= predetermined.offFrame)
+        {
+            _on_ReleaseNote(this.midi_note, predetermined.releaseTime);
+        }
+        
     }
 
 }

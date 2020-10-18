@@ -7,7 +7,7 @@
 
 [sub_resource type="AudioStreamGenerator" id=1]
 mix_rate = 32000.0
-buffer_length = 0.3
+buffer_length = 1.0
 
 [node name="MIDIPlay" type="Control"]
 anchor_right = 1.0
