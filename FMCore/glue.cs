@@ -29,11 +29,14 @@ public class glue : Node
 		oscillators.gen_sin_table(9600);  //Sounds better at high frequencies....
         
     }
+
 }
 
 // C# Implementations of math funcs, probably faster than delegating from the GD namespace?
 public static class GDSFmFuncs
 {
+    static readonly Action DoNothing = () => {};  //Empty lambda for stuffing arrays full of actions or otherwise "pass" on an action set
+
     //Godot easing func.
     public static double Ease(double p_x, double p_c) {
         if (p_x < 0.0)
@@ -200,6 +203,25 @@ public static class GDSFmFuncs
         output.Append("}");
 
         return output.ToString();
+    }
+
+    /// Extension method which resizes a List<T>.
+    public static void Resize<T>(this System.Collections.Generic.List<T> list, int sz, T c)
+    {
+        int cur = list.Count;
+        if(sz < cur)
+            list.RemoveRange(sz, cur - sz);
+        else if(sz > cur)
+        {
+            if(sz > list.Capacity)//this bit is purely an optimisation, to avoid multiple automatic capacity changes.
+              list.Capacity = sz;
+            list.AddRange(Enumerable.Repeat(c, sz - cur));
+        }
+    }
+    /// Creates a List<T> with <c>sz</c> newly initialized elements.
+    public static void Resize<T>(this System.Collections.Generic.List<T> list, int sz) where T : new()
+    {
+        Resize(list, sz, new T());
     }
 }
 

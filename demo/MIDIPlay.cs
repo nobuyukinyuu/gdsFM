@@ -56,6 +56,9 @@ namespace MidiDemo{
             player.sequence = sequence;
             Clock.Reset(sequence.Tracks.Count);  //RESET THE CLOCK.  This properly sets the number of tracks for the clock to check.
 
+            AudioStreamGenerator streamGenerator = (AudioStreamGenerator) player.Stream;
+            player.parser.ParseSequence(sequence, streamGenerator.MixRate);
+
         } catch (MidiParser.MidiParserException e) {
             GD.Print("WARNING:  Encountered a problem parsing MIDI.\n", e.ToString() );
         }

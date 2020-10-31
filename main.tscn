@@ -510,6 +510,7 @@ valign = 1
 [node name="Audio" type="AudioStreamPlayer" parent="."]
 stream = SubResource( 2 )
 volume_db = -12.0
+bus = "New Bus"
 script = ExtResource( 23 )
 
 [node name="ProcessRate" type="Label" parent="."]

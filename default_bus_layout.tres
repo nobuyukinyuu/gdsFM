@@ -1,4 +1,4 @@
-[gd_resource type="AudioBusLayout" load_steps=3 format=2]
+[gd_resource type="AudioBusLayout" load_steps=8 format=2]
 
 [sub_resource type="AudioEffectChorus" id=1]
 resource_name = "Chorus"
@@ -20,6 +20,50 @@ spread = 0.63
 hipass = 0.18
 wet = 0.2
 
+[sub_resource type="AudioEffectEQ" id=3]
+resource_name = "EQ"
+
+[sub_resource type="AudioEffectEQ21" id=4]
+resource_name = "EQ21"
+band_db/22_hz = -18.0
+band_db/32_hz = -18.0
+band_db/44_hz = -18.0
+band_db/63_hz = -18.0
+band_db/90_hz = -18.0
+band_db/125_hz = -18.0
+band_db/175_hz = -18.0
+band_db/250_hz = -18.0
+band_db/350_hz = -18.0
+band_db/500_hz = -13.8
+band_db/700_hz = -51.7
+band_db/1000_hz = -60.0
+band_db/1400_hz = -18.0
+band_db/2000_hz = -52.1
+band_db/2800_hz = -60.0
+band_db/4000_hz = -18.0
+band_db/5600_hz = -18.0
+band_db/8000_hz = -18.0
+band_db/11000_hz = -18.0
+band_db/16000_hz = -18.0
+band_db/22000_hz = -18.0
+
+[sub_resource type="AudioEffectBandPassFilter" id=5]
+resource_name = "BandPassFilter"
+cutoff_hz = 450.0
+resonance = 1.0
+db = 3
+
+[sub_resource type="AudioEffectBandPassFilter" id=6]
+resource_name = "BandPassFilter"
+cutoff_hz = 800.0
+resonance = 1.0
+db = 3
+
+[sub_resource type="AudioEffectBandPassFilter" id=7]
+resource_name = "BandPassFilter"
+cutoff_hz = 2830.0
+resonance = 0.47
+
 [resource]
 bus/1/name = "reverb"
 bus/1/solo = false
@@ -31,3 +75,19 @@ bus/1/effect/0/effect = SubResource( 1 )
 bus/1/effect/0/enabled = false
 bus/1/effect/1/effect = SubResource( 2 )
 bus/1/effect/1/enabled = true
+bus/2/name = "New Bus"
+bus/2/solo = false
+bus/2/mute = false
+bus/2/bypass_fx = false
+bus/2/volume_db = -27.4604
+bus/2/send = "Master"
+bus/2/effect/0/effect = SubResource( 3 )
+bus/2/effect/0/enabled = false
+bus/2/effect/1/effect = SubResource( 4 )
+bus/2/effect/1/enabled = true
+bus/2/effect/2/effect = SubResource( 5 )
+bus/2/effect/2/enabled = false
+bus/2/effect/3/effect = SubResource( 6 )
+bus/2/effect/3/enabled = false
+bus/2/effect/4/effect = SubResource( 7 )
+bus/2/effect/4/enabled = false
