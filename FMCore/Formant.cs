@@ -4,28 +4,41 @@ using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using Godot;
 
-public enum FilterType {LOWPASS, HIPASS, BANDPASS_CSG, BANDPASS_CZPG, NOTCH, ALLPASS, PEAKING, LOWSHELF, HISHELF}
 
-public class CFxRbjFilter
+// Bandpass CSG = "Bandpass constant skirt gain, peak gain = Q"
+// Bandpass CZPG= "Bandpass constant 0 dB peak gain"
+// Allpass: all frequencies are passed through unattenuated, but the phase of the signal changes around the target frequency. What a phaser does.
+public enum FilterType {NONE, LOWPASS, HIPASS, BANDPASS_CSG, BANDPASS_CZPG, NOTCH, ALLPASS, PEAKING, LOWSHELF, HISHELF}
+
+public class RbjFilter
 {
 
 	// filter coeffs
-	float b0a0,b1a0,b2a0,a1a0,a2a0;
+	float b0a0=1,b1a0=1,b2a0=1,a1a0=1,a2a0=1;
 	// in/out history
 	float ou1,ou2,in1,in2;
 
-    static double sample_rate=44100.0;
+    public static double sample_rate=44100.0;
+	public bool Enabled;
 
-	public CFxRbjFilter()
+	public void Reset()
 	{
 		// reset filter coeffs
-		b0a0=b1a0=b2a0=a1a0=a2a0=0.0f;
+		b0a0=b1a0=b2a0=a1a0=a2a0=1.0f;
 		
 		// reset in/out history
 		ou1=ou2=in1=in2=0.0f;	
 	}
 
-	public float filter(float in0)
+	public RbjFilter()  { Reset(); }
+
+	public RbjFilter(double mixRate)
+	{
+		sample_rate = mixRate;
+		Reset();
+	}
+
+	public float Filter(float in0)
 	{
 		// filter
 		float yn = b0a0*in0 + b1a0*in1 + b2a0*in2 - a1a0*ou1 - a2a0*ou2;
@@ -40,7 +53,7 @@ public class CFxRbjFilter
 		return yn;
 	}
 
-	void calc_filter_coeffs(FilterType type,double frequency,double sample_rate,double q,double db_gain,bool q_is_bandwidth)
+	public void calc_filter_coeffs(FilterType type,double frequency,double q,double db_gain,bool q_is_bandwidth)
 	{
 		// temp pi
 		const double temp_pi=3.1415926535897932384626433832795;
@@ -48,7 +61,7 @@ public class CFxRbjFilter
 		double alpha=0,a0=0,a1=0,a2=0,b0=0,b1=0,b2=0;
 
 		// peaking, lowshelf and hishelf
-		if((int)type>=6)
+		if((int)type>6)
 		{
 			double A	=	Math.Pow(10.0,(db_gain/40.0));
 			double omega=	2.0*temp_pi*frequency/sample_rate;
@@ -172,6 +185,16 @@ public class CFxRbjFilter
 				a0=1.0+alpha;
 				a1=-2.0*tcos;
 				a2=1.0-alpha;
+			}
+
+			if(type==FilterType.NONE)
+			{
+				b0=1;
+				b1=1;
+				b2=1;
+				a0=1;
+				a1=1;
+				a2=1;
 			}
 		}
 

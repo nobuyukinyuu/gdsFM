@@ -15,6 +15,10 @@ enum EGCopyFlags{NONE=0, EG=1, TUNING=4, CURVE=2, WAVEFORM=8, RTABLES=16, LOWPAS
 enum OPCopyFlags{NONE=0, NAME=1,ID=2,EG=4,BYPASS=8, LFO=16, WAVEFORM_BANK=32, WAVEFORM=64, ALL=127, HEADERS=11}
 enum PatchCopyFlags{NONE=0, GENERAL=1,  OPS=2, PG=4, LFO=8, WAVEFORMS=16, ALL=255}
 
+# RBJ filter types
+enum FilterType {NONE, LOWPASS, HIPASS, BANDPASS_CSG, BANDPASS_CZPG, NOTCH, ALLPASS, PEAKING, LOWSHELF, HISHELF}
+const FilterNames = ["None", "Low Pass", "High Pass", "Bandpass (Skirt Gain)", "Bandpass (0dB Peak)", 
+						"Notch", "All-pass", "Peaking" , "Low Shelf", "High Shelf"]
 
 # 12-field array containing a LUT of semitone frequencies at all MIDI note numbers.
 #Generated from center tuning (A-4) at 440hz.

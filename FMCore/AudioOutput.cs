@@ -139,6 +139,13 @@ public Channel PreviewNotes = new Channel();
 
         //TODO:  Attenuate the samples here with another parallel For loop on the final buffer.  Automatic gain control maybe applied here?
 
+        //FIXME:  This breaks stereo panning
+        for(int i=0; i<bufferdata.Length; i++)
+        {
+            bufferdata[i].x = patch.filter.Filter(bufferdata[i].x);
+            bufferdata[i].y = bufferdata[i].x;
+        }
+
         // if (patch!=null)  LowPass(patch.CutOff,patch.Resonance);
         buf.PushBuffer(bufferdata); 
     }

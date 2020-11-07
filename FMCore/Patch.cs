@@ -13,7 +13,8 @@ public class Patch : Resource
 
     //This ctor can be used to set the sample rate used in phase calculations by a patch. The algorithm validator should do it when making a patch.
     //TODO:  This ctor should also initialize the LFOs with the sample rate given, if LFOs are always allocated.....
-    public Patch(double sample_rate) { Patch.sample_rate = sample_rate; LFO.sample_rate = sample_rate; InitWaveformBank();}
+    public Patch(double sample_rate) { Patch.sample_rate = sample_rate; 
+                                      LFO.sample_rate = sample_rate; RbjFilter.sample_rate = sample_rate; InitWaveformBank();}
 
 
     // This value should typically be initialized to whatever the global sample rate is.
@@ -32,6 +33,8 @@ public class Patch : Resource
     public float Gain {get => GD.Linear2Db(gain); set => GD.Db2Linear(value);}  //Convenience func
     public double transpose = 1.0;  //Master tuning
     public double Transpose {get => Math.Log(transpose, 2) * 12; set => transpose = Math.Pow(2, value/12);}  //Convenience func
+
+    public RbjFilter filter = new RbjFilter(sample_rate);
 
     //List of LFOs available for operators to use.  3 initialized at first.  Operator will attempt to procure an LFO reference from list if its bank > -1.
     public List<LFO> LFOs = new List<LFO>( new LFO[] {new LFO(sample_rate), new LFO(sample_rate), new LFO(sample_rate)} );
@@ -400,6 +403,8 @@ public class Patch : Resource
                 output[i] += op.request_sample(note.phase[op.id], note, LFOs, i); 
             }
 
+            // output[i] = filter.Filter((float) output[i]);  //Not threadsafe.  Don't do this
+
             // output[i] *= note.Velocity;   //TODO:  Apply master response curve here instead.  Most velocity should be controlled in EG.
 
             //Recalculate the pitch.
@@ -476,6 +481,17 @@ public class Patch : Resource
     }
 
 
+    public void SetFilter(Godot.Collections.Array input, bool reset)
+    {
+        if (reset) filter.Reset();
+        var t= (FilterType) Enum.ToObject(typeof(FilterType), input[0]);
+        var freq = (float) input[1];
+        var q = (float) input[2];
+
+        // GD.Print("Filter set ", t);
+
+        filter.calc_filter_coeffs( t, freq, q, 0, false);
+    }
 
 #region ====================== IO ======================
     public JSONObject JsonMetadata(PatchCopyFlags flags=PatchCopyFlags.ALL)
@@ -779,6 +795,6 @@ public class Patch : Resource
         sw.WriteLine("Operators: " + operators.Count.ToString());
         return sw.ToString();
     }
-#endregion
+#endregion  //IO
 
 }
