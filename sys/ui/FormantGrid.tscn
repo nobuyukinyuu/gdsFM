@@ -1,0 +1,72 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://gfx/ui/vowel_grid.png" type="Texture" id=1]
+[ext_resource path="res://gfx/noteColors/dot.png" type="Texture" id=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Control
+export(float, 0.001, 10, 0.001) var q = 1.0
+
+var freq = Vector2.ONE
+
+func _gui_input(event):
+	if event is InputEventMouseMotion:
+		if Input.is_mouse_button_pressed(BUTTON_LEFT):
+			var pos = get_local_mouse_position()
+			pos.x = clamp(pos.x, 0, rect_size.x)
+			pos.y = clamp(pos.y, 0, rect_size.y)
+			$Sprite.position = pos
+
+			#Get fundamental frequencies
+			freq = pos 
+			freq.x = range_lerp(freq.x, 0,128, 2500, 350)
+			freq.y = range_lerp(freq.y, 0,128, 300, 1000)
+		
+			freq = freq.snapped(Vector2.ONE)
+
+			$Label.text = var2str(freq)
+			
+
+			if global.currentPatch:
+				recalc()
+				
+				
+func recalc():
+	global.currentPatch.SetFormant([freq.x, freq.y], q, false)
+"
+
+[node name="FormantGrid" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = -1280.0
+margin_bottom = -600.0
+rect_min_size = Vector2( 128, 128 )
+script = SubResource( 1 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="TextureRect" type="TextureRect" parent="."]
+margin_right = 128.0
+margin_bottom = 128.0
+mouse_filter = 2
+texture = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Sprite" type="Sprite" parent="."]
+modulate = Color( 1, 1, 1, 0.631373 )
+position = Vector2( 24, 72 )
+scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 2 )
+hframes = 2
+
+[node name="Label" type="Label" parent="."]
+visible = false
+margin_right = 40.0
+margin_bottom = 14.0
+__meta__ = {
+"_edit_use_anchors_": false
+}

@@ -5,16 +5,50 @@ using System.Collections.Generic;
 using Godot;
 
 
+public class FormantFilter
+{
+	const int PEAKCOUNT=3;
+	RbjFilter[] peaks = new RbjFilter[PEAKCOUNT];
+
+	public float peak0, peak1;  //Peak frequencies
+	public float q, gain;
+
+	public FormantFilter(double mixRate=44100.0)
+	{
+		for(int i=0; i<PEAKCOUNT; i++)
+		{
+			peaks[i] = new RbjFilter(mixRate);
+		}
+	}
+
+	public void Recalc()
+	{
+		peaks[0].calc_filter_coeffs(FilterType.BANDPASS_CSG, peak0, q, gain, false);
+		peaks[1].calc_filter_coeffs(FilterType.BANDPASS_CSG, peak1, q, gain, false);
+	}
+
+	public float Filter(float in0)
+	{
+		return (peaks[0].Filter(in0) + peaks[1].Filter(in0)) / 2.0f;
+	}
+
+	public void Reset()
+	{
+		for(int i=0; i<PEAKCOUNT; i++)  peaks[i].Reset();
+	}
+}
+
+
 // Bandpass CSG = "Bandpass constant skirt gain, peak gain = Q"
 // Bandpass CZPG= "Bandpass constant 0 dB peak gain"
 // Allpass: all frequencies are passed through unattenuated, but the phase of the signal changes around the target frequency. What a phaser does.
 public enum FilterType {NONE, LOWPASS, HIPASS, BANDPASS_CSG, BANDPASS_CZPG, NOTCH, ALLPASS, PEAKING, LOWSHELF, HISHELF}
-
 public class RbjFilter
 {
 
 	// filter coeffs
 	float b0a0=1,b1a0=1,b2a0=1,a1a0=1,a2a0=1;
+	
 	// in/out history
 	float ou1,ou2,in1,in2;
 

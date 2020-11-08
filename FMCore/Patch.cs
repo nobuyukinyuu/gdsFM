@@ -35,6 +35,7 @@ public class Patch : Resource
     public double Transpose {get => Math.Log(transpose, 2) * 12; set => transpose = Math.Pow(2, value/12);}  //Convenience func
 
     public RbjFilter filter = new RbjFilter(sample_rate);
+    public FormantFilter formantFilter = new FormantFilter(sample_rate);
 
     //List of LFOs available for operators to use.  3 initialized at first.  Operator will attempt to procure an LFO reference from list if its bank > -1.
     public List<LFO> LFOs = new List<LFO>( new LFO[] {new LFO(sample_rate), new LFO(sample_rate), new LFO(sample_rate)} );
@@ -492,6 +493,19 @@ public class Patch : Resource
 
         filter.calc_filter_coeffs( t, freq, q, 0, false);
     }
+
+    public void SetFormant(Godot.Collections.Array input, float q, bool reset)
+    {
+        if (reset) formantFilter.Reset();
+
+        formantFilter.peak0 = (float) input[0];
+        formantFilter.peak1 = (float) input[1];
+        formantFilter.q = q;
+
+
+        formantFilter.Recalc();
+    }
+
 
 #region ====================== IO ======================
     public JSONObject JsonMetadata(PatchCopyFlags flags=PatchCopyFlags.ALL)

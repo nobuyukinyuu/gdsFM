@@ -142,7 +142,8 @@ public Channel PreviewNotes = new Channel();
         //FIXME:  This breaks stereo panning
         for(int i=0; i<bufferdata.Length; i++)
         {
-            bufferdata[i].x = patch.filter.Filter(bufferdata[i].x);
+            // bufferdata[i].x = patch.filter.Filter(bufferdata[i].x);
+            bufferdata[i].x = patch.formantFilter.Filter(bufferdata[i].x);
             bufferdata[i].y = bufferdata[i].x;
         }
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=49 format=2]
+[gd_scene load_steps=50 format=2]
 
 [ext_resource path="res://main.gd" type="Script" id=1]
 [ext_resource path="res://sys/panels/EGControl.tscn" type="PackedScene" id=2]
@@ -27,6 +27,7 @@
 [ext_resource path="res://sys/panels/WaveformOptions.tscn" type="PackedScene" id=25]
 [ext_resource path="res://PanelScope.gd" type="Script" id=26]
 [ext_resource path="res://MIDI.gd" type="Script" id=27]
+[ext_resource path="res://sys/ui/FormantGrid.tscn" type="PackedScene" id=28]
 [ext_resource path="res://sys/panels/tuning/TuningControl.tscn" type="PackedScene" id=29]
 [ext_resource path="res://sys/ui/EnvelopeDisplay.tscn" type="PackedScene" id=30]
 [ext_resource path="res://gfx/ui/godot_icons/GuiTabMenu.svg" type="Texture" id=31]
@@ -468,7 +469,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 min_value = 20.0
 max_value = 22030.0
-value = 22050.0
+value = 22030.0
 exp_edit = true
 allow_greater = true
 tick_count = 13
@@ -512,7 +513,7 @@ margin_bottom = 16.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 min_value = 0.01
-max_value = 2.0
+max_value = 10.0
 step = 0.01
 value = 1.0
 allow_greater = true
@@ -895,6 +896,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="FormantGrid" parent="." instance=ExtResource( 28 )]
+margin_left = 680.0
+margin_top = 416.0
+margin_right = -472.0
+margin_bottom = -56.0
+
 [node name="CPMenu" type="PopupMenu" parent="."]
 margin_left = 1328.0
 margin_top = 112.0
@@ -911,6 +918,7 @@ __meta__ = {
 [connection signal="timeout" from="TC2/Patch/Label/Timer" to="TC2/Patch" method="_on_Timer_timeout"]
 [connection signal="value_changed" from="TC2/Patch/V/Gain/Slider" to="TC2/Patch" method="_on_Gain_value_changed"]
 [connection signal="item_selected" from="TC2/Patch/Filter/Type/Drop" to="TC2/Patch" method="_on_FilterType_item_selected"]
+[connection signal="value_changed" from="TC2/Patch/Filter/Q/Slider" to="TC2/Patch" method="_on_Q_value_changed"]
 [connection signal="gui_input" from="TC" to="." method="_on_TC_gui_input"]
 [connection signal="changed" from="GraphEdit" to="." method="_on_GraphEdit_changed"]
 [connection signal="connection_request" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_connection_request"]

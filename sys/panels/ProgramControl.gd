@@ -72,3 +72,9 @@ func reload():
 	$Name/LineEdit.text = patch.name
 
 
+
+
+func _on_Q_value_changed(value):
+	owner.get_node("FormantGrid").q = value
+	owner.get_node("FormantGrid").recalc()
+	pass # Replace with function body.
