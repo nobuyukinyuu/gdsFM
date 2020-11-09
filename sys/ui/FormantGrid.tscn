@@ -19,8 +19,8 @@ func _gui_input(event):
 
 			#Get fundamental frequencies
 			freq = pos 
-			freq.x = range_lerp(freq.x, 0,128, 2500, 350)
-			freq.y = range_lerp(freq.y, 0,128, 300, 1000)
+			freq.x = range_lerp(freq.x, 0,128, 2500, 370)
+			freq.y = range_lerp(freq.y, 0,128, 300, 1100)
 		
 			freq = freq.snapped(Vector2.ONE)
 
