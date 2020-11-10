@@ -127,6 +127,12 @@ public const int NOTE_A4 = 69;   // Nice.
         phase[idx] += numsamples / sample_rate * (hz*multiplier);
     }
 
+    /// Returns what the phase would be if the accumulator was moved forward.
+    public double PhaseIfAccumulated(int idx, int numsamples, double multiplier, double sample_rate)
+    {
+        return phase[idx] + (numsamples / sample_rate * (hz*multiplier));
+    }
+
     //Iterates the sample timer.  
     public virtual void Iterate(int numsamples=1)
     {

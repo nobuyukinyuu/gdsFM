@@ -283,37 +283,51 @@ public Channel PreviewNotes = new Channel();
     }
 
 
-    public void LowPass(double resofreq=5000, double amp=1.0)
+    // public void LowPass(double resofreq=5000, double amp=1.0)
+    // {
+    //     int streamofs;
+    //     double w = 2.0 * Math.PI * resofreq/MixRate; // Pole angle
+    //     double q = 1.0 - w/(2.0*(amp + 0.5/(1.0+w)) + w - 2.0); // Pole magnitude
+    //     double r = q*q;
+    //     double c = r + 1.0 - 2.0*Math.Cos(w) * q;  //Update to use lookup table
+
+
+    //     int streamsize = bufferdata.Length;
+
+    //     /* Main loop */
+    //     for (streamofs = 0; streamofs < streamsize; streamofs++) 
+    //     {
+    //         /* Accelerate vibra by signal-vibra, multiplied by lowpasscutoff */
+    //         vibraspeed += (bufferdata[streamofs].x - vibrapos) * c;
+
+    //         /* Add velocity to vibra's position */
+    //         vibrapos += vibraspeed;
+
+    //         /* Attenuate/amplify vibra's velocity by resonance */
+    //         vibraspeed *= r;
+
+    //         /* Check clipping */
+    //         float temp = (float) vibrapos;
+    //         Mathf.Clamp(temp, -1.0f, 1.0f);
+
+    //         /* Store new value */
+    //         bufferdata[streamofs] = new Vector2(temp,temp);
+    //     }        
+    // }
+
+    public string GetPhases()
     {
-        int streamofs;
-        double w = 2.0 * Math.PI * resofreq/MixRate; // Pole angle
-        double q = 1.0 - w/(2.0*(amp + 0.5/(1.0+w)) + w - 2.0); // Pole magnitude
-        double r = q*q;
-        double c = r + 1.0 - 2.0*Math.Cos(w) * q;  //Update to use lookup table
-
-
-        int streamsize = bufferdata.Length;
-
-        /* Main loop */
-        for (streamofs = 0; streamofs < streamsize; streamofs++) 
+        var sb = new System.Text.StringBuilder("");
+        if (!PreviewNotes.Empty)
         {
-            /* Accelerate vibra by signal-vibra, multiplied by lowpasscutoff */
-            vibraspeed += (bufferdata[streamofs].x - vibrapos) * c;
+            for(int i=0; i<4; i++)
+            {
+                sb.Append ((int) PreviewNotes[0].GetPhase(i));
+                sb.Append(", ");
+            }
+        }
 
-            /* Add velocity to vibra's position */
-            vibrapos += vibraspeed;
-
-            /* Attenuate/amplify vibra's velocity by resonance */
-            vibraspeed *= r;
-
-            /* Check clipping */
-            float temp = (float) vibrapos;
-            Mathf.Clamp(temp, -1.0f, 1.0f);
-
-            /* Store new value */
-            bufferdata[streamofs] = new Vector2(temp,temp);
-        }        
+        return sb.ToString();
     }
-
 
 }

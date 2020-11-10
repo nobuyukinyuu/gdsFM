@@ -95,11 +95,13 @@ script/source = "extends Label
 
 
 func _physics_process(_delta):
-	text = str($\"../Audio\".Polyphony())
+#	text = str($\"../Audio\".Polyphony())
 
 #	if $\"../TC/Tuning\".currentEG:
 #		text = \"\\n\" + str($\"../TC/Tuning\".currentEG.totalMultiplier)
-	pass
+
+	if global.currentPatch:
+		text = global.currentPatch.GetMultipliers()
 "
 
 [sub_resource type="GDScript" id=7]
@@ -712,6 +714,7 @@ margin_left = -72.0
 margin_top = 24.0
 margin_right = -6.0
 margin_bottom = 38.0
+grow_horizontal = 0
 text = "Polyphony"
 align = 2
 script = SubResource( 6 )
