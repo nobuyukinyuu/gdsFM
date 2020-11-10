@@ -38,7 +38,7 @@ func _on_slider_change(value, which):
 	if global.currentEG:
 		global.currentEG.set(which, value)
 		var e=global.currentEG
-		prints(e.opID, e.ownerName, which, value, e.totalMultiplier, e._freqMult)
+#		prints(e.opID, e.ownerName, which, value, e.totalMultiplier, e._freqMult)
 		
 #		if ["Ar", "Dr", "Sr", "Rr", "Sl", "Tl"].has(which):
 #			emit_signal("envelope_changed", value, which)

@@ -779,7 +779,8 @@ public class Patch : Resource
 
             //These mappings might not be perfect.  SL attenuation goes from 0-15 to -93dB, TL goes from 0-127 to -96dB.
             op.EG.Sl = GD.Db2Linear(-6.2f * (Int32.Parse(val[4]))) * 100 ;
-            op.EG.Tl = GD.Db2Linear(-0.75f * Int32.Parse(val[5])) * 100 ;
+            // op.EG.Tl = GD.Db2Linear(-0.75f * Int32.Parse(val[5])) * 100 ;
+            op.EG.Tl = GD.Db2Linear(-0.9375f * Int32.Parse(val[5])) * 100 ;
 
             var remap= new int[] {100, 50, 25, 0};
 
