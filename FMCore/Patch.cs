@@ -401,8 +401,7 @@ public class Patch : Resource
             for (int j=0; j < connections.Length; j++)
             {	
                 Operator op = connections[j];
-                double chainMul = 1;//op.GetMult(note, LFOs, i);  //Get initial multiplier
-                output[i] += op.request_sample(chainMul, note.phase[op.id], note, LFOs, i); 
+                output[i] += op.request_sample(note.phase[op.id], note, LFOs, i); 
             }
 
             // output[i] = filter.Filter((float) output[i]);  //Not threadsafe.  Don't do this
@@ -474,8 +473,7 @@ public class Patch : Resource
         {	
             Operator op = connections[j];
             //FIXME:  lfoBufPos probably shouldn't be 0 maybe?  Try and remember what it does...
-            double chainMul = 1;//op.GetMult(note, LFOs, 0);  //Get initial multiplier
-            avg += op.request_sample(chainMul, note.phase[op.id], note, LFOs, 0); 
+            avg += op.request_sample(note.phase[op.id], note, LFOs, 0); 
         }
 
         //Recalculate the pitch.

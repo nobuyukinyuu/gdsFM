@@ -78,7 +78,7 @@ public class Operator : Resource
 
     public double LastChain;   //////////////////DEBUG, REMOVE ME
     /// Iterate over our connections, then mix and modulate them before returning the final modulated value.
-    public double request_sample(double chainMul, double phase, Note note, List<LFO> LFOs = null, int lfoBufPos = 0)
+    public double request_sample(double phase, Note note, List<LFO> LFOs = null, int lfoBufPos = 0)
     {
         
         double output = 0.0;        
@@ -99,10 +99,12 @@ public class Operator : Resource
         } else if (connections.Length > 0)  //Not a terminus.  Probably a modulator.
         {	
             phase = note.phase[id];
+            double phaseIfAccumulated = phase + PhaseIfAccumulated(phase, note);
+
             // First, mix the parallel modulators.
             for (var i=0; i < connections.Length; i++)
             {
-                modulator += connections[i].request_sample(mult, phase + PhaseIfAccumulated(phase, note), note, LFOs, lfoBufPos);
+                modulator += connections[i].request_sample(phaseIfAccumulated, note, LFOs, lfoBufPos);
             }
 
             modulator /= connections.Length;  //mix down to 0.0-1.0f.   Is this correct?
@@ -181,17 +183,16 @@ public class Operator : Resource
 
           //Apply the filter.
           if (eg.filter.enabled) output = GDSFmLowPass.Filter(output, eg.filter, ref note.cutoffHistory[id][0], ref note.cutoffHistory[id][1]);
-          LastChain = chainMul;
           return output;        
     }
 
-    void Accumulate(double phase, Note note)
+    void Accumulate(double multiplier, Note note)
     {
-          note.Accumulate(id,1, phase, eg.SampleRate);
+          note.Accumulate(id,1, multiplier, eg.SampleRate);
     }
-    double PhaseIfAccumulated(double phase, Note note)
+    double PhaseIfAccumulated(double multiplier, Note note)
     {
-        return note.PhaseIfAccumulated(id, 1, phase, eg.SampleRate);
+        return note.PhaseIfAccumulated(id, 1, multiplier, eg.SampleRate);
     }
 
     double GetMult(Note note, List<LFO> LFOs = null, int lfoBufPos = 0)
