@@ -422,6 +422,13 @@ public class Patch : Resource
 
             //Iterate the sample timer.  The phase accumulators were already called from the Operators.
             note.Iterate(1);
+            // for (int a=0; a<operators.Count; a++)
+            foreach (Operator op in operators.Values)
+            {
+                // note.Accumulate(a, 1, operators["OP" + (a+1).ToString()].GetMult(note,LFOs, i), sample_rate);
+                note.Accumulate(op.id, 1, op.GetMult(note,LFOs, i), sample_rate);
+            }
+
         }
 
         return output;

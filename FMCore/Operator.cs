@@ -95,7 +95,7 @@ public class Operator : Resource
 
 
         if (bypass && connections.Length ==0){
-            goto Finalize;  //No output
+            // goto Finalize;  //No output.  TODO:  Check if output is connected to it?
         } else if (connections.Length > 0)  //Not a terminus.  Probably a modulator.
         {	
             phase = note.phase[id];
@@ -111,7 +111,7 @@ public class Operator : Resource
             
             if (bypass)  
             {
-                Accumulate(mult,note);
+                // Accumulate(mult,note);
                 return modulator;
             }
             
@@ -136,7 +136,7 @@ public class Operator : Resource
             output *= adsr;
             output *= eg._totalLevel;  
 
-            Accumulate(mult,note);
+            // Accumulate(mult,note);
         } else {  // Terminus.  No further modulation required. 
             var scaledPhase = note.phase[id]; //* mult;
             // Process feedback
@@ -172,7 +172,7 @@ public class Operator : Resource
 
             output *= eg._totalLevel;  //Finally, Attenuate total level.  ADSR was applied to output earlier depending on FB.
 
-            Accumulate(mult,note);
+            // Accumulate(mult,note);
         }
 
         //Iterate the phase accumulator.
@@ -195,7 +195,8 @@ public class Operator : Resource
         return note.PhaseIfAccumulated(id, 1, multiplier, eg.SampleRate);
     }
 
-    double GetMult(Note note, List<LFO> LFOs = null, int lfoBufPos = 0)
+    /// Gets the total EG + LFO multiplier for the operator at the given position in the audio buffer.
+    public double GetMult(Note note, List<LFO> LFOs = null, int lfoBufPos = 0)
     {
         var lfoMult = (lfoBankPitch>=0 && LFOs != null) ? LFOs[lfoBankPitch].GetPitchMult(lfoBufPos, note.samples, pms) : 1.0;
         var mult = eg.FixedFreq>0? eg.totalMultiplier * lfoMult / note.hz: eg.totalMultiplier * lfoMult;

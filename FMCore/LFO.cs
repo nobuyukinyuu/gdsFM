@@ -119,7 +119,7 @@ public class LFO : Resource //: Node
     }
 
 
-
+    /// Sets this LFO's buffer to the next chunk of frames needed by the audio buffer filling algorithm. Each frame is used as a reference by operators.
     public void UpdateBuffer(int length) {buffer = RequestBuffer(length);}
     public double[] RequestBuffer(int length)
     {
