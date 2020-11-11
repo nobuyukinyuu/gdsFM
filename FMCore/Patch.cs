@@ -401,7 +401,7 @@ public class Patch : Resource
             for (int j=0; j < connections.Length; j++)
             {	
                 Operator op = connections[j];
-                output[i] += op.request_sample(note.phase[op.id], note, LFOs, i); 
+                output[i] += op.request_sample(note, LFOs, i); 
             }
 
             // output[i] = filter.Filter((float) output[i]);  //Not threadsafe.  Don't do this
@@ -420,15 +420,9 @@ public class Patch : Resource
         #endif
 
 
-            //Iterate the sample timer.  The phase accumulators were already called from the Operators.
+            //Iterate the sample timer.
             note.Iterate(1);
-            // for (int a=0; a<operators.Count; a++)
-            foreach (Operator op in operators.Values)
-            {
-                // note.Accumulate(a, 1, operators["OP" + (a+1).ToString()].GetMult(note,LFOs, i), sample_rate);
-                note.Accumulate(op.id, 1, op.GetMult(note,LFOs, i), sample_rate);
-            }
-
+            foreach (Operator op in operators.Values) { note.Accumulate(op.id, 1, op.GetMult(note,LFOs, i), sample_rate); }
         }
 
         return output;
@@ -463,29 +457,17 @@ public class Patch : Resource
     public double mix(Note note){ 
         double avg = 0.0;  //Output average
 
-        // foreach (Operator op in connections)
-        // // Parallel.ForEach(connections, delegate(Operator op)
-        // {	
-        //     //Get running average of sample output of all operators connected to output.
-        //     avg += op.request_sample(note.phase[op.id], note); 
-
-        //     //Iterate the sample timer.
-        //     // note.Iterate(op.id, 1, op.EG.totalMultiplier, sample_rate);
-        //     // note.Accumulate(op.id,1, op.EG.totalMultiplier, op.EG.SampleRate);
-        //     // note.Iterate(1);
-
-        // } //);
-
-        for (int j=0; j < connections.Length; j++)
+       for (int j=0; j < connections.Length; j++)
         {	
             Operator op = connections[j];
             //FIXME:  lfoBufPos probably shouldn't be 0 maybe?  Try and remember what it does...
-            avg += op.request_sample(note.phase[op.id], note, LFOs, 0); 
+            avg += op.request_sample(note, LFOs, 0); 
         }
 
         //Recalculate the pitch.
         note.hz = note.base_hz * note.PitchAtSamplePosition(this) * pitchMod * this.pitchMod * transpose;
         note.Iterate(1);
+        foreach (Operator op in operators.Values) { note.Accumulate(op.id, 1, op.GetMult(note,LFOs, 0), sample_rate); } //Accumulate
         return avg;
     }
 

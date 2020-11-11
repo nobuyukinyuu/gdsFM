@@ -78,7 +78,7 @@ public class Operator : Resource
 
     public double LastChain;   //////////////////DEBUG, REMOVE ME
     /// Iterate over our connections, then mix and modulate them before returning the final modulated value.
-    public double request_sample(double phase, Note note, List<LFO> LFOs = null, int lfoBufPos = 0)
+    public double request_sample(Note note, List<LFO> LFOs = null, int lfoBufPos = 0)
     {
         
         double output = 0.0;        
@@ -86,7 +86,7 @@ public class Operator : Resource
 
         double adsr = calc_eg(note);  //Get the adsr envelope from the EG to use later.
         double mult = GetMult(note, LFOs, lfoBufPos);
-
+        double phase = note.phase[id];
 
         if (Math.Abs(adsr) < 0.0005) 
             {
@@ -98,13 +98,11 @@ public class Operator : Resource
             // goto Finalize;  //No output.  TODO:  Check if output is connected to it?
         } else if (connections.Length > 0)  //Not a terminus.  Probably a modulator.
         {	
-            phase = note.phase[id];
-            double phaseIfAccumulated = phase + PhaseIfAccumulated(phase, note);
 
             // First, mix the parallel modulators.
             for (var i=0; i < connections.Length; i++)
             {
-                modulator += connections[i].request_sample(phaseIfAccumulated, note, LFOs, lfoBufPos);
+                modulator += connections[i].request_sample(note, LFOs, lfoBufPos);
             }
 
             modulator /= connections.Length;  //mix down to 0.0-1.0f.   Is this correct?
@@ -136,9 +134,8 @@ public class Operator : Resource
             output *= adsr;
             output *= eg._totalLevel;  
 
-            // Accumulate(mult,note);
         } else {  // Terminus.  No further modulation required. 
-            var scaledPhase = note.phase[id]; //* mult;
+
             // Process feedback
             if (eg.feedback > 0)
             {
@@ -147,9 +144,9 @@ public class Operator : Resource
 
                 double wave;
                 if (eg.waveform== Waveforms.CUSTOM){
-                    wave = oscillators.wave(scaledPhase + scaled_fb, customWaveform) * adsr;  
+                    wave = oscillators.wave(phase + scaled_fb, customWaveform) * adsr;  
                 } else {
-                    wave = oscillators.wave(scaledPhase + scaled_fb, eg.waveform | eg._use_duty, eg.duty, eg.reflect, 128-note.midi_note) * adsr;
+                    wave = oscillators.wave(phase + scaled_fb, eg.waveform | eg._use_duty, eg.duty, eg.reflect, 128-note.midi_note) * adsr;
                 }
 
                 note.feedbackHistory[id][1] = note.feedbackHistory[id][0]; 
@@ -159,10 +156,10 @@ public class Operator : Resource
 
             } else {  //No feedback
                 if (eg.waveform== Waveforms.CUSTOM){
-                    output = oscillators.wave(scaledPhase, customWaveform) * adsr;  
+                    output = oscillators.wave(phase, customWaveform) * adsr;  
                 } else {
                     //Get a waveform from the oscillator.
-                    output = oscillators.wave(scaledPhase, eg.waveform|eg._use_duty, eg.duty, eg.reflect, 128-note.midi_note) * adsr;  
+                    output = oscillators.wave(phase, eg.waveform|eg._use_duty, eg.duty, eg.reflect, 128-note.midi_note) * adsr;  
                 }
 
             }
@@ -171,8 +168,6 @@ public class Operator : Resource
             output *= (lfoBankAmp>=0 && LFOs != null) ? LFOs[lfoBankAmp].GetAmpMult(lfoBufPos, note.ampBuffer, ams) : 1.0;
 
             output *= eg._totalLevel;  //Finally, Attenuate total level.  ADSR was applied to output earlier depending on FB.
-
-            // Accumulate(mult,note);
         }
 
         //Iterate the phase accumulator.
@@ -186,14 +181,7 @@ public class Operator : Resource
           return output;        
     }
 
-    void Accumulate(double multiplier, Note note)
-    {
-          note.Accumulate(id,1, multiplier, eg.SampleRate);
-    }
-    double PhaseIfAccumulated(double multiplier, Note note)
-    {
-        return note.PhaseIfAccumulated(id, 1, multiplier, eg.SampleRate);
-    }
+
 
     /// Gets the total EG + LFO multiplier for the operator at the given position in the audio buffer.
     public double GetMult(Note note, List<LFO> LFOs = null, int lfoBufPos = 0)

@@ -20,7 +20,7 @@ func _init():
 			var action = InputEventKey.new()
 			
 			action.scancode = OS.find_scancode_from_string(note_keys[octave][i])
-			key_to_notenum[n] = notenum + i + (octave*12) - 12  #Sets the correct note number for this keypress.
+			key_to_notenum[n]= notenum + i + ((octave+4)*12) - 12 #Sets the correct note number for this keypress.
 			InputMap.add_action(n)
 			InputMap.action_add_event(n,action)
 
