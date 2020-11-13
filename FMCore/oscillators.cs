@@ -60,9 +60,11 @@ public class oscillators //: Node
 
 
 	public static double wave(double n, Waveforms waveform = Waveforms.SINE, double duty = 0.5, bool reflect=false, int auxData=1){
-		n %= 1.0;
+		// n %= 1.0;
+		n = n - ((long) n);  //Truncate integral component
 
-		double sReflect = reflect? -1 : 1;
+		// double sReflect = reflect? -1 : 1;
+		double sReflect = Convert.ToInt32(reflect) * -2  +1;
 
 		switch(waveform){
 			case Waveforms.PULSE:
@@ -104,28 +106,31 @@ public class oscillators //: Node
 
 			case Waveforms.BROWN:
 				lastr += ThreadSafeRandom.NextDouble() * 0.2 - 0.1;
-				lastr *= 0.99f;
+				lastr *= 0.99;
 				return lastr;
 			case Waveforms.BROWN|Waveforms.USE_DUTY:
 				if (n < duty) {
 					lastr += ThreadSafeRandom.NextDouble() * 0.2 - 0.1;
-					lastr *= 0.99f;
+					lastr *= 0.99;
 					return lastr;					
 				} else {
 					return 0.0;
 				}
 
 			case Waveforms.WHITE:
-				// return (double)random.NextDouble() * 2.0 - 1.0;
-				noise_counter[auxData] += 0b1;
-				noise_counter[auxData] %= Convert.ToByte(auxData);
+				// noise_counter[auxData] += 0b1;
+				// noise_counter[auxData] %= Convert.ToByte(auxData);
+				auxData = 128-auxData;
+				noise_counter[auxData] += 1;
+				noise_counter[auxData] -= (byte) (auxData & ( ((auxData - 1) - noise_counter[auxData]) >> 31 ));
 
 				if (noise_counter[auxData]==0) lastNoiseValue[auxData]=ThreadSafeRandom.NextDouble() * 2.0 - 1.0;
 				return lastNoiseValue[auxData];
 
 			case Waveforms.WHITE|Waveforms.USE_DUTY:
-				noise_counter[auxData] += 0b1;
-				noise_counter[auxData] %= Convert.ToByte(auxData);
+				auxData = 128-auxData;
+				noise_counter[auxData] += 1;
+				noise_counter[auxData] -= (byte) (auxData & ( ((auxData - 1) - noise_counter[auxData]) >> 31 ));
 
 				if (noise_counter[auxData]==0) lastNoiseValue[auxData]=ThreadSafeRandom.NextDouble() * 2.0 - 1.0;
 				return n<duty? lastNoiseValue[auxData] : 0.0;

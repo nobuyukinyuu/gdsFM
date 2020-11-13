@@ -10,7 +10,7 @@ public class Envelope : Node
     public const string _iotype = "envelope";
 
 //This measurement was done against DX7 detune at A-4, where every 22 cycles the tone would change (-detune) samples at a recording rate of 44100hz.
-//See const definitions in Note.cs for more information about the extra-fine detune increment.
+//See const definitions in glue.cs for more information about the extra-fine detune increment.
     const Decimal DETUNE_440 = 2205M / 22M;
     const Decimal DETUNE_MIN = (2198M / 22M) / DETUNE_440 ;  //Smallest detune multiplier, a fraction of 1.0
     const Decimal DETUNE_MAX = (2212M / 22M) / DETUNE_440;   //Largest detune multiplier, a multiple of 1.0
@@ -220,12 +220,13 @@ public class Envelope : Node
         var atkTime = _attackTime * ksr[note.midi_note];
         var decTime = _decayTime * ksr[note.midi_note];
         var susTime = _susTime * ksr[note.midi_note];
-        var rlsTime = _releaseTime * ksr[note.midi_note];
         var ad = atkTime + decTime + _delay;
+
+        if (s>= ad+susTime) return 0;  //Gone past the end of the envelope.
 
         //Determine the envelope phase.
         if (s < _delay)  {return 0;} //Delay phase.
-        else if (s >= _delay && note.delayed[opID]==false) {note.ResetPhase(opID);  note.delayed[opID]=true;}
+        else if (s >= _delay && note.delayed[opID]==false) {note.ResetPhase(opID);  note.delayed[opID]=true;}  //Delay has elapsed.
 
 
         if (s-_delay < atkTime) { // Attack phase.
@@ -248,6 +249,7 @@ public class Envelope : Node
         // if(Double.IsNaN(output)) System.Diagnostics.Debugger.Break();
         // #endif
 
+        var rlsTime = _releaseTime * ksr[note.midi_note];
         if (noteOff && (s-releaseSample) < rlsTime)  //Apply release envelope.
         {
             output *= GDSFmFuncs.EaseFast(1.0, 0.0, (s-releaseSample) / rlsTime, rc);
@@ -256,14 +258,14 @@ public class Envelope : Node
             return 0;
         }
 
-        #if DEBUG
-        if(Double.IsNaN(output)) 
-        {
-            System.Diagnostics.Debugger.Break();  //Stop. NaN propagation. This should never trigger but if it does prepare for pain
-            return 0;
-            // throw new ArithmeticException("NaN encountered in calculated envelope output");
-        }
-        #endif
+        // #if DEBUG
+        // if(Double.IsNaN(output)) 
+        // {
+        //     System.Diagnostics.Debugger.Break();  //Stop. NaN propagation. This should never trigger but if it does prepare for pain
+        //     return 0;
+        //     // throw new ArithmeticException("NaN encountered in calculated envelope output");
+        // }
+        // #endif
 
         return output * ksl[note.midi_note] * vr[note.midi_velocity];
     }

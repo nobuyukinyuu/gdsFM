@@ -900,7 +900,6 @@ __meta__ = {
 }
 
 [node name="FormantGrid" parent="." instance=ExtResource( 28 )]
-visible = false
 margin_left = 680.0
 margin_top = 416.0
 margin_right = -472.0

@@ -39,7 +39,7 @@ _global_script_class_icons={
 [application]
 
 config/name="gdsFM"
-run/main_scene="res://demo/MIDIPlay.tscn"
+run/main_scene="res://main.tscn"
 run/low_processor_mode=true
 boot_splash/image="res://gfx/logos/icon256.png"
 boot_splash/fullsize=false

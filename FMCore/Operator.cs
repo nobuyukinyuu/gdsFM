@@ -85,7 +85,6 @@ public class Operator : Resource
         double modulator = 0.0;
 
         double adsr = calc_eg(note);  //Get the adsr envelope from the EG to use later.
-        double mult = GetMult(note, LFOs, lfoBufPos);
         double phase = note.phase[id];
 
         if (Math.Abs(adsr) < 0.0005) 
@@ -95,7 +94,7 @@ public class Operator : Resource
 
 
         if (bypass && connections.Length ==0){
-            // goto Finalize;  //No output.  TODO:  Check if output is connected to it?
+            goto Finalize;  //No output.
         } else if (connections.Length > 0)  //Not a terminus.  Probably a modulator.
         {	
 
@@ -107,12 +106,9 @@ public class Operator : Resource
 
             modulator /= connections.Length;  //mix down to 0.0-1.0f.   Is this correct?
             
-            if (bypass)  
-            {
-                // Accumulate(mult,note);
-                return modulator;
-            }
-            
+            if (bypass)  { return modulator; }
+
+
             // Now modulate.
             //Modulate the phase according to the phase technique. In most FM engines this technique is always a sine wave.
             var phaseAmt = oscillators.wave(modulator, eg.fmTechnique, eg.techDuty);
@@ -123,7 +119,7 @@ public class Operator : Resource
             if (eg.waveform== Waveforms.CUSTOM){
                 output = oscillators.wave(phase, customWaveform);  
             } else {
-                output = oscillators.wave(phase, eg.waveform | eg._use_duty, eg.duty, eg.reflect, 128-note.midi_note);  
+                output = oscillators.wave(phase, eg.waveform | eg._use_duty, eg.duty, eg.reflect, note.midi_note);  
             }
 
 
@@ -146,7 +142,7 @@ public class Operator : Resource
                 if (eg.waveform== Waveforms.CUSTOM){
                     wave = oscillators.wave(phase + scaled_fb, customWaveform) * adsr;  
                 } else {
-                    wave = oscillators.wave(phase + scaled_fb, eg.waveform | eg._use_duty, eg.duty, eg.reflect, 128-note.midi_note) * adsr;
+                    wave = oscillators.wave(phase + scaled_fb, eg.waveform | eg._use_duty, eg.duty, eg.reflect, note.midi_note) * adsr;
                 }
 
                 note.feedbackHistory[id][1] = note.feedbackHistory[id][0]; 
@@ -159,7 +155,7 @@ public class Operator : Resource
                     output = oscillators.wave(phase, customWaveform) * adsr;  
                 } else {
                     //Get a waveform from the oscillator.
-                    output = oscillators.wave(phase, eg.waveform|eg._use_duty, eg.duty, eg.reflect, 128-note.midi_note) * adsr;  
+                    output = oscillators.wave(phase, eg.waveform|eg._use_duty, eg.duty, eg.reflect, note.midi_note) * adsr;  
                 }
 
             }
@@ -170,12 +166,7 @@ public class Operator : Resource
             output *= eg._totalLevel;  //Finally, Attenuate total level.  ADSR was applied to output earlier depending on FB.
         }
 
-        //Iterate the phase accumulator.
         Finalize: 
-          //Apply Pitch LFO here.  Grab the calculation from the bank associated with this Operator and multiply it with eg.totalMultiplier.
-        //   var lfoMult = (lfoBankPitch>=0 && LFOs != null) ? LFOs[lfoBankPitch].GetPitchMult(lfoBufPos, note.samples, pms) : 1.0;
-        //   note.Accumulate(id,1, eg.FixedFreq>0? eg.totalMultiplier/note.hz * lfoMult: eg.totalMultiplier * lfoMult, eg.SampleRate);
-
           //Apply the filter.
           if (eg.filter.enabled) output = GDSFmLowPass.Filter(output, eg.filter, ref note.cutoffHistory[id][0], ref note.cutoffHistory[id][1]);
           return output;        
@@ -183,7 +174,7 @@ public class Operator : Resource
 
 
 
-    /// Gets the total EG + LFO multiplier for the operator at the given position in the audio buffer.
+    /// Gets the total EG + LFO multiplier for the operator at the given position in the audio buffer.  Used to accumulate phase for an Operator.
     public double GetMult(Note note, List<LFO> LFOs = null, int lfoBufPos = 0)
     {
         var lfoMult = (lfoBankPitch>=0 && LFOs != null) ? LFOs[lfoBankPitch].GetPitchMult(lfoBufPos, note.samples, pms) : 1.0;
