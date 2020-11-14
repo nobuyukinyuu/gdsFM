@@ -59,7 +59,7 @@ public class Channel : List<Note>
     }
 
     #if DEBUG
-        int maxPolyphony=16;
+        int maxPolyphony=24;
     #else
         int maxPolyphony=64;
     #endif
@@ -78,6 +78,12 @@ public class Channel : List<Note>
         //      before old ones are ready to die, the calls to TurnOffNote will fetch the last note added to the table.
         //      This could potentially leave notes hanging if two On events occur in a row.  
         //      The alternative is erroring out here during the lookupTbl add, having an inactive notes collection, or...
+
+        if (this.Count > maxPolyphony)
+        {
+            GD.Print("Channel.cs:  Max polyphony reached.  Note dropped.");
+            return;
+        }
 
         base.Add(item);  //Call the superclass.
         // lookupTbl.Add(item.midi_note, item);  //Throws an error if a note is already active in the same pitch

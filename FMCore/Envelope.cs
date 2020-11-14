@@ -75,10 +75,21 @@ public class Envelope : Node
 
 
     //ADSR easing curve values.
-    public double ac = -2.0;  //Attack curve.  In-out.
-    public double dc = 0.75;  //Decay curve.  75% Linear, 25% Ease-out.
-    public double sc = 0.5;  //Sustain curve.  50% Linear, 50% Ease-out.
-    public double rc = 0.250;  //Release curve.  75% Ease-out.
+    public double ac = DefaultCurves.A;  //Attack curve.  In-out.
+    public double dc = DefaultCurves.D;  //Decay curve.  75% Linear, 25% Ease-out.
+    public double sc = DefaultCurves.S;  //Sustain curve.  50% Linear, 50% Ease-out.
+    public double rc = DefaultCurves.R;  //Release curve.  75% Ease-out.
+
+    public double Ac {get => ac; set=> RecacheCurve(ref AttackCurve, ref ac, value);}
+    public double Dc {get => dc; set=> RecacheCurve(ref DecayCurve, ref dc, value);}
+    public double Sc {get => sc; set=> RecacheCurve(ref SustainCurve, ref sc, value);}
+    public double Rc {get => rc; set=> RecacheCurve(ref ReleaseCurve, ref rc, value);}
+
+    //Cached curves.  256kb each
+    public CurveCache AttackCurve = DefaultCurves.Attack;
+    public CurveCache DecayCurve = DefaultCurves.Decay;
+    public CurveCache SustainCurve = DefaultCurves.Sustain;
+    public CurveCache ReleaseCurve = DefaultCurves.Release;
 
 
     #region Response Tables.
@@ -195,6 +206,11 @@ public class Envelope : Node
         FixedFreq = fixed_frequency;
         Delay = delay;
 
+        Ac = ac;
+        Dc = dc;
+        Sc = sc;
+        Rc = rc;
+
         ksr.RecalcValues();
         ksl.RecalcValues();
         vr.RecalcValues();
@@ -230,18 +246,27 @@ public class Envelope : Node
 
 
         if (s-_delay < atkTime) { // Attack phase.
-            //Interpolate between 0 and the total level.
-            output= GDSFmFuncs.EaseFast(0.0, 1.0, (s-_delay) / atkTime, ac);
-            // if(Double.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
+            // //Interpolate between 0 and the total level.
+            // output= GDSFmFuncs.EaseFast(0.0, 1.0, (s-_delay) / atkTime, ac);
 
-        } else if ((s-_delay >= atkTime) && (s-_delay < ad) ) {  //Decay phase.
-            //Interpolate between the total level and sustain level.
-            output= GDSFmFuncs.EaseFast(1.0, _susLevel, (s-(atkTime+_delay)) / decTime, dc);
-            // if(Double.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
+            output = AttackCurve[ (s-_delay) / atkTime ];
 
-        } else if ((s-delay >= ad) ) {  //Sustain phase.
-            //Interpolate between sustain level and 0.
-            output= GDSFmFuncs.EaseFast(_susLevel, 0, (s-_delay-ad) / susTime, sc);
+            // if(Double.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
+        } else if ((s-_delay >= atkTime) && (s < ad) ) {  //Decay phase.
+            // //Interpolate between the total level and sustain level.
+            // output= GDSFmFuncs.EaseFast(1.0, _susLevel, (s-(atkTime+_delay)) / decTime, dc);
+
+            // GD.Print("s=", s, "  delay=", _delay, "  atkTime=", atkTime);
+            output = DecayCurve.MappedTo(1.0, _susLevel, (s-(atkTime+_delay)) / decTime);
+
+            // if(Double.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
+        // } else if ((s-delay >= ad) ) {  //Sustain phase.
+        } else {  //Sustain phase.
+            // //Interpolate between sustain level and 0.
+            // output= GDSFmFuncs.EaseFast(_susLevel, 0, (s-_delay-ad) / susTime, sc);
+
+            output = SustainCurve.MappedTo(_susLevel, 0, (s-ad) / susTime);
+
             // if(Double.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
         }
 
@@ -252,7 +277,10 @@ public class Envelope : Node
         var rlsTime = _releaseTime * ksr[note.midi_note];
         if (noteOff && (s-releaseSample) < rlsTime)  //Apply release envelope.
         {
-            output *= GDSFmFuncs.EaseFast(1.0, 0.0, (s-releaseSample) / rlsTime, rc);
+            // output *= GDSFmFuncs.EaseFast(1.0, 0.0, (s-releaseSample) / rlsTime, rc);
+
+            output *= 1.0 - ReleaseCurve[ (s-releaseSample) / rlsTime ];  //TODO:  Consider pre-caching a modified level
+
             // if(Double.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
         } else if (noteOff && (s-releaseSample) >= rlsTime) {
             return 0;
@@ -287,6 +315,27 @@ public class Envelope : Node
         //      Table lookup appears to be ~1.4x faster
         // http://www.hxa7241.org/articles/content/fast-pow-adjustable_hxa7241_2007.html
 
+    }
+
+    /// Creates a new curve cache for the specified curva value.
+    void RecacheCurve(ref CurveCache which, ref double easingField, double val)
+    {
+        //Check if the curve we want to recache actually exists in the default curve caches.  This could potentially save a lot of memory.
+        foreach(CurveCache curve in DefaultCurves.ADSR)
+        {
+            if (val==curve.EaseValue) //Curve matches one of the default cached curves.  Use a reference to this instead.
+            {
+                which = curve;
+                easingField = curve.EaseValue;
+                return;
+            }
+        }
+
+        //No matching cache found.  Create a new one.
+        var cache = new CurveCache(val);
+        which = cache;
+        easingField = val;
+        GD.Print("Recaching curve to ", val);  //remove me
     }
 
     void _set_attack_time(double val) {

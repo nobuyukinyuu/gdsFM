@@ -15,8 +15,8 @@ func _ready():
 func load_settings(envelope):
 	global.currentEG = envelope
 	
-	for o in ["a", "s", "d", "r"]:
-		var node = get_node(o.to_upper() + "/Slider")
+	for o in ["A", "D", "S", "R"]:
+		var node = get_node(o + "/Slider")
 		node.value = envelope.get(o + "c")
 
 
@@ -27,7 +27,8 @@ func _on_slider_change(value, which):
 	$Disp.get_node(which).material.set_shader_param("curve", value)
 		
 	if global.currentEG:
-		global.currentEG.set(which.to_lower() + "c", value)
+#		global.currentEG.set(which.to_lower() + "c", value)
+		global.currentEG.set(which + "c", value)
 		emit_signal("envelope_changed", value, which + "c")
 
 func _on_slider_input(ev, which):

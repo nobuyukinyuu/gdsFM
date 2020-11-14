@@ -7,10 +7,6 @@ using System.Threading.Tasks;
 public class AudioOutput : AudioStreamPlayer
 {
 public static float MixRate = 44100.0f;  //This is set to a global var sample_rate
-
-        double vibrapos = 0;
-        double vibraspeed = 0;
-
 AudioStreamGeneratorPlayback buf;  //Playback buffer
 Vector2[] bufferdata = new Vector2[8192];
 
@@ -21,9 +17,6 @@ Vector2[] bufferdata = new Vector2[8192];
     // public Note PreviewNote () {return previewNote;}
 
 public Channel PreviewNotes = new Channel();
-
-    Node global;
-
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
@@ -48,7 +41,7 @@ public Channel PreviewNotes = new Channel();
         System.Threading.ThreadPool.GetMinThreads(out workerthreads, out iothreads);
         System.Threading.ThreadPool.SetMaxThreads(workerthreads*2, iothreads*2);
 
-        fill_buffer3();   //prefill output buffer
+        // fill_buffer3();   //prefill output buffer
         Play();
 
         // //DEBUG:  Test json lib
@@ -156,6 +149,9 @@ public Channel PreviewNotes = new Channel();
     {
         int frames = buf.GetFramesAvailable();
         bufferdata = new Vector2[frames];
+
+        //Process the LFOs.
+        patch.UpdateLFOs(frames);
 
         for(int i=0; i < PreviewNotes.Count; i++)
         {
