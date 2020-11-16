@@ -335,7 +335,7 @@ public class Envelope : Node
         var cache = new CurveCache(val);
         which = cache;
         easingField = val;
-        GD.Print("Recaching curve to ", val);  //remove me
+        // GD.Print("Recaching curve to ", val);  //remove me
     }
 
     void _set_attack_time(double val) {

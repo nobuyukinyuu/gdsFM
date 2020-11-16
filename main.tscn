@@ -59,7 +59,9 @@ func _ready():
 		var name = global.FilterNames[i]
 		add_icon_item(load(\"res://gfx/ui/filter/%s.svg\" % i), name)
 
-
+	add_separator()
+	add_icon_item(load(\"res://gfx/ui/icon_pitch.svg\"), \"Formant\", 0xFF)
+	selected = 0
 "
 
 [sub_resource type="StyleBoxTexture" id=3]

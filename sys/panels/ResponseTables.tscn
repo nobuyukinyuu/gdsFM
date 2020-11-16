@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://sys/ui/responseCurve/ResponsePreviewButton.tscn" type="PackedScene" id=1]
 [ext_resource path="res://gfx/fonts/spelunkid_font.tres" type="BitmapFont" id=2]
@@ -6,8 +6,27 @@
 [ext_resource path="res://sys/panels/AMS.gd" type="Script" id=4]
 [ext_resource path="res://gfx/fonts/NoteFont.tres" type="BitmapFont" id=5]
 [ext_resource path="res://sys/panels/LFOBankSelect.gd" type="Script" id=6]
+[ext_resource path="res://gfx/ui/godot_icons/tab_unshaded.png" type="Texture" id=7]
+[ext_resource path="res://gfx/ui/godot_icons/tab_container_bg.png" type="Texture" id=8]
+[ext_resource path="res://sys/ui/FormantGrid.tscn" type="PackedScene" id=9]
 
-[sub_resource type="Theme" id=1]
+[sub_resource type="StyleBoxTexture" id=6]
+content_margin_left = 16.0
+content_margin_right = 8.0
+texture = ExtResource( 8 )
+region_rect = Rect2( 0, 0, 16, 16 )
+margin_left = 5.0
+margin_right = 5.0
+margin_top = 5.0
+margin_bottom = 5.0
+expand_margin_left = 3.0
+expand_margin_right = 3.0
+expand_margin_top = 8.0
+expand_margin_bottom = 3.0
+
+[sub_resource type="ButtonGroup" id=5]
+
+[sub_resource type="Theme" id=3]
 default_font = ExtResource( 5 )
 Button/colors/font_color = Color( 0.88, 0.88, 0.88, 1 )
 Button/colors/font_color_disabled = Color( 0.9, 0.9, 0.9, 0.2 )
@@ -21,7 +40,47 @@ Button/styles/hover = null
 Button/styles/normal = null
 Button/styles/pressed = null
 
-[sub_resource type="ButtonGroup" id=2]
+[sub_resource type="ButtonGroup" id=4]
+
+[sub_resource type="StyleBoxTexture" id=7]
+content_margin_left = 16.0
+content_margin_right = 8.0
+texture = ExtResource( 7 )
+region_rect = Rect2( 0, 0, 16, 16 )
+margin_left = 5.0
+margin_right = 5.0
+margin_top = 5.0
+margin_bottom = 5.0
+expand_margin_left = 3.0
+expand_margin_right = 3.0
+expand_margin_top = 2.0
+expand_margin_bottom = 3.0
+
+[sub_resource type="StyleBoxFlat" id=1]
+draw_center = false
+border_width_bottom = 1
+border_color = Color( 0.8, 0.8, 0.8, 0.25098 )
+expand_margin_bottom = 17.0
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends OptionButton
+
+
+# Declare member variables here. Examples:
+# var a = 2
+# var b = \"text\"
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	for i in global.FilterNames.size():
+		var name = global.FilterNames[i]
+		add_icon_item(load(\"res://gfx/ui/filter/%s.svg\" % i), name)
+
+	add_separator()
+	add_icon_item(load(\"res://gfx/ui/icon_pitch.svg\"), \"Formant\", 0xFF)
+	selected = 0
+"
 
 [node name="Response" type="Control"]
 anchor_right = 1.0
@@ -57,7 +116,614 @@ margin_bottom = 312.0
 text = "Velocity"
 dest_property = "Vr"
 
+[node name="TabContainer" type="TabContainer" parent="."]
+margin_top = 32.0
+margin_right = 408.0
+margin_bottom = 144.0
+custom_styles/panel = SubResource( 6 )
+custom_fonts/font = ExtResource( 5 )
+custom_constants/side_margin = 0
+tab_align = 0
+tabs_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="A" type="Tabs" parent="TabContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 16.0
+margin_top = 5.0
+margin_right = -8.0
+margin_bottom = -5.0
+
+[node name="Label2" type="Label" parent="TabContainer/A"]
+margin_left = 302.0
+margin_top = -31.0
+margin_right = 342.0
+margin_bottom = -23.0
+size_flags_stretch_ratio = 0.5
+custom_fonts/font = ExtResource( 2 )
+text = "Bank:"
+
+[node name="0" type="Button" parent="TabContainer/A"]
+margin_left = 344.0
+margin_top = -37.0
+margin_right = 366.0
+margin_bottom = -17.0
+custom_fonts/font = ExtResource( 5 )
+toggle_mode = true
+group = SubResource( 5 )
+text = "A"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Blanker2" type="Control" parent="TabContainer/A"]
+margin_left = 368.0
+margin_top = -37.0
+margin_right = 368.0
+margin_bottom = -17.0
+
+[node name="1" type="Button" parent="TabContainer/A"]
+margin_left = 370.0
+margin_top = -37.0
+margin_right = 392.0
+margin_bottom = -17.0
+custom_fonts/font = ExtResource( 5 )
+toggle_mode = true
+group = SubResource( 5 )
+text = "B"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Filter" type="VBoxContainer" parent="TabContainer/A"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -8.0
+margin_top = 3.0
+custom_constants/separation = 20
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Hz" type="HBoxContainer" parent="TabContainer/A/Filter" groups=[
+"slider",
+]]
+margin_right = 392.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Lbl" type="Label" parent="TabContainer/A/Filter/Hz"]
+margin_top = 4.0
+margin_right = 16.0
+margin_bottom = 12.0
+custom_fonts/font = ExtResource( 2 )
+text = "Hz"
+align = 1
+
+[node name="Slider" type="HSlider" parent="TabContainer/A/Filter/Hz"]
+margin_left = 20.0
+margin_right = 348.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+min_value = 20.0
+max_value = 22030.0
+value = 22030.0
+exp_edit = true
+allow_greater = true
+tick_count = 13
+ticks_on_borders = true
+
+[node name="Val" type="Label" parent="TabContainer/A/Filter/Hz"]
+margin_left = 352.0
+margin_top = 4.0
+margin_right = 392.0
+margin_bottom = 12.0
+rect_min_size = Vector2( 32, 0 )
+custom_fonts/font = ExtResource( 2 )
+text = "22050"
+align = 1
+valign = 2
+
+[node name="Q" type="HBoxContainer" parent="TabContainer/A/Filter" groups=[
+"slider",
+]]
+margin_top = 36.0
+margin_right = 392.0
+margin_bottom = 52.0
+size_flags_horizontal = 3
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Lbl" type="Label" parent="TabContainer/A/Filter/Q"]
+margin_top = 4.0
+margin_right = 16.0
+margin_bottom = 12.0
+custom_fonts/font = ExtResource( 2 )
+text = "Q "
+align = 1
+
+[node name="Slider" type="HSlider" parent="TabContainer/A/Filter/Q"]
+margin_left = 20.0
+margin_right = 356.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+min_value = 0.01
+max_value = 10.0
+step = 0.01
+value = 1.0
+allow_greater = true
+tick_count = 21
+ticks_on_borders = true
+
+[node name="Val" type="Label" parent="TabContainer/A/Filter/Q"]
+margin_left = 360.0
+margin_top = 4.0
+margin_right = 392.0
+margin_bottom = 12.0
+rect_min_size = Vector2( 32, 0 )
+custom_fonts/font = ExtResource( 2 )
+text = "1.0"
+align = 1
+valign = 2
+
+[node name="Gain" type="HBoxContainer" parent="TabContainer/A/Filter" groups=[
+"slider",
+]]
+margin_top = 72.0
+margin_right = 392.0
+margin_bottom = 88.0
+size_flags_horizontal = 3
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Lbl" type="Label" parent="TabContainer/A/Filter/Gain"]
+margin_top = 4.0
+margin_right = 32.0
+margin_bottom = 12.0
+custom_fonts/font = ExtResource( 2 )
+text = "Gain"
+align = 1
+
+[node name="Slider" type="HSlider" parent="TabContainer/A/Filter/Gain"]
+margin_left = 36.0
+margin_right = 356.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+min_value = -6.0
+max_value = 6.0
+step = 0.1
+value = 1.0
+allow_greater = true
+tick_count = 21
+ticks_on_borders = true
+
+[node name="Val" type="Label" parent="TabContainer/A/Filter/Gain"]
+margin_left = 360.0
+margin_top = 4.0
+margin_right = 392.0
+margin_bottom = 12.0
+rect_min_size = Vector2( 32, 0 )
+custom_fonts/font = ExtResource( 2 )
+text = "0.0"
+align = 1
+valign = 2
+
+[node name="B" type="Tabs" parent="TabContainer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 16.0
+margin_top = 5.0
+margin_right = -8.0
+margin_bottom = -5.0
+
+[node name="LfoBank" type="HBoxContainer" parent="TabContainer/B"]
+margin_left = 88.0
+margin_top = -5.0
+margin_right = 258.0
+margin_bottom = 11.0
+alignment = 2
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="lblBank" type="Label" parent="TabContainer/B/LfoBank"]
+modulate = Color( 1, 1, 1, 0.376471 )
+margin_top = 4.0
+margin_right = 80.0
+margin_bottom = 12.0
+custom_fonts/font = ExtResource( 2 )
+text = "LFO Bank: "
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="0" type="Button" parent="TabContainer/B/LfoBank"]
+margin_left = 84.0
+margin_right = 106.0
+margin_bottom = 16.0
+theme = SubResource( 3 )
+toggle_mode = true
+group = SubResource( 4 )
+text = "A"
+
+[node name="1" type="Button" parent="TabContainer/B/LfoBank"]
+margin_left = 110.0
+margin_right = 132.0
+margin_bottom = 16.0
+theme = SubResource( 3 )
+toggle_mode = true
+group = SubResource( 4 )
+text = "B"
+
+[node name="2" type="Button" parent="TabContainer/B/LfoBank"]
+margin_left = 136.0
+margin_right = 158.0
+margin_bottom = 16.0
+theme = SubResource( 3 )
+toggle_mode = true
+group = SubResource( 4 )
+text = "C"
+
+[node name="Blanker" type="Control" parent="TabContainer/B/LfoBank"]
+margin_left = 162.0
+margin_right = 170.0
+margin_bottom = 16.0
+rect_min_size = Vector2( 8, 0 )
+
+[node name="Panel" type="Panel" parent="TabContainer/B"]
+margin_left = 248.0
+margin_top = -37.0
+margin_right = 392.0
+margin_bottom = -13.0
+custom_styles/panel = SubResource( 7 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="lblPeaks" type="Label" parent="TabContainer/B"]
+margin_left = -8.0
+margin_top = 35.0
+margin_right = 64.0
+margin_bottom = 65.0
+custom_fonts/font = ExtResource( 2 )
+text = "Lo Limit:
+
+Hi Limit:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="lblPeaks2" type="Label" parent="TabContainer/B"]
+modulate = Color( 1, 1, 1, 0.301961 )
+margin_left = 172.0
+margin_top = 35.0
+margin_right = 244.0
+margin_bottom = 65.0
+custom_fonts/font = ExtResource( 2 )
+text = "hz
+
+hz"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Grid" type="GridContainer" parent="TabContainer/B"]
+margin_left = 68.0
+margin_top = 29.0
+margin_right = 228.0
+margin_bottom = 69.0
+columns = 3
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="0" type="LineEdit" parent="TabContainer/B/Grid"]
+margin_right = 50.0
+margin_bottom = 18.0
+custom_fonts/font = ExtResource( 2 )
+custom_constants/minimum_spaces = 5
+
+[node name="2" type="LineEdit" parent="TabContainer/B/Grid"]
+margin_left = 54.0
+margin_right = 104.0
+margin_bottom = 18.0
+custom_fonts/font = ExtResource( 2 )
+custom_constants/minimum_spaces = 5
+
+[node name="4" type="LineEdit" parent="TabContainer/B/Grid"]
+margin_left = 108.0
+margin_right = 158.0
+margin_bottom = 18.0
+custom_fonts/font = ExtResource( 2 )
+custom_constants/minimum_spaces = 5
+
+[node name="1" type="LineEdit" parent="TabContainer/B/Grid"]
+margin_top = 22.0
+margin_right = 50.0
+margin_bottom = 40.0
+custom_fonts/font = ExtResource( 2 )
+custom_constants/minimum_spaces = 5
+
+[node name="3" type="LineEdit" parent="TabContainer/B/Grid"]
+margin_left = 54.0
+margin_top = 22.0
+margin_right = 104.0
+margin_bottom = 40.0
+custom_fonts/font = ExtResource( 2 )
+custom_constants/minimum_spaces = 5
+
+[node name="5" type="LineEdit" parent="TabContainer/B/Grid"]
+margin_left = 108.0
+margin_top = 22.0
+margin_right = 158.0
+margin_bottom = 40.0
+custom_fonts/font = ExtResource( 2 )
+custom_constants/minimum_spaces = 5
+
+[node name="FormantGrid" parent="TabContainer/B" instance=ExtResource( 9 )]
+margin_left = 256.0
+margin_top = -29.0
+margin_right = 0.0
+margin_bottom = -1.0
+
+[node name="Q" type="HBoxContainer" parent="TabContainer/B" groups=[
+"slider",
+]]
+margin_left = -8.0
+margin_top = 83.0
+margin_right = 248.0
+margin_bottom = 99.0
+size_flags_horizontal = 3
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Lbl" type="Label" parent="TabContainer/B/Q"]
+margin_top = 4.0
+margin_right = 16.0
+margin_bottom = 12.0
+custom_fonts/font = ExtResource( 2 )
+text = "Q "
+align = 1
+
+[node name="Slider" type="HSlider" parent="TabContainer/B/Q"]
+margin_left = 20.0
+margin_right = 220.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+min_value = 0.01
+max_value = 10.0
+step = 0.01
+value = 1.0
+allow_greater = true
+tick_count = 21
+ticks_on_borders = true
+
+[node name="Val" type="Label" parent="TabContainer/B/Q"]
+margin_left = 224.0
+margin_top = 4.0
+margin_right = 256.0
+margin_bottom = 12.0
+rect_min_size = Vector2( 32, 0 )
+custom_fonts/font = ExtResource( 2 )
+text = "1.0"
+align = 1
+valign = 2
+
+[node name="Preset" type="HBoxContainer" parent="TabContainer/B"]
+visible = false
+margin_left = -8.0
+margin_top = -5.0
+margin_right = 248.0
+margin_bottom = 15.0
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="lblPreset" type="Label" parent="TabContainer/B/Preset"]
+margin_top = 6.0
+margin_right = 56.0
+margin_bottom = 14.0
+custom_fonts/font = ExtResource( 2 )
+text = "Preset:"
+
+[node name="Spacer" type="Control" parent="TabContainer/B/Preset"]
+margin_left = 60.0
+margin_right = 124.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="OptionButton" type="OptionButton" parent="TabContainer/B/Preset"]
+margin_left = 128.0
+margin_right = 256.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 128, 0 )
+text = "Presets..."
+
+[node name="Button" type="Button" parent="TabContainer/B"]
+margin_left = -8.0
+margin_top = -5.0
+margin_right = 64.0
+margin_bottom = 19.0
+custom_fonts/font = ExtResource( 2 )
+text = "Presets"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Type" type="HBoxContainer" parent="."]
+margin_left = 8.0
+margin_right = 320.0
+margin_bottom = 20.0
+custom_constants/separation = 2
+alignment = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="lblFilt" type="Label" parent="Type"]
+margin_top = 6.0
+margin_right = 64.0
+margin_bottom = 14.0
+size_flags_stretch_ratio = 0.5
+custom_fonts/font = ExtResource( 2 )
+text = "Filter: "
+
+[node name="Spacer" type="Panel" parent="Type"]
+visible = false
+margin_left = 58.0
+margin_right = 116.0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+custom_styles/panel = SubResource( 1 )
+
+[node name="Spacer2" type="Panel" parent="Type"]
+visible = false
+margin_left = 68.0
+margin_right = 152.0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+custom_styles/panel = SubResource( 1 )
+
+[node name="Drop" type="OptionButton" parent="Type"]
+margin_left = 66.0
+margin_right = 248.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 182, 0 )
+size_flags_horizontal = 2
+custom_constants/hseparation = 8
+script = SubResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AMS" type="HBoxContainer" parent="." groups=[
+"setting_group",
+]]
+margin_left = 8.0
+margin_top = 160.0
+margin_right = 400.0
+margin_bottom = 179.0
+size_flags_horizontal = 3
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Lbl" type="Label" parent="AMS"]
+margin_right = 88.0
+margin_bottom = 19.0
+custom_fonts/font = ExtResource( 2 )
+text = "LFO Amplit.
+Sensitivity"
+align = 1
+
+[node name="Slider" type="HSlider" parent="AMS"]
+margin_left = 92.0
+margin_right = 356.0
+margin_bottom = 19.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+step = 0.1
+allow_greater = true
+tick_count = 11
+ticks_on_borders = true
+
+[node name="Val" type="Label" parent="AMS"]
+margin_left = 360.0
+margin_top = 5.0
+margin_right = 392.0
+margin_bottom = 13.0
+rect_min_size = Vector2( 32, 0 )
+custom_fonts/font = ExtResource( 2 )
+text = "0"
+align = 1
+valign = 2
+
+[node name="Banks" type="HBoxContainer" parent="."]
+margin_left = 8.0
+margin_top = 187.0
+margin_right = 400.0
+margin_bottom = 203.0
+alignment = 2
+script = ExtResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+lfo_type = 1
+
+[node name="lblBank" type="Label" parent="Banks"]
+modulate = Color( 1, 1, 1, 0.376471 )
+margin_left = 222.0
+margin_top = 4.0
+margin_right = 302.0
+margin_bottom = 12.0
+custom_fonts/font = ExtResource( 2 )
+text = "LFO Bank: "
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="0" type="Button" parent="Banks"]
+margin_left = 306.0
+margin_right = 328.0
+margin_bottom = 16.0
+theme = SubResource( 3 )
+toggle_mode = true
+group = SubResource( 4 )
+text = "A"
+
+[node name="1" type="Button" parent="Banks"]
+margin_left = 332.0
+margin_right = 354.0
+margin_bottom = 16.0
+theme = SubResource( 3 )
+toggle_mode = true
+group = SubResource( 4 )
+text = "B"
+
+[node name="2" type="Button" parent="Banks"]
+margin_left = 358.0
+margin_right = 380.0
+margin_bottom = 16.0
+theme = SubResource( 3 )
+toggle_mode = true
+group = SubResource( 4 )
+text = "C"
+
+[node name="Blanker" type="Control" parent="Banks"]
+margin_left = 384.0
+margin_right = 392.0
+margin_bottom = 16.0
+rect_min_size = Vector2( 8, 0 )
+
 [node name="V" type="VBoxContainer" parent="."]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_top = 8.0
@@ -169,7 +835,7 @@ valign = 2
 
 [node name="LineSep" type="Panel" parent="V"]
 margin_top = 120.0
-margin_right = 408.0
+margin_right = 392.0
 margin_bottom = 121.0
 rect_min_size = Vector2( 0, 1 )
 __meta__ = {
@@ -219,104 +885,5 @@ custom_fonts/font = ExtResource( 2 )
 text = "0"
 align = 1
 valign = 2
-
-[node name="AMS" type="HBoxContainer" parent="V" groups=[
-"setting_group",
-]]
-margin_top = 137.0
-margin_right = 408.0
-margin_bottom = 156.0
-size_flags_horizontal = 3
-script = ExtResource( 4 )
-__meta__ = {
-"_edit_group_": true,
-"_edit_use_anchors_": false
-}
-
-[node name="Lbl" type="Label" parent="V/AMS"]
-margin_right = 88.0
-margin_bottom = 19.0
-custom_fonts/font = ExtResource( 2 )
-text = "LFO Amplit.
-Sensitivity"
-align = 1
-
-[node name="Slider" type="HSlider" parent="V/AMS"]
-margin_left = 92.0
-margin_right = 372.0
-margin_bottom = 19.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-step = 0.1
-allow_greater = true
-tick_count = 11
-ticks_on_borders = true
-
-[node name="Val" type="Label" parent="V/AMS"]
-margin_left = 376.0
-margin_top = 5.0
-margin_right = 408.0
-margin_bottom = 13.0
-rect_min_size = Vector2( 32, 0 )
-custom_fonts/font = ExtResource( 2 )
-text = "0"
-align = 1
-valign = 2
-
-[node name="Banks" type="HBoxContainer" parent="V"]
-margin_top = 172.0
-margin_right = 408.0
-margin_bottom = 188.0
-alignment = 2
-script = ExtResource( 6 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-lfo_type = 1
-
-[node name="lblBank" type="Label" parent="V/Banks"]
-modulate = Color( 1, 1, 1, 0.376471 )
-margin_left = 238.0
-margin_top = 4.0
-margin_right = 318.0
-margin_bottom = 12.0
-custom_fonts/font = ExtResource( 2 )
-text = "LFO Bank: "
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="0" type="Button" parent="V/Banks"]
-margin_left = 322.0
-margin_right = 344.0
-margin_bottom = 16.0
-theme = SubResource( 1 )
-toggle_mode = true
-group = SubResource( 2 )
-text = "A"
-
-[node name="1" type="Button" parent="V/Banks"]
-margin_left = 348.0
-margin_right = 370.0
-margin_bottom = 16.0
-theme = SubResource( 1 )
-toggle_mode = true
-group = SubResource( 2 )
-text = "B"
-
-[node name="2" type="Button" parent="V/Banks"]
-margin_left = 374.0
-margin_right = 396.0
-margin_bottom = 16.0
-theme = SubResource( 1 )
-toggle_mode = true
-group = SubResource( 2 )
-text = "C"
-
-[node name="Blanker" type="Control" parent="V/Banks"]
-margin_left = 400.0
-margin_right = 408.0
-margin_bottom = 16.0
-rect_min_size = Vector2( 8, 0 )
+[connection signal="value_changed" from="AMS/Slider" to="AMS" method="_on_Slider_value_changed"]
 [connection signal="toggled" from="V/chkEnableFilter" to="." method="_on_chkEnableFilter_toggled"]
-[connection signal="value_changed" from="V/AMS/Slider" to="V/AMS" method="_on_Slider_value_changed"]
