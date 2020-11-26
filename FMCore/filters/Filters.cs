@@ -1,48 +1,14 @@
-//Implementation of the Robert Bristow-Johnson filters
+// C# Implementation of the Robert Bristow-Johnson filters
 using System;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using Godot;
 
-
-public class FormantFilter
-{
-	const int PEAKCOUNT=3;
-	RbjFilter[] peaks = new RbjFilter[PEAKCOUNT];
-
-	public float peak0, peak1;  //Peak frequencies
-	public float q, gain;
-
-	public FormantFilter(double mixRate=44100.0)
-	{
-		for(int i=0; i<PEAKCOUNT; i++)
-		{
-			peaks[i] = new RbjFilter(mixRate);
-		}
-	}
-
-	public void Recalc()
-	{
-		peaks[0].calc_filter_coeffs(FilterType.BANDPASS_CSG, peak0, q, gain, false);
-		peaks[1].calc_filter_coeffs(FilterType.BANDPASS_CSG, peak1, q, gain, false);
-	}
-
-	public float Filter(float in0)
-	{
-		return (peaks[0].Filter(in0) + peaks[1].Filter(in0)) / 2.0f;
-	}
-
-	public void Reset()
-	{
-		for(int i=0; i<PEAKCOUNT; i++)  peaks[i].Reset();
-	}
-}
-
-
 // Bandpass CSG = "Bandpass constant skirt gain, peak gain = Q"
 // Bandpass CZPG= "Bandpass constant 0 dB peak gain"
 // Allpass: all frequencies are passed through unattenuated, but the phase of the signal changes around the target frequency. What a phaser does.
 public enum FilterType {NONE, LOWPASS, HIPASS, BANDPASS_CSG, BANDPASS_CZPG, NOTCH, ALLPASS, PEAKING, LOWSHELF, HISHELF}
+
 public class RbjFilter
 {
 
@@ -87,7 +53,7 @@ public class RbjFilter
 		return yn;
 	}
 
-	public void calc_filter_coeffs(FilterType type,double frequency,double q,double db_gain,bool q_is_bandwidth)
+	public void Recalc(FilterType type,double frequency,double q,double db_gain,bool q_is_bandwidth=false)
 	{
 		// temp pi
 		const double temp_pi=3.1415926535897932384626433832795;
@@ -240,5 +206,31 @@ public class RbjFilter
 		a2a0 = (float) (a2/a0);
 	}
 
+
+
+    public class FilterData
+    {
+        FilterType filterType = FilterType.LOWPASS;  //Backwards compatibility with gfmp version 1
+
+        private bool enabled = false;  //Used by Envelope to determine whether to pass the sample to the cutoff filter.
+        public bool Enabled { get => enabled; set => enabled = value; }  //TODO:  Set later to false if filterType is NONE once gfmp v2
+
+        public double cutoff=22050;  //Field is named such for backwards compatibility.  Frequency value.
+        public double resonanceAmp=1.0;  //Resonance amplitude.  Field is named such for backwards compatibility.
+
+
+		FilterData(FilterType f) {filterType = f;}
+
+
+        public override string ToString()
+        {
+            var output=new GdsFMJson.JSONObject();
+            output.AddPrim("frequency", cutoff);
+            output.AddPrim("q", resonanceAmp);
+
+            return output.ToString();
+        }
+
+    }
 
 }

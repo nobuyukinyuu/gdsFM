@@ -168,7 +168,7 @@ public class Operator : Resource
 
         Finalize: 
           //Apply the filter.
-          if (eg.filter.enabled) output = GDSFmLowPass.Filter(output, eg.filter, ref note.cutoffHistory[id][0], ref note.cutoffHistory[id][1]);
+          if (eg.filter.Enabled) output = GDSFmLowPass.Filter(output, eg.filter, ref note.cutoffHistory[id][0], ref note.cutoffHistory[id][1]);
           return output;        
     }
 
@@ -232,14 +232,14 @@ public class Operator : Resource
     }
 
     /// Attempts to load a JSON string into this operator.!--
-    public int FromString(string input, bool ignoreIOtype)
+    public IOError FromString(string input, bool ignoreIOtype)
     {
         var p = JSONData.ReadJSON(input);
-        if (p is JSONDataError) return -1;  // JSON malformed.  Exit early.
+        if (p is JSONDataError) return IOError.JSON_MALFORMED;  // JSON malformed.  Exit early.
         
         var j = (JSONObject) p;
         // var ver = j.GetItem("_version", -1);
-        if (!ignoreIOtype && (j.GetItem("_iotype", "") != _iotype)) return -3;  //Incorrect iotype.  Exit early.
+        if (!ignoreIOtype && (j.GetItem("_iotype", "") != _iotype)) return IOError.INCORRECT_IOTYPE;  //Incorrect iotype.  Exit early.
 
         //If we got this far, the data is probably okay.  Let's try parsing it.......
         // var idk = new List<string>();
@@ -268,12 +268,12 @@ public class Operator : Resource
             
 
         } catch {
-            return -1;
+            return IOError.JSON_MALFORMED;
         }
 
-        return 0;
+        return IOError.OK;
     }
-    public int FromString(string input) { return FromString(input, false); }
+    public IOError FromString(string input) { return FromString(input, false); }
 
 #endregion
 

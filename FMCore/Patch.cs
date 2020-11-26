@@ -481,7 +481,7 @@ public class Patch : Resource
 
         // GD.Print("Filter set ", t);
 
-        filter.calc_filter_coeffs( t, freq, q, 0, false);
+        filter.Recalc( t, freq, q, 0, false);
     }
 
     public void SetFormant(Godot.Collections.Array input, float q, bool reset)
@@ -587,24 +587,24 @@ public class Patch : Resource
 
 
     /// Attempts to load a JSON string into the patch data.  Ignores version data;  useful for clipboard paste operations where data is assumed to be fresh.
-    public int FromString(string input) { return FromString(input, false);}
+    public IOError FromString(string input) { return FromString(input, false);}
 
     /// Attempts to load a JSON string into the patch data.
-    public int FromString(string input, bool ignoreVersion)
+    public IOError FromString(string input, bool ignoreVersion)
     {
         var p = JSONData.ReadJSON(input);
-        if (p is JSONDataError) return -1;  // JSON malformed.  Exit early.
+        if (p is JSONDataError) return IOError.JSON_MALFORMED;  // JSON malformed.  Exit early.
         
         var j = (JSONObject) p;
 
         if (!ignoreVersion){
             var ver = j.GetItem("_version", -1);
-            if (ver < VERSION) {GD.Print("Patch.FromString:  Unknown version number " , ver); return -2;}
+            if (ver < VERSION) {GD.Print("Patch.FromString:  Unknown version number " , ver); return IOError.UNKNOWN_VERSION;}
             else if (ver > VERSION) GD.Print("Patch.FromString:  WARNING, newer patch version", ver ,"detected. Some settings may not load correctly.");
         }
         if (j.GetItem("_iotype", "") != _iotype) {
             GD.Print("Patch.FromString:  Incorrect iotype.  Expected 'patch', got '", j.GetItem("_iotype", ""), "'.");
-            return -3;  //Incorrect iotype.  Exit early.
+            return IOError.INCORRECT_IOTYPE;  //Incorrect iotype.  Exit early.
         }
 
         //If we got this far, the data is probably okay.  Let's try parsing it.......
@@ -696,10 +696,10 @@ public class Patch : Resource
 
 
         } catch {
-            return -1;  // JSON malformed or another error.
+            return IOError.JSON_MALFORMED;  // JSON malformed or another error.
         }
 
-        return 0;
+        return IOError.OK;
     }
 
     /// Copies an instrument (this Patch) in an envelope format understood by BambooTracker.

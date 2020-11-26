@@ -15,6 +15,11 @@ using System.Threading;
 [Flags]  public enum PatchCopyFlags{NONE=0, GENERAL=1,  OPS=2, PG=4, LFO=8, WAVEFORMS=16, ALL=255};
 // [Flags]  public enum LFOCopyFlags{NONE=0, NAME=1, TRANSPOSE=2, GAIN=4, PAN=8, OPS=16, PG=32, LFO=64, WAVEFORMS=128, ALL=255};
 
+namespace GdsFMJson
+{
+    public enum IOError{OK=0, JSON_MALFORMED=-1, UNKNOWN_VERSION=-2, UNSUPPORTED_VERSION=-20, INCORRECT_IOTYPE=-3, }
+}
+
 
 //"Glue" class used for interacting with GDScript code only
 public class glue : Node

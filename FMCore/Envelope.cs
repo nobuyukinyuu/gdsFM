@@ -8,6 +8,7 @@ using GdsFMJson;
 public class Envelope : Node 
 {
     public const string _iotype = "envelope";
+    public const int VERSION = 2;  // Used to determine which io version of the envelope this is, for forwards compatibility.
 
 //This measurement was done against DX7 detune at A-4, where every 22 cycles the tone would change (-detune) samples at a recording rate of 44100hz.
 //See const definitions in glue.cs for more information about the extra-fine detune increment.
@@ -163,7 +164,7 @@ public class Envelope : Node
 
     public double Delay { get => delay; set {_delay = value*SampleRate / 1000; delay=value;} }
 
-    public bool FilterEnabled { get => filter.enabled; set => filter.enabled = value; }
+    public bool FilterEnabled { get => filter.Enabled; set => filter.Enabled = value; }
     public double CutOff { get => filter.cutoff; set {filter.cutoff = value; filter.Recalc(SampleRate);} }
     public double Resonance { get => filter.resonanceAmp; set {filter.resonanceAmp = value; filter.Recalc(SampleRate);} }
 
@@ -488,7 +489,8 @@ public class Envelope : Node
         //Begin constructing a new json object.
         JSONObject p = new JSONObject();
 
-        if (add_iotype)  p.AddPrim("_iotype", _iotype);
+        if (add_iotype)  p.AddPrim("_iotype", _iotype);  //IOType is needed for clipboard safety.
+        else p.AddPrim("_version", VERSION);  //Version number is probably only useful for long-term IO and not clipboard operations.
 
         if (flags.HasFlag(EGCopyFlags.EG)){
              p.AddPrim("ar", ar);
@@ -509,15 +511,18 @@ public class Envelope : Node
             p.AddPrim("rc", rc);
         }
         if (flags.HasFlag(EGCopyFlags.WAVEFORM)){
-            p.AddPrim("waveform", (int) waveform);
+            p.AddPrim("waveform", waveform.ToString());
             p.AddPrim("feedback", feedback);
             // p.AddPrim("filter", filter);
             p.AddPrim("reflect", reflect);
 
-            p.AddPrim("duty", duty);
-            p.AddPrim("_use_duty", (int) _use_duty);
+            if ( add_iotype || (_use_duty == Waveforms.USE_DUTY || waveform == Waveforms.PULSE) )
+            {  //Save a little disk space by not adding these tags if they're unused, but always copy them if it's a clipboard operation.
+                p.AddPrim("_use_duty", (int) _use_duty);
+                p.AddPrim("duty", duty);
+            }
 
-            p.AddPrim("fmTechnique", (int) fmTechnique);
+            p.AddPrim("fmTechnique", fmTechnique.ToString());
             p.AddPrim("techDuty", techDuty);
             p.AddPrim("techReflect", techReflect);
 
@@ -558,18 +563,50 @@ public class Envelope : Node
         return output.ToJSONString(); 
     }
 
-    public int FromString(string input, bool ignoreIOtype)
+    public IOError FromString(string input, bool ignoreIOtype)
     {
         var p = JSONData.ReadJSON(input);
-        if (p is JSONDataError) return -1;  // JSON malformed.  Exit early.        
+        if (p is JSONDataError) return IOError.JSON_MALFORMED;  // JSON malformed.  Exit early.        
         var j = (JSONObject) p;
 
-        if (!ignoreIOtype && (j.GetItem("_iotype", "") != _iotype)) return -3;  //Incorrect iotype.  Exit early.
+        if (!ignoreIOtype && (j.GetItem("_iotype", "") != _iotype)) return IOError.INCORRECT_IOTYPE;  //Incorrect iotype.  Exit early.
+
+        //// Uncomment the below line once Version 1 files are no longer supported.  This version didn't have an EG version tag.
+        // if (j.GetItem("_version", -1) == -1) return IOError.UNSUPPORTED_VERSION;  //Probably a very early version file.
+
+        var version = j.GetItem("_version", 1);  //Backwards compatibility with version 1, which had no tag.  FIXME:  Remove support eventually.
+
 
         //If we got this far, the data is probably okay.  Let's try parsing it.......
         // var idk = new List<string>();
         try
         {
+
+            //Version 2 files use readable enums in the file format.  We need to convert these from integers to the proper enum value if parsing v1 files.
+            if (version==1)  
+            {
+                //Convert enum values to readable ones.
+                if (j.HasItem("waveform")) waveform = (Waveforms) j.GetItem("waveform", (int) waveform);
+                if (j.HasItem("fmTechnique")) fmTechnique = (Waveforms) j.GetItem("fmTechnique", (int) fmTechnique);
+
+                //Get the filter and convert it to the current version style of filter.
+                if (j.HasItem("filter"))
+                {
+                    var filt = (JSONObject) j.GetItem("filter");
+                    // filt.Assign("enabled", ref filter.Enabled);
+                    filter.Enabled = filt.GetItem("enabled", false);
+                    filt.Assign("cutoff", ref filter.cutoff);
+                    filt.Assign("resonanceAmp", ref filter.resonanceAmp);
+                }
+
+            } else {  //Assume the version is current?
+                //Version 2 parse.  Will not process if the tag is of an unknown type (such as future versions) or doesn't exist.
+ 
+                Waveforms wf,tech;
+                if (Enum.TryParse(j.GetItem("waveform", ""), true, out wf)) waveform = wf;
+                if (Enum.TryParse(j.GetItem("fmTechnique", ""), true, out tech))  fmTechnique = tech;
+            }
+
              j.Assign("ar", ref ar);
              j.Assign("dr", ref dr);
              j.Assign("sr", ref sr);
@@ -584,17 +621,12 @@ public class Envelope : Node
             j.Assign("sc", ref sc);
             j.Assign("rc", ref rc);
 
-            if (j.HasItem("waveform")) waveform = (Waveforms) j.GetItem("waveform", (int) waveform);
-
             j.Assign("feedback", ref feedback);
-            // j.Assign("filter", ref filter);
             j.Assign("reflect", ref reflect);
 
             j.Assign("duty", ref duty);
             if (j.HasItem("_use_duty")) _use_duty = (Waveforms) j.GetItem("_use_duty", (int) _use_duty);
 
-
-            if (j.HasItem("fmTechnique")) fmTechnique = (Waveforms) j.GetItem("fmTechnique", (int) fmTechnique);
             j.Assign("techDuty", ref techDuty);
             j.Assign("techReflect", ref techReflect);
 
@@ -604,15 +636,6 @@ public class Envelope : Node
             j.Assign("delay", ref delay);
             j.Assign("fixed_frequency", ref fixed_frequency);            
 
-            //Get the filter
-            if (j.HasItem("filter"))
-            {
-                var filt = (JSONObject) j.GetItem("filter");
-                filt.Assign("enabled", ref filter.enabled);
-                filt.Assign("cutoff", ref filter.cutoff);
-                filt.Assign("resonanceAmp", ref filter.resonanceAmp);
-            }
-
 
             //Set the tables
             if (j.HasItem("ksr"))  ksr.SetValues((JSONObject) j.GetItem("ksr"));
@@ -620,11 +643,11 @@ public class Envelope : Node
             if (j.HasItem("vr"))  vr.SetValues((JSONObject) j.GetItem("vr"));
 
         } catch {
-            return -1;
+            return IOError.JSON_MALFORMED;
         }
 
         RecalcAll();
-        return 0;
+        return IOError.OK;
     }
 
 #endregion //IO

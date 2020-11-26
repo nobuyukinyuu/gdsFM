@@ -66,12 +66,16 @@ static double vibrapos, vibraspeed;  //Used for global low-pass.  Move to Patch?
     //To reduce calculations for a single sample filter, calculations (Q factor, etc) that don't need to be made multiple times can be stored in a data packet.
     public class FilterData
     {
-        public bool enabled = false;  //Used by Envelope to determine whether to pass the sample to the cutoff filter.
-        public double cutoff=44100;  //Cutoff frequency.  Should probably default to sample_rate.
+        FilterType filterType = FilterType.LOWPASS;  //Backwards compatibility with gfmp version 1
+
+        private bool enabled = false;  //Used by Envelope to determine whether to pass the sample to the cutoff filter.
+        public bool Enabled { get => enabled; set => enabled = value; }  //TODO:  Set later to false if filterType is NONE once gfmp v2
+
+        public double cutoff=22050;  //Cutoff frequency.  Should probably default to sample_rate.
         public double resonanceAmp=1.0;  //Resonance amplitude.  MUST BE >= 1.0, NO EXCEPTIONS.
 
-        [System.Runtime.Serialization.IgnoreDataMember]        public double w; // Pole angle
-        [System.Runtime.Serialization.IgnoreDataMember]        public double q; // Pole magnitude
+        [System.Runtime.Serialization.IgnoreDataMember]        double w; // Pole angle
+        [System.Runtime.Serialization.IgnoreDataMember]        double q; // Pole magnitude
         [System.Runtime.Serialization.IgnoreDataMember]        public double r; //res
         [System.Runtime.Serialization.IgnoreDataMember]        public double c; //cut
 
@@ -99,7 +103,7 @@ static double vibrapos, vibraspeed;  //Used for global low-pass.  Move to Patch?
         public override string ToString()
         {
             var output=new GdsFMJson.JSONObject();
-            output.AddPrim("enabled", enabled);
+            output.AddPrim("enabled", Enabled);
             output.AddPrim("cutoff", cutoff);
             output.AddPrim("resonanceAmp", resonanceAmp);
 
