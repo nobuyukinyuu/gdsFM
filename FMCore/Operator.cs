@@ -168,7 +168,9 @@ public class Operator : Resource
 
         Finalize: 
           //Apply the filter.
-          if (eg.filter.Enabled) output = GDSFmLowPass.Filter(output, eg.filter, ref note.cutoffHistory[id][0], ref note.cutoffHistory[id][1]);
+        //   if (eg.filter.Enabled) output = eg.filter.Filter(output, eg.filter, ref note.cutoffHistory[id][0], ref note.cutoffHistory[id][1]);
+          if (eg.filter.Enabled) output = eg.filter.Filter((float) output, ref note.filterHistory[id][0], ref note.filterHistory[id][1], 
+                                                                    ref note.filterHistory[id][2], ref note.filterHistory[id][3]);
           return output;        
     }
 

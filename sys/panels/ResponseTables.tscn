@@ -10,7 +10,7 @@
 [ext_resource path="res://gfx/ui/godot_icons/tab_container_bg.png" type="Texture" id=8]
 [ext_resource path="res://sys/ui/FormantGrid.tscn" type="PackedScene" id=9]
 
-[sub_resource type="StyleBoxTexture" id=6]
+[sub_resource type="StyleBoxTexture" id=1]
 content_margin_left = 16.0
 content_margin_right = 8.0
 texture = ExtResource( 8 )
@@ -24,7 +24,7 @@ expand_margin_right = 3.0
 expand_margin_top = 8.0
 expand_margin_bottom = 3.0
 
-[sub_resource type="ButtonGroup" id=5]
+[sub_resource type="ButtonGroup" id=2]
 
 [sub_resource type="Theme" id=3]
 default_font = ExtResource( 5 )
@@ -42,7 +42,7 @@ Button/styles/pressed = null
 
 [sub_resource type="ButtonGroup" id=4]
 
-[sub_resource type="StyleBoxTexture" id=7]
+[sub_resource type="StyleBoxTexture" id=5]
 content_margin_left = 16.0
 content_margin_right = 8.0
 texture = ExtResource( 7 )
@@ -56,13 +56,13 @@ expand_margin_right = 3.0
 expand_margin_top = 2.0
 expand_margin_bottom = 3.0
 
-[sub_resource type="StyleBoxFlat" id=1]
+[sub_resource type="StyleBoxFlat" id=6]
 draw_center = false
 border_width_bottom = 1
 border_color = Color( 0.8, 0.8, 0.8, 0.25098 )
 expand_margin_bottom = 17.0
 
-[sub_resource type="GDScript" id=2]
+[sub_resource type="GDScript" id=7]
 script/source = "extends OptionButton
 
 
@@ -120,7 +120,7 @@ dest_property = "Vr"
 margin_top = 32.0
 margin_right = 408.0
 margin_bottom = 144.0
-custom_styles/panel = SubResource( 6 )
+custom_styles/panel = SubResource( 1 )
 custom_fonts/font = ExtResource( 5 )
 custom_constants/side_margin = 0
 tab_align = 0
@@ -153,7 +153,7 @@ margin_right = 366.0
 margin_bottom = -17.0
 custom_fonts/font = ExtResource( 5 )
 toggle_mode = true
-group = SubResource( 5 )
+group = SubResource( 2 )
 text = "A"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -172,7 +172,7 @@ margin_right = 392.0
 margin_bottom = -17.0
 custom_fonts/font = ExtResource( 5 )
 toggle_mode = true
-group = SubResource( 5 )
+group = SubResource( 2 )
 text = "B"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -391,7 +391,7 @@ margin_left = 248.0
 margin_top = -37.0
 margin_right = 392.0
 margin_bottom = -13.0
-custom_styles/panel = SubResource( 7 )
+custom_styles/panel = SubResource( 5 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -599,7 +599,7 @@ margin_left = 58.0
 margin_right = 116.0
 size_flags_horizontal = 3
 size_flags_vertical = 0
-custom_styles/panel = SubResource( 1 )
+custom_styles/panel = SubResource( 6 )
 
 [node name="Spacer2" type="Panel" parent="Type"]
 visible = false
@@ -607,7 +607,7 @@ margin_left = 68.0
 margin_right = 152.0
 size_flags_horizontal = 3
 size_flags_vertical = 0
-custom_styles/panel = SubResource( 1 )
+custom_styles/panel = SubResource( 6 )
 
 [node name="Drop" type="OptionButton" parent="Type"]
 margin_left = 66.0
@@ -616,7 +616,7 @@ margin_bottom = 20.0
 rect_min_size = Vector2( 182, 0 )
 size_flags_horizontal = 2
 custom_constants/hseparation = 8
-script = SubResource( 2 )
+script = SubResource( 7 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -885,5 +885,6 @@ custom_fonts/font = ExtResource( 2 )
 text = "0"
 align = 1
 valign = 2
+[connection signal="item_selected" from="Type/Drop" to="." method="_on_FilterType_item_selected"]
 [connection signal="value_changed" from="AMS/Slider" to="AMS" method="_on_Slider_value_changed"]
 [connection signal="toggled" from="V/chkEnableFilter" to="." method="_on_chkEnableFilter_toggled"]

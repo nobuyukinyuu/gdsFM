@@ -7,9 +7,9 @@ func _ready():
 		if o.is_in_group("slider"):
 			o.get_node("Slider").connect("value_changed", self, "_on_slider_change", [o.name])
 
-#	for o in $Filter.get_children():
-#		if o.is_in_group("slider"):
-#			o.get_node("Slider").connect("value_changed", self, "_on_filter_change", [o.name])
+	for o in $TabContainer/A/Filter.get_children():
+		if o.is_in_group("slider"):
+			o.get_node("Slider").connect("value_changed", self, "_on_filter_change", [o.name])
 
 
 func load_settings(envelope):
@@ -45,18 +45,11 @@ func _on_chkEnableFilter_toggled(button_pressed):
 
 #Filters
 func _on_filter_change(value, which):
-	$Filter.get_node(which + "/Val").text = str(value)
-	update_filter()
+#	$Filter.get_node(which + "/Val").text = str(value)
+	$TabContainer/A/Filter.get_node(which + "/Val").text = str(value)
+
+	if global.currentEG:
+		global.currentEG.set(which, value)
 	
 func _on_FilterType_item_selected(index):
-	update_filter(true)
-
-func update_filter(reset=false):
-	if !global.currentPatch:  return
-
-	var output = []
-	output.append($Filter/Type/Drop.selected)
-	output.append($Filter/Hz/Slider.value)
-	output.append($Filter/Q/Slider.value)
-
-	global.currentPatch.SetFilter(output, reset)
+	global.currentEG.set("FilterType", index)

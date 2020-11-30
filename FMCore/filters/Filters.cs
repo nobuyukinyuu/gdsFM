@@ -19,7 +19,6 @@ public class RbjFilter
 	float ou1,ou2,in1,in2;
 
     public static double sample_rate=44100.0;
-	public bool Enabled;
 
 	public void Reset()
 	{
@@ -38,10 +37,30 @@ public class RbjFilter
 		Reset();
 	}
 
+	/// Uses built-in history buffers to this filter.  Can only support one stream per RbjFilter.
 	public float Filter(float in0)
 	{
 		// filter
 		float yn = b0a0*in0 + b1a0*in1 + b2a0*in2 - a1a0*ou1 - a2a0*ou2;
+
+		// push in/out buffers
+		in2=in1;
+		in1=in0;
+		ou2=ou1;
+		ou1=yn;
+
+		// return output
+		return yn;
+	}
+
+	/// Filters a sample based on the specified filter i/o history using our precalculated coefficients.<!---->
+	public float Filter(float in0, ref float in1, ref float in2, ref float ou1, ref float ou2)
+	{
+	    //io format:  in1, in2, out1, out2
+
+		// filter
+		float yn = b0a0*in0 + b1a0*in1 + b2a0*in2 - a1a0*ou1 - a2a0*ou2;
+
 
 		// push in/out buffers
 		in2=in1;
@@ -210,26 +229,53 @@ public class RbjFilter
 
     public class FilterData
     {
-        FilterType filterType = FilterType.LOWPASS;  //Backwards compatibility with gfmp version 1
+		RbjFilter rbj = new RbjFilter();
+        public FilterType filterType = FilterType.NONE;  //Backwards compatibility with gfmp version 1
 
-        private bool enabled = false;  //Used by Envelope to determine whether to pass the sample to the cutoff filter.
-        public bool Enabled { get => enabled; set => enabled = value; }  //TODO:  Set later to false if filterType is NONE once gfmp v2
+        private bool enabled = true;  //Used by Envelope to determine whether to pass the sample to the cutoff filter.
+
+		//Backwards compatibility with V1.  Will return TRUE if a filterType is selected.
+        public bool Enabled { get => filterType != (FilterType.NONE);  set {enabled = value;  /* if (!value) filterType=FilterType.NONE; */ } }
 
         public double cutoff=22050;  //Field is named such for backwards compatibility.  Frequency value.
         public double resonanceAmp=1.0;  //Resonance amplitude.  Field is named such for backwards compatibility.
 
+		public double gain;
 
-		FilterData(FilterType f) {filterType = f;}
+		public FilterData(FilterType f) {filterType = f;}
+		public FilterData(FilterType f, double mixRate) {filterType = f; RbjFilter.sample_rate = mixRate;}
+
+		public void Reset() {rbj.Reset();}
+
+		public void Recalc()
+		{
+			rbj.Recalc(filterType, cutoff, resonanceAmp, gain);
+		}
+
+		public float Filter(float sample)
+		{
+			return rbj.Filter(sample);
+		}
+
+		public float Filter(float sample, ref float in1, ref float in2, ref float ou1, ref float ou2)
+		{
+			return rbj.Filter(sample, ref in1, ref in2, ref ou1, ref ou2);
+		}
 
 
         public override string ToString()
         {
             var output=new GdsFMJson.JSONObject();
+
+			output.AddPrim("type", filterType.ToString());
             output.AddPrim("frequency", cutoff);
             output.AddPrim("q", resonanceAmp);
+            output.AddPrim("gain", gain);
 
-            return output.ToString();
+            return output.ToJSONString();
         }
+
+		// public GdsFMJson.JSONObject 
 
     }
 

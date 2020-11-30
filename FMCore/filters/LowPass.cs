@@ -107,7 +107,7 @@ static double vibrapos, vibraspeed;  //Used for global low-pass.  Move to Patch?
             output.AddPrim("cutoff", cutoff);
             output.AddPrim("resonanceAmp", resonanceAmp);
 
-            return output.ToString();
+            return output.ToJSONString();
         }
 
     }

@@ -61,7 +61,7 @@ public class Envelope : Node
     //CUSTOM STUFF
 	public Waveforms waveform = Waveforms.SINE;
 	public double feedback = 0;  //Operator feedback only used in op chain termini.
-    public GDSFmLowPass.FilterData filter = new GDSFmLowPass.FilterData(Patch.sample_rate);  //Lowpass cutoff + resonance filter.
+    public RbjFilter.FilterData filter = new RbjFilter.FilterData(FilterType.NONE);  //Lowpass cutoff + resonance filter.
     public bool reflect = false;  //Waveform reflection.  Inverts sine phase, makes sawtooth point to the right, etc.
 
 	public double duty = 0.5;  //Duty cycle is only used for pulse right now
@@ -164,9 +164,14 @@ public class Envelope : Node
 
     public double Delay { get => delay; set {_delay = value*SampleRate / 1000; delay=value;} }
 
-    public bool FilterEnabled { get => filter.Enabled; set => filter.Enabled = value; }
-    public double CutOff { get => filter.cutoff; set {filter.cutoff = value; filter.Recalc(SampleRate);} }
-    public double Resonance { get => filter.resonanceAmp; set {filter.resonanceAmp = value; filter.Recalc(SampleRate);} }
+    //Filter related properties.  Some of these are for backwards-compatibility only.
+    public bool FilterEnabled { get => filter.Enabled; set => filter.Enabled = value; }  //Backwards compatibility
+    public double CutOff { get => filter.cutoff; set {filter.cutoff = value; filter.Recalc();} } //Backwards compatibility
+    public double Resonance { get => filter.resonanceAmp; set {filter.resonanceAmp = value; filter.Recalc();} } //Backwards compatibility
+    public double Hz { get => filter.cutoff; set {filter.cutoff = value; filter.Recalc();} }  //Filter effective frequency
+    public double Q { get => filter.resonanceAmp; set {filter.resonanceAmp = value; filter.Recalc();} }
+    public double Gain { get => filter.gain; set {filter.gain = value; filter.Recalc();} }
+    public FilterType FilterType {get=> filter.filterType; set {filter.Reset(); filter.filterType=value;  filter.Recalc();} }  
 
 
     // True, internal values referenced by the operator to reduce re-calculating
@@ -216,7 +221,7 @@ public class Envelope : Node
         ksl.RecalcValues();
         vr.RecalcValues();
 
-        filter.Recalc(SampleRate);
+        filter.Recalc();
         update_multiplier();
         recalc_adsr();
     }
@@ -576,7 +581,6 @@ public class Envelope : Node
 
         var version = j.GetItem("_version", 1);  //Backwards compatibility with version 1, which had no tag.  FIXME:  Remove support eventually.
 
-
         //If we got this far, the data is probably okay.  Let's try parsing it.......
         // var idk = new List<string>();
         try
@@ -589,15 +593,14 @@ public class Envelope : Node
                 if (j.HasItem("waveform")) waveform = (Waveforms) j.GetItem("waveform", (int) waveform);
                 if (j.HasItem("fmTechnique")) fmTechnique = (Waveforms) j.GetItem("fmTechnique", (int) fmTechnique);
 
-                //Get the filter and convert it to the current version style of filter.
-                if (j.HasItem("filter"))
-                {
-                    var filt = (JSONObject) j.GetItem("filter");
-                    // filt.Assign("enabled", ref filter.Enabled);
-                    filter.Enabled = filt.GetItem("enabled", false);
-                    filt.Assign("cutoff", ref filter.cutoff);
-                    filt.Assign("resonanceAmp", ref filter.resonanceAmp);
-                }
+            if (j.HasItem("filter"))
+            {
+                var filt = (JSONObject) j.GetItem("filter");
+                filter.Enabled = filt.GetItem("enabled", false);
+                filt.Assign("cutoff", ref filter.cutoff);
+                filt.Assign("resonanceAmp", ref filter.resonanceAmp);
+            }
+                filter.filterType = FilterType.LOWPASS;  //This was the only type of filter supported by v1.
 
             } else {  //Assume the version is current?
                 //Version 2 parse.  Will not process if the tag is of an unknown type (such as future versions) or doesn't exist.
@@ -605,6 +608,21 @@ public class Envelope : Node
                 Waveforms wf,tech;
                 if (Enum.TryParse(j.GetItem("waveform", ""), true, out wf)) waveform = wf;
                 if (Enum.TryParse(j.GetItem("fmTechnique", ""), true, out tech))  fmTechnique = tech;
+
+                if (j.HasItem("filter"))
+                {
+                    //Check to see if a valid type was specified.  If not, set filterType to NONE.
+                    var filt = (JSONObject) j.GetItem("filter");
+                    FilterType ft = FilterType.NONE;
+
+                    //Backwards compatibility with "Enabled" field.  Always set Enabled to TRUE for v2.  FilterType determines filtering.
+                    filter.Enabled = true;
+                    if (Enum.TryParse(j.GetItem("type", "NONE"), true, out ft))  filter.filterType = ft;
+                    
+                    filt.Assign("frequency", ref filter.cutoff);
+                    filt.Assign("q", ref filter.resonanceAmp);
+                    filt.Assign("gain", ref filter.gain);
+                }
             }
 
              j.Assign("ar", ref ar);
