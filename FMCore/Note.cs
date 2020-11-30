@@ -33,7 +33,7 @@ public class Note : IComparable<Note>
     // public List<Double[]> cutoffHistory = new List<Double[]>{new double[]{0.0, 0.0}, new double[]{0.0, 0.0},new double[]{0.0, 0.0},new double[]{0.0, 0.0}, };
 
     //format:  in1, in2, out1, out2
-    public List<float[]> filterHistory = new List<float[]>{new float[]{0,0,0,0}, new float[]{0,0,0,0},new float[]{0,0,0,0},new float[]{0,0,0,0}, };
+    public List<float[]> filterHistory = new List<float[]>{new float[8], new float[8],new float[8],new float[8], };
 
 //Similar to the above 2 values, this field smooths out the amplitude modulation when the note is attached to a patch with AMS enabled.
     public List<double> ampBuffer = new List<double>(new double[16]);

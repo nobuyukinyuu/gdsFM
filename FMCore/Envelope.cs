@@ -619,7 +619,7 @@ public class Envelope : Node
 
                     //Backwards compatibility with "Enabled" field.  Always set Enabled to TRUE for v2.  FilterType determines filtering.
                     filter.Enabled = true;
-                    if (Enum.TryParse(j.GetItem("type", "NONE"), true, out ft))  filter.filterType = ft;
+                    if (Enum.TryParse(filt.GetItem("type", ""), true, out ft))  filter.filterType = ft;
                     
                     filt.Assign("frequency", ref filter.cutoff);  filter.cutoff = Math.Min(filter.cutoff, 22050);
                     filt.Assign("q", ref filter.resonanceAmp);

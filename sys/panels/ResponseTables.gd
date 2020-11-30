@@ -60,4 +60,5 @@ func _on_filter_change(value, which):
 		global.currentEG.set(which, value)
 	
 func _on_FilterType_item_selected(index):
+	if !global.currentEG:  return
 	global.currentEG.set("FilterType", index)

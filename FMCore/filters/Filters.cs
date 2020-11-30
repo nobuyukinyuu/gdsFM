@@ -229,7 +229,7 @@ public class RbjFilter
 
     public class FilterData
     {
-		RbjFilter rbj = new RbjFilter();
+		RbjFilter rbj;// = new RbjFilter();
         public FilterType filterType = FilterType.NONE;  //Backwards compatibility with gfmp version 1
 
         private bool enabled = true;  //Used by Envelope to determine whether to pass the sample to the cutoff filter.
@@ -239,11 +239,11 @@ public class RbjFilter
 
         public double cutoff=22050;  //Field is named such for backwards compatibility.  Frequency value.
         public double resonanceAmp=1.0;  //Resonance amplitude.  Field is named such for backwards compatibility.
-
 		public double gain;
 
-		public FilterData(FilterType f) {filterType = f;}
-		public FilterData(FilterType f, double mixRate) {filterType = f; RbjFilter.sample_rate = mixRate;}
+		public FilterData() {rbj=new RbjFilter();}
+		public FilterData(FilterType f) {filterType = f; rbj=new RbjFilter();}
+		public FilterData(FilterType f, double mixRate) {filterType = f; rbj=new RbjFilter(mixRate);}
 
 		public void Reset() {rbj.Reset();}
 
@@ -262,6 +262,11 @@ public class RbjFilter
 			return rbj.Filter(sample, ref in1, ref in2, ref ou1, ref ou2);
 		}
 
+		//Overridable call for compatibility with FormantFilterData
+		public virtual float Filter(float sample,  ref float[] filterHistory)
+		{ return Filter(sample, ref filterHistory[0], ref filterHistory[1], 
+                               	ref filterHistory[2], ref filterHistory[3]);
+		}
 
         public override string ToString()
         {
@@ -274,9 +279,22 @@ public class RbjFilter
 
             return output.ToJSONString();
         }
-
-		// public GdsFMJson.JSONObject 
-
     }
+
+	public class FormantFilterData : FilterData
+	{
+		public FormantFilter rbj; //= new FormantFilter();
+		public double freq2;  //Peak frequency 2 for formant filter
+
+		FormantFilterData() {rbj=new FormantFilter();}
+		public FormantFilterData(FilterType f) {filterType = f; rbj=new FormantFilter();}
+		public FormantFilterData(FilterType f, double mixRate) {filterType = f; rbj=new FormantFilter(mixRate);}
+
+
+		public override float Filter(float sample,  ref float[] filterHistory)
+		{ return Filter(sample, ref filterHistory[0], ref filterHistory[1], 
+                               	ref filterHistory[2], ref filterHistory[3]);
+		}
+	}
 
 }
