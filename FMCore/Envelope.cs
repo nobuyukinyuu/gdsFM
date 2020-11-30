@@ -595,12 +595,14 @@ public class Envelope : Node
 
             if (j.HasItem("filter"))
             {
+                filter.Enabled = true;
                 var filt = (JSONObject) j.GetItem("filter");
-                filter.Enabled = filt.GetItem("enabled", false);
-                filt.Assign("cutoff", ref filter.cutoff);
+                var enabled = filt.GetItem("enabled", false);
+                filter.filterType = enabled? FilterType.LOWPASS : FilterType.NONE;  //Lowpass was the only type of filter supported by v1.
+                filt.Assign("cutoff", ref filter.cutoff);  filter.cutoff = Math.Min(filter.cutoff, 22050);
                 filt.Assign("resonanceAmp", ref filter.resonanceAmp);
+                filter.gain = 0;
             }
-                filter.filterType = FilterType.LOWPASS;  //This was the only type of filter supported by v1.
 
             } else {  //Assume the version is current?
                 //Version 2 parse.  Will not process if the tag is of an unknown type (such as future versions) or doesn't exist.
@@ -619,7 +621,7 @@ public class Envelope : Node
                     filter.Enabled = true;
                     if (Enum.TryParse(j.GetItem("type", "NONE"), true, out ft))  filter.filterType = ft;
                     
-                    filt.Assign("frequency", ref filter.cutoff);
+                    filt.Assign("frequency", ref filter.cutoff);  filter.cutoff = Math.Min(filter.cutoff, 22050);
                     filt.Assign("q", ref filter.resonanceAmp);
                     filt.Assign("gain", ref filter.gain);
                 }

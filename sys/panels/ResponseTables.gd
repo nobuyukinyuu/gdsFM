@@ -30,6 +30,14 @@ func load_settings(envelope):
 			setting.load_settings()  #Applies to AMS settings, maybe others
 
 	$V/chkEnableFilter.pressed = envelope.FilterEnabled
+	
+	for setting in $TabContainer/A/Filter.get_children():
+		var s = setting.name
+		if setting.is_in_group("slider"):
+			get_node("TabContainer/A/Filter/%s/Slider" % setting.name).value = envelope.get(s)
+			
+	$Type/Drop.selected = envelope.get("FilterType")
+		
 
 	
 func _on_slider_change(value, which):
