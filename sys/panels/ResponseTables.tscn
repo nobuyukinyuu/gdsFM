@@ -130,6 +130,7 @@ __meta__ = {
 }
 
 [node name="A" type="Tabs" parent="TabContainer"]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 16.0
@@ -322,7 +323,6 @@ align = 1
 valign = 2
 
 [node name="B" type="Tabs" parent="TabContainer"]
-visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 16.0
