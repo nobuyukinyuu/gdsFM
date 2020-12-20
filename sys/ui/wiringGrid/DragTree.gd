@@ -1,67 +1,88 @@
 tool
 extends Control
 
+const spk = preload("res://gfx/ui/icon_speaker.svg")
 var tree = {"1": "2,4"}
 var font = preload("res://gfx/fonts/NoteFont.tres")
 
+var total_ops = 4
 var opsPerLevel = [[],[],[],[]]  #n-elements long where n is the total number of operators
 var op:opNode = opNode.new()
 
+enum targets {nothing, output, operator, swap}
+const action_str = ["", "//\nOut:" ,">>\nMods", "Swaps\nwith"]
+export(targets) var target_type = targets.nothing
+var target_id = 0
+
+export (int, 16, 0xFFFF) var tile_size = 32
+
+
 func _ready():
-#	var d = opNode.new()
-#	d.id = 5
-#
-#	var a = opNode.new()
-#	a.id = 1
-#
-#	var b = opNode.new()
-#	b.id = 2
-#
-#	var c = opNode.new()
-#	c.id = 3
-#	b.connections = [c]
-#	a.connections = [c]
-#
-#	op.connections = [a,b,d]
+#	$C.rect_size.x = tile_size * 1.5
 	pass
 	
 func _draw():
-	draw_op(op.id, Vector2.ZERO,0, op.connections, Vector2(-32,-32))
+	$C.visible = true
+	match target_type:
+		targets.swap:
+			draw_op(op.id, Vector2.ZERO,0, op.connections, Vector2(-tile_size, -tile_size), 0.25)
+			draw_box(op.id, Vector2(-tile_size, -tile_size))
+			draw_box(target_id, Vector2(-tile_size*1.5, tile_size ))
+		targets.operator:
+			draw_op(op.id, Vector2.ZERO,0, op.connections, Vector2(-tile_size, -tile_size))
+#			draw_box(target_id, Vector2(tile_size * 1.5, -tile_size))
+			draw_box(target_id, Vector2(-tile_size*1.5, tile_size ))
+		targets.nothing:
+			$C.visible = false
+			draw_op(op.id, Vector2.ZERO,0, op.connections, -Vector2.ONE * tile_size, 0.4)
+			draw_box(op.id, Vector2(-tile_size, -tile_size))
+		targets.output:
+			draw_op(op.id, Vector2.ZERO,0, op.connections, Vector2(-tile_size, -tile_size), 0.7)
+			draw_box(op.id, Vector2(-tile_size, -tile_size))
+			var pos = Vector2(-tile_size*1.5, tile_size)
+			var half = Vector2.ONE * tile_size / 2
+			draw_circle(pos+half, tile_size/2 + 2, ColorN("black", 0.75))
+			draw_arc(pos+half, tile_size/2, 0, TAU,24,ColorN("white", 0.5))
+			draw_texture(spk,pos+half - spk.get_size()/2)
+	$C/Label.text = action_str[target_type]
 	resetLevels()
 
-func draw_op(id, pos:Vector2, level=0, connections=[], offset=Vector2.ZERO):
+
+func draw_op(id, pos:Vector2, level=0, connections=[], offset=Vector2.ZERO, alpha=1.0):
 	#Consider opsPerLevel to contain arrays of the ops that wer used on each level,
 	#Then we can check where to point to them based on position, otherwise we add a free slot
 	
 	var pos2=pos+offset
 	
-	draw_rect(Rect2(pos2+Vector2.ONE, Vector2(32,32)), ColorN("black"), false)
-	draw_rect(Rect2(pos2, Vector2(32,32)), ColorN("black", 0.5), true)
-	draw_rect(Rect2(pos2, Vector2(32,32)), ColorN("white"), false)
-	
-	draw_string(font, pos2 + Vector2(13,13), str(id+1), ColorN("black"))
-	draw_string(font, pos2 + Vector2(12,12), str(id+1), ColorN("white"))
+	draw_box(id, pos2, alpha)
+
+
+	var half_tile = tile_size / 2
+	var qtr_tile = tile_size / 4
 	
 	for connection in connections:
 		var slot_pos:Vector2 = get_slot_pos(connection.id, level) + offset #+ Vector2(pos.x,0)
-		var a = pos2 + Vector2(16 - 8*sign(pos2.x-slot_pos.x), 4)
-		var b = slot_pos + Vector2(16 + 8*sign(pos2.x-slot_pos.x), 28)
+		var a = pos2 + Vector2(half_tile - qtr_tile*sign(pos2.x-slot_pos.x), qtr_tile/2)
+		var b = slot_pos + Vector2(half_tile + qtr_tile*sign(pos2.x-slot_pos.x), tile_size - qtr_tile/2)
 
-		draw_op(connection.id, slot_pos-offset, level+1, connection.connections, offset)
-		draw_arrow(a,b)
+		draw_op(connection.id, slot_pos-offset, level+1, connection.connections, offset, alpha)
+		draw_arrow(a,b, ColorN("white", alpha))
 
 func get_slot_pos(id, level):
 	var output
+	var tile_spaced = tile_size + tile_size/4
 	var idx = opsPerLevel[level].find(id)
 	if idx >=0:
-		output = Vector2((idx) * 40, (level+1) * -40)
+		output = Vector2((idx) * tile_spaced, (level+1) * -tile_spaced)
 	else:
-		output = Vector2(opsPerLevel[level].size() * 40, (level+1) * -40)
+		output = Vector2(opsPerLevel[level].size() * tile_spaced, (level+1) * -tile_spaced)
 		opsPerLevel[level].append(id)
 	return output
 
 func resetLevels():
-	opsPerLevel = [[],[],[],[]]
+	opsPerLevel.clear()
+	for i in total_ops:
+		opsPerLevel.append([])
 
 func draw_arrow(a, b, color=Color(1,1,1,1), width=1.0):
 	var arrow_spread= PI/6
@@ -79,6 +100,17 @@ func draw_arrow(a, b, color=Color(1,1,1,1), width=1.0):
 	draw_line(a,b,color,width, true)
 	draw_line(a,pts[0],color,width, true)
 	draw_line(a,pts[2],color,width, true)
+
+func draw_box(id, pos, alpha=1.0):
+	draw_rect(Rect2(pos-Vector2.ONE, Vector2.ONE * (tile_size+2)), ColorN("black", alpha), false)
+	draw_rect(Rect2(pos, Vector2.ONE * tile_size), ColorN("black", alpha*0.75), true)
+	draw_rect(Rect2(pos, Vector2.ONE * tile_size), ColorN("white", alpha*0.5), false)
+	
+	var font_pos = Vector2.ONE * tile_size/2 - Vector2(4,4)
+	
+	draw_string(font, pos + font_pos + Vector2.ONE, str(id+1), ColorN("black", alpha))
+	draw_string(font, pos + font_pos, str(id+1), ColorN("white", alpha))
+
 
 class opNode:
 	var id = 0  #Must be nonzero

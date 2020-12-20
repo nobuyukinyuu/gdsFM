@@ -244,7 +244,10 @@ public Channel PreviewNotes = new Channel();
     public void TurnOffNote(int note_number)
     {
         Note note = PreviewNotes.FindActiveNote(note_number);        
+
+        #if DEBUG
         if (note==null) throw new NullReferenceException("Note not found?");
+        #endif
 
         // note.releaseSample = note.samples;
         // note.pressed = false;

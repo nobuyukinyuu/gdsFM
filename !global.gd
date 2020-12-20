@@ -86,6 +86,12 @@ func get_secs():
 func log2(n):
 	return log(n) / log(2)
 
+func arr_replace(arr:Array, a, b):
+	var idx = arr.find(a)
+	if idx >= 0:
+		arr[idx] = b
+		return true
+	return false
 
 class Instr:
 	var rr = 1 setget set_release_time  #Float between 0-1
