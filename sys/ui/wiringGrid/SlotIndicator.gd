@@ -170,7 +170,8 @@ func request_move(source, dest):
 	if dest_op != null:  dest_op = ops[dest_op]  #Only fetch the opNode if it's actually there.
 												#If not, we'll find a proper spot to connect to later.
 
-	if dest_op != null:  #Determine whether the destination is in the connections of the source op.
+	if dest_op != null:  
+		#Determine whether the destination is in the connections of the source op.
 		#If so, swap their connections and grid positions and call it a day.
 		if source_op.has_connection_to(dest_op):
 			source_op.swap_connections_with(dest_op)  
@@ -190,31 +191,51 @@ func request_move(source, dest):
 			
 		else:
 			#We bingo'd a destination that's free to connect to, so add the source op to the dest op connections.
-			#We also need to update the grid to reflect the new stack, and all ops in the tree need free slots 
-			#found on the levels we put them on.
-			
-			
-			#Remove the tree from the grid and break source ops' connections to it.
+			#First, remove the tree from the grid and break source ops' connections to it.
 			remove_tree_at(source)
-			break_all_connections_to(source_op)
-			
-			#Now connect the source to the destination and find slots for the tree.
-			dest_op.connections.append(source_op)
+			move_tree(source_op, dest)
 
-			#The ops for the tree have invalid grid positions, so we need to find free positions for all of them.
-			#Using the source_op's Y position, we find an open space in the level it inhabits on the op stack.
-			#The first call to recursive func should be level of dest-1. This calls func for all connections
-			#until each one is found a home.
-			find_free_slots(source_op, dest.y-1, dest.x)
-			
-			#eg:  find_free_slots(source_op, destPos) calls func(each_connection_op, source_op.gridPos)
-			#This is different from finding a connection point, which we do later if we didn't bingo.
-			#TODO ======================================
-			
-			#Next:  redraw grid and exit out
-			redraw_grid()
-			return
+	else:  #User tried to drop on an empty slot.  Try to find a connection point beneath the drop point.
+		#We shouldn't try to find a connection point with a grid that contains our tree, so let's remove
+		#The tree from the grid before finding a connection point.
+		remove_tree_at(source)
+		break_all_connections_to(source_op)
+		print ("Empty slot at ", dest)
+
+		var connection_point = find_connection_point(dest)
+		if connection_point.y == -1:  #Nothing to connect to.  Make the tree into a new stack.
+			connection_point.y = total_ops-1
+			move_tree(source_op, connection_point, false)
+		else:  #We found an operator to connect to!
+			move_tree(source_op, connection_point)
+		return
+
+
+#Moves an operator located at source and places at dest.  Careful not to replace dest directly unless empty.
+func move_tree(source_op, dest, append_to_dest=true):
+	var dest_op = getGridID(dest)
+	if dest_op != null:  
+		dest_op = ops[dest_op]  #Only fetch the opNode if it's actually there.
+	elif dest_op==null and !append_to_dest:
+		print ("move_tree(): Nothing to attach to.")
+
+	#Remove the tree from the grid and break source ops' connections to it.
+	break_all_connections_to(source_op)
 	
+	#Now connect the source to the destination and find slots for the tree.
+	if append_to_dest:  dest_op.connections.append(source_op)
+	var dest_offset = 1 if append_to_dest else 0
+
+	#The ops for the tree have invalid grid positions, so we need to find free positions for all of them.
+	#Using the source_op's Y position, we find an open space in the level it inhabits on the op stack.
+	#The first call to recursive func should be level of dest-1. This calls func for all connections
+	#until each one is found a home.
+	find_free_slots(source_op, dest.y-dest_offset, dest.x)
+
+	#Next:  redraw grid and exit out
+	redraw_grid()
+	return
+
 
 func find_free_slots(op, level:int, start_from=0):
 	print("Looking for free slot for OP%s on level %s starting at %s..." % [op.id, level, start_from])
@@ -276,9 +297,13 @@ func find_connection_point(dest):
 	#Get the first free slot below where the user dropped his tree.
 	var free_x = total_ops
 	for i in range(dest.y, total_ops):
-		
-		pass   #TODO================================
-	
+		var pos = Vector2(dest.x, i)
+		if getGridID(pos) != null:  
+			print ("find_connection_point(): Connection point found at ", pos)
+			return pos
+
+	print ("find_connection_point(): Converting tree to carrier....", Vector2(dest.x, -1))
+	return Vector2(dest.x, -1)
 
 
 

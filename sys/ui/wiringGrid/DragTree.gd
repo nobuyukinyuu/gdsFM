@@ -1,11 +1,10 @@
-tool
 extends Control
 
 const spk = preload("res://gfx/ui/icon_speaker.svg")
 var tree = {"1": "2,4"}
 var font = preload("res://gfx/fonts/NoteFont.tres")
 
-var total_ops = 4
+var total_ops = 4 setget set_total_ops
 var opsPerLevel = [[],[],[],[]]  #n-elements long where n is the total number of operators
 var op:opNode = opNode.new()
 
@@ -16,6 +15,9 @@ var target_id = 0
 
 export (int, 16, 0xFFFF) var tile_size = 32
 
+func set_total_ops(val):
+	total_ops = val
+	resetLevels()
 
 func _ready():
 #	$C.rect_size.x = tile_size * 1.5
