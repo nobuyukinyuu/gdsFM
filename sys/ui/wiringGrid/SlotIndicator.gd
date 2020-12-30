@@ -11,6 +11,7 @@ var _grid = []  #References to opNodes in a particular grid position
 var ops = []  #array of each operator being used and its connections
 var isReady=false
 
+var manual_src_pos = Vector2.ONE * -1
 
 func _ready():
 #	reinit_grid(total_ops)
@@ -21,6 +22,8 @@ func _ready():
 	reset_default_op_positions()
 	
 	update()
+
+
 
 func reset_focus(val):
 	prints("unfocusing", last_slot_focused, "and focusing", val)
@@ -180,6 +183,10 @@ func request_move(source, dest):
 				global.arr_replace(o.connections, source_op, 0xFFFF)
 				global.arr_replace(o.connections, dest_op, source_op)
 				global.arr_replace(o.connections, 0xFFFF, dest_op)
+
+				global.arr_replace(o.manual_connections, source_op, 0xFFFF)
+				global.arr_replace(o.manual_connections, dest_op, source_op)
+				global.arr_replace(o.manual_connections, 0xFFFF, dest_op)
 			
 			#Now swap their grid positions.
 			setGridID(dest, source_op.id)
@@ -221,10 +228,12 @@ func move_tree(source_op, dest, append_to_dest=true):
 
 	#Remove the tree from the grid and break source ops' connections to it.
 	break_all_connections_to(source_op)
-	
+
 	#Now connect the source to the destination and find slots for the tree.
 	if append_to_dest:  dest_op.connections.append(source_op)
 	var dest_offset = 1 if append_to_dest else 0
+
+	
 
 	#The ops for the tree have invalid grid positions, so we need to find free positions for all of them.
 	#Using the source_op's Y position, we find an open space in the level it inhabits on the op stack.
@@ -233,6 +242,7 @@ func move_tree(source_op, dest, append_to_dest=true):
 	find_free_slots(source_op, dest.y-dest_offset, dest.x)
 
 	#Next:  redraw grid and exit out
+	break_bad_connections()
 	redraw_grid()
 	return
 
@@ -268,8 +278,51 @@ func break_all_connections_to(source_op):
 	for op in ops:
 		var idx = op.connections.find(source_op)
 		if idx >= 0: op.connections.remove(idx)
-	
-	
+
+#func break_manual_connections_in(source_op, recursive=true):
+#	while not source_op.manual_connections.empty():
+#		var lower_op = source_op.manual_connections.pop_back()
+##		print ("breaking connection from %s to %s..." % [source_op.id+1, lower_op.id+1])
+#		global.arr_remove_all(lower_op.connections, source_op)
+#
+#	if !recursive:  return
+#	for connection in source_op.connections:
+#		break_manual_connections_in(connection)
+#
+#func break_bad_connections(source_op):
+#	var bad_connections = []
+#	for dest_op in source_op.manual_connections:
+#		if source_op.gridPos.y >= dest_op.gridPos.y:
+#			#Uh oh.  Bad connection.  Mark it.
+#			bad_connections.append(dest_op)
+#
+#	for o in bad_connections:
+#		print ("Breaking bad connection from %s to %s" % [source_op.id+1, o.id+1])
+#		global.arr_remove_all(source_op.manual_connections, o)
+#		global.arr_remove_all(o.connections, source_op)
+#
+#	#Recursively check
+#	for connection in source_op.connections:
+#		break_bad_connections(connection)
+
+#Checks manual connections for anything that breaks the rules.
+func break_bad_connections():
+	for op in ops:
+		var flagged_indices = []
+		for i in op.manual_connections.size():
+			var connection = op.manual_connections[i]
+			if not op.gridPos.y < connection.gridPos.y:
+#				op.manual_connections.remove(i)
+				flagged_indices.append(connection)
+			if connection.connections.has(op):
+#				op.manual_connections.remove(i)
+				flagged_indices.append(connection)
+		
+		for j in flagged_indices:
+#			op.manual_connections.remove(j)
+			global.arr_remove_all(op.manual_connections, j)
+	update()			
+
 #Removes an entire operator tree off the grid.
 func remove_tree_at(gridPos):
 	if gridPosIsEmpty(gridPos):
@@ -286,6 +339,8 @@ func remove_tree_at(gridPos):
 	
 	for id in ids.keys():
 		resetGridID(ops[id].gridPos)
+#		break_manual_connections_in(ops[id])
+
 
 
 
@@ -309,7 +364,7 @@ func find_connection_point(dest):
 
 #======================= DRAW ROUTINES ================================
 func _draw():
-	#Draw the output diagram
+	#Draw the "connection to output" diagram
 	var tile_size = rect_size / total_ops
 	var y = rect_size.y - tile_size.y/4
 
@@ -328,7 +383,25 @@ func _draw():
 		for connection in op.connections:
 			draw_connection(op.gridPos, connection.gridPos)
 
-func draw_connection(source, dest):
+	for op in ops:
+		for dest in op.manual_connections:
+			var dist = (half*0.002) * (dest.gridPos.y - op.gridPos.y)
+			var dir = sign(0.01+ (dest.gridPos.x - op.gridPos.x))
+#			var nudge = Vector2(0.01*dir + dist * dir, -dist+0.1)
+			var nudge = Vector2(0.01*dir + dist * dir, 0)
+			if sign((dest.gridPos.x - op.gridPos.x)) == 0:  
+				nudge.x *=2.5
+				nudge.x -= 0.1
+#			draw_connection(dest.gridPos+nudge, op.gridPos+nudge, Color(1,0,0.5, 1))
+			draw_connection(dest.gridPos+nudge, op.gridPos+nudge, ColorN("yellow", 0.75))
+			
+	if manual_src_pos.x > -1:
+		draw_line(manual_src_pos * tile_size + Vector2(half,half)+Vector2.ONE, 
+					get_local_mouse_position()+Vector2.ONE, ColorN("black", 0.85), 1.0, true)
+		draw_line(manual_src_pos * tile_size + Vector2(half,half), get_local_mouse_position(),
+					ColorN("yellow", 0.5), 1.0, true)
+
+func draw_connection(source, dest, color=Color(1,1,1,1)):
 	#Translate the connection point to the control's location on the grid.
 	var tile_size = rect_size / total_ops
 	source *= tile_size
@@ -344,7 +417,7 @@ func draw_connection(source, dest):
 	source.y -= nudge.y
 	dest.y += nudge.y
 	
-	draw_arrow(source, dest) 
+	draw_arrow(source, dest, color) 
 	
 func draw_arrow(a, b, color=Color(1,1,1,1), width=1.0):
 	var arrow_spread= PI/6
@@ -363,17 +436,70 @@ func draw_arrow(a, b, color=Color(1,1,1,1), width=1.0):
 	draw_line(a,pts[2],color,width, true)
 
 
-func _onSlotRightClicked(id):
-	var slot = get_node(str(id))
-	if slot.id < 0:
-		slot.hint_tooltip = "Slot %s: (Nothing here)" % id
-	else:
-		slot.hint_tooltip = "Slot %s. %s" % [id, ops[slot.id].get_connection_string()]
+#======================= GUI ROUTINES ================================
+func _onSlotRightClicked(pos, pressed):
+	if pressed:
+		#Start a manual connection request.
+		print ("Starting manual connection at ", pos)
+		manual_src_pos = pos
+		update()
+
+func _gui_input(event):
+	if event is InputEventMouseButton:
+		if event.button_index == BUTTON_RIGHT:
+			if !event.pressed:
+				var tile_size = rect_size / total_ops
+				var dest = (get_local_mouse_position() / tile_size).floor()
+				print ("Requesting manual connection at ", dest)
+				request_connection(manual_src_pos, dest)
+				manual_src_pos = Vector2.ONE * -1
+				update()
+		return
+	if event is InputEventMouseMotion and manual_src_pos.x > -1:
+		#We're busy drawing a manual connection.  Update the control.
+		update()
+	
+#Requests a manual connection between two operators.
+func request_connection(source, dest):
+	if source.x >= total_ops or dest.x >= total_ops or source.x < 0 or dest.x < 0:  return
+	if source.y >= total_ops or dest.y >= total_ops or source.y < 0 or dest.y < 0:  return
+	if dest.y <= source.y:  
+		print("request_connection():  Destination operator must be at a lower level to connect")
+		return
+	
+	
+	var source_op = getGridID(source)
+	var dest_op = getGridID(dest)
+	if source_op==null or dest_op==null:
+		print("request_connection():  Both source %s and destination %s must be valid operators."
+				 % [source_op, dest_op])
+		return
+	
+	#If we have reached this point, the above variables contain the operator indices we need.
+	var src_idx = source_op
+	var dest_idx = dest_op
+	print("request_connection():  Connecting %s and %s..." % [src_idx+1, dest_idx+1])
+	source_op = ops[source_op]
+	dest_op = ops[dest_op]
+	
+	if dest_op.connections.find(source_op) != -1:
+		print("request_connection():  %s and %s are already connected!" % [src_idx+1, dest_idx+1])
+		return
+	if source_op.manual_connections.find(dest_op) != -1:
+		print("request_connection():  %s and %s are already connected!" % [src_idx+1, dest_idx+1])
+		return
+	
+#	dest_op.connections.append(source_op)
+	source_op.manual_connections.append(dest_op)
+	update()
+	
+	
 
 #===================== CLASS =============================
 class opNode:
 	var id = 0  
 	var connections = []
+	var manual_connections = []  #Used to break connections in a tree above as well as make draw offsets
 	var gridPos = Vector2.ONE * -1
 
 	func pos_valid():  return gridPos != Vector2(-1,-1)
@@ -394,6 +520,13 @@ class opNode:
 		global.arr_replace(op.connections, op.id, id)
 		connections = op.connections
 		op.connections = c
+
+		c = manual_connections
+		global.arr_replace(c, id, op.id)
+		global.arr_replace(op.manual_connections, op.id, id)
+		manual_connections = op.manual_connections
+		op.manual_connections = c
+
 
 	func get_tree_ids(output_dict={}):  #Returns the IDs of every operator connected to this tree.
 		for o in connections:

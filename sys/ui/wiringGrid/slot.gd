@@ -53,7 +53,7 @@ func unfocus():
 func _on_gui_input(event):
 	if event is InputEventMouseButton and event.pressed:
 		if event.button_index == BUTTON_RIGHT:
-			emit_signal("right_clicked", int(name))
+			emit_signal("right_clicked", gridPos, event.pressed)
 		if has_focus():  
 			change_stylebox(s_hilight)
 			$"..".last_slot_focused = int(name)

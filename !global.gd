@@ -93,6 +93,12 @@ func arr_replace(arr:Array, a, b):
 		return true
 	return false
 
+func arr_remove_all(arr:Array, item):
+	while arr.has(item):
+		var idx = arr.find(item)
+		arr.remove(idx)
+
+
 class Instr:
 	var rr = 1 setget set_release_time  #Float between 0-1
 	var mul = 0 setget set_frequency_multiplier #Float between 0.5 and 15
