@@ -81,6 +81,7 @@ func get_drag_data(position):
 	pass
 
 func set_preview(source_id, target_type=0, target_id=0):
+	if source_id < 0:  return
 	var p = dragTree.instance()
 	p.total_ops = get_parent_control().total_ops
 	p.op.id = source_id

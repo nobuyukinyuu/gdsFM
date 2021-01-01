@@ -27,7 +27,7 @@ func _draw():
 	$C.visible = true
 	match target_type:
 		targets.swap:
-			draw_op(op.id, Vector2.ZERO,0, op.connections, Vector2(-tile_size, -tile_size), 0.25)
+			draw_op(op.id, Vector2.ZERO,0, op.connections, Vector2(-tile_size, -tile_size), 0.1)
 			draw_box(op.id, Vector2(-tile_size, -tile_size))
 			draw_box(target_id, Vector2(-tile_size*1.5, tile_size ))
 		targets.operator:
