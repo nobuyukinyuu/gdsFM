@@ -19,7 +19,7 @@ func _ready():
 	set_ops(total_ops)
 	yield (get_tree(), "idle_frame")
 	yield (get_tree(), "idle_frame")
-	reset_default_op_positions()
+	reset_default_op_positions(total_ops)
 	
 	update()
 
@@ -34,15 +34,28 @@ func reset_focus(val):
 
 func set_ops(val):  #Set the number of operators in the grid.  Property setter.
 #	print ("SetOps: ", val, "total_ops: ", total_ops)
+	
 	var oldsz = total_ops
 	total_ops = val
 	if not isReady:  return
 	resize_op_array(val)
-	reinit_grid(val)
+	if val >= oldsz:  yield(reinit_grid(val), "completed")
 	
 	if val < oldsz:  
-		reinit_connections()  #Grid's smaller.  Can't guarantee connection tree is valid.
-		reset_default_op_positions()  #Gotta move the remaining ops left back to carrier positions.
+#		yield(reinit_connections(), "completed")  #Grid's smaller.  Can't guarantee connection tree is valid.
+
+	  #Gotta move the remaining ops left back to carrier positions.
+		yield(reset_default_op_positions(val), "completed")
+		yield(reinit_grid(val), "completed")
+
+	elif val > oldsz:
+		for i in oldsz:
+			ops[i].gridPos.y += val-oldsz  #usually 1
+		clearGridIDs()
+		restore_grid()
+
+	yield(get_tree(), "idle_frame")
+	redraw_grid()
 
 
 func resize_op_array(newsz):  #Deals with re-initializing new opNodes in a larger array.
@@ -54,6 +67,7 @@ func resize_op_array(newsz):  #Deals with re-initializing new opNodes in a large
 		for i in range(oldsz, newsz):
 			ops[i] = opNode.new()
 			ops[i].id = i
+			ops[i].gridPos = Vector2.ONE * (newsz-1)
 
 func reinit_connections():  #Clears all opNode connections by making new opNodes for all ops.
 	ops.clear()
@@ -63,6 +77,7 @@ func reinit_connections():  #Clears all opNode connections by making new opNodes
 		ops.append(p)
 
 func reinit_grid(gridSize):  #Completely nuke the controls and rebuild the slot indicator grid.
+	last_slot_focused = 0
 	for o in get_children():
 		if o.is_connected("dropped", self, "request_move"):
 			o.disconnect("dropped", self, "request_move")
@@ -76,6 +91,7 @@ func reinit_grid(gridSize):  #Completely nuke the controls and rebuild the slot 
 	yield (get_tree(), "idle_frame")
 
 	resize_grid(gridSize)
+	restore_grid()
 	
 	for i in range(gridSize*gridSize):  #Repopulate controls.
 		var p = sProto.instance()
@@ -90,18 +106,26 @@ func reinit_grid(gridSize):  #Completely nuke the controls and rebuild the slot 
 
 	update()
 
-func reset_default_op_positions():  #Flips the opNodes positions to default and changes slot indicators to match.
-	var start = total_ops*total_ops - total_ops
-	for i in total_ops:
+#Flips the opNodes positions to default and changes slot indicators to match.
+func reset_default_op_positions(sz:int):  
+	if sz == -1:  sz = total_ops
+	var start = sz*sz - sz
+	for i in sz:
 		var p = get_child(start+i)
 		p.set_slot(i, 1)  #1=carrier
 
 		setGridID(p.gridPos, i)
 
 		#Move the op nodes to the new positions.
-		ops[i].gridPos = p.gridPos
+#		ops[i].gridPos = p.gridPos
+		ops[i].gridPos.x = i
+		ops[i].gridPos.y = sz-1
+		ops[i].connections = []
+		ops[i].manual_connections = []
 
-	redraw_grid()
+	yield(get_tree(), "idle_frame")
+
+#	yield(get_tree().create_timer(0), "timeout")
 
 func clearGridIDs():  #Fills grid with nulls.
 	resize_grid(total_ops)
@@ -111,6 +135,10 @@ func resize_grid(newsz):
 		var arr = []
 		arr.resize(newsz)
 		_grid.append(arr)
+
+func restore_grid():  #Puts ops back in grid positions.
+	for op in ops:
+		setGridID(op.gridPos, op.id)
 
 #Grid operations
 func getGridID(pos):		return _grid[pos.x][pos.y]

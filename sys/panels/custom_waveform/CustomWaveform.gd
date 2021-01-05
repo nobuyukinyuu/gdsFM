@@ -1,6 +1,7 @@
 extends Control
 
 const noteFont = preload("res://gfx/fonts/NoteFont.tres")
+# warning-ignore:unused_signal
 signal value_changed
 
 var wave = Riff.new()

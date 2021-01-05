@@ -21,9 +21,6 @@ public Channel PreviewNotes = new Channel();
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        // global = GetNode("/root/global");
-        // MixRate = (float) global.Get("sample_rate");
-
         AudioStreamGenerator stream = (AudioStreamGenerator) this.Stream;
         MixRate = stream.MixRate;
         buf = (AudioStreamGeneratorPlayback) GetStreamPlayback();
@@ -44,15 +41,44 @@ public Channel PreviewNotes = new Channel();
         // fill_buffer3();   //prefill output buffer
         Play();
 
-        // //DEBUG:  Test json lib
-        // GdsFMJson.JSONObject jsonObject = (GdsFMJson.JSONObject) GdsFMJson.JSONData.ReadJSON(input2);
-        // GD.Print(new object[]{"SusTime: ", jsonObject.GetItem("_susTime")});
-        // GD.Print(new object[]{"Bad read (with default): ", jsonObject.GetItem("_badvalue", "Default text.")});
-        // GD.Print(new object[]{"Bad read (without default): ", jsonObject.GetItem("_badvalue")});
+        // System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
+        // long frequency = System.Diagnostics.Stopwatch.Frequency;
+        // var avg=0.0;
+        // for(int r=0; r<10;r++){
+        //     watch.Start();
+        //     for (int i=0; i<30000000; i++)
+        //     {
+        //         oscillators.sint2(i/20.0);
+        //     }
+        //     watch.Stop();
+        //     var time = watch.ElapsedTicks / (double)frequency * 1000;
+        //     avg+= time;
+        //     GD.Print("Elapsed: ", time, "ms");
+
+        //     watch.Reset();
+        // }  GD.Print("Average:  ", avg/10.0, "ms");
+  
+  
+        // avg=0;
+        // for(int r=0; r<10;r++){
+        //     watch.Start();
+        //     for (int i=0; i<30000000; i++)
+        //     {
+        //         oscillators.sint3(i/20.0);
+        //     }
+        //     watch.Stop();
+        //     var time = watch.ElapsedTicks / (double)frequency * 1000;
+        //     avg+= time;
+        //     GD.Print("Elapsed: ", time, "ms");
+
+        //     watch.Reset();
+        // }  GD.Print("Average:  ", avg/10.0, "ms");
+  
+
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
-    public override void _Process(float delta)
+    public override void _PhysicsProcess(float delta)
     {
         fill_buffer2();
         PreviewNotes.Update();
@@ -133,12 +159,12 @@ public Channel PreviewNotes = new Channel();
         //TODO:  Attenuate the samples here with another parallel For loop on the final buffer.  Automatic gain control maybe applied here?
 
         //FIXME:  This breaks stereo panning
-        for(int i=0; i<bufferdata.Length; i++)
-        {
-            // bufferdata[i].x = patch.filter.Filter(bufferdata[i].x);
-            bufferdata[i].x = patch.formantFilter.Filter(bufferdata[i].x);
-            bufferdata[i].y = bufferdata[i].x;
-        }
+        // for(int i=0; i<bufferdata.Length; i++)
+        // {
+        //     // bufferdata[i].x = patch.filter.Filter(bufferdata[i].x);
+        //     bufferdata[i].x = patch.formantFilter.Filter(bufferdata[i].x);
+        //     bufferdata[i].y = bufferdata[i].x;
+        // }
 
         // if (patch!=null)  LowPass(patch.CutOff,patch.Resonance);
         buf.PushBuffer(bufferdata); 

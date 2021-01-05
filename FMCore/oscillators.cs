@@ -50,7 +50,7 @@ public class oscillators //: Node
 	}
 
 // Grab a sine from the lookup table, from 0-1 instead of 0-TAU.
-	public static double sint2(double n){
+	public static double sint3(double n){
 		int sz = sintable.Length;
 		int idx = (int) Math.Round(n*sz);
 		idx = OscMath.Wrap(idx,0, sz);
@@ -58,6 +58,15 @@ public class oscillators //: Node
 		return sintable[idx];
 	}
 
+// Faster version of sint2()  that assumes n to always be > 0
+	public static double sint2(double n){
+		int sz = sintable.Length;
+		int idx = (int) (n*sz);
+		// idx = OscMath.Wrap(idx,0, sz);
+		idx = ((idx % sz) + sz) % sz;
+
+		return sintable[idx];
+	}
 
 	public static double wave(double n, Waveforms waveform = Waveforms.SINE, double duty = 0.5, bool reflect=false, int auxData=1){
 		// n %= 1.0;
