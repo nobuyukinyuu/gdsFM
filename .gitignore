@@ -17,6 +17,10 @@ export_presets.cfg
 .directory
 *~
 
+#VS shim project build files
+.vs/
+DummyProject/bin/
+DummyProject/obj/
 
 workfiles/*
 addons/

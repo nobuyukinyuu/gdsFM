@@ -88,8 +88,8 @@ func _ready():
 	
 	pass # Replace with function body.
 
-func _process(delta):
-	text = str(Engine.get_frames_per_second())
+#func _process(delta):
+#	text = str(Engine.get_frames_per_second())
 "
 
 [sub_resource type="GDScript" id=6]
