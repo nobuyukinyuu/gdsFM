@@ -1,6 +1,7 @@
 extends Control
 
 var fnt = preload("res://gfx/fonts/spelunkid_font.tres")
+var MAX_OPS = 6
 
 func _ready():
 	pass
@@ -9,7 +10,7 @@ func _physics_process(delta):
 	update()
 
 func _on_Add_pressed():
-	if $SlotIndicator.total_ops < 8:
+	if $SlotIndicator.total_ops < MAX_OPS:
 		$SlotIndicator.total_ops +=1
 
 

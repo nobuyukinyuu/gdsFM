@@ -5,7 +5,7 @@ export (int, 2, 8) var total_ops:int = 4 setget set_ops
 const sProto = preload("res://sys/ui/wiringGrid/SlotProto.tscn")
 const spk = preload("res://gfx/ui/icon_speaker.svg")
 
-var last_slot_focused=0 setget reset_focus
+var last_slot_focused=-1 setget reset_focus
 
 var _grid = []  #References to opNodes in a particular grid position
 var ops = []  #array of each operator being used and its connections
@@ -16,9 +16,9 @@ var manual_src_pos = Vector2.ONE * -1
 func _ready():
 #	reinit_grid(total_ops)
 	isReady = true
-	set_ops(total_ops)
-	yield (get_tree(), "idle_frame")
-	yield (get_tree(), "idle_frame")
+	yield(set_ops(total_ops), "completed")
+#	yield (get_tree(), "idle_frame")
+#	yield (get_tree(), "idle_frame")
 	reset_default_op_positions(total_ops)
 	
 	update()
@@ -26,11 +26,21 @@ func _ready():
 
 
 func reset_focus(val):
-	prints("unfocusing", last_slot_focused, "and focusing", val)
-	if last_slot_focused >=0:
-		get_node(str(last_slot_focused)).unfocus()
+	if val != last_slot_focused:
+		if last_slot_focused >=0:
+			prints("unfocusing", last_slot_focused, "and focusing", val)
+			get_node(str(last_slot_focused)).unfocus()
+		else:
+			prints("refocusing", val)
 #		if val == last_slot_focused:  val = -1
-	last_slot_focused = val
+		last_slot_focused = val
+	else:
+		var n = get_node(str(val))
+		if n.has_focus():
+			prints("unfocusing", val)
+			n.unfocus()
+			last_slot_focused = -1
+
 
 func set_ops(val):  #Set the number of operators in the grid.  Property setter.
 #	print ("SetOps: ", val, "total_ops: ", total_ops)
@@ -77,7 +87,7 @@ func reinit_connections():  #Clears all opNode connections by making new opNodes
 		ops.append(p)
 
 func reinit_grid(gridSize):  #Completely nuke the controls and rebuild the slot indicator grid.
-	last_slot_focused = 0
+	last_slot_focused = -1
 	for o in get_children():
 		if o.is_connected("dropped", self, "request_move"):
 			o.disconnect("dropped", self, "request_move")
