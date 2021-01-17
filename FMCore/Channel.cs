@@ -15,14 +15,14 @@ public class Channel : List<Note>
 
     Dictionary<int, Note> lookupTbl = new Dictionary<int, Note>();  //Dictionary of active notes. Makes for faster lookup.
 
-    public Channel(double sample_rate=44100) {
+    public Channel(float sample_rate=44100) {
         patch = new Patch(sample_rate);
         patch.FromString(glue.INIT_PATCH, true);
     }
 
     //Stuff related to the channel's sample requesting functionality
     private bool mute;  public bool Mute { get => mute; set => mute = value; }
-    public double volume = 1.0;  private float pan, _panL=0.5f, _panR=0.5f ;
+    public float volume = 1.0f;  private float pan, _panL=0.5f, _panR=0.5f ;
 
     /// Takes a value from -1.0 to 1.0 and assigns _panL and _panR to respective values depending on center channel volume C_PAN.
     public float Pan

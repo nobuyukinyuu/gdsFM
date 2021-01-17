@@ -43,48 +43,48 @@ public class Envelope : Node
     public int opID;  // Operator index typically associated with this envelope. Used to reset delay phases.
 
     //STANDARD FM EG STUFF
-    double ar=31;						//Attack
-    double dr=31;						//Decay
-    double sr=6;            			//Sustain
-    double rr = 15;                      //Release
-    double sl=100.0;                      //Sustain level
-    double tl = 100;                     //Total level  (attenuation)
-    double ks=0;						//Key scale
-    double mul=1.0;					//Frequency multiplier  //double between 0.5 and 15
-    double dt=0;                        //_detune
-    double dt2=0;                        // Coarse detune (semitone, -12 to 12)
+    float ar=31;						//Attack
+    float dr=31;						//Decay
+    float sr=6;            			//Sustain
+    float rr = 15;                      //Release
+    float sl=100.0f;                      //Sustain level
+    float tl = 100;                     //Total level  (attenuation)
+    float ks=0;						//Key scale
+    float mul=1.0f;					//Frequency multiplier  //float between 0.5 and 15
+    float dt=0;                        //_detune
+    float dt2=0;                        // Coarse detune (semitone, -12 to 12)
 
-    double delay=0;                     //Envelope delay
-    double fixed_frequency=0;           //Use fixed frequency if >0
+    float delay=0;                     //Envelope delay
+    float fixed_frequency=0;           //Use fixed frequency if >0
 
 
     //CUSTOM STUFF
 	public Waveforms waveform = Waveforms.SINE;
-	public double feedback = 0;  //Operator feedback only used in op chain termini.
+	public float feedback = 0;  //Operator feedback only used in op chain termini.
     public RbjFilter.FilterData filter = new RbjFilter.FilterData(FilterType.NONE);  //Lowpass cutoff + resonance filter.
     public bool reflect = false;  //Waveform reflection.  Inverts sine phase, makes sawtooth point to the right, etc.
 
-	public double duty = 0.5;  //Duty cycle is only used for pulse right now
+	public float duty = 0.5f;  //Duty cycle is only used for pulse right now
     public Waveforms _use_duty = 0;  //Set to Waveforms.USE_DUTY (0x100) to use duty cycle variants of functions
     //Property accessor for GDScript that flips the internal duty flag to the proper native bitmask.
     public bool UseDuty { get => _use_duty==Waveforms.USE_DUTY; set => _use_duty=value? Waveforms.USE_DUTY : Waveforms.SINE;}
 
 
     public Waveforms fmTechnique = Waveforms.SINE;  //FM Technique used to modulate phase when requesting a sample up the chain.
-    public double techDuty = 0.5;  //Duty cycle for the fmTechnique.  Currently UNUSED (no use_tech_duty bit set) to save CPU. 
+    public float techDuty = 0.5f;  //Duty cycle for the fmTechnique.  Currently UNUSED (no use_tech_duty bit set) to save CPU. 
     public bool techReflect = false;  //Waveform reflection for the fmTechnique
 
 
     //ADSR easing curve values.
-    public double ac = DefaultCurves.A;  //Attack curve.  In-out.
-    public double dc = DefaultCurves.D;  //Decay curve.  75% Linear, 25% Ease-out.
-    public double sc = DefaultCurves.S;  //Sustain curve.  50% Linear, 50% Ease-out.
-    public double rc = DefaultCurves.R;  //Release curve.  75% Ease-out.
+    public float ac = DefaultCurves.A;  //Attack curve.  In-out.
+    public float dc = DefaultCurves.D;  //Decay curve.  75% Linear, 25% Ease-out.
+    public float sc = DefaultCurves.S;  //Sustain curve.  50% Linear, 50% Ease-out.
+    public float rc = DefaultCurves.R;  //Release curve.  75% Ease-out.
 
-    public double Ac {get => ac; set=> RecacheCurve(ref AttackCurve, ref ac, value);}
-    public double Dc {get => dc; set=> RecacheCurve(ref DecayCurve, ref dc, value);}
-    public double Sc {get => sc; set=> RecacheCurve(ref SustainCurve, ref sc, value);}
-    public double Rc {get => rc; set=> RecacheCurve(ref ReleaseCurve, ref rc, value);}
+    public float Ac {get => ac; set=> RecacheCurve(ref AttackCurve, ref ac, value);}
+    public float Dc {get => dc; set=> RecacheCurve(ref DecayCurve, ref dc, value);}
+    public float Sc {get => sc; set=> RecacheCurve(ref SustainCurve, ref sc, value);}
+    public float Rc {get => rc; set=> RecacheCurve(ref ReleaseCurve, ref rc, value);}
 
     //Cached curves.  256kb each
     public CurveCache AttackCurve = DefaultCurves.Attack;
@@ -94,11 +94,11 @@ public class Envelope : Node
 
 
     #region Response Tables.
-    internal RTable<Double> ksr = RTable.FromPreset<Double>(RTable.Presets.TWELFTH_ROOT_OF_2 | RTable.Presets.DESCENDING, 
+    internal RTable<float> ksr = RTable.FromPreset<float>(RTable.Presets.TWELFTH_ROOT_OF_2 | RTable.Presets.DESCENDING, 
                                                            floor:100, allow_zero:false );      //KeyScale rate. Lower values shrink envelope timings.
-    private RTable<Double> ksl = RTable.FromPreset<Double>(RTable.Presets.TWELFTH_ROOT_OF_2 | RTable.Presets.DESCENDING,
+    private RTable<float> ksl = RTable.FromPreset<float>(RTable.Presets.TWELFTH_ROOT_OF_2 | RTable.Presets.DESCENDING,
                                                             floor:100);  //KeyScale level. Multiplies from 0-100% against TL of this envelope.
-    private RTable<Double> vr = RTable.FromPreset<Double>(RTable.Presets.IN_OUT 
+    private RTable<float> vr = RTable.FromPreset<float>(RTable.Presets.IN_OUT 
                                                          |0, floor:100);  //Velocity response. Sensitivity goes from 0% to 100% (0-1).  Default 0
 
 
@@ -150,50 +150,50 @@ public class Envelope : Node
 
 
     //Property values used to translate "user-friendly" values to internal values, which are different than standard FM values.
-    public double Ar { get => ar; set => _set_attack_time(value); }
-    public double Dr { get => dr; set => _set_decay_time(value); }
-    public double Sr { get => sr; set => _set_sustain_time(value); }
-    public double Rr { get => rr;   set =>  _set_release_time(value); }
-    public double Sl { get => sl; set  {sl = value;  _susLevel = value / 100.0;} }
-    public double Tl { get => tl; set  {tl = value;  _totalLevel = value / 100.0;} }
-    public double Ks { get => ks; set => ks = value; }
-    public double Mul { get => mul;  set => _set_octave_multiplier(value); }
-    public double Dt { get => dt; set => set_detune(value); }
-    public double Dt2 { get => dt2; set => set_detune2(value); }
-    public double FixedFreq { get => fixed_frequency; set {fixed_frequency = value;  update_multiplier();} }
+    public float Ar { get => ar; set => _set_attack_time(value); }
+    public float Dr { get => dr; set => _set_decay_time(value); }
+    public float Sr { get => sr; set => _set_sustain_time(value); }
+    public float Rr { get => rr;   set =>  _set_release_time(value); }
+    public float Sl { get => sl; set  {sl = value;  _susLevel = value / 100.0f;} }
+    public float Tl { get => tl; set  {tl = value;  _totalLevel = value / 100.0f;} }
+    public float Ks { get => ks; set => ks = value; }
+    public float Mul { get => mul;  set => _set_octave_multiplier(value); }
+    public float Dt { get => dt; set => set_detune(value); }
+    public float Dt2 { get => dt2; set => set_detune2(value); }
+    public float FixedFreq { get => fixed_frequency; set {fixed_frequency = value;  update_multiplier();} }
 
-    public double Delay { get => delay; set {_delay = value*SampleRate / 1000; delay=value;} }
+    public float Delay { get => delay; set {_delay = value*SampleRate / 1000; delay=value;} }
 
     //Filter related properties.  Some of these are for backwards-compatibility only.
     public bool FilterEnabled { get => filter.Enabled; set => filter.Enabled = value; }  //Backwards compatibility
-    public double CutOff { get => filter.cutoff; set {filter.cutoff = value; filter.Recalc();} } //Backwards compatibility
-    public double Resonance { get => filter.resonanceAmp; set {filter.resonanceAmp = value; filter.Recalc();} } //Backwards compatibility
-    public double Hz { get => filter.cutoff; set {filter.cutoff = value; filter.Recalc();} }  //Filter effective frequency
-    public double Q { get => filter.resonanceAmp; set {filter.resonanceAmp = value; filter.Recalc();} }
-    public double Gain { get => filter.gain; set {filter.gain = value; filter.Recalc();} }
+    public float CutOff { get => filter.cutoff; set {filter.cutoff = value; filter.Recalc();} } //Backwards compatibility
+    public float Resonance { get => filter.resonanceAmp; set {filter.resonanceAmp = value; filter.Recalc();} } //Backwards compatibility
+    public float Hz { get => filter.cutoff; set {filter.cutoff = value; filter.Recalc();} }  //Filter effective frequency
+    public float Q { get => filter.resonanceAmp; set {filter.resonanceAmp = value; filter.Recalc();} }
+    public float Gain { get => filter.gain; set {filter.gain = value; filter.Recalc();} }
     public FilterType FilterType {get=> filter.filterType; set {filter.Reset(); filter.filterType=value;  filter.Recalc();} }  
 
 
     // True, internal values referenced by the operator to reduce re-calculating
     // these values when the above EG slider value changes.
-    public double _attackTime = 50;//double.Epsilon; //Needs to be large enough to avoid a clicking pop under certain circumstances when the phase isn't 0
-    public double _decayTime = 50;//double.Epsilon;
-    public double _susTime = 2880000; //float.MaxValue/5;  //about a minute, depending on sample rate
-    public double _releaseTime = 100; //Calculated from rr when set
-    public double _susLevel = 1.0;
-    public double _totalLevel = 1.0;
-	public double _freqMult = 1.0;  //Octave multiplier (MUL)
-	public double _coarseDetune = 1;
-	public double _detune = 1;
-    public double _delay;
+    public float _attackTime = 50;//float.Epsilon; //Needs to be large enough to avoid a clicking pop under certain circumstances when the phase isn't 0
+    public float _decayTime = 50;//float.Epsilon;
+    public float _susTime = 2880000; //float.MaxValue/5;  //about a minute, depending on sample rate
+    public float _releaseTime = 100; //Calculated from rr when set
+    public float _susLevel = 1.0f;
+    public float _totalLevel = 1.0f;
+	public float _freqMult = 1.0f;  //Octave multiplier (MUL)
+	public float _coarseDetune = 1;
+	public float _detune = 1;
+    public float _delay;
 	
-    public double totalMultiplier = 1;  //Precalculated value of mul+dt+dt2 or the fixed frequency. See update_multiplier().
+    public float totalMultiplier = 1;  //Precalculated value of mul+dt+dt2 or the fixed frequency. See update_multiplier().
 
     //Internal ADSR timer calculating values.
-    public double _egLength;  //total envelope length, in samples.  TODO:  Make ASDR true values int?
-    double _ad;  //Attack time + decay time
-    public double _ads; //Attack, decay, and sustain time.
-	double _adr; //Attack, decay, and release time.  Used to check whether the sample offset from release is beyond the need to calculate an easing curve.
+    public float _egLength;  //total envelope length, in samples.  TODO:  Make ASDR true values int?
+    float _ad;  //Attack time + decay time
+    public float _ads; //Attack, decay, and sustain time.
+	float _adr; //Attack, decay, and release time.  Used to check whether the sample offset from release is beyond the need to calculate an easing curve.
 
 
     /// Performs a full recalculation of all preset values.  Useful for loading/pasting from external sources.
@@ -227,16 +227,16 @@ public class Envelope : Node
     }
 
     //ASDR Getter
-    public double VolumeAtSamplePosition(Note note)
+    public float VolumeAtSamplePosition(Note note)
     {
 
         int s = note.samples;
         bool noteOff=!note.pressed;
         int releaseSample=note.releaseSample;
-        double output=0;
+        float output=0;
 
         //Determine key scaling rate for this note.
-        double _ksr= ksr[note.midi_note];
+        float _ksr= ksr[note.midi_note];
 
         //Generate keyScaled envelope times
         var atkTime = _attackTime * ksr[note.midi_note];
@@ -257,15 +257,15 @@ public class Envelope : Node
 
             output = AttackCurve[ (s-_delay) / atkTime ];
 
-            // if(Double.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
+            // if(float.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
         } else if ((s-_delay >= atkTime) && (s < ad) ) {  //Decay phase.
             // //Interpolate between the total level and sustain level.
             // output= GDSFmFuncs.EaseFast(1.0, _susLevel, (s-(atkTime+_delay)) / decTime, dc);
 
             // GD.Print("s=", s, "  delay=", _delay, "  atkTime=", atkTime);
-            output = DecayCurve.MappedTo(1.0, _susLevel, (s-(atkTime+_delay)) / decTime);
+            output = DecayCurve.MappedTo(1.0f, _susLevel, (s-(atkTime+_delay)) / decTime);
 
-            // if(Double.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
+            // if(float.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
         // } else if ((s-delay >= ad) ) {  //Sustain phase.
         } else {  //Sustain phase.
             // //Interpolate between sustain level and 0.
@@ -273,11 +273,11 @@ public class Envelope : Node
 
             output = SustainCurve.MappedTo(_susLevel, 0, (s-ad) / susTime);
 
-            // if(Double.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
+            // if(float.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
         }
 
         // #if DEBUG
-        // if(Double.IsNaN(output)) System.Diagnostics.Debugger.Break();
+        // if(float.IsNaN(output)) System.Diagnostics.Debugger.Break();
         // #endif
 
         var rlsTime = _releaseTime * ksr[note.midi_note];
@@ -285,15 +285,15 @@ public class Envelope : Node
         {
             // output *= GDSFmFuncs.EaseFast(1.0, 0.0, (s-releaseSample) / rlsTime, rc);
 
-            output *= 1.0 - ReleaseCurve[ (s-releaseSample) / rlsTime ];  //TODO:  Consider pre-caching a modified level
+            output *= 1.0f - ReleaseCurve[ (s-releaseSample) / rlsTime ];  //TODO:  Consider pre-caching a modified level
 
-            // if(Double.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
+            // if(float.IsNaN(output)) {System.Diagnostics.Debugger.Break();}
         } else if (noteOff && (s-releaseSample) >= rlsTime) {
             return 0;
         }
 
         // #if DEBUG
-        // if(Double.IsNaN(output)) 
+        // if(float.IsNaN(output)) 
         // {
         //     System.Diagnostics.Debugger.Break();  //Stop. NaN propagation. This should never trigger but if it does prepare for pain
         //     return 0;
@@ -324,7 +324,7 @@ public class Envelope : Node
     }
 
     /// Creates a new curve cache for the specified curva value.
-    void RecacheCurve(ref CurveCache which, ref double easingField, double val)
+    void RecacheCurve(ref CurveCache which, ref float easingField, float val)
     {
         //Check if the curve we want to recache actually exists in the default curve caches.  This could potentially save a lot of memory.
         foreach(CurveCache curve in DefaultCurves.ADSR)
@@ -344,37 +344,37 @@ public class Envelope : Node
         // GD.Print("Recaching curve to ", val);  //remove me
     }
 
-    void _set_attack_time(double val) {
+    void _set_attack_time(float val) {
         ar = val;
         if (val <=0) {
-            _attackTime = float.MaxValue/5.0;  //Stupid workaround to avoid Double.PositiveInfinity.  Who's gonna hold a note for 2.264668e+299 hours?
+            _attackTime = float.MaxValue/5.0f;  //Stupid workaround to avoid float.PositiveInfinity.  Who's gonna hold a note for 2.264668e+299 hours?
         } else {
-            _attackTime = get_curve_secs(BaseSecs.AR, val, 0.5, 0) * SampleRate;
+            _attackTime = get_curve_secs(BaseSecs.AR, val, 0.5f, 0) * SampleRate;
         }
         recalc_adsr();
     }
 
-    void _set_decay_time(double val) {
+    void _set_decay_time(float val) {
         dr = val;
         if (val <=0) {
             _decayTime = 0;
         } else {
-            _decayTime = get_curve_secs(BaseSecs.DR, val, 0.5) * SampleRate;
+            _decayTime = get_curve_secs(BaseSecs.DR, val, 0.5f) * SampleRate;
         }
         recalc_adsr();
     }
 
-    void _set_sustain_time(double val) {
+    void _set_sustain_time(float val) {
         sr = val;
         if (val <=0) {
-            _susTime = float.MaxValue/5.0;  //Stupid workaround to avoid Double.PositiveInfinity.  Who's gonna hold a note for 2.264668e+299 hours?
+            _susTime = float.MaxValue/5.0f;  //Stupid workaround to avoid float.PositiveInfinity.  Who's gonna hold a note for 2.264668e+299 hours?
         } else {
-            _susTime = get_curve_secs(BaseSecs.SR, val, 0.5) * SampleRate;
+            _susTime = get_curve_secs(BaseSecs.SR, val, 0.5f) * SampleRate;
         }
         recalc_adsr();
     }
 
-	void _set_release_time(double val){
+	void _set_release_time(float val){
         // rr = val;
 
 		// if (val <= 0) {
@@ -385,7 +385,7 @@ public class Envelope : Node
 	
         rr = val;
         if (val <= 0) {
-            _releaseTime = SampleRate * 1800;  //Workaround to avoid Double.PositiveInfinity and stuck notes.  30 minutes release
+            _releaseTime = SampleRate * 1800;  //Workaround to avoid float.PositiveInfinity and stuck notes.  30 minutes release
         } else {
             _releaseTime = get_curve_secs(BaseSecs.RR, val) * SampleRate;
         }
@@ -402,14 +402,14 @@ public class Envelope : Node
     // Precalculate absolute total length (in samples) of a blip. During KeyOff event, in sustain state whenever KeyOff is detected,
     // Immediately move the play head to the total length minus RR length.
     // http://forums.submarine.org.uk/phpBB/viewtopic.php?f=9&t=16
-    double get_curve_secs(double base_secs, double val, double scaleFactor=1.0, double minlength=0.005)
+    float get_curve_secs(float base_secs, float val, float scaleFactor=1.0f, float minlength=0.005f)
     {
         //estimated base rates for OPNA at value 1:
         //AR    30sec?   (32 values)
         //DR    120sec  (32 values)
         //SR    120sec  (32 values)
         //RR    54sec   (16 values)
-        return base_secs / Math.Pow(2, (val-1) * scaleFactor);
+        return base_secs / (float) Math.Pow(2, (val-1) * scaleFactor);
     }
 
 
@@ -430,7 +430,7 @@ public class Envelope : Node
 
  
     /// Octave multiplier
-	void _set_octave_multiplier(double val){
+	void _set_octave_multiplier(float val){
 		mul = val;
 		
 		if (val == 0)  val = 0.5f;
@@ -440,21 +440,21 @@ public class Envelope : Node
     }
 
     /// Extra fine detune
-	void set_detune(double val){  
+	void set_detune(float val){  
 		dt = val;
 		// _detune = 1.0f + (val / 10000.0f);  //approx max multiplier is 1.0 ± 0.01
         switch (Math.Sign(val))
         {
             case 0:
-                _detune = 1.0;
+                _detune = 1.0f;
                 break;
 
             case 1:
-        		_detune = (double) GDSFmFuncs.lerp(1.0M, DETUNE_MAX, (Decimal) (val / 100.0)) ;
+        		_detune = (float) GDSFmFuncs.lerp(1.0M, DETUNE_MAX, (Decimal) (val / 100.0)) ;
                 break;
 
             case -1:
-        		_detune = (double) GDSFmFuncs.lerp(1.0M, DETUNE_MIN, (Decimal) (-val / 100.0)) ;
+        		_detune = (float) GDSFmFuncs.lerp(1.0M, DETUNE_MIN, (Decimal) (-val / 100.0)) ;
                 break;
         }
 
@@ -462,21 +462,21 @@ public class Envelope : Node
     }
 
     /// Coarse detune (Semitone)
-    void set_detune2(double val)
+    void set_detune2(float val)
     {
         dt2 = val;
         switch (Math.Sign(val))
         {
             case 0:
-                _coarseDetune = 1.0;
+                _coarseDetune = 1.0f;
                 break;
             
             case 1:
-                _coarseDetune = 1 * Math.Pow(2, Math.Abs(val) / 12.0);
+                _coarseDetune = 1 * (float) Math.Pow(2, Math.Abs(val) / 12.0);
                 break;
             
             case -1:
-                _coarseDetune = 1 / Math.Pow(2, Math.Abs(val) / 12.0);
+                _coarseDetune = 1 / (float) Math.Pow(2, Math.Abs(val) / 12.0);
                 break;
         }
 
@@ -675,11 +675,11 @@ public class Envelope : Node
 
 
     /// Gets the sample rate from the global singleton
-    public double SampleRate {
+    public float SampleRate {
         get 
         {
             //// NOPE NOPE NOPE, NEVERMIND.  This clobbers any semblance of portability.  Use AudioOutput and work on abstracting it from the autoloads.
-            // return (double) AutoLoadHelper<Double>.Get("global", "sample_rate");
+            // return (float) AutoLoadHelper<float>.Get("global", "sample_rate");
             // return AudioOutput.MixRate;
             return Patch.sample_rate;
         }
@@ -690,8 +690,8 @@ public class Envelope : Node
 /// Struct for typical length of one part of an Envelope at value 1 on OPNA
 struct BaseSecs
 {
-    public const double AR = 30;
-    public const double DR = 120;
-    public const double SR = 120;
-    public const double RR = 54;
+    public const float AR = 30;
+    public const float DR = 120;
+    public const float SR = 120;
+    public const float RR = 54;
 }

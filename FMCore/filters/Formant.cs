@@ -9,7 +9,7 @@ public class FormantFilter
 	public float peak0, peak1;  //Peak frequencies
 	public float q, gain;
 
-	public FormantFilter(double mixRate=44100.0)
+	public FormantFilter(float mixRate=44100.0f)
 	{
 		for(int i=0; i<PEAKCOUNT; i++)
 		{

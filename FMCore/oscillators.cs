@@ -8,19 +8,19 @@ public enum Waveforms {SINE, SAW, TRI, PULSE, ABSINE, WHITE, PINK, BROWN, CUSTOM
 
 public class oscillators //: Node
 {
-	const double TAU = Mathf.Tau;
+	const float TAU = (float) Math.PI * 2;
 
-	static double[] sintable;
+	static float[] sintable;
 
 
 	//Used for periodic noise
 	static byte[] noise_counter = new byte[129];   //Extra field is to accomodate white noise chunkyness
-	static double[] lastNoiseValue = new double[129];
+	static float[] lastNoiseValue = new float[129];
 
 	static PinkNumber pinkr = new PinkNumber() ; 
-	static double lastr = 0.0f;
+	static float lastr = 0.0f;
 
-	readonly static double[] TRITABLE = {0.0f, 0.2f, 0.4f, 0.6f, 0.8f, 1.0f, 0.8f, 0.6f, 0.4f, 0.2f, 0.0f, -0.2f, -0.4f,
+	readonly static float[] TRITABLE = {0.0f, 0.2f, 0.4f, 0.6f, 0.8f, 1.0f, 0.8f, 0.6f, 0.4f, 0.2f, 0.0f, -0.2f, -0.4f,
 							-0.6f, -0.8f, -1.0f, -0.8f, -0.6f, -0.4f, -0.2f};
 
 
@@ -35,22 +35,22 @@ public class oscillators //: Node
 
 
 	public static void gen_sin_table(int res) {
-		sintable = new double[res];
+		sintable = new float[res];
 		for(int i=0; i < res; i++){
-			sintable[i] = Math.Sin(TAU * i / (double)(res));
+			sintable[i] = (float) Math.Sin(TAU * i / (double)(res));
 		}
 	}
 // Grab a sine value from the lookup table
-	public static double sint(double n){
+	public static float sint(float n){
 		int sz = sintable.Length;
-		int idx = (int) Math.Round(n/TAU * (double)sz);
+		int idx = (int) Math.Round(n/TAU * (float)sz);
 		idx = OscMath.Wrap(idx,0, sz);
 
 		return sintable[idx];
 	}
 
 // Grab a sine from the lookup table, from 0-1 instead of 0-TAU.
-	public static double sint3(double n){
+	public static float sint3(float n){
 		int sz = sintable.Length;
 		int idx = (int) Math.Round(n*sz);
 		idx = OscMath.Wrap(idx,0, sz);
@@ -59,7 +59,7 @@ public class oscillators //: Node
 	}
 
 // Faster version of sint2()  that assumes n to always be > 0
-	public static double sint2(double n){
+	public static float sint2(float n){
 		int sz = sintable.Length;
 		int idx = (int) (n*sz);
 		// idx = OscMath.Wrap(idx,0, sz);
@@ -68,12 +68,12 @@ public class oscillators //: Node
 		return sintable[idx];
 	}
 
-	public static double wave(double n, Waveforms waveform = Waveforms.SINE, double duty = 0.5, bool reflect=false, int auxData=1){
+	public static float wave(float n, Waveforms waveform = Waveforms.SINE, float duty = 0.5f, bool reflect=false, int auxData=1){
 		// n %= 1.0;
 		n = n - ((long) n);  //Truncate integral component
 
-		// double sReflect = reflect? -1 : 1;
-		double sReflect = Convert.ToInt32(reflect) * -2  +1;
+		// float sReflect = reflect? -1 : 1;
+		float sReflect = Convert.ToInt32(reflect) * -2  +1;
 
 		switch(waveform){
 			case Waveforms.PULSE:
@@ -86,44 +86,44 @@ public class oscillators //: Node
 				return sint2(n)  * sReflect;
 
 			case Waveforms.SINE|Waveforms.USE_DUTY:
-				return n>=duty ? 0.0 : sint2(n*1.0/(duty+Double.Epsilon)) * sReflect;
+				return n>=duty ? 0.0f : sint2(n*1.0f/(duty+float.Epsilon)) * sReflect;
 
 			case Waveforms.ABSINE:
 				return Math.Abs(sint2(n)) * sReflect;
 			case Waveforms.ABSINE|Waveforms.USE_DUTY:
-				return n >= duty? 0.0:  Math.Abs(sint2(n*1.0/(duty+Double.Epsilon))) * sReflect;
+				return n >= duty? 0.0f:  Math.Abs(sint2(n*1.0f/(duty+float.Epsilon))) * sReflect;
 
 			case Waveforms.TRI:
 				return TRITABLE[(int)(Math.Abs(n)*20)] * sReflect;
 			case Waveforms.TRI|Waveforms.USE_DUTY:
-				return n >= duty? 0.0:  TRITABLE[(int)(Math.Abs(n)*20)] * sReflect;
+				return n >= duty? 0.0f:  TRITABLE[(int)(Math.Abs(n)*20)] * sReflect;
 
 			case Waveforms.SAW:
-				return (1.0 - (n * 2.0)) * sReflect; 
+				return (1.0f - (n * 2.0f)) * sReflect; 
 
 			case Waveforms.SAW|Waveforms.USE_DUTY:
 				// return (1.0f - (n * 2.0f)) * sReflect; 
 				// return (1.0 - (Math.Min((n/duty), 1.0) * 2.0 * duty)) * sReflect; 
 				duty += Single.Epsilon;
 				// duty *= 2.0;   //Used when duty needs to be in the 0-0.5 range due to a 0.5 default
-				return 1.0 - Math.Max(n + duty - 1.0, 0.0) * (1.0/duty) * 2 * sReflect;
+				return (float) (1.0 - Math.Max(n + duty - 1.0, 0.0) * (1.0/duty) * 2 * sReflect);
 
 			case Waveforms.PINK:
 				return pinkr.GetNextValue();
 			case Waveforms.PINK|Waveforms.USE_DUTY:
-				return n<duty?  pinkr.GetNextValue() : 0.0;
+				return n<duty?  pinkr.GetNextValue() : 0.0f;
 
 			case Waveforms.BROWN:
-				lastr += ThreadSafeRandom.NextDouble() * 0.2 - 0.1;
-				lastr *= 0.99;
+				lastr += ThreadSafeRandom.NextSingle() * 0.2f - 0.1f;
+				lastr *= 0.99f;
 				return lastr;
 			case Waveforms.BROWN|Waveforms.USE_DUTY:
 				if (n < duty) {
-					lastr += ThreadSafeRandom.NextDouble() * 0.2 - 0.1;
-					lastr *= 0.99;
+					lastr += ThreadSafeRandom.NextSingle() * 0.2f - 0.1f;
+					lastr *= 0.99f;
 					return lastr;					
 				} else {
-					return 0.0;
+					return 0.0f;
 				}
 
 			case Waveforms.WHITE:
@@ -133,7 +133,7 @@ public class oscillators //: Node
 				noise_counter[auxData] += 1;
 				noise_counter[auxData] -= (byte) (auxData & ( ((auxData - 1) - noise_counter[auxData]) >> 31 ));
 
-				if (noise_counter[auxData]==0) lastNoiseValue[auxData]=ThreadSafeRandom.NextDouble() * 2.0 - 1.0;
+				if (noise_counter[auxData]==0) lastNoiseValue[auxData]=ThreadSafeRandom.NextSingle() * 2.0f - 1.0f;
 				return lastNoiseValue[auxData];
 
 			case Waveforms.WHITE|Waveforms.USE_DUTY:
@@ -141,8 +141,8 @@ public class oscillators //: Node
 				noise_counter[auxData] += 1;
 				noise_counter[auxData] -= (byte) (auxData & ( ((auxData - 1) - noise_counter[auxData]) >> 31 ));
 
-				if (noise_counter[auxData]==0) lastNoiseValue[auxData]=ThreadSafeRandom.NextDouble() * 2.0 - 1.0;
-				return n<duty? lastNoiseValue[auxData] : 0.0;
+				if (noise_counter[auxData]==0) lastNoiseValue[auxData]=ThreadSafeRandom.NextSingle() * 2.0f - 1.0f;
+				return n<duty? lastNoiseValue[auxData] : 0.0f;
 
 			default:
 				return 0;  //FIXME:  REROUTE CASES FOR FUNCTIONS NOT SUPPORTING DUTY CYCLE OR ELSE THIS WILL OCCUR
@@ -151,10 +151,10 @@ public class oscillators //: Node
 	}
 
 	//Custom waveform function
-	public static double wave(double n, RTable<double> auxData=null){
-		if (auxData==null) return 0.0;
-		n %= 1.0;
-		return auxData[(int)(Math.Abs(n)*auxData.values.Length -double.Epsilon)] * 2.0 - 1.0;
+	public static float wave(float n, RTable<float> auxData=null){
+		if (auxData==null) return 0.0f;
+		n %= 1.0f;
+		return auxData[(int)(Math.Abs(n)*auxData.values.Length -float.Epsilon)] * 2.0f - 1.0f;
 	}
 }
 
@@ -178,7 +178,7 @@ public
 	  for (int i=0; i<5; i++)	white_values[i] = ThreadSafeRandom.Next() % (range/5);
 	}
 
-  public double GetNextValue()
+  public float GetNextValue()
 	{
 	  int last_key = key;
 	  int sum;
@@ -197,7 +197,7 @@ public
 	 white_values[i] = ThreadSafeRandom.Next() % (range/5);
    sum += white_values[i];
  }
-	  return sum / 64.0-1.0;
+	  return sum / 64.0f-1.0f;
 	}
 };
 
@@ -260,4 +260,9 @@ public static class ThreadSafeRandom
         }
         return inst.NextDouble();
     }
+
+	public static float NextSingle()
+	{
+		return (float) NextDouble();
+	}
 }

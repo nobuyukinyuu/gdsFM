@@ -106,7 +106,7 @@ public Channel PreviewNotes = new Channel();
         {
             if (patch != null)
             {
-                var s = (float) patch.mix(PreviewNotes);
+                var s = patch.mix(PreviewNotes);
 
                  bufferdata[i].x = s;  //TODO:  Stereo mixing maybe
                  bufferdata[i].y = s;  //TODO:  Stereo mixing maybe   
@@ -145,8 +145,8 @@ public Channel PreviewNotes = new Channel();
 
                         //TODO:  Applies patch mixing globally. If multiple programs are being mixed this needs to change so mixing is applied per-patch.
                         //      Global mixing is only used here for a slight speed boost.
-                        bufferdata[j].x += (float) output[j] * 0.5f * patch._panL * patch.gain;  
-                        bufferdata[j].y += (float) output[j] * 0.5f * patch._panR * patch.gain;  
+                        bufferdata[j].x += output[j] * 0.5f * patch._panL * patch.gain;  
+                        bufferdata[j].y += output[j] * 0.5f * patch._panR * patch.gain;  
                     }
 
                     // System.Threading.Interlocked.Exchange(ref bufferdata[j].x, GDSFmFuncs.InterlockedAdd(ref bufferdata[j].x, (float) output[j]) );
@@ -190,8 +190,8 @@ public Channel PreviewNotes = new Channel();
                 {
                     //TODO:  Applies patch mixing globally. If multiple programs are being mixed this needs to change so mixing is applied per-patch.
                     //      Global mixing is only used here for a slight speed boost.
-                    bufferdata[j].x += (float) output[j] * 0.5f * patch._panL * patch.gain;  
-                    bufferdata[j].y += (float) output[j] * 0.5f * patch._panR * patch.gain;  
+                    bufferdata[j].x += output[j] * 0.5f * patch._panL * patch.gain;  
+                    bufferdata[j].y += output[j] * 0.5f * patch._panR * patch.gain;  
                 } 
             }
         }
@@ -301,44 +301,12 @@ public Channel PreviewNotes = new Channel();
 
 
     /// Used by Godot frontend to change the preview pitch using a bend wheel.
-    public void Pitch(double amt, float range)
+    public void Pitch(float amt, float range)
     { 
-        double rangemod = Math.Pow(2.0, (range/12) * amt);
+        float rangemod = (float) Math.Pow(2.0, (range/12) * amt);
         patch.pitchMod = rangemod;
     }
 
-
-    // public void LowPass(double resofreq=5000, double amp=1.0)
-    // {
-    //     int streamofs;
-    //     double w = 2.0 * Math.PI * resofreq/MixRate; // Pole angle
-    //     double q = 1.0 - w/(2.0*(amp + 0.5/(1.0+w)) + w - 2.0); // Pole magnitude
-    //     double r = q*q;
-    //     double c = r + 1.0 - 2.0*Math.Cos(w) * q;  //Update to use lookup table
-
-
-    //     int streamsize = bufferdata.Length;
-
-    //     /* Main loop */
-    //     for (streamofs = 0; streamofs < streamsize; streamofs++) 
-    //     {
-    //         /* Accelerate vibra by signal-vibra, multiplied by lowpasscutoff */
-    //         vibraspeed += (bufferdata[streamofs].x - vibrapos) * c;
-
-    //         /* Add velocity to vibra's position */
-    //         vibrapos += vibraspeed;
-
-    //         /* Attenuate/amplify vibra's velocity by resonance */
-    //         vibraspeed *= r;
-
-    //         /* Check clipping */
-    //         float temp = (float) vibrapos;
-    //         Mathf.Clamp(temp, -1.0f, 1.0f);
-
-    //         /* Store new value */
-    //         bufferdata[streamofs] = new Vector2(temp,temp);
-    //     }        
-    // }
 
     public string GetPhases()
     {

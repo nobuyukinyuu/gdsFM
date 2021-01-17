@@ -217,9 +217,9 @@ namespace MidiDemo{
         }
 
         /// Used by Godot frontend to change the preview pitch using a bend wheel.
-        public void Pitch(int channel, double amt, float range)
+        public void Pitch(int channel, float amt, float range)
         { 
-            double rangemod = Math.Pow(2.0, (range/12) * amt);
+            float rangemod = (float) Math.Pow(2.0, (range/12) * amt);
             channels[channel].patch.pitchMod = rangemod;
         }
     }

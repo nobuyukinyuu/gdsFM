@@ -13,13 +13,13 @@ public class Patch : Resource
 
     //This ctor can be used to set the sample rate used in phase calculations by a patch. The algorithm validator should do it when making a patch.
     //TODO:  This ctor should also initialize the LFOs with the sample rate given, if LFOs are always allocated.....
-    public Patch(double sample_rate) { Patch.sample_rate = sample_rate; 
+    public Patch(float sample_rate) { Patch.sample_rate = sample_rate; 
                                       LFO.sample_rate = sample_rate; RbjFilter.sample_rate = sample_rate; InitWaveformBank();}
 
 
     // This value should typically be initialized to whatever the global sample rate is.
-    public static double sample_rate = 44100.0;
-    public double pitchMod = 1.0;  //Global pitch modifier.  Used by audio output to modify the pitch of samples requested.
+    public static float sample_rate = 44100.0f;
+    public float pitchMod = 1.0f;  //Global pitch modifier.  Used by audio output to modify the pitch of samples requested.
 
     public const int VERSION = 1;  // Used to determine which version of the patch instrument this is, for forwards compatibility.
     public const string _iotype = "patch";
@@ -31,8 +31,8 @@ public class Patch : Resource
 
     public float gain = 1.0f;  //Straight multiplier to the end output.  Use db2linear conversion.
     public float Gain {get => GD.Linear2Db(gain); set => GD.Db2Linear(value);}  //Convenience func
-    public double transpose = 1.0;  //Master tuning
-    public double Transpose {get => Math.Log(transpose, 2) * 12; set => transpose = Math.Pow(2, value/12);}  //Convenience func
+    public float transpose = 1.0f;  //Master tuning
+    public float Transpose {get => (float) Math.Log(transpose, 2) * 12; set => transpose = (float) Math.Pow(2, value/12);}  //Convenience func
 
     public RbjFilter filter = new RbjFilter(sample_rate);
     public FormantFilter formantFilter = new FormantFilter(sample_rate);
@@ -81,28 +81,28 @@ public class Patch : Resource
 
 
 #region Pitch generator.  Rates must always be positive
-    public double pal,pdl,psl,prl;  //Levels, from -100 to 100.
-    public double par,pdr,prr;  //Rates, in samples.
+    public float pal,pdl,psl,prl;  //Levels, from -100 to 100.
+    public float par,pdr,prr;  //Rates, in samples.
 
-    public double _padr;  //Precalculated attack and decay times combined.
-    public double palMult=1, pdlMult=1, pslMult=1, prlMult=1;  //Multipliers to reference level
+    public float _padr;  //Precalculated attack and decay times combined.
+    public float palMult=1, pdlMult=1, pslMult=1, prlMult=1;  //Multipliers to reference level
 
-    public double Par { get => par / sample_rate * 1000.0; set {par = (value * sample_rate / 1000.0); _padr=par+pdr;} }
-    public double Pdr { get => pdr / sample_rate * 1000.0; set {pdr = (value * sample_rate / 1000.0);  _padr=par+pdr;} }
-    public double Prr { get => prr / sample_rate * 1000.0; set => prr = (value * sample_rate / 1000.0); }
+    public float Par { get => par / sample_rate * 1000.0f; set {par = (value * sample_rate / 1000.0f); _padr=par+pdr;} }
+    public float Pdr { get => pdr / sample_rate * 1000.0f; set {pdr = (value * sample_rate / 1000.0f);  _padr=par+pdr;} }
+    public float Prr { get => prr / sample_rate * 1000.0f; set => prr = (value * sample_rate / 1000.0f); }
  
     //Rates, in ms.
-    public double Pal { get => pal; set => pal = _calcPitch(ref palMult, value); }
-    public double Pdl { get => pdl; set => pdl = _calcPitch(ref pdlMult, value); }
-    public double Psl { get => psl; set => psl = _calcPitch(ref pslMult, value); }
-    public double Prl { get => prl; set => prl = _calcPitch(ref prlMult, value); }
+    public float Pal { get => pal; set => pal = _calcPitch(ref palMult, value); }
+    public float Pdl { get => pdl; set => pdl = _calcPitch(ref pdlMult, value); }
+    public float Psl { get => psl; set => psl = _calcPitch(ref pslMult, value); }
+    public float Prl { get => prl; set => prl = _calcPitch(ref prlMult, value); }
 
     /// Used by pitch level properties to translate values into proper multipliers
-    private double _calcPitch(ref double field, double value)
+    private float _calcPitch(ref float field, float value)
     {
 
-        var amt = value / 100.0; 
-        amt = Math.Pow(2, 2*amt) ;  //Magic scaling integer to multiplier
+        var amt = value / 100.0f; 
+        amt = (float) Math.Pow(2, 2*amt) ;  //Magic scaling integer to multiplier
 
         field = amt;
         return value;
@@ -132,7 +132,7 @@ public class Patch : Resource
 
 
 #region Custom Waveform bank stuff
-    public List<RTable<double>> customWaveforms = new List<RTable<double>>();
+    public List<RTable<float>> customWaveforms = new List<RTable<float>>();
     public int WaveformBankSize {get => customWaveforms.Count;}
     public bool isValidWaveformBank (int idx){
         if (idx < 0 || idx>=customWaveforms.Count) return false;
@@ -141,12 +141,12 @@ public class Patch : Resource
 
     public void ResetWaveformBanks() {customWaveforms.Clear();  InitWaveformBank();}
     public void InitWaveformBank() {if (customWaveforms.Count == 0) AddWaveformBank();}
-    public void AddWaveformBank() {customWaveforms.Add(RTable.FromPreset<Double>(RTable.Presets.FIFTY_PERCENT));}
+    public void AddWaveformBank() {customWaveforms.Add(RTable.FromPreset<float>(RTable.Presets.FIFTY_PERCENT));}
     public Godot.Collections.Dictionary GetWaveformBank (int idx, bool returnDefault=false) 
     {
         if (!isValidWaveformBank(idx)) {
             if (returnDefault)  //Return a default table, probably for the operator's preview button.
-            {return RTable.FromPreset<Double>(RTable.Presets.ZERO).ToDict();}
+            {return RTable.FromPreset<float>(RTable.Presets.ZERO).ToDict();}
             return null;
         }
         return customWaveforms[idx].ToDict();
@@ -180,7 +180,7 @@ public class Patch : Resource
         customWaveforms.RemoveAt(idx);  //This should hopefully dispose of the waveform now that references to it are gone.
     }
 
-    public void SetWaveformValue(int bank, int index, double value)  //Sets a single value in the destination waveform for immediate feedback.
+    public void SetWaveformValue(int bank, int index, float value)  //Sets a single value in the destination waveform for immediate feedback.
     {
         customWaveforms[bank].SetValue(index, value);
     }
@@ -393,9 +393,9 @@ public class Patch : Resource
     }
 
     /// Request multiple samples from this patch for a requested note.  Maybe better for parallelizing notes?
-    public double[] request_samples(Note note, int nSamples=1, double pitchMod=1.0) //TODO: external timer funcref + execution frequency arguments here.
+    public float[] request_samples(Note note, int nSamples=1, float pitchMod=1.0f) //TODO: external timer funcref + execution frequency arguments here.
     {
-        var output = new double[nSamples];
+        var output = new float[nSamples];
         for(int i=0; i < nSamples; i++)
         {
             for (int j=0; j < connections.Length; j++)
@@ -429,9 +429,9 @@ public class Patch : Resource
     }
 
     /// Multiple note polyphony.  Old method for original single-thread fill_buffer
-    public double mix(List<Note> notes)
+    public float mix(List<Note> notes)
     {
-        double output = 0.0;
+        float output = 0.0f;
         
         // TODO!!!!!!!! FIX CONCURRENT LIST MODIFICATION IN SEPARATE THREADS.  FIXME FIXME FIXME
         // NOTES COME IN AS AN EVENT ON A SEPARATE THREAD, SO MODIFICATION (NOTE DELETION) MUST BE QUEUED TO THE NEXT SYNCED PROCESS THREAD
@@ -454,8 +454,8 @@ public class Patch : Resource
     }
 
     /// Requests a single sample frame from a note.
-    public double mix(Note note){ 
-        double avg = 0.0;  //Output average
+    public float mix(Note note){ 
+        float avg = 0.0f;  //Output average
 
        for (int j=0; j < connections.Length; j++)
         {	
@@ -748,7 +748,7 @@ public class Patch : Resource
 
         if (algorithm >= 0 && algorithm < 8)  WireUp(algorithm);
 
-        operators["OP1"].EG.feedback = feedback / 2.0;  //FIXME:  Key scaling probably is necessary to stop extreme feedback. Deliberately dialed down as a temp workaround.
+        operators["OP1"].EG.feedback = feedback / 2.0f;  //FIXME:  Key scaling probably is necessary to stop extreme feedback. Deliberately dialed down as a temp workaround.
 
         //Go and try to populate the envelope generators.
         foreach(Operator op in operators.Values)
@@ -758,7 +758,7 @@ public class Patch : Resource
 
             op.EG.waveform = Waveforms.SINE;
             op.EG.fmTechnique = Waveforms.SINE;
-            op.EG.duty = 0.5;
+            op.EG.duty = 0.5f;
             op.EG.UseDuty = false;
 
             op.EG.Ar = Int32.Parse(val[0]);
@@ -774,11 +774,11 @@ public class Patch : Resource
             var remap= new int[] {100, 50, 25, 0};
 
             // op.EG.Ks = Int32.Parse(val[6]);  //TODO:  Map key scaling rates to 12th root of 2 defaults and scale down...
-            op.EG.ksr = RTable.FromPreset<Double>(RTable.Presets.DESCENDING | RTable.Presets.TWELFTH_ROOT_OF_2, floor: remap[Int32.Parse(val[6])] );
+            op.EG.ksr = RTable.FromPreset<float>(RTable.Presets.DESCENDING | RTable.Presets.TWELFTH_ROOT_OF_2, floor: remap[Int32.Parse(val[6])] );
 
             op.EG.Mul = Int32.Parse(val[7]);
 
-            op.EG.Dt = (Int32.Parse(val[8]) - 3.5) * (100/3.5);  //This may not be correct either....
+            op.EG.Dt = (Int32.Parse(val[8]) - 3.5f) * (100/3.5f);  //This may not be correct either....
         }
         return algorithm;
     }

@@ -18,7 +18,7 @@ public class RbjFilter
 	// in/out history
 	float ou1,ou2,in1,in2;
 
-    public static double sample_rate=44100.0;
+    public static float sample_rate=44100.0f;
 
 	public void Reset()
 	{
@@ -31,7 +31,7 @@ public class RbjFilter
 
 	public RbjFilter()  { Reset(); }
 
-	public RbjFilter(double mixRate)
+	public RbjFilter(float mixRate)
 	{
 		sample_rate = mixRate;
 		Reset();
@@ -237,13 +237,13 @@ public class RbjFilter
 		//Backwards compatibility with V1.  Will return TRUE if a filterType is selected.
         public bool Enabled { get => filterType != (FilterType.NONE);  set {enabled = value;  /* if (!value) filterType=FilterType.NONE; */ } }
 
-        public double cutoff=22050;  //Field is named such for backwards compatibility.  Frequency value.
-        public double resonanceAmp=1.0;  //Resonance amplitude.  Field is named such for backwards compatibility.
-		public double gain;
+        public float cutoff=22050;  //Field is named such for backwards compatibility.  Frequency value.
+        public float resonanceAmp=1.0f;  //Resonance amplitude.  Field is named such for backwards compatibility.
+		public float gain;
 
 		public FilterData() {rbj=new RbjFilter();}
 		public FilterData(FilterType f) {filterType = f; rbj=new RbjFilter();}
-		public FilterData(FilterType f, double mixRate) {filterType = f; rbj=new RbjFilter(mixRate);}
+		public FilterData(FilterType f, float mixRate) {filterType = f; rbj=new RbjFilter(mixRate);}
 
 		public void Reset() {rbj.Reset();}
 
@@ -284,11 +284,11 @@ public class RbjFilter
 	public class FormantFilterData : FilterData
 	{
 		public FormantFilter rbj; //= new FormantFilter();
-		public double freq2;  //Peak frequency 2 for formant filter
+		public float freq2;  //Peak frequency 2 for formant filter
 
 		FormantFilterData() {rbj=new FormantFilter();}
 		public FormantFilterData(FilterType f) {filterType = f; rbj=new FormantFilter();}
-		public FormantFilterData(FilterType f, double mixRate) {filterType = f; rbj=new FormantFilter(mixRate);}
+		public FormantFilterData(FilterType f, float mixRate) {filterType = f; rbj=new FormantFilter(mixRate);}
 
 
 		public override float Filter(float sample,  ref float[] filterHistory)

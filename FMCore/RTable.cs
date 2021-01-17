@@ -11,7 +11,7 @@ public class RTable<T> : Resource
 
     public T[] precalc_values = new T[128];  //Calculated from values with the floor, ceiling, and optional epsilon applied (if zeroes are prohibited)
     public T[] values = new T[128];
-    public double floor=0, ceiling=100;
+    public float floor=0, ceiling=100;
     public bool use_log = false;
 
 //Allows zeros to return from the precalculated table.  This is very bad for rates or anything that divides by this number.
@@ -44,7 +44,7 @@ public class RTable<T> : Resource
         var output = new GdsFMJson.JSONObject();
         var v = new GdsFMJson.JSONArray();
 
-        if (typeof(T) == typeof(float) || typeof(T) == typeof(double) )
+        if (typeof(T) == typeof(float) || typeof(T) == typeof(float) )
         {
             for(int i=0; i < values.Length; i++)
             { v.AddPrim( (float)Convert.ChangeType(values[i], typeof(float)) ); }
@@ -76,12 +76,12 @@ public class RTable<T> : Resource
 
             //Presume values is float or double instead of T. Precalc values will have to be T and upper limits defined based on type.
             // if (typeof(T) == typeof(float) || typeof(T) == typeof(double) )
-                var val = Convert.ToDouble( values[i] );
-                val = val * (ceiling/100.0);  //Apply ceiling.
-                val = (floor/100.0) +  val * (1.0-(floor/100.0));  //Apply floor.
+                var val = Convert.ToSingle( values[i] );
+                val = val * (ceiling/100.0f);  //Apply ceiling.
+                val = (floor/100.0f) +  val * (1.0f-(floor/100.0f));  //Apply floor.
 
                 if (val ==0 && !allow_zero)  val += float.Epsilon;  //Apply epsilon.
-                if (use_log)  val = Math.Pow(val, RTable.LOGFACTOR);  //Apply LinLog conversion (0.5 = 0.1, etc).
+                if (use_log)  val = (float) Math.Pow(val, RTable.LOGFACTOR);  //Apply LinLog conversion (0.5 = 0.1, etc).
 
                 if (typeof(T) == typeof(float) || typeof(T) == typeof(double) || typeof(T) == typeof(byte) )
                 {
@@ -98,12 +98,12 @@ public class RTable<T> : Resource
 
         //Presume values is float or double instead of T. Precalc values will have to be T and upper limits defined based on type.
         // if (typeof(T) == typeof(float) || typeof(T) == typeof(double) )
-        var val = Convert.ToDouble( values[i] );
-        val = val * (ceiling/100.0);  //Apply ceiling.
-        val = (floor/100.0) +  val * (1.0-(floor/100.0));  //Apply floor.
+        var val = Convert.ToSingle( values[i] );
+        val = val * (ceiling/100.0f);  //Apply ceiling.
+        val = (floor/100.0f) +  val * (1.0f-(floor/100.0f));  //Apply floor.
 
         if (val ==0 && !allow_zero)  val += float.Epsilon;  //Apply epsilon.
-        if (use_log)  val = Math.Pow(val, RTable.LOGFACTOR);  //Apply LinLog conversion (0.5 = 0.1, etc).
+        if (use_log)  val = (float) Math.Pow(val, RTable.LOGFACTOR);  //Apply LinLog conversion (0.5 = 0.1, etc).
 
         if (typeof(T) == typeof(float) || typeof(T) == typeof(double) || typeof(T) == typeof(byte) )
         {
@@ -118,25 +118,25 @@ public class RTable<T> : Resource
 
 public static class RTable
 {
-    public const double LOGFACTOR = 3.32192809488736; // Math.Log(0.1) / Math.Log(0.5);  Raising an input value 0.5^LOGFACTOR produces 0.1
+    public const float LOGFACTOR = 3.32192809488736f; // Math.Log(0.1) / Math.Log(0.5);  Raising an input value 0.5^LOGFACTOR produces 0.1
     public enum Presets {ZERO, FIFTY_PERCENT, MAX, LINEAR, IN, OUT, IN_OUT, TWELFTH_ROOT_OF_2, DESCENDING=0x100}
-    static readonly System.Collections.Generic.Dictionary<Presets, Double> curveMap = new System.Collections.Generic.Dictionary<Presets, double>
+    static readonly System.Collections.Generic.Dictionary<Presets, float> curveMap = new System.Collections.Generic.Dictionary<Presets, float>
     {
         [Presets.ZERO] = 0,
         [Presets.LINEAR] = 1,
-        [Presets.IN] = 2.0,
-        [Presets.OUT] = 0.5,
-        [Presets.IN_OUT] = -2.0,
+        [Presets.IN] = 2.0f,
+        [Presets.OUT] = 0.5f,
+        [Presets.IN_OUT] = -2.0f,
     };
 
-    public static RTable<U> FromPreset<U>(Presets preset, double floor=0, double ceiling=100, bool allow_zero=true) where U:struct
+    public static RTable<U> FromPreset<U>(Presets preset, float floor=0, float ceiling=100, bool allow_zero=true) where U:struct
     {
         var output = new RTable<U>();
         switch (preset)
         {
             case Presets.MAX:
             case Presets.MAX|Presets.DESCENDING:
-                if (typeof(U) == typeof(float) || typeof(U) == typeof(double) )
+                if (typeof(U) == typeof(float) || typeof(U) == typeof(float) )
                 {
                     for (int i=0; i<128; i++)   output.values[i] = (U) Convert.ChangeType(1, typeof(U));
                 } else if (typeof(U).IsValueType==true) {  //Integer or Byte or Short
@@ -145,7 +145,7 @@ public static class RTable
                 break;
             case Presets.FIFTY_PERCENT:
             case Presets.FIFTY_PERCENT|Presets.DESCENDING:
-                if (typeof(U) == typeof(float) || typeof(U) == typeof(double) )
+                if (typeof(U) == typeof(float) || typeof(U) == typeof(float) )
                 {
                     for (int i=0; i<128; i++)   output.values[i] = (U) Convert.ChangeType(0.5, typeof(U));
                 } else if (typeof(U).IsValueType==true) {  //Integer or Byte or Short
@@ -154,7 +154,7 @@ public static class RTable
                 break;
             case Presets.LINEAR:
             case Presets.LINEAR|Presets.DESCENDING:
-                if (typeof(U) == typeof(float) || typeof(U) == typeof(double) )
+                if (typeof(U) == typeof(float) || typeof(U) == typeof(float) )
                 {
                     for (int i=0; i<128; i++)   output.values[i] = (U) Convert.ChangeType(i/127.0, typeof(U));
                 } else if (typeof(U).IsValueType==true) {  //Integer or Byte or Short
@@ -163,7 +163,7 @@ public static class RTable
                 break;
             case Presets.IN: case Presets.OUT: case Presets.IN_OUT:
             case Presets.IN|Presets.DESCENDING: case Presets.OUT|Presets.DESCENDING: case Presets.IN_OUT|Presets.DESCENDING:
-                if (typeof(U) == typeof(float) || typeof(U) == typeof(double) )
+                if (typeof(U) == typeof(float) || typeof(U) == typeof(float) )
                 {
                     for (int i=0; i<128; i++)   output.values[i] = (U) Convert.ChangeType(GDSFmFuncs.Ease(0,1, i/127.0 , curveMap[preset]) , typeof(U));
                 } else if (typeof(U).IsValueType==true) {  //Integer or Byte or Short
@@ -172,7 +172,7 @@ public static class RTable
                 break;
             case Presets.TWELFTH_ROOT_OF_2:
             case Presets.TWELFTH_ROOT_OF_2|Presets.DESCENDING:
-                if (typeof(U) == typeof(float) || typeof(U) == typeof(double) )
+                if (typeof(U) == typeof(float) || typeof(U) == typeof(float) )
                 {
                     for (int i=0; i<128; i++)   output.values[i] = (U) Convert.ChangeType(Pow12th(i), typeof(U));
                 } else if (typeof(U).IsValueType==true) {  //Integer or Byte or Short
@@ -192,9 +192,9 @@ public static class RTable
     }
 
     //Returns a value from 0-1 with input x in the range 0-127 following 12th root of 2 exponential curvature.  Useful for octave keyscaled curves.
-    static double Pow12th(double x)
+    static float Pow12th(float x)
     {
-        return Math.Pow(2, (x-127)/12.0);
+        return (float) Math.Pow(2, (x-127)/12.0);
     }
 }
 
@@ -212,7 +212,7 @@ public static class RTableExtensions
             instance.values[i] = Convert.ToByte(s[i]);
         }
     }
-    public static void SetValues(this RTable<double> instance, string input)
+    public static void SetValues(this RTable<float> instance, string input)
     {
         var s = input.Substring(1,input.Length-2).SplitFloats(",",false);
 
@@ -223,14 +223,14 @@ public static class RTableExtensions
     }
 
     /// Input from a float source, value's coming in from 0-100 and should be tamped down to 0-1.
-    public static void SetValues(this RTable<double> instance, Godot.Collections.Dictionary input)
+    public static void SetValues(this RTable<float> instance, Godot.Collections.Dictionary input)
     {
         // GD.Print("attempting to assign RTable.......");
         // GD.Print(input["values"].GetType());
 
         //Structure of dict:   {values=[PoolRealArray tbl], floor=0, ceiling=100, use_log=false...}
-        instance.floor = Convert.ToDouble( input["floor"] ) ;
-        instance.ceiling = Convert.ToDouble( input["ceiling"] ) ;
+        instance.floor = Convert.ToSingle( input["floor"] ) ;
+        instance.ceiling = Convert.ToSingle( input["ceiling"] ) ;
         instance.use_log = Convert.ToBoolean( input["use_log"] );
 
         //Convert values to our maximum.
@@ -238,14 +238,14 @@ public static class RTableExtensions
 
         for (int i=0; i < vals.Length; i++)
         {
-            instance.values[i] = (double) vals[i] / 100.0;
+            instance.values[i] = (float) vals[i] / 100.0f;
         }
 
         instance.RecalcValues();
     }
 
    //Input from a serialized source, value's coming in from 0-1.
-    public static void SetValues(this RTable<double> instance, GdsFMJson.JSONObject input, bool tableOnly=false)
+    public static void SetValues(this RTable<float> instance, GdsFMJson.JSONObject input, bool tableOnly=false)
     {
         // GD.Print("attempting to assign RTable.......");
 
@@ -268,16 +268,17 @@ public static class RTableExtensions
         instance.RecalcValues();
     }
 
-    public static void SetValue(this RTable<double> instance, int index, double input)
+    public static void SetValue(this RTable<float> instance, int index, float input)
     {
         //Convert values to our maximum.
-        instance.values[index] = (double) input / 100.0;
+        instance.values[index] = (float) input / 100.0f;
+        // instance.values[index] = input / 100.0f;
 
         instance.RecalcValue(index);
     }
 
     //TODO:  EQUIVALENT FOR RTable<Byte>
-    public static Godot.Collections.Dictionary ToDict(this RTable<Double> instance)
+    public static Godot.Collections.Dictionary ToDict(this RTable<float> instance)
     {
         // var output = new float[128];
         var out_tbl = new Godot.Collections.Array(new float[128]);
@@ -303,13 +304,13 @@ public static class RTableExtensions
 
 
     /// Takes a compatible JSON string from the clipboard and populates the table with it.
-    public static int FromString(this RTable<Double> instance, string input, bool tableOnly = true)
+    public static int FromString(this RTable<float> instance, string input, bool tableOnly = true)
     {
         var p = GdsFMJson.JSONData.ReadJSON(input);
         if (p is GdsFMJson.JSONDataError) return -1;  // JSON malformed.  Exit early.
         
         var o = (GdsFMJson.JSONObject) p;
-        if (o.GetItem("_iotype", "") != RTable<Double>._iotype) return -2;  //Incorrect iotype.  Exit early.
+        if (o.GetItem("_iotype", "") != RTable<float>._iotype) return -2;  //Incorrect iotype.  Exit early.
 
         instance.SetValues(o, tableOnly);
         return 0;

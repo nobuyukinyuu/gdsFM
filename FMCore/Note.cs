@@ -5,38 +5,38 @@ using System.Collections.Generic;
 public class Note : IComparable<Note>
 {
     [Export]
-    public double base_hz = 440.0;  //Always fixed compared to the hz field;  used to return to normal after a pitch bend or lfo calc
-	public double hz = 440.0;  //Current frequency at any given time.
+    public float base_hz = 440.0f;  //Always fixed compared to the hz field;  used to return to normal after a pitch bend or lfo calc
+	public float hz = 440.0f;  //Current frequency at any given time.
     
     public int samples = 0;  //Samples elapsed.  Sample timer. 
-    public List<Double> phase = new List<double>{0,0,0,0};  //Phase accumulator. This holds the sum of all previous Note.Iterate() periods. Allows smooth pitch changes.
+    public List<float> phase = new List<float>{0,0,0,0};  //Phase accumulator. This holds the sum of all previous Note.Iterate() periods. Allows smooth pitch changes.
 
     [Export]
     public int midi_velocity = 0; //0-127, probably
     public int midi_note; //Pitch of note.  0-127 for sure.
 
-    public double Velocity  => midi_velocity/128.0;  //Grab velocity as a float value 0-1.
+    public float Velocity  => midi_velocity/128.0f;  //Grab velocity as a float value 0-1.
 
     public bool[] delayed = {false,false,false,false};  //The state of the note's envelope phase.  Gets activated once delay is exceeded.
     public bool pressed = true;     //The current state of whether the note is on or off.
     public int releaseSample = 0;  //The sample at which noteOff was received.
 
     //Set by the mixer handling the channel. Mixer finds the patch being used for this Note, gets total release time, and patch determines when to release from channel.
-    public double ttl = 79380000; //30 minutes by default
+    public float ttl = 79380000; //30 minutes by default
 
 // Feedback relies on averaging the last 2 samples in an operator. To support polyphony, each note should store its own feedback history per-operator.
 // When/if more/less operators are supported per patch, Note may need to examine patch on init to determine capacity. 
 // If Patches are eventually linked to Notes, requesting samples can be moved here from AudioOutput and the Channel can request samples more directly.
-    public List<Double[]> feedbackHistory = new List<Double[]>{new double[]{0.0, 0.0}, new double[]{0.0, 0.0},new double[]{0.0, 0.0},new double[]{0.0, 0.0}, };
+    public List<float[]> feedbackHistory = new List<float[]>{new float[]{0.0f, 0.0f}, new float[]{0.0f, 0.0f},new float[]{0.0f, 0.0f},new float[]{0.0f, 0.0f}, };
 
 //Similar to feedback, to determine running frequency for cutoff filters, a history must be kept per-operator.
-    // public List<Double[]> cutoffHistory = new List<Double[]>{new double[]{0.0, 0.0}, new double[]{0.0, 0.0},new double[]{0.0, 0.0},new double[]{0.0, 0.0}, };
+    // public List<float[]> cutoffHistory = new List<float[]>{new float[]{0.0f, 0.0f}, new float[]{0.0f, 0.0f},new float[]{0.0f, 0.0f},new float[]{0.0f, 0.0f}, };
 
     //format:  in1, in2, out1, out2
     public List<float[]> filterHistory = new List<float[]>{new float[8], new float[8],new float[8],new float[8], };
 
 //Similar to the above 2 values, this field smooths out the amplitude modulation when the note is attached to a patch with AMS enabled.
-    public List<double> ampBuffer = new List<double>(new double[16]);
+    public List<float> ampBuffer = new List<float>(new float[16]);
 
 
 //The owner of the Note.  This could be a channel for arbitrary-n notes, or a channel which needs temporary polyphony.
@@ -46,7 +46,7 @@ public class Note : IComparable<Note>
 // Generated from center tuning (A-4) at 440hz.
 
 // https://www.inspiredacoustics.com/en/MIDI_note_numbers_and_center_frequencies
-static double[] periods = {} ;  //Size 128 +1
+static float[] periods = {} ;  //Size 128 +1
 public const int NOTE_A4 = 69;   // Nice.
 
 
@@ -65,7 +65,7 @@ public const int NOTE_A4 = 69;   // Nice.
     }
 
     //Construct a note directly with the frequency specified.
-    public Note(double hz, int velocity=0)
+    public Note(float hz, int velocity=0)
     {
         this.midi_note = -1;  //Custom sound location in channel
         this.hz = hz;
@@ -78,29 +78,29 @@ public const int NOTE_A4 = 69;   // Nice.
 
         if (periods.Length == 0)
         {
-            periods = new double[129]; // Extra field accounts for G#9
+            periods = new float[129]; // Extra field accounts for G#9
 
             for (int i=0; i < periods.Length; i++)
             {
-                periods[i] = 440.0 * Math.Pow(2.0, (i-NOTE_A4)/12.0);
+                periods[i] = (float) (440.0 * Math.Pow(2.0, (i-NOTE_A4)/12.0));
             }
             // GD.Print("FMCore:  Note period table generated.");
             // foreach (double val in periods)  {GD.Print(val);}
         }    
     }
 
-    public static double lookup_frequency(int note_number)
+    public static float lookup_frequency(int note_number)
     {
         if (periods.Length == 0)
         {
-            periods = new double[129]; // Extra field accounts for G#9
+            periods = new float[129]; // Extra field accounts for G#9
             gen_period_table();
         }
         return periods[note_number];
     }
 
     //Gets the phase increment based on the current pitch and sample rate.
-    public double GetPhase(int idx, double sample_rate=44100.0)
+    public float GetPhase(int idx, float sample_rate=44100.0f)
     {
         // return samples / sample_rate * hz;
         return this.phase[idx];
@@ -120,13 +120,13 @@ public const int NOTE_A4 = 69;   // Nice.
 
 
     /// Increments the phase accumulator, which controls the timbre of the note's overall sound.
-    public void Accumulate(int idx, int numsamples, double multiplier, double sample_rate)
+    public void Accumulate(int idx, int numsamples, float multiplier, float sample_rate)
     {
         phase[idx] += numsamples / sample_rate * (hz*multiplier);
     }
 
     /// Returns what the phase would be if the accumulator was moved forward.
-    public double PhaseIfAccumulated(int idx, int numsamples, double multiplier, double sample_rate)
+    public float PhaseIfAccumulated(int idx, int numsamples, float multiplier, float sample_rate)
     {
         return phase[idx] + (numsamples / sample_rate * (hz*multiplier));
     }
@@ -139,10 +139,10 @@ public const int NOTE_A4 = 69;   // Nice.
 
 
     //Determine pitch at our current sample position based on the pitch generator from the patch supplied.
-    public double PitchAtSamplePosition(Patch p)
+    public float PitchAtSamplePosition(Patch p)
     {
         if (samples < p.par){ //Attack phase.
-            return GDSFmFuncs.lerp(p.palMult, p.pdlMult,  samples / (double) p.par);
+            return GDSFmFuncs.lerp(p.palMult, p.pdlMult,  samples / (float) p.par);
 
         // } else if (samples < p._padr) { //Decay phase.
         } else if ((samples >= p.par) && (samples < p._padr) ) { //Decay phase.
@@ -192,7 +192,7 @@ public const int NOTE_A4 = 69;   // Nice.
 
 
     //When this note receives a NoteOff event, it's sent release time from a Patch. MIDI preview handler can do this, or (later) patterns with patch data.
-    public void _on_ReleaseNote(int pitch, double releaseTime)
+    public void _on_ReleaseNote(int pitch, float releaseTime)
     {
         if (midi_note == pitch && pressed)
         {

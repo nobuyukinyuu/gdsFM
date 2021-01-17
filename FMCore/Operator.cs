@@ -25,9 +25,9 @@ public class Operator : Resource
     public int lfoBankAmp = -1;
     public int lfoBankPitch = -1;
     //Sensitivity variables for amplitude and pitch.  These are normalized from 0-1.
-    public double pms, ams;
+    public float pms, ams;
 
-    public RTable<double> customWaveform;  //Waveform oscillator used when eg.Waveform == Waveforms.CUSTOM
+    public RTable<float> customWaveform;  //Waveform oscillator used when eg.Waveform == Waveforms.CUSTOM
     public int waveformBank = -1; //Used to assist in finding where the customWaveform lives inside the associated Patch.
 
     /// Ctor to give me a name
@@ -76,16 +76,16 @@ public class Operator : Resource
     }
 
 
-    public double LastChain;   //////////////////DEBUG, REMOVE ME
+    public float LastChain;   //////////////////DEBUG, REMOVE ME
     /// Iterate over our connections, then mix and modulate them before returning the final modulated value.
-    public double request_sample(Note note, List<LFO> LFOs = null, int lfoBufPos = 0)
+    public float request_sample(Note note, List<LFO> LFOs = null, int lfoBufPos = 0)
     {
         
-        double output = 0.0;        
-        double modulator = 0.0;
+        float output = 0.0f;
+        float modulator = 0.0f;
 
-        double adsr = calc_eg(note);  //Get the adsr envelope from the EG to use later.
-        double phase = note.phase[id];
+        float adsr = calc_eg(note);  //Get the adsr envelope from the EG to use later.
+        float phase = note.phase[id];
 
         if (Math.Abs(adsr) < 0.0005) 
             {
@@ -124,7 +124,7 @@ public class Operator : Resource
 
 
             //Apply Amplitude LFO here.  Grab the calculation from the bank associated with this Operator and multiply it with eg._totalLevel.
-            output *= (lfoBankAmp>=0 && LFOs != null) ? LFOs[lfoBankAmp].GetAmpMult(lfoBufPos, note.ampBuffer, ams) : 1.0;
+            output *= (lfoBankAmp>=0 && LFOs != null) ? LFOs[lfoBankAmp].GetAmpMult(lfoBufPos, note.ampBuffer, ams) : 1.0f;
 
             //Determine the EG position and attenuate.
             output *= adsr;
@@ -135,10 +135,10 @@ public class Operator : Resource
             // Process feedback
             if (eg.feedback > 0)
             {
-                var average = (note.feedbackHistory[id][0] + note.feedbackHistory[id][1]) * 0.5;
-                var scaled_fb = average / Math.Pow(2, 6.0f-eg.feedback);  //maybe use powfast if I can get it to support negative numbers
+                float average = (note.feedbackHistory[id][0] + note.feedbackHistory[id][1]) * 0.5f;
+                float scaled_fb = (float) (average / Math.Pow(2, 6.0f-eg.feedback));  //maybe use powfast if I can get it to support negative numbers
 
-                double wave;
+                float wave;
                 if (eg.waveform== Waveforms.CUSTOM){
                     wave = oscillators.wave(phase + scaled_fb, customWaveform) * adsr;  
                 } else {
@@ -161,7 +161,7 @@ public class Operator : Resource
             }
 
             //Apply Amplitude LFO here.  Grab the calculation from the bank associated with this Operator and multiply it with eg._totalLevel.
-            output *= (lfoBankAmp>=0 && LFOs != null) ? LFOs[lfoBankAmp].GetAmpMult(lfoBufPos, note.ampBuffer, ams) : 1.0;
+            output *= (lfoBankAmp>=0 && LFOs != null) ? LFOs[lfoBankAmp].GetAmpMult(lfoBufPos, note.ampBuffer, ams) : 1.0f;
 
             output *= eg._totalLevel;  //Finally, Attenuate total level.  ADSR was applied to output earlier depending on FB.
         }
@@ -177,15 +177,15 @@ public class Operator : Resource
 
 
     /// Gets the total EG + LFO multiplier for the operator at the given position in the audio buffer.  Used to accumulate phase for an Operator.
-    public double GetMult(Note note, List<LFO> LFOs = null, int lfoBufPos = 0)
+    public float GetMult(Note note, List<LFO> LFOs = null, int lfoBufPos = 0)
     {
-        var lfoMult = (lfoBankPitch>=0 && LFOs != null) ? LFOs[lfoBankPitch].GetPitchMult(lfoBufPos, note.samples, pms) : 1.0;
+        var lfoMult = (lfoBankPitch>=0 && LFOs != null) ? LFOs[lfoBankPitch].GetPitchMult(lfoBufPos, note.samples, pms) : 1.0f;
         var mult = eg.FixedFreq>0? eg.totalMultiplier * lfoMult / note.hz: eg.totalMultiplier * lfoMult;
         return mult;
     }
 
     /// Calculate the position and value attenuation as determined by the envelope generator.
-    double calc_eg(Note note)
+    float calc_eg(Note note)
     {
         //TODO:  Take a sample timer, NoteOff status, and NoteOff position from an external Note resource.
         return eg.VolumeAtSamplePosition(note);
