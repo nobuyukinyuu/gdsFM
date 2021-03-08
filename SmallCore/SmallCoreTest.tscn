@@ -1,0 +1,71 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://SmallCore/SmallCoreTest.cs" type="Script" id=1]
+
+[sub_resource type="AudioStreamGenerator" id=1]
+buffer_length = 0.2
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends Node
+
+#Default keys for keyboard controls.
+const note_names = [\"C-\", \"C#\", \"D-\", \"D#\", \"E-\", \"F-\", \"F#\", \"G-\", \"G#\", \"A-\", \"A#\", \"B-\", ]
+const note_keys = [
+		[\"z\",\"x\",\"c\",\"v\",\"b\",\"n\",\"m\", \"comma\" ,\"period\", \"slash\"],
+		[\"a\",\"s\",\"d\",\"f\",\"g\",\"h\",\"j\",\"k\",\"l\",\"semicolon\", \"Apostrophe\", \"backslash\"],
+		[\"q\",\"w\",\"e\",\"r\",\"t\",\"y\",\"u\",\"i\",\"o\",\"p\",\"braceleft\", \"braceright\"],
+	]
+var key_to_notenum = {}
+
+
+func _init():
+	var notenum = global.NOTE_A4 -9  #c-4
+	for octave in note_keys.size():
+		for i in note_keys[octave].size():
+			var n = note_names[i] + str(octave)
+			var action = InputEventKey.new()
+			
+			action.scancode = OS.find_scancode_from_string(note_keys[octave][i])
+			key_to_notenum[n] = notenum + i + (octave*12) - 12  #Sets the correct note number for this keypress.
+			InputMap.add_action(n)
+			InputMap.action_add_event(n,action)
+
+
+func _process(delta):
+	#Scan for note pressed.
+	for octave in note_keys.size():
+		for i in note_keys[octave].size():
+			var n = note_names[i] + str(octave)
+			var notenum = key_to_notenum[n] + 24
+			if Input.is_action_just_pressed(n):  #note was pressed or released.			
+#				$\"../Audio\".AddNote(notenum, 127, self)
+				$\"..\".NoteOn(notenum, 127)
+				print(n, \" Pitch: %s\" % [notenum])
+					
+			elif Input.is_action_just_released(n):
+#				emit_signal(\"NoteOff\", notenum)
+#				owner.get_node(\"Audio\").TurnOffNote(notenum)
+				$\"..\".NoteOff()
+"
+
+[node name="SmallCoreTest" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = SubResource( 1 )
+volume_db = -10.0
+
+[node name="InputControl" type="Node" parent="."]
+script = SubResource( 2 )
+
+[node name="Label" type="Label" parent="."]
+margin_left = 248.0
+margin_top = 120.0
+margin_right = 496.0
+margin_bottom = 248.0
+text = "value"
